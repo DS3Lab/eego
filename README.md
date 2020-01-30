@@ -8,3 +8,7 @@ NLP experiments with ZuCo for COLING 2020
 ## Relation detection
 
 ## Sentiment analysis
+
+binary or ternary
+only SR sentences from ZuCo 1
+
