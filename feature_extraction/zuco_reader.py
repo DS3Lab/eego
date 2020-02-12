@@ -20,8 +20,34 @@ def extract_features(sent_data, feature_set, feature_dict):
 def extract_labels(feature_dict, label_dict, task, subject):
     """"""
     if task.startswith("sentiment"):
-        # todo: does a  file with all SST sentences + binary/ternary labels already exist? yes
-        label_file = open()
+
+        count = 0
+        label_names = {};
+        i = 0
+
+        if subject.startswith('Z'):  # subjects from ZuCo 1
+            with open('/Users/norahollenstein/Desktop/PhD/projects/eego/feature_extraction/labels/sentiment_sents_labels-corrected.txt', 'r') as csv_file:
+                csv_reader = csv.reader(csv_file, delimiter=';')
+                for row in csv_reader:
+                    #print(row)
+                    sent = row[1]
+                    label = row[-1]
+
+                    if label not in label_names:
+                        label_names[label] = i
+                        i += 1
+
+                    if sent in feature_dict:
+                        # print(zuco2_relations_normal_reading_labels.csv[sent])
+                        label_dict[sent] = label_names[label]
+                    else:
+                        print("Sentence not found in feature dict!")
+                        print(sent)
+                        count += 1
+                print('ZuCo 1 sentences not found:', count)
+
+        else:
+            print("Sentiment analysis only possible for ZuCo 1!!!")
 
     if task == 'reldetect':
 

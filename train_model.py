@@ -10,7 +10,7 @@ def load_matlab_files(task, subject):
     """loads matlab files depending on which files are required for the chosen classification task"""
 
     if task.startswith("sentiment"):
-        filename_sr = config.rootdir + "results" + subject + "_SR.mat"
+        filename_sr = config.rootdir_zuco1 + "results" + subject + "_SR.mat"
         f_sr = h5py.File(filename_sr, 'r')
         sentence_data_sr = f_sr['sentenceData']
 
@@ -42,22 +42,17 @@ def main():
         loaded_data = load_matlab_files(config.class_task, subject)
 
         zuco_reader.extract_features(loaded_data, config.feature_set, feature_dict)
-        # todo: fix label extraction
+        # todo: fix label extraction for relation detection
         zuco_reader.extract_labels(feature_dict, label_dict, config.class_task, subject)
 
     print(len(feature_dict), len(label_dict))
+    if len(feature_dict) != len(label_dict):
+        print("WARNING: Not an equal number of sentences in features and labels!")
 
     #reldetect_model.lstm_classfier(feature_dict, label_dict)
 
 
 
-    # convert features to sequences for ML model
-    #def convert_to_sequences():
-        # reshape for LSTM
-
-    # train model --> define which model to train
-
-    # report results
 
 
 if __name__ == '__main__':
