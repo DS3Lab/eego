@@ -23,7 +23,7 @@ import tensorflow as tf
 tf.set_random_seed(42)
 
 
-def lstm_classfier(features, labels):
+def lstm_classifier(features, labels):
 
     X = list(features.keys())
     y = list(labels.values())

@@ -17,13 +17,15 @@ from sklearn.model_selection import KFold
 import ml_helpers
 
 
+# Machine learning model for BINARY sentiment classification
+
 os.environ['KERAS_BACKEND'] = 'tensorflow'
 np.random.seed(42)
 import tensorflow as tf
 tf.set_random_seed(42)
 
 
-def lstm_classfier(features, labels):
+def lstm_classifier(features, labels):
 
     X = list(features.keys())
     y = list(labels.values())

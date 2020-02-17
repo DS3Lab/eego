@@ -2,6 +2,8 @@ import config
 import h5py
 from feature_extraction import zuco_reader
 from reldetect import reldetect_model
+from sentiment import sentiment_2_model, sentiment_3_model
+from data_helpers import save_results
 
 # calls zuco_reader --> define which feature to extract
 
@@ -49,7 +51,12 @@ def main():
     if len(feature_dict) != len(label_dict):
         print("WARNING: Not an equal number of sentences in features and labels!")
 
-    #reldetect_model.lstm_classfier(feature_dict, label_dict)
+    if config.class_task == 'reldetect':
+        reldetect_model.lstm_classfier(feature_dict, label_dict)
+    elif config.class_task == 'sentiment-tri':
+        fold_results = sentiment_3_model.lstm_classifier(feature_dict, label_dict, config.embeddings)
+        print(fold_results)
+        save_results(fold_results, config.class_task)
 
 
 
