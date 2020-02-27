@@ -7,12 +7,8 @@ from tensorflow.python.keras import backend as K
 from tensorflow.python.keras.preprocessing.sequence import pad_sequences
 from tensorflow.python.keras.preprocessing.text import one_hot
 from tensorflow.python.keras.utils import np_utils
-
 from tensorflow.python.keras import optimizers
-from sklearn.preprocessing import MinMaxScaler
 import sklearn.metrics
-from tensorflow.python.keras.utils import to_categorical
-import ml_helpers
 from sklearn.model_selection import KFold
 import ml_helpers
 
