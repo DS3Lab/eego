@@ -22,7 +22,8 @@ def extract_labels(feature_dict, label_dict, task, subject):
     if task.startswith("sentiment"):
 
         count = 0
-        label_names = {};
+        #label_names = {};
+        label_names = {'0': 2, '1': 1, '-1': 0}
         i = 0
 
         if subject.startswith('Z'):  # subjects from ZuCo 1
@@ -38,7 +39,6 @@ def extract_labels(feature_dict, label_dict, task, subject):
                         i += 1
 
                     if sent in feature_dict:
-                        # print(zuco2_relations_normal_reading_labels.csv[sent])
                         label_dict[sent] = label_names[label]
                     else:
                         print("Sentence not found in feature dict!")
@@ -48,6 +48,8 @@ def extract_labels(feature_dict, label_dict, task, subject):
 
         else:
             print("Sentiment analysis only possible for ZuCo 1!!!")
+
+        print(label_names)
 
     if task == 'reldetect':
 

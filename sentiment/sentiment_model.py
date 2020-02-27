@@ -58,7 +58,7 @@ def lstm_classifier(features, labels, embedding_type, param_dict):
 
     if embedding_type is 'glove':
         "Loading Glove embeddings..."
-        embedding_dim = 50
+        embedding_dim = 300
         num_words = min(vocab_size, len(word_index) + 1)
         embedding_matrix = ml_helpers.load_glove_embeddings(vocab_size, word_index, embedding_dim)
 
@@ -95,7 +95,7 @@ def lstm_classifier(features, labels, embedding_type, param_dict):
         epochs = param_dict['epochs']
         lr = param_dict['lr']
 
-        fold_results['params'] = [lstm_dim, dense_dim, dropout, batch_size, epochs, lr]
+        fold_results['params'] = [lstm_dim, dense_dim, dropout, batch_size, epochs, lr, embedding_type]
 
         model = Sequential()
 
