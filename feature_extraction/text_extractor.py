@@ -1,4 +1,4 @@
-import data_loading_helpers as dh
+from . import data_loading_helpers as dh
 
 
 def extract_sentences(sentence_data, sentence_dict):
