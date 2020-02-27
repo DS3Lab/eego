@@ -2,7 +2,7 @@ import config
 import h5py
 from feature_extraction import zuco_reader
 from reldetect import reldetect_model
-from sentiment import sentiment_2_model, sentiment_3_model
+from sentiment import sentiment_model
 from data_helpers import save_results
 
 # calls zuco_reader --> define which feature to extract
@@ -51,14 +51,30 @@ def main():
     if len(feature_dict) != len(label_dict):
         print("WARNING: Not an equal number of sentences in features and labels!")
 
-    parameter_dict = {"lr": 0.001, "lstm_dim": 128, "dense_dim": 64, "dropout": 0.5, "batch_size": 20, "epochs": 3}
+    for lr_val in config.lr:
+        for e_val in config.epochs:
+            parameter_dict = {"lr": lr_val, "lstm_dim": 128, "dense_dim": 64, "dropout": 0.5, "batch_size": 20, "epochs": e_val}
 
-    if config.class_task == 'reldetect':
-        reldetect_model.lstm_classfier(feature_dict, label_dict)
-    elif config.class_task == 'sentiment-tri':
-        fold_results = sentiment_3_model.lstm_classifier(feature_dict, label_dict, config.embeddings, parameter_dict)
-        print(fold_results)
-        save_results(fold_results, config.class_task)
+            if config.class_task == 'reldetect':
+                reldetect_model.lstm_classfier(feature_dict, label_dict)
+            elif config.class_task == 'sentiment-tri':
+                fold_results = sentiment_model.lstm_classifier(feature_dict, label_dict, config.embeddings, parameter_dict)
+                print(fold_results)
+                save_results(fold_results, config.class_task)
+            elif config.class_task == 'sentiment-bin':
+                print(len(feature_dict), len(label_dict))
+                for s, label in list(label_dict.items()):
+                    # delete neutral sentences
+                    if label == 2:
+                            del label_dict[s]
+                            del feature_dict[s]
+                print(len(feature_dict), len(label_dict))
+                fold_results = sentiment_model.lstm_classifier(feature_dict, label_dict, config.embeddings, parameter_dict)
+                print(fold_results)
+                save_results(fold_results, config.class_task)
+
+
+
 
 
 

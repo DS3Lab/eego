@@ -22,7 +22,7 @@ def load_glove_embeddings(vocab_size, word_index, EMBEDDING_DIM):
 
     embeddings_index = {}
     with open(os.path.join(
-            '/Users/norahollenstein/Desktop/PhD/projects/eego/feature_extraction/embeddings/glove.6B.50d.txt')) as f:
+            '/Users/norahollenstein/Desktop/PhD/projects/eego/feature_extraction/embeddings/glove.6B.'+str(EMBEDDING_DIM)+'d.txt')) as f:
         for line in f:
             word, coefs = line.split(maxsplit=1)
             coefs = np.fromstring(coefs, 'f', sep=' ')

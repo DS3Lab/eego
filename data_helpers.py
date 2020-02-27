@@ -4,7 +4,7 @@ import numpy as np
 
 def save_results(fold_results_dict, task):
 
-    result_file = open('sentiment/results/3classes/'+str(date.today()) + "_results_" + task + ".txt", 'a')
+    result_file = open('sentiment/results/'+str(date.today()) + "_results_" + task + ".txt", 'a')
 
     avg_precision = np.mean(fold_results_dict['precision'])
     avg_recall = np.mean(fold_results_dict['recall'])

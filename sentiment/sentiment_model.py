@@ -24,7 +24,7 @@ import os
 os.environ['PYTHONHASHSEED']=str(seed_value)
 
 
-def lstm_classifier(features, labels, embedding_type):
+def lstm_classifier(features, labels, embedding_type, param_dict):
 
     X = list(features.keys())
     y = list(labels.values())
@@ -82,19 +82,20 @@ def lstm_classifier(features, labels, embedding_type):
 
         #print(X_train.shape)
         #print(X_test.shape)  # test samples
-        #print(y_train.shape)
-        #print(y_test.shape)  # test labels
+        print(y_train.shape)
+        print(y_test.shape)  # test labels
 
         # reset model
         K.clear_session()
 
-        lstm_dim = 128
-        dense_dim = 64
-        dropout = 0.5
-        batch_size = 20
-        epochs = 3
+        lstm_dim = param_dict['lstm_dim']
+        dense_dim = param_dict['dense_dim']
+        dropout = param_dict['dropout']
+        batch_size = param_dict['batch_size']
+        epochs = param_dict['epochs']
+        lr = param_dict['lr']
 
-        fold_results['params'] = [lstm_dim, dense_dim, dropout, batch_size, epochs]
+        fold_results['params'] = [lstm_dim, dense_dim, dropout, batch_size, epochs, lr]
 
         model = Sequential()
 
@@ -118,7 +119,7 @@ def lstm_classifier(features, labels, embedding_type):
         model.add(Dense(y_train.shape[1], activation='softmax'))
 
         model.compile(loss='categorical_crossentropy',
-                      optimizer=optimizers.Adam(lr=0.1),
+                      optimizer=optimizers.Adam(lr=lr),
                       metrics=['accuracy'])
 
         model.summary()
