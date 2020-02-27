@@ -1,4 +1,4 @@
-import data_loading_helpers as dh
+from . import data_loading_helpers as dh
 
 # extract eye-tracking features: nFix, FFD, TRT, GD, GPT
 
