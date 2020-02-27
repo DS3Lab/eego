@@ -19,7 +19,7 @@ seed_value = 42
 os.environ['KERAS_BACKEND'] = 'tensorflow'
 np.random.seed(seed_value)
 import tensorflow as tf
-tf.set_seed(seed_value)
+tf.random.set_seed(seed_value)
 import os
 os.environ['PYTHONHASHSEED']=str(seed_value)
 

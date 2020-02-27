@@ -16,7 +16,7 @@ import ml_helpers
 os.environ['KERAS_BACKEND'] = 'tensorflow'
 np.random.seed(42)
 import tensorflow as tf
-tf.set_seed(42)
+tf.random.set_seed(42)
 
 
 def lstm_classifier(features, labels):
