@@ -1,16 +1,8 @@
-from sklearn.datasets import load_files
-import math
-import collections
-from scipy import io
 import h5py
 import numpy as np
 import pickle as pkl
-import data_loading_helpers as dlh
-import pandas as pd
 import re
 import config
-import time
-import sys
 
 eeg_float_resolution = np.float16
 
