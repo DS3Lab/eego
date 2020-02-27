@@ -2,8 +2,6 @@ from sklearn.datasets import load_files
 import math
 import collections
 from scipy import io
-#import nltk
-from nltk.corpus import stopwords
 import h5py
 import numpy as np
 import pickle as pkl
@@ -13,8 +11,6 @@ import re
 import config
 import time
 import sys
-stopwords.words('english')
-stopwords = stopwords.words('english')
 
 eeg_float_resolution = np.float16
 
