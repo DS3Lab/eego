@@ -1,7 +1,7 @@
 import csv
 
-import gaze_extractor
-import text_extractor
+from . import gaze_extractor
+from . import text_extractor
 
 # wrapper script to read matlab files and extract gaze and/or EEG features
 
