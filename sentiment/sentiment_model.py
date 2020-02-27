@@ -5,8 +5,8 @@ from tensorflow.python.keras.layers import Dense, Dropout
 from tensorflow.python.keras.layers import LSTM, Embedding
 from tensorflow.python.keras import backend as K
 from tensorflow.python.keras.preprocessing.sequence import pad_sequences
-from tensorflow.python.keras.preprocessing.text import one_hot, Tokenizer
-from tensorflow.python.keras.utils import np_utils, to_categorical
+from tensorflow.python.keras.preprocessing.text import Tokenizer
+from tensorflow.python.keras.utils import np_utils
 from tensorflow.python.keras import optimizers
 from tensorflow.python.keras.initializers import Constant
 import sklearn.metrics
@@ -19,7 +19,7 @@ seed_value = 42
 os.environ['KERAS_BACKEND'] = 'tensorflow'
 np.random.seed(seed_value)
 import tensorflow as tf
-tf.set_random_seed(seed_value)
+tf.set_seed(seed_value)
 import os
 os.environ['PYTHONHASHSEED']=str(seed_value)
 
