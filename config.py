@@ -4,8 +4,9 @@ dataset = 'zuco1'
 # dataset directories
 #rootdir_zuco1 = "/Volumes/methlab/NLP/Ce_ETH/OSF-ZuCo1.0-200107/mat7.3/"
 #rootdir_zuco2 = "/Volumes/methlab/NLP/Ce_ETH/2019/FirstLevel_V2/"
-rootdir_zuco1 = "/mnt/ds3lab-scratch/noraho/coling2020/zuco1/"
-rootdir_zuco2 = "/mnt/ds3lab-scratch/noraho/coling2020/zuco2/"
+base_dir = "/mnt/ds3lab-scratch/noraho/coling2020/"
+rootdir_zuco1 = base_dir+"zuco1/"
+rootdir_zuco2 = base_dir+"zuco2/"
 
 
 # subjects

@@ -1,5 +1,5 @@
 import csv
-
+import config
 from . import gaze_extractor
 from . import text_extractor
 
@@ -27,7 +27,7 @@ def extract_labels(feature_dict, label_dict, task, subject):
         i = 0
 
         if subject.startswith('Z'):  # subjects from ZuCo 1
-            with open('/Users/norahollenstein/Desktop/PhD/projects/eego/feature_extraction/labels/sentiment_sents_labels-corrected.txt', 'r') as csv_file:
+            with open(config.base_dir+'eego/feature_extraction/labels/sentiment_sents_labels-corrected.txt', 'r') as csv_file:
                 csv_reader = csv.reader(csv_file, delimiter=';')
                 for row in csv_reader:
                     #print(row)
@@ -59,7 +59,7 @@ def extract_labels(feature_dict, label_dict, task, subject):
         # todo: update this to take labels from brat!!! original labels are not complete
 
         if subject.startswith('Z'):  # subjects from ZuCo 1
-            with open('/Users/norahollenstein/Desktop/PhD/projects/eego/feature_extraction/labels/zuco1_relations_nr_labels_cleaned.csv', 'r') as csv_file:
+            with open(config.base_dir+'eego/feature_extraction/labels/zuco1_relations_nr_labels_cleaned.csv', 'r') as csv_file:
                 csv_reader = csv.reader(csv_file, delimiter=',')
                 next(csv_reader, None)
                 for row in csv_reader:
@@ -84,7 +84,7 @@ def extract_labels(feature_dict, label_dict, task, subject):
 
         elif subject.startswith('Y'):  # subjects from ZuCo 2
             count = 0
-            with open('/Users/norahollenstein/Desktop/PhD/projects/eego/feature_extraction/labels/zuco2_relations_nr_labels_cleaned.csv', 'r') as csv_file:
+            with open(config.basedir+'eego/feature_extraction/labels/zuco2_relations_nr_labels_cleaned.csv', 'r') as csv_file:
                 csv_reader = csv.reader(csv_file, delimiter=',')
                 next(csv_reader, None)
                 for row in csv_reader:
