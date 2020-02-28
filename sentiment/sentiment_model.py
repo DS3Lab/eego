@@ -119,7 +119,7 @@ def lstm_classifier(features, labels, embedding_type, param_dict):
         model.add(Dense(y_train.shape[1], activation='softmax'))
 
         model.compile(loss='categorical_crossentropy',
-                      optimizer=optimizers.Adam(lr=lr),
+                      optimizer=tf.keras.optimizers.Adam(lr=lr),
                       metrics=['accuracy'])
 
         model.summary()
