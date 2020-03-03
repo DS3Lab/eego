@@ -8,7 +8,6 @@ base_dir = "/mnt/ds3lab-scratch/noraho/coling2020/"
 rootdir_zuco1 = base_dir+"zuco1/"
 rootdir_zuco2 = base_dir+"zuco2/"
 
-
 # subjects
 #subjects = ['YAC', 'YAG', 'YAK', 'YDG', 'YDR', 'YFR', 'YFS', 'YHS', 'YIS', 'YLS', 'YMD', 'YMS', 'YRH', 'YRK', 'YRP', 'YSD', 'YSL', 'YTL']  # exclude YMH
 subjects = ["ZKW"]#,"ZJS", "ZDN", "ZJN"]#, "ZPH", "ZAB", "ZJM", "ZKB", "ZKH", "ZMG", "ZGW", "ZKW", "ZDM"]
@@ -27,5 +26,8 @@ lstm_dim = [128]
 dense_dim = [64]
 dropout = [0.5]
 batch_size = [20]
-epochs = [3, 5]
-lr = [0.001, 0.0001]
+epochs = [3]
+lr = [0.001]
+
+# other parameters
+folds = 3
