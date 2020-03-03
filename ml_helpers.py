@@ -6,6 +6,9 @@ import config
 import tensorflow as tf
 import tensorflow_datasets
 
+import tensorflow_hub as hub
+import bert
+
 
 
 def plot_label_distribution(y):
@@ -50,8 +53,13 @@ def load_bert_embeddings():
 
     # todo: use this tutorial for Bert with TF; https://github.com/huggingface/transformers#quick-tour
 
-    # tokenizer & model from pretrained model/vocabulary
-    #tokenizer = BertTokenizer.from_pretrained('bert-base-cased')
-    model_bert = TFBertForSequenceClassification.from_pretrained('bert-base-cased')
 
-    return model_bert
+    # from https://colab.research.google.com/drive/1IubZ3T7gqD09ZIVmJapiB5MXUnVGlzwH#scrollTo=lyRTv9GNzdJt
+    bert_path = "https://tfhub.dev/tensorflow/bert_en_uncased_L-12_H-768_A-12/1"
+    bert_layer = hub.KerasLayer(bert_path, trainable=True)
+
+    vocab_file1 = bert_layer.resolved_object.vocab_file.asset_path.numpy()
+    bert_tokenizer_tfhub = bert.bert_tokenization.FullTokenizer(vocab_file1, do_lower_case=True)
+
+    bert_inputs = _get_inputs(df=train.head(), tokenizer=bert_tokenizer_tfhub, _maxlen=100)
+    print(bert_inputs)
