@@ -12,6 +12,7 @@ from tensorflow.python.keras.initializers import Constant
 import sklearn.metrics
 from sklearn.model_selection import KFold
 import ml_helpers
+import config
 
 # Machine learning model for TERNARY sentiment classification
 
@@ -67,7 +68,7 @@ def lstm_classifier(features, labels, embedding_type, param_dict):
         bert_pretrained = ml_helpers.load_bert_embeddings()
 
     # split data into train/test
-    kf = KFold(n_splits=3, random_state=seed_value, shuffle=False)
+    kf = KFold(n_splits=config.folds, random_state=seed_value, shuffle=True)
 
     fold = 0
     fold_results = {}
@@ -122,7 +123,7 @@ def lstm_classifier(features, labels, embedding_type, param_dict):
                       optimizer=tf.keras.optimizers.Adam(lr=lr),
                       metrics=['accuracy'])
 
-        model.summary()
+        #model.summary
 
         # train model
         model.fit(X_train, y_train, validation_split=0.1, epochs=epochs, batch_size=batch_size)

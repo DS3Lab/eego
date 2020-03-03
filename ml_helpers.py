@@ -51,7 +51,7 @@ def load_bert_embeddings():
     # todo: use this tutorial for Bert with TF; https://github.com/huggingface/transformers#quick-tour
 
     # tokenizer & model from pretrained model/vocabulary
-    tokenizer = BertTokenizer.from_pretrained('bert-base-cased')
+    #tokenizer = BertTokenizer.from_pretrained('bert-base-cased')
     model_bert = TFBertForSequenceClassification.from_pretrained('bert-base-cased')
 
     return model_bert
