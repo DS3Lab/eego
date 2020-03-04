@@ -49,7 +49,7 @@ def load_glove_embeddings(vocab_size, word_index, EMBEDDING_DIM):
     return embedding_matrix
 
 
-def load_bert_embeddings():
+def load_bert_embeddings(sequences, word_index, max_length):
 
     # todo: use this tutorial for Bert with TF; https://github.com/huggingface/transformers#quick-tour
 
@@ -61,5 +61,6 @@ def load_bert_embeddings():
     vocab_file1 = bert_layer.resolved_object.vocab_file.asset_path.numpy()
     bert_tokenizer_tfhub = bert.bert_tokenization.FullTokenizer(vocab_file1, do_lower_case=True)
 
-    bert_inputs = _get_inputs(df=train.head(), tokenizer=bert_tokenizer_tfhub, _maxlen=100)
-    print(bert_inputs)
+
+    return bert_layer, bert_tokenizer_tfhub
+

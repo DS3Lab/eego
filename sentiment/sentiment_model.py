@@ -1,8 +1,7 @@
 import os
 import numpy as np
 from tensorflow.python.keras.models import Sequential
-from tensorflow.python.keras.layers import Dense, Dropout
-from tensorflow.python.keras.layers import LSTM, Embedding
+from tensorflow.python.keras.layers import Input, Dense, Dropout, GlobalAveragePooling1D, LSTM, Embedding
 from tensorflow.python.keras import backend as K
 from tensorflow.python.keras.preprocessing.sequence import pad_sequences
 from tensorflow.python.keras.preprocessing.text import Tokenizer
@@ -13,6 +12,8 @@ import sklearn.metrics
 from sklearn.model_selection import KFold
 import ml_helpers
 import config
+import tensorflow_hub as hub
+import bert
 
 # Machine learning model for TERNARY sentiment classification
 
@@ -58,14 +59,23 @@ def lstm_classifier(features, labels, embedding_type, param_dict):
     print('Shape of label tensor:', y.shape)
 
     if embedding_type is 'glove':
-        "Loading Glove embeddings..."
+        print("Loading Glove embeddings...")
         embedding_dim = 300
         num_words = min(vocab_size, len(word_index) + 1)
         embedding_matrix = ml_helpers.load_glove_embeddings(vocab_size, word_index, embedding_dim)
 
     if embedding_type is 'bert':
-        "Loading Bert embeddings..."
-        bert_pretrained = ml_helpers.load_bert_embeddings()
+        print("Loading Bert embeddings...")
+        print("Getting bert layer & tokenizer...")
+        bert_layer, bert_tokenizer_tfhub = ml_helpers.load_bert_embeddings(sequences, word_index, max_length)
+
+        print("Computing bert inputs...")
+        bert_inputs = _get_inputs(df=sequences, tokenizer=bert_tokenizer_tfhub, _maxlen=100)
+
+        _, Xtr_bert = bert_layer(bert_inputs)
+        bert_pretrained = Input(shape=(max_length, 768), name='bert_encoding')
+        print("DONE.")
+
 
     # split data into train/test
     kf = KFold(n_splits=config.folds, random_state=seed_value, shuffle=True)
@@ -111,9 +121,11 @@ def lstm_classifier(features, labels, embedding_type, param_dict):
                                         input_length=max_length,
                                         trainable=False)
         elif embedding_type is 'bert':
-            embedding_layer = bert_pretrained
+            embedding_layer = Dense(100, activation='relu')(bert_pretrained)
+            embedding_layer = GlobalAveragePooling1D()(embedding_layer)
 
         model.add(embedding_layer)
+        model.summary()
         model.add(LSTM(lstm_dim))
         model.add(Dense(dense_dim, activation='relu'))
         model.add(Dropout(rate=dropout))
@@ -123,7 +135,7 @@ def lstm_classifier(features, labels, embedding_type, param_dict):
                       optimizer=tf.keras.optimizers.Adam(lr=lr),
                       metrics=['accuracy'])
 
-        #model.summary
+        model.summary()
 
         # train model
         model.fit(X_train, y_train, validation_split=0.1, epochs=epochs, batch_size=batch_size)
