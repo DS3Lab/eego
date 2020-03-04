@@ -6,14 +6,11 @@ from tensorflow.python.keras import backend as K
 from tensorflow.python.keras.preprocessing.sequence import pad_sequences
 from tensorflow.python.keras.preprocessing.text import Tokenizer
 from tensorflow.python.keras.utils import np_utils
-from tensorflow.python.keras import optimizers
 from tensorflow.python.keras.initializers import Constant
 import sklearn.metrics
 from sklearn.model_selection import KFold
 import ml_helpers
 import config
-import tensorflow_hub as hub
-import bert
 
 # Machine learning model for TERNARY sentiment classification
 
@@ -66,15 +63,9 @@ def lstm_classifier(features, labels, embedding_type, param_dict):
 
     if embedding_type is 'bert':
         print("Loading Bert embeddings...")
-        print("Getting bert layer & tokenizer...")
-        bert_layer, bert_tokenizer_tfhub = ml_helpers.load_bert_embeddings(sequences, word_index, max_length)
+        ml_helpers.load_bert_embeddings(X, sequences, word_index, max_length)
 
-        print("Computing bert inputs...")
-        bert_inputs = _get_inputs(df=sequences, tokenizer=bert_tokenizer_tfhub, _maxlen=100)
 
-        _, Xtr_bert = bert_layer(bert_inputs)
-        bert_pretrained = Input(shape=(max_length, 768), name='bert_encoding')
-        print("DONE.")
 
 
     # split data into train/test
