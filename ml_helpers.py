@@ -3,11 +3,8 @@ import os
 import numpy as np
 from transformers import *
 import config
-import tensorflow as tf
-import tensorflow_datasets
+import torch
 
-import tensorflow_hub as hub
-import bert
 
 
 
@@ -49,18 +46,17 @@ def load_glove_embeddings(vocab_size, word_index, EMBEDDING_DIM):
     return embedding_matrix
 
 
-def load_bert_embeddings(sequences, word_index, max_length):
+def load_bert_embeddings(X, sequences, word_index, max_length):
+    # Allocate a pipeline for feature extraction (= generates a tensor representation for the input sequence)
+    # https://github.com/huggingface/transformers#quick-tour-of-pipelines
 
-    # todo: use this tutorial for Bert with TF; https://github.com/huggingface/transformers#quick-tour
+    pretrained_weights = 'bert-base-uncased'
+    tokenizer = BertTokenizer.from_pretrained(pretrained_weights)
+    bert_model = BertModel.from_pretrained(pretrained_weights,
+                                        output_hidden_states=True,
+                                        output_attentions=True)
 
-
-    # from https://colab.research.google.com/drive/1IubZ3T7gqD09ZIVmJapiB5MXUnVGlzwH#scrollTo=lyRTv9GNzdJt
-    bert_path = "https://tfhub.dev/tensorflow/bert_en_uncased_L-12_H-768_A-12/1"
-    bert_layer = hub.KerasLayer(bert_path, trainable=True)
-
-    vocab_file1 = bert_layer.resolved_object.vocab_file.asset_path.numpy()
-    bert_tokenizer_tfhub = bert.bert_tokenization.FullTokenizer(vocab_file1, do_lower_case=True)
-
-
-    return bert_layer, bert_tokenizer_tfhub
+    input_ids = torch.tensor([tokenizer.encode("Let's see all hidden-states and attentions on this text")])
+    all_hidden_states, all_attentions = bert_model(input_ids)[-2:]
+    print(all_hidden_states.shape)
 
