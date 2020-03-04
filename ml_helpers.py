@@ -58,5 +58,5 @@ def load_bert_embeddings(X, sequences, word_index, max_length):
 
     input_ids = torch.tensor([tokenizer.encode("Let's see all hidden-states and attentions on this text")])
     all_hidden_states, all_attentions = bert_model(input_ids)[-2:]
-    print(all_hidden_states.shape)
+    print(all_hidden_states)
 
