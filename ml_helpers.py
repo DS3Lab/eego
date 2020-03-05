@@ -64,6 +64,7 @@ def load_bert_embeddings(X, sequences, word_index, max_length):
     print(last_hidden_states)
     print(last_hidden_states.shape)
 
-    bert_stated_papped = pad_sequences(last_hidden_states, maxlen=max_length, dtype="long", truncating="post", padding="post")
-    print(bert_stated_papped.shape)
+    bert_stated_padded = pad_sequences(last_hidden_states, maxlen=max_length, dtype="long", truncating="post", padding="post")
+    print(bert_stated_padded.shape)
+    print(bert_stated_padded)
 
