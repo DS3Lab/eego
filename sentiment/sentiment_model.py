@@ -84,9 +84,9 @@ def lstm_classifier(features, labels, embedding_type, param_dict):
 
         print("FOLD: ", fold)
 
-        print(np.array(X_data))
+        #print(np.array(X_data))
 
-        print(np.array(X_data)[train_index])
+        #print(np.array(X_data)[train_index])
 
         # print("TRAIN:", train_index, "TEST:", test_index)
         X_train, X_test = np.array(X_data)[train_index], np.array(X_data)[test_index]
@@ -122,8 +122,7 @@ def lstm_classifier(features, labels, embedding_type, param_dict):
                                         input_length=max_length,
                                         trainable=False)
         elif embedding_type is 'bert':
-            embedding_layer = Dense(100, activation='relu')(bert_pretrained)
-            embedding_layer = GlobalAveragePooling1D()(embedding_layer)
+            embedding_layer = Embedding(vocab_size, 768, input_length=max_length)
 
         model.add(embedding_layer)
         model.summary()
