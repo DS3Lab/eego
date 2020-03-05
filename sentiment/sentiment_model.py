@@ -84,6 +84,10 @@ def lstm_classifier(features, labels, embedding_type, param_dict):
 
         print("FOLD: ", fold)
 
+        print(np.array(X_data))
+
+        print(np.array(X_data)[train_index])
+
         # print("TRAIN:", train_index, "TEST:", test_index)
         X_train, X_test = np.array(X_data)[train_index], np.array(X_data)[test_index]
         y_train, y_test = np.array(y)[train_index], np.array(y)[test_index]
