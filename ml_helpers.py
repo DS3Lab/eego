@@ -55,7 +55,7 @@ def load_bert_embeddings(X, sequences, word_index, max_length):
     tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
     model = TFBertModel.from_pretrained('bert-base-uncased')
 
-    input_ids = tf.constant(tokenizer.encode("Hello, my dog is cute", add_special_tokens=True))[None, :]  # Batch size 1
+    input_ids = tf.constant(tokenizer.encode("Hello, my dog is cute", max_length=max_length, add_special_tokens=True, pad_to_max_length=True))[None, :]  # Batch size 1
     print(input_ids)
 
     outputs = model(input_ids)
@@ -64,7 +64,4 @@ def load_bert_embeddings(X, sequences, word_index, max_length):
     print(last_hidden_states)
     print(last_hidden_states.shape)
 
-    bert_stated_padded = pad_sequences(last_hidden_states, maxlen=max_length, dtype="long", truncating="post", padding="post")
-    print(bert_stated_padded.shape)
-    print(bert_stated_padded)
 
