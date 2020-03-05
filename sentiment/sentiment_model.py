@@ -112,7 +112,7 @@ def lstm_classifier(features, labels, embedding_type, param_dict):
         model = Sequential()
 
         if embedding_type is 'none':
-            embedding_layer = Embedding(vocab_size, 32, input_length=max_length)
+            embedding_layer = Embedding(vocab_size, 32, input_length=max_length, name='none_input_embeddings')
         elif embedding_type is 'glove':
             # load pre-trained word embeddings into an Embedding layer
             # note that we set trainable = False so as to keep the embeddings fixed
@@ -120,9 +120,10 @@ def lstm_classifier(features, labels, embedding_type, param_dict):
                                         embedding_dim,
                                         embeddings_initializer=Constant(embedding_matrix),
                                         input_length=max_length,
-                                        trainable=False)
+                                        trainable=False,
+                                        name='glove_input_embeddings')
         elif embedding_type is 'bert':
-            embedding_layer = Embedding(vocab_size, 768, input_length=max_length)
+            embedding_layer = Embedding(vocab_size, 768, input_length=max_length, trainable=False, name='bert_input_embeddings')
 
         model.add(embedding_layer)
         model.summary()
