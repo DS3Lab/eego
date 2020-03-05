@@ -48,20 +48,23 @@ def load_glove_embeddings(vocab_size, word_index, EMBEDDING_DIM):
     return embedding_matrix
 
 
-def load_bert_embeddings(X, sequences, word_index, max_length):
+def load_bert_embeddings(X, max_length):
     # Allocate a pipeline for feature extraction (= generates a tensor representation for the input sequence)
     # https://github.com/huggingface/transformers#quick-tour-of-pipelines
 
-    tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
-    model = TFBertModel.from_pretrained('bert-base-uncased')
+    for sent in X:
+        print(sent)
 
-    input_ids = tf.constant(tokenizer.encode("Hello, my dog is cute", max_length=max_length, add_special_tokens=True, pad_to_max_length=True))[None, :]  # Batch size 1
-    print(input_ids)
+        tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
+        model = TFBertModel.from_pretrained('bert-base-uncased')
 
-    outputs = model(input_ids)
+        input_ids = tf.constant(tokenizer.encode("Hello, my dog is cute", max_length=max_length, add_special_tokens=True, pad_to_max_length=True))[None, :]  # Batch size 1
+        print(input_ids)
 
-    last_hidden_states = outputs[0]  # The last hidden-state is the first element of the output tuple
-    print(last_hidden_states)
-    print(last_hidden_states.shape)
+        outputs = model(input_ids)
+
+        last_hidden_states = outputs[0]  # The last hidden-state is the first element of the output tuple
+        #print(last_hidden_states)
+        print(last_hidden_states.shape)
 
 
