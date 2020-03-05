@@ -58,12 +58,13 @@ def load_bert_embeddings(X, sequences, word_index, max_length):
     input_ids = torch.tensor(tokenizer.encode("Hello, my dog is cute", add_special_tokens=True)).unsqueeze(
         0)  # Batch size 1
     print(input_ids)
-    input_ids = pad_sequences(input_ids, maxlen=max_length, dtype="long", truncating="post", padding="post")
-    print(input_ids)
 
     outputs = model(input_ids)
 
     last_hidden_states = outputs[0]  # The last hidden-state is the first element of the output tuple
     print(last_hidden_states)
     print(last_hidden_states.shape)
+
+    bert_stated_papped = pad_sequences(last_hidden_states, maxlen=max_length, dtype="long", truncating="post", padding="post")
+    print(bert_stated_papped.shape)
 
