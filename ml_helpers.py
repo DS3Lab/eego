@@ -4,6 +4,7 @@ import numpy as np
 from transformers import *
 import config
 import torch
+from keras.preprocessing.sequence import pad_sequences
 
 
 
@@ -55,6 +56,8 @@ def load_bert_embeddings(X, sequences, word_index, max_length):
 
     input_ids = torch.tensor(tokenizer.encode("Hello, my dog is cute", add_special_tokens=True)).unsqueeze(
         0)  # Batch size 1
+    input_ids = pad_sequences(input_ids, maxlen=max_length, dtype="long", truncating="post", padding="post")
+
     outputs = model(input_ids)
 
     last_hidden_states = outputs[0]  # The last hidden-state is the first element of the output tuple
