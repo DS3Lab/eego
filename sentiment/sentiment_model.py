@@ -47,15 +47,24 @@ def lstm_classifier(features, labels, embedding_type, param_dict):
     max_length = max([len(s) for s in sequences])
     print("max: ", max_length)
 
-    word_index = tokenizer.word_index
-    print('Found %s unique tokens.' % len(word_index))
+    if embedding_type is 'none':
+        word_index = tokenizer.word_index
+        print('Found %s unique tokens.' % len(word_index))
 
-    X_data = pad_sequences(sequences, maxlen=max_length)
+        X_data = pad_sequences(sequences, maxlen=max_length)
 
-    print('Shape of data tensor:', X_data.shape)
-    print('Shape of label tensor:', y.shape)
+        print('Shape of data tensor:', X_data.shape)
+        print('Shape of label tensor:', y.shape)
 
     if embedding_type is 'glove':
+        word_index = tokenizer.word_index
+        print('Found %s unique tokens.' % len(word_index))
+
+        X_data = pad_sequences(sequences, maxlen=max_length)
+
+        print('Shape of data tensor:', X_data.shape)
+        print('Shape of label tensor:', y.shape)
+
         print("Loading Glove embeddings...")
         embedding_dim = 300
         num_words = min(vocab_size, len(word_index) + 1)
@@ -63,10 +72,7 @@ def lstm_classifier(features, labels, embedding_type, param_dict):
 
     if embedding_type is 'bert':
         print("Loading Bert embeddings...")
-        ml_helpers.load_bert_embeddings(X, sequences, word_index, max_length)
-
-
-
+        X_data = ml_helpers.load_bert_embeddings(X, max_length)
 
     # split data into train/test
     kf = KFold(n_splits=config.folds, random_state=seed_value, shuffle=True)
