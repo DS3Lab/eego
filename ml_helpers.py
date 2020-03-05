@@ -61,4 +61,5 @@ def load_bert_embeddings(X, sequences, word_index, max_length):
     print(len(all_hidden_states))
     for x in all_hidden_states:
         print(len(x))
+        print(type(x))
 
