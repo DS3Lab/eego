@@ -54,10 +54,10 @@ def load_bert_embeddings(X, max_length):
 
     X_bert_states_padded = []
 
-    for sent in X:
+    tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
+    model = TFBertModel.from_pretrained('bert-base-uncased')
 
-        tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
-        model = TFBertModel.from_pretrained('bert-base-uncased')
+    for sent in X:
 
         input_ids = tf.constant(tokenizer.encode(sent, max_length=max_length, add_special_tokens=True, pad_to_max_length=True))[None, :]  # Batch size 1
         #print(input_ids)
