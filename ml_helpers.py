@@ -50,18 +50,14 @@ def load_bert_embeddings(X, sequences, word_index, max_length):
     # Allocate a pipeline for feature extraction (= generates a tensor representation for the input sequence)
     # https://github.com/huggingface/transformers#quick-tour-of-pipelines
 
-    pretrained_weights = 'bert-base-uncased'
-    tokenizer = BertTokenizer.from_pretrained(pretrained_weights)
-    bert_model = BertModel.from_pretrained(pretrained_weights,
-                                        output_hidden_states=True,
-                                        output_attentions=True)
+    tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
+    model = BertModel.from_pretrained('bert-base-uncased')
 
-    input_ids = torch.tensor([tokenizer.encode("Let's see all hidden-states and attentions on this text")])
-    print(input_ids)
-    all_hidden_states, all_attentions = bert_model(input_ids)[-2:]
-    print(len(all_hidden_states))
-    for x in all_hidden_states:
-        print(len(x))
-        print(type(x))
-        print(x.shape)
+    input_ids = torch.tensor(tokenizer.encode("Hello, my dog is cute", add_special_tokens=True)).unsqueeze(
+        0)  # Batch size 1
+    outputs = model(input_ids)
+
+    last_hidden_states = outputs[0]  # The last hidden-state is the first element of the output tuple
+    print(last_hidden_states)
+    print(last_hidden_states.shape)
 
