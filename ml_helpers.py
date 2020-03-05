@@ -3,7 +3,7 @@ import os
 import numpy as np
 from transformers import *
 import config
-import torch
+import tensorflow as tf
 from tensorflow.python.keras.preprocessing.sequence import pad_sequences
 
 
@@ -53,10 +53,9 @@ def load_bert_embeddings(X, sequences, word_index, max_length):
     # https://github.com/huggingface/transformers#quick-tour-of-pipelines
 
     tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
-    model = BertModel.from_pretrained('bert-base-uncased')
+    model = TFBertModel.from_pretrained('bert-base-uncased')
 
-    input_ids = torch.tensor(tokenizer.encode("Hello, my dog is cute", add_special_tokens=True)).unsqueeze(
-        0)  # Batch size 1
+    input_ids = tf.constant(tokenizer.encode("Hello, my dog is cute", add_special_tokens=True))[None, :]  # Batch size 1
     print(input_ids)
 
     outputs = model(input_ids)
