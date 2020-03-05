@@ -57,7 +57,9 @@ def load_bert_embeddings(X, sequences, word_index, max_length):
 
     input_ids = torch.tensor(tokenizer.encode("Hello, my dog is cute", add_special_tokens=True)).unsqueeze(
         0)  # Batch size 1
+    print(input_ids)
     input_ids = pad_sequences(input_ids, maxlen=max_length, dtype="long", truncating="post", padding="post")
+    print(input_ids)
 
     outputs = model(input_ids)
 
