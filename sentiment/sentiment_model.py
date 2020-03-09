@@ -101,7 +101,7 @@ def lstm_classifier(features, labels, embedding_type, param_dict):
         # print("TRAIN:", train_index, "TEST:", test_index)
         # todo: why does this take so much time for BErt??
         print("splitting X")
-        X_train, X_test = np.array(X_data)[train_index], np.array(X_data)[test_index]
+        #X_train, X_test = np.array(X_data)[train_index], np.array(X_data)[test_index]
         X_train, X_test = X_data[train_index], X_data[test_index]
         print("splitting y")
         #y_train, y_test = np.array(y)[train_index], np.array(y)[test_index]
