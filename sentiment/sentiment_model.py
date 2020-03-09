@@ -87,13 +87,14 @@ def lstm_classifier(features, labels, embedding_type, param_dict):
         #print(np.array(X_data)[train_index])
 
         # print("TRAIN:", train_index, "TEST:", test_index)
+        # todo: why does this take so much time for BErt??
         print("splitting X")
         X_train, X_test = np.array(X_data)[train_index], np.array(X_data)[test_index]
         print("splitting y")
         y_train, y_test = np.array(y)[train_index], np.array(y)[test_index]
 
-        #print(X_train.shape)
-        #print(X_test.shape)  # test samples
+        print(X_train.shape)
+        print(X_test.shape)  # test samples
         print(y_train.shape)
         print(y_test.shape)  # test labels
 
@@ -127,6 +128,8 @@ def lstm_classifier(features, labels, embedding_type, param_dict):
                                         name='glove_input_embeddings')
         elif embedding_type is 'bert':
             embedding_layer = Embedding(num_words, 768, input_length=max_length, trainable=False, name='bert_input_embeddings')
+
+            #X_train = X_train.reshape(X_train.shape[0], 720, 1280, 1)
 
         model.add(embedding_layer)
         model.summary()
