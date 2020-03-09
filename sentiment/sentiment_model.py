@@ -1,12 +1,12 @@
 import os
 import numpy as np
-from keras.models import Sequential
-from keras.layers import Input, Dense, Dropout, GlobalAveragePooling1D, LSTM, Embedding
-from keras import backend as K
-from keras.preprocessing.sequence import pad_sequences
-from keras.preprocessing.text import Tokenizer
-from keras.utils import np_utils
-from keras.initializers import Constant
+from tensorflow.python.keras.models import Sequential
+from tensorflow.python.keras.layers import Input, Dense, Dropout, GlobalAveragePooling1D, LSTM, Embedding
+from tensorflow.python.keras import backend as K
+from tensorflow.python.keras.preprocessing.sequence import pad_sequences
+from tensorflow.python.keras.preprocessing.text import Tokenizer
+from tensorflow.python.keras.utils import np_utils
+from tensorflow.python.keras.initializers import Constant
 import sklearn.metrics
 from sklearn.model_selection import KFold
 import ml_helpers
@@ -17,7 +17,7 @@ from datetime import timedelta, date
 # Machine learning model for TERNARY sentiment classification
 
 seed_value = 42
-#os.environ['KERAS_BACKEND'] = 'tensorflow'
+os.environ['KERAS_BACKEND'] = 'tensorflow'
 np.random.seed(seed_value)
 import tensorflow as tf
 tf.random.set_seed(seed_value)
@@ -143,7 +143,8 @@ def lstm_classifier(features, labels, embedding_type, param_dict):
             #embedding_layer = Embedding(num_words, bert_dim, input_length=max_length, trainable=False, name='bert_input_embeddings')
             # todo: try this
             # https://medium.com/analytics-vidhya/bert-in-keras-tensorflow-2-0-using-tfhub-huggingface-81c08c5f81d8
-            embedding_input = tf.keras.Input(shape=(max_length, bert_dim), name='bert_input_embeddings')
+            embedding_input = Input(shape=(max_length, bert_dim), name='bert_input_embeddings')
+            # or:
             # todo: this works but seems to be empty
             embedding_layer = Dense(100, activation='relu')(embedding_input)
             #embedding_layer = GlobalAveragePooling1D()(embedding_layer)
