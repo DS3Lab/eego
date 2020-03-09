@@ -70,6 +70,8 @@ def lstm_classifier(features, labels, embedding_type, param_dict):
         print("Loading Glove embeddings...")
         embedding_dim = 300
         embedding_matrix = ml_helpers.load_glove_embeddings(vocab_size, word_index, embedding_dim)
+        print(embedding_matrix)
+        print(embedding_matrix.shape)
 
     if embedding_type is 'bert':
         print("Loading Bert embeddings...")
@@ -77,10 +79,10 @@ def lstm_classifier(features, labels, embedding_type, param_dict):
         bert_dim = 768
         print("embeddings loaded")
 
-        print('Shape of data tensor:', X_data.shape)
-        print('Shape of label tensor:', y.shape)
+        #print('Shape of data tensor:', X_data.shape)
+        #print('Shape of label tensor:', y.shape)
 
-        print(X_data[0].shape)
+        #print(X_data[0].shape)
 
     # split data into train/test
     kf = KFold(n_splits=config.folds, random_state=seed_value, shuffle=True)
@@ -138,7 +140,9 @@ def lstm_classifier(features, labels, embedding_type, param_dict):
                                         trainable=False,
                                         name='glove_input_embeddings')
         elif embedding_type is 'bert':
-            embedding_layer = Embedding(num_words, bert_dim, input_length=max_length, trainable=False, name='bert_input_embeddings')
+            embedding_layer = Embedding(num_words, bert_dim, input_length=max_length, trainable=False,
+                                        name='bert_input_embeddings')
+            #embedding_layer = Embedding(num_words, bert_dim, input_length=max_length, trainable=False, name='bert_input_embeddings')
 
             X_train = X_train.reshape(X_train.shape[0], max_length)
             X_test = X_test.reshape(X_test.shape[0], max_length)
