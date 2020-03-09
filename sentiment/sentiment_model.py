@@ -79,10 +79,6 @@ def lstm_classifier(features, labels, embedding_type, param_dict):
         bert_dim = 768
         print("embeddings loaded")
 
-        #print('Shape of data tensor:', X_data.shape)
-        #print('Shape of label tensor:', y.shape)
-
-        #print(X_data[0].shape)
 
     # split data into train/test
     kf = KFold(n_splits=config.folds, random_state=seed_value, shuffle=True)
@@ -101,17 +97,15 @@ def lstm_classifier(features, labels, embedding_type, param_dict):
         # print("TRAIN:", train_index, "TEST:", test_index)
         # todo: why does this take so much time for BErt??
         print("splitting X")
-        #X_train, X_test = np.array(X_data)[train_index], np.array(X_data)[test_index]
-        X_train, X_test = X_data[train_index], X_data[test_index]
+        X_train, X_test = np.array(X_data)[train_index], np.array(X_data)[test_index]
         print("splitting y")
-        #y_train, y_test = np.array(y)[train_index], np.array(y)[test_index]
-        y_train, y_test = y[train_index], y[test_index]
+        y_train, y_test = np.array(y)[train_index], np.array(y)[test_index]
 
-        #print(X_train.shape)
-        #print(X_train[0].shape)
-        #print(X_test.shape)  # test samples
-        #print(y_train.shape)
-        #print(y_test.shape)  # test labels
+        print(X_train.shape)
+        print(X_train[0].shape)
+        print(X_test.shape)  # test samples
+        print(y_train.shape)
+        print(y_test.shape)  # test labels
 
         # reset model
         K.clear_session()
@@ -142,9 +136,11 @@ def lstm_classifier(features, labels, embedding_type, param_dict):
                                         trainable=False,
                                         name='glove_input_embeddings')
         elif embedding_type is 'bert':
-            embedding_layer = Embedding(num_words, bert_dim, input_length=max_length, trainable=False,
-                                        name='bert_input_embeddings')
             #embedding_layer = Embedding(num_words, bert_dim, input_length=max_length, trainable=False, name='bert_input_embeddings')
+            # todo: try this
+            # https://medium.com/analytics-vidhya/bert-in-keras-tensorflow-2-0-using-tfhub-huggingface-81c08c5f81d8
+            embedding_layer = Input(shape=(max_length,bert_dim),
+                                        name='bert_input_embeddings')
 
             #X_train = X_train.reshape(X_train.shape[0], max_length)
             #X_test = X_test.reshape(X_test.shape[0], max_length)
