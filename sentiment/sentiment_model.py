@@ -77,6 +77,11 @@ def lstm_classifier(features, labels, embedding_type, param_dict):
         bert_dim = 768
         print("embeddings loaded")
 
+        print('Shape of data tensor:', X_data.shape)
+        print('Shape of label tensor:', y.shape)
+
+        print(X_data[0].shape)
+
     # split data into train/test
     kf = KFold(n_splits=config.folds, random_state=seed_value, shuffle=True)
 
