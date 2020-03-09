@@ -94,6 +94,7 @@ def lstm_classifier(features, labels, embedding_type, param_dict):
         y_train, y_test = np.array(y)[train_index], np.array(y)[test_index]
 
         print(X_train.shape)
+        print(X_train[0].shape)
         print(X_test.shape)  # test samples
         print(y_train.shape)
         print(y_test.shape)  # test labels
