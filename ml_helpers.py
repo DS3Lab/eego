@@ -53,7 +53,7 @@ def load_bert_embeddings(X, max_length, bert_dim):
     # https://github.com/huggingface/transformers#quick-tour-of-pipelines
 
     X_bert_states_padded = []
-    X_bert_states_padded = np.empty((len(X),max_length,bert_dim))
+    X_bert_states_padded = np.empty((max_length,bert_dim))
 
     tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
     model = TFBertModel.from_pretrained('bert-base-uncased')
