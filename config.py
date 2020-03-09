@@ -16,6 +16,7 @@ subjects = ["ZKW"]#,"ZJS", "ZDN", "ZJN"]#, "ZPH", "ZAB", "ZJM", "ZKB", "ZKH", "Z
 # ML task {sentiment-bin, sentiment-tri, ner, reldetect}
 class_task = 'sentiment-bin' #'sentiment-bin'
 
+# Features sets {'text_only', 'gaze_feats', 'eeg_feats'}
 feature_set = 'text_only' #'gaze_features'
 
 # word embeddings {none, glove (300d), bert}

@@ -11,6 +11,8 @@ import sklearn.metrics
 from sklearn.model_selection import KFold
 import ml_helpers
 import config
+import time
+from datetime import timedelta, date
 
 # Machine learning model for TERNARY sentiment classification
 
@@ -24,6 +26,8 @@ os.environ['PYTHONHASHSEED']=str(seed_value)
 
 
 def lstm_classifier(features, labels, embedding_type, param_dict):
+
+    start = time.time()
 
     X = list(features.keys())
     y = list(labels.values())
@@ -131,9 +135,11 @@ def lstm_classifier(features, labels, embedding_type, param_dict):
         elif embedding_type is 'bert':
             embedding_layer = Embedding(num_words, bert_dim, input_length=max_length, trainable=False, name='bert_input_embeddings')
 
-            X_train = X_train.reshape(X_train.shape[0], max_length, bert_dim)
+            X_train = X_train.reshape(X_train.shape[0], max_length)
+            X_test = X_test.reshape(X_test.shape[0], max_length)
             print(X_train.shape)
             print(X_train[0].shape)
+            print(X_test.shape)
 
         model.add(embedding_layer)
         model.summary()
@@ -149,7 +155,9 @@ def lstm_classifier(features, labels, embedding_type, param_dict):
         model.summary()
 
         # train model
-        model.fit(X_train, y_train, validation_split=0.1, epochs=epochs, batch_size=batch_size)
+        history = model.fit(X_train, y_train, validation_split=0.1, epochs=epochs, batch_size=batch_size)
+        print(history)
+        # todo: add final validation accuracy + loss to fold results
 
         # evaluate model
         scores = model.evaluate(X_test, y_test, verbose=0)
@@ -176,6 +184,10 @@ def lstm_classifier(features, labels, embedding_type, param_dict):
             fold_results['fscore'].append(f)
 
         fold += 1
+
+    elapsed = (time.time() - start)
+    print("Training time (all folds):", str(timedelta(seconds=elapsed)))
+    fold_results['training_time'] = [elapsed]
 
     return fold_results
 
