@@ -47,34 +47,30 @@ def lstm_classifier(features, labels, embedding_type, param_dict):
     max_length = max([len(s) for s in sequences])
     print("max: ", max_length)
 
+    word_index = tokenizer.word_index
+    print('Found %s unique tokens.' % len(word_index))
+    num_words = min(vocab_size, len(word_index) + 1)
+
     if embedding_type is 'none':
-        word_index = tokenizer.word_index
-        print('Found %s unique tokens.' % len(word_index))
 
         X_data = pad_sequences(sequences, maxlen=max_length)
-        num_words = min(vocab_size, len(word_index) + 1)
-        print(num_words)
-
         print('Shape of data tensor:', X_data.shape)
         print('Shape of label tensor:', y.shape)
 
     if embedding_type is 'glove':
-        word_index = tokenizer.word_index
-        print('Found %s unique tokens.' % len(word_index))
 
         X_data = pad_sequences(sequences, maxlen=max_length)
-
         print('Shape of data tensor:', X_data.shape)
         print('Shape of label tensor:', y.shape)
 
         print("Loading Glove embeddings...")
         embedding_dim = 300
-        num_words = min(vocab_size, len(word_index) + 1)
         embedding_matrix = ml_helpers.load_glove_embeddings(vocab_size, word_index, embedding_dim)
 
     if embedding_type is 'bert':
         print("Loading Bert embeddings...")
         X_data = ml_helpers.load_bert_embeddings(X, max_length)
+        print("embeddings loaded")
 
     # split data into train/test
     kf = KFold(n_splits=config.folds, random_state=seed_value, shuffle=True)
@@ -91,7 +87,9 @@ def lstm_classifier(features, labels, embedding_type, param_dict):
         #print(np.array(X_data)[train_index])
 
         # print("TRAIN:", train_index, "TEST:", test_index)
+        print("splitting X")
         X_train, X_test = np.array(X_data)[train_index], np.array(X_data)[test_index]
+        print("splitting y")
         y_train, y_test = np.array(y)[train_index], np.array(y)[test_index]
 
         #print(X_train.shape)
@@ -111,6 +109,8 @@ def lstm_classifier(features, labels, embedding_type, param_dict):
 
         fold_results['params'] = [lstm_dim, dense_dim, dropout, batch_size, epochs, lr, embedding_type]
 
+        print("Preparing model...")
+
         model = Sequential()
 
         if embedding_type is 'none':
@@ -126,7 +126,7 @@ def lstm_classifier(features, labels, embedding_type, param_dict):
                                         trainable=False,
                                         name='glove_input_embeddings')
         elif embedding_type is 'bert':
-            embedding_layer = Embedding(vocab_size, 768, input_length=max_length, trainable=False, name='bert_input_embeddings')
+            embedding_layer = Embedding(num_words, 768, input_length=max_length, trainable=False, name='bert_input_embeddings')
 
         model.add(embedding_layer)
         model.summary()
