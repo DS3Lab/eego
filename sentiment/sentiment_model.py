@@ -1,12 +1,12 @@
 import os
 import numpy as np
-from tensorflow.python.keras.models import Sequential
-from tensorflow.python.keras.layers import Input, Dense, Dropout, GlobalAveragePooling1D, LSTM, Embedding
-from tensorflow.python.keras import backend as K
-from tensorflow.python.keras.preprocessing.sequence import pad_sequences
-from tensorflow.python.keras.preprocessing.text import Tokenizer
-from tensorflow.python.keras.utils import np_utils
-from tensorflow.python.keras.initializers import Constant
+from keras.models import Sequential
+from keras.layers import Input, Dense, Dropout, GlobalAveragePooling1D, LSTM, Embedding
+from keras import backend as K
+from keras.preprocessing.sequence import pad_sequences
+from keras.preprocessing.text import Tokenizer
+from keras.utils import np_utils
+from keras.initializers import Constant
 import sklearn.metrics
 from sklearn.model_selection import KFold
 import ml_helpers
@@ -17,7 +17,7 @@ from datetime import timedelta, date
 # Machine learning model for TERNARY sentiment classification
 
 seed_value = 42
-os.environ['KERAS_BACKEND'] = 'tensorflow'
+#os.environ['KERAS_BACKEND'] = 'tensorflow'
 np.random.seed(seed_value)
 import tensorflow as tf
 tf.random.set_seed(seed_value)
