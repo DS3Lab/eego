@@ -19,7 +19,7 @@ class_task = 'sentiment-bin' #'sentiment-bin'
 feature_set = 'text_only' #'gaze_features'
 
 # word embeddings {none, glove (300d), bert}
-embeddings = 'glove'
+embeddings = 'none'
 
 # hyper-parameters
 lstm_dim = [128]
