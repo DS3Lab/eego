@@ -52,6 +52,8 @@ def lstm_classifier(features, labels, embedding_type, param_dict):
         print('Found %s unique tokens.' % len(word_index))
 
         X_data = pad_sequences(sequences, maxlen=max_length)
+        num_words = min(vocab_size, len(word_index) + 1)
+        print(num_words)
 
         print('Shape of data tensor:', X_data.shape)
         print('Shape of label tensor:', y.shape)
@@ -124,7 +126,7 @@ def lstm_classifier(features, labels, embedding_type, param_dict):
                                         trainable=False,
                                         name='glove_input_embeddings')
         elif embedding_type is 'bert':
-            embedding_layer = Embedding(num_words, 768, input_length=max_length, trainable=False, name='bert_input_embeddings')
+            embedding_layer = Embedding(vocab_size, 768, input_length=max_length, trainable=False, name='bert_input_embeddings')
 
         model.add(embedding_layer)
         model.summary()
