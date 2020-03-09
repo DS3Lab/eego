@@ -139,10 +139,11 @@ def lstm_classifier(features, labels, embedding_type, param_dict):
             #embedding_layer = Embedding(num_words, bert_dim, input_length=max_length, trainable=False, name='bert_input_embeddings')
             # todo: try this
             # https://medium.com/analytics-vidhya/bert-in-keras-tensorflow-2-0-using-tfhub-huggingface-81c08c5f81d8
-            embedding_input = Input(shape=(max_length,bert_dim), name='bert_input_embeddings')
+            embedding_layer = Input(shape=(max_length, bert_dim), name='bert_input_embeddings')
             # todo: this works but seems to be empty
-            embedding_layer = Dense(100, activation='relu')(embedding_input)
-            embedding_layer = GlobalAveragePooling1D()(embedding_layer)
+            #embedding_layer = Dense(100, activation='relu')(embedding_input)
+            #embedding_layer = GlobalAveragePooling1D()(embedding_layer)
+            #out = Dense(30, activation='sigmoid', name=output)
 
             #X_train = X_train.reshape(X_train.shape[0], max_length)
             #X_test = X_test.reshape(X_test.shape[0], max_length)
