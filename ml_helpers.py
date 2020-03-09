@@ -48,11 +48,12 @@ def load_glove_embeddings(vocab_size, word_index, EMBEDDING_DIM):
     return embedding_matrix
 
 
-def load_bert_embeddings(X, max_length):
+def load_bert_embeddings(X, max_length, bert_dim):
     # Allocate a pipeline for feature extraction (= generates a tensor representation for the input sequence)
     # https://github.com/huggingface/transformers#quick-tour-of-pipelines
 
     X_bert_states_padded = []
+    X_bert_states_padded = np.empty((len(X),max_length,bert_dim))
 
     tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
     model = TFBertModel.from_pretrained('bert-base-uncased')
@@ -68,7 +69,9 @@ def load_bert_embeddings(X, max_length):
         cls_embeddings = last_hidden_states[0] # Use hidden states of the [CLS] token of the last layer as sentence embedding for classification
         #print(last_hidden_states)
         #print(cls_embeddings.shape)
-        X_bert_states_padded.append(cls_embeddings)
+        #X_bert_states_padded.append(cls_embeddings)
+        np.append(X_bert_states_padded, cls_embeddings, axis=0)
+        print(X_bert_states_padded.shape)
 
     #print(len(X_bert_states_padded))
     return X_bert_states_padded

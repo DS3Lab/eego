@@ -75,9 +75,12 @@ def lstm_classifier(features, labels, embedding_type, param_dict):
 
     if embedding_type is 'bert':
         print("Loading Bert embeddings...")
-        X_data = ml_helpers.load_bert_embeddings(X, max_length)
         bert_dim = 768
+        X_data = ml_helpers.load_bert_embeddings(X, max_length, bert_dim)
         print("embeddings loaded")
+
+        print('Shape of data tensor:', X_data.shape)
+        print('Shape of label tensor:', y.shape)
 
 
     # split data into train/test
