@@ -69,8 +69,8 @@ def load_bert_embeddings(X, max_length):
         print(last_hidden_states.shape)
         #print(last_hidden_states[0])
         #print(last_hidden_states[0][0])
-        last_hidden_states = last_hidden_states.reshape(last_hidden_states.shape[1], last_hidden_states.shape[2])
-        print(last_hidden_states.shape)
+        #last_hidden_states = last_hidden_states.reshape(last_hidden_states.shape[1], last_hidden_states.shape[2])
+        #print(last_hidden_states.shape)
         X_bert_states_padded.append(last_hidden_states)
 
     print(len(X_bert_states_padded))
