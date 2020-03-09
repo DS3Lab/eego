@@ -67,6 +67,8 @@ def load_bert_embeddings(X, max_length):
         last_hidden_states = outputs[0]  # The last hidden-state is the first element of the output tuple
         #print(last_hidden_states)
         print(last_hidden_states.shape)
+        print(last_hidden_states[0])
+        print(last_hidden_states[0][0])
         X_bert_states_padded.append(last_hidden_states)
 
     print(len(X_bert_states_padded))
