@@ -14,6 +14,7 @@ import config
 import time
 from datetime import timedelta, date
 
+
 # Machine learning model for TERNARY sentiment classification
 
 seed_value = 42
@@ -143,28 +144,27 @@ def lstm_classifier(features, labels, embedding_type, param_dict):
             #embedding_layer = Embedding(num_words, bert_dim, input_length=max_length, trainable=False, name='bert_input_embeddings')
             # todo: try this
             # https://medium.com/analytics-vidhya/bert-in-keras-tensorflow-2-0-using-tfhub-huggingface-81c08c5f81d8
-            embedding_input = Input(shape=(max_length, bert_dim), name='bert_input_embeddings')
-            # or:
-            # todo: this works but seems to be empty
-            embedding_layer = Dense(100, activation='relu')(embedding_input)
-            #embedding_layer = GlobalAveragePooling1D()(embedding_layer)
-            #out = Dense(30, activation='sigmoid', name=output)
+            #embedding_input = Input(shape=(max_length, bert_dim), name='bert_input_embeddings')
 
-            #model.add(Input(tensor=tf_embedding_input))
-            #model.add(Embedding(max_features, 128, input_length=maxlen))
+            model = tf.keras.Sequential([
+                tf.keras.layers.Input(shape=(max_length,), dtype='int32', name='input_ids'),
+                ml_helpers.bert_layer,
+                tf.keras.layers.Flatten(),
+                tf.keras.layers.Dense(256, activation=tf.nn.relu),
+                tf.keras.layers.Dropout(0.5),
+                tf.keras.layers.Dense(256, activation=tf.nn.relu),
+                tf.keras.layers.Dropout(0.5),
+                tf.keras.layers.Dense(y_train.shape[1], activation=tf.nn.softmax)
+            ])
 
-            #X_train = X_train.reshape(X_train.shape[0], max_length)
-            #X_test = X_test.reshape(X_test.shape[0], max_length)
-            #print(X_train.shape)
-            #print(X_train[0].shape)
-            #print(X_test.shape)
+            model.build(input_shape=(None, max_length))
 
-        model.add(embedding_layer)
-        model.summary()
-        model.add(LSTM(lstm_dim))
-        model.add(Dense(dense_dim, activation='relu'))
-        model.add(Dropout(rate=dropout))
-        model.add(Dense(y_train.shape[1], activation='softmax'))
+        #model.add(embedding_layer)
+        #model.summary()
+        #model.add(LSTM(lstm_dim))
+        #model.add(Dense(dense_dim, activation='relu'))
+        #model.add(Dropout(rate=dropout))
+        #model.add(Dense(y_train.shape[1], activation='softmax'))
 
         model.compile(loss='categorical_crossentropy',
                       optimizer=tf.keras.optimizers.Adam(lr=lr),
