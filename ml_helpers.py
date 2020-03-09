@@ -67,7 +67,7 @@ def load_bert_embeddings(X, max_length):
         last_hidden_states = outputs[0]  # The last hidden-state is the first element of the output tuple
         cls_embeddings = last_hidden_states[0] # Use hidden states of the [CLS] token of the last layer as sentence embedding for classification
         #print(last_hidden_states)
-        print(cls_embeddings.shape)
+        #print(cls_embeddings.shape)
         X_bert_states_padded.append(cls_embeddings)
 
     #print(len(X_bert_states_padded))
