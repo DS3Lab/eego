@@ -70,6 +70,7 @@ def lstm_classifier(features, labels, embedding_type, param_dict):
     if embedding_type is 'bert':
         print("Loading Bert embeddings...")
         X_data = ml_helpers.load_bert_embeddings(X, max_length)
+        bert_dim = 768
         print("embeddings loaded")
 
     # split data into train/test
@@ -128,9 +129,11 @@ def lstm_classifier(features, labels, embedding_type, param_dict):
                                         trainable=False,
                                         name='glove_input_embeddings')
         elif embedding_type is 'bert':
-            embedding_layer = Embedding(num_words, 768, input_length=max_length, trainable=False, name='bert_input_embeddings')
+            embedding_layer = Embedding(num_words, bert_dim, input_length=max_length, trainable=False, name='bert_input_embeddings')
 
-            #X_train = X_train.reshape(X_train.shape[0], 720, 1280, 1)
+            X_train = X_train.reshape(X_train.shape[0], max_length, bert_dim)
+            print(X_train.shape)
+            print(X_train[0].shape)
 
         model.add(embedding_layer)
         model.summary()
