@@ -145,7 +145,7 @@ def lstm_classifier(features, labels, embedding_type, param_dict):
             embedding_input = Input(shape=(max_length, bert_dim), name='bert_input_embeddings')
             # todo: this works but seems to be empty
             embedding_layer = Dense(100, activation='relu')(embedding_input)
-            #embedding_layer = GlobalAveragePooling1D()(embedding_layer)
+            embedding_layer = GlobalAveragePooling1D()(embedding_layer)
             #out = Dense(30, activation='sigmoid', name=output)
 
             #X_train = X_train.reshape(X_train.shape[0], max_length)
