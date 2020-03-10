@@ -155,7 +155,7 @@ def lstm_classifier(features, labels, embedding_type, param_dict):
         print("Preparing model...")
 
 
-        #model = tf.keras.Sequential()
+        model = tf.keras.Sequential()
 
         if embedding_type is 'none':
             embedding_layer = tf.keras.layers.Embedding(num_words, 32, input_length=max_length, name='none_input_embeddings')
@@ -172,6 +172,7 @@ def lstm_classifier(features, labels, embedding_type, param_dict):
                                         name='glove_input_embeddings')
             model.add(embedding_layer)
 
+        """
         elif embedding_type is 'bert':
 
             createBertLayer()
@@ -211,14 +212,8 @@ def lstm_classifier(features, labels, embedding_type, param_dict):
                       metrics=['accuracy'])
 
         model.summary()
-        """
 
         # train model
-        print(X_train.shape)
-        print(X_train[0].shape)
-        print(type(X_train))
-        print(type(X_train[0]))
-        print(y_train.shape)
         history = model.fit(X_train, y_train, validation_split=0.1, epochs=epochs, batch_size=batch_size)
         print(history)
         # todo: add final validation accuracy + loss to fold results
