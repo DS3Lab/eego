@@ -1,5 +1,32 @@
 from datetime import date
 import numpy as np
+import config
+import h5py
+
+
+def load_matlab_files(task, subject):
+    """loads matlab files depending on which files are required for the chosen classification task"""
+
+    if task.startswith("sentiment"):
+        filename_sr = config.rootdir_zuco1 + "results" + subject + "_SR.mat"
+        f_sr = h5py.File(filename_sr, 'r')
+        sentence_data_sr = f_sr['sentenceData']
+
+        return [(f_sr, sentence_data_sr)]
+
+    elif task.startswith('reldetect'):
+        if subject.startswith('Z'):  # subjects from ZuCo 1
+            filename_nr = config.rootdir_zuco1 + "results" + subject + "_NR.mat"
+            f_nr = h5py.File(filename_nr, 'r')
+            sentence_data_nr = f_nr['sentenceData']
+        elif subject.startswith('Y'):  # subjects from ZuCo 1
+            filename_nr = config.rootdir_zuco2 + "results" + subject + "_NR.mat"
+            f_nr = h5py.File(filename_nr, 'r')
+            sentence_data_nr = f_nr['sentenceData']
+        else:
+            print("UNDEFINED SUBJECT NAME")
+
+        return [(f_nr, sentence_data_nr)]
 
 
 def save_results(fold_results_dict, task):
