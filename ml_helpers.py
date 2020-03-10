@@ -1,7 +1,7 @@
 import matplotlib. pyplot as plt
 import os
 import numpy as np
-#from transformers import *
+from transformers import *
 import config
 #import tensorflow as tf
 from tensorflow.python.keras.preprocessing.sequence import pad_sequences
@@ -80,10 +80,13 @@ modelBertDir = "/mnt/ds3lab-scratch/noraho/embeddings/bert"
 
 
 def createTokenizer():
-    modelsFolder = os.path.join(modelBertDir, "multi_cased_L-12_H-768_A-12/")
-    vocab_file = os.path.join(modelsFolder, "vocab.txt")
+    #odelsFolder = os.path.join(modelBertDir, "multi_cased_L-12_H-768_A-12/")
+    #vocab_file = os.path.join(modelsFolder, "vocab.txt")
 
-    tokenizer = bert.FullTokenizer(vocab_file, do_lower_case=True)
+    #tokenizer = bert.FullTokenizer(vocab_file, do_lower_case=True)
+
+
+    tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
     return tokenizer
 
 
