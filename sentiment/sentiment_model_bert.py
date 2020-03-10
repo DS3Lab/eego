@@ -179,6 +179,8 @@ def lstm_classifier(features, labels, embedding_type, param_dict):
             model.add(bert_layer())
             model.add(tf.keras.layers.Flatten())
 
+            model.build(input_shape=(None, max_length))
+
         """
         def createModel():
             global model
