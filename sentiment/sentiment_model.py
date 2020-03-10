@@ -107,10 +107,13 @@ def lstm_classifier(features, labels, embedding_type, param_dict):
 
 
         print(X_train.shape)
-        print(X_train[0].shape)
+        #print(X_train[0].shape)
         print(X_test.shape)  # test samples
         print(y_train.shape)
         print(y_test.shape)  # test labels
+
+        print(X_train[0])
+        print(type(X_train[0]))
 
         # reset model
         K.clear_session()

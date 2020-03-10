@@ -41,7 +41,7 @@ def main():
                             del label_dict[s]
                             del feature_dict[s]
                 print(len(feature_dict), len(label_dict))
-                fold_results = sentiment_model_bert.lstm_classifier(feature_dict, label_dict, config.embeddings, parameter_dict)
+                fold_results = sentiment_model.lstm_classifier(feature_dict, label_dict, config.embeddings, parameter_dict)
                 print(fold_results)
                 save_results(fold_results, config.class_task)
 
