@@ -71,6 +71,7 @@ def lstm_classifier(features, labels, embedding_type, param_dict):
     tokenizer = Tokenizer(num_words=vocab_size)
     tokenizer.fit_on_texts(X)
     sequences = tokenizer.texts_to_sequences(X)
+    print(type(sequences))
     max_length = max([len(s) for s in sequences])
     print("max: ", max_length)
 
@@ -98,7 +99,10 @@ def lstm_classifier(features, labels, embedding_type, param_dict):
 
     if embedding_type is 'bert':
         print("Prepare sequences for Bert ...")
-        X_data = ml_helpers.prepare_sequences_for_bert(X, max_length)
+        X_data_bert = ml_helpers.prepare_sequences_for_bert(X, max_length)
+
+        X_data = pad_sequences(X_data_bert, maxlen=max_length)
+
         print("Bert sequences ready")
         print(X_data.shape)
 

@@ -94,16 +94,7 @@ def prepare_sequences_for_bert(X, max_seq_length):
     tokens = map(lambda tok: ["[CLS]"] + tok + ["[SEP]"], tokens)
     token_ids = list(map(tokenizer.convert_tokens_to_ids, tokens))
 
-    token_ids = map(lambda tids: tids + [0] * (max_seq_length - len(tids)), token_ids)
-
-    ti = []
-
-    for x in token_ids:
-        a = np.array(x)
-        print(a.shape)
-        ti.append(a)
-
-    token_ids = np.array(list(ti))
+    token_ids = np.array(list(token_ids))
 
     return token_ids
 
