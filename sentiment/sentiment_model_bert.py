@@ -110,7 +110,7 @@ def lstm_classifier(features, labels, embedding_type, param_dict):
         print(y_test.shape)  # test labels
 
         # reset model
-        K.clear_session()
+        #K.clear_session()
 
         lstm_dim = param_dict['lstm_dim']
         dense_dim = param_dict['dense_dim']
