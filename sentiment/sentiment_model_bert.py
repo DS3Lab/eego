@@ -153,6 +153,7 @@ def lstm_classifier(features, labels, embedding_type, param_dict):
 
         #model = Sequential()
 
+        """
         if embedding_type is 'none':
             embedding_layer = tf.keras.layers.Embedding(num_words, 32, input_length=max_length, name='none_input_embeddings')
 
@@ -166,34 +167,36 @@ def lstm_classifier(features, labels, embedding_type, param_dict):
                                         trainable=False,
                                         name='glove_input_embeddings')
         elif embedding_type is 'bert':
+        """
 
-            createBertLayer()
+        createBertLayer()
 
-            def createModel():
-                global model
+        def createModel():
+            global model
 
-                model = tf.keras.Sequential([
-                    tf.keras.layers.Input(shape=(max_length,), dtype='int32', name='input_ids'),
-                    bert_layer,
-                    tf.keras.layers.Flatten(),
-                    tf.keras.layers.Dense(256, activation=tf.nn.relu),
-                    tf.keras.layers.Dropout(0.5),
-                    tf.keras.layers.Dense(256, activation=tf.nn.relu),
-                    tf.keras.layers.Dropout(0.5),
-                    tf.keras.layers.Dense(y_train.shape[1], activation=tf.nn.softmax)
-                ])
+            model = tf.keras.Sequential([
+                tf.keras.layers.Input(shape=(max_length,), dtype='int32', name='input_ids'),
+                bert_layer,
+                tf.keras.layers.Flatten(),
+                tf.keras.layers.Dense(256, activation=tf.nn.relu),
+                tf.keras.layers.Dropout(0.5),
+                tf.keras.layers.Dense(256, activation=tf.nn.relu),
+                tf.keras.layers.Dropout(0.5),
+                tf.keras.layers.Dense(y_train.shape[1], activation=tf.nn.softmax)
+            ])
 
-                model.build(input_shape=(None, max_length))
+            model.build(input_shape=(None, max_length))
 
-                model.compile(loss='categorical_crossentropy', optimizer=tf.optimizers.Adam(lr=0.00001),
-                              metrics=['accuracy'])
+            model.compile(loss='categorical_crossentropy', optimizer=tf.optimizers.Adam(lr=0.00001),
+                          metrics=['accuracy'])
 
-                print(model.summary())
+            print(model.summary())
 
-            createModel()
+        createModel()
 
         # train model
         print(X_train.shape)
+        print(X_train[0].shape)
         print(y_train.shape)
         history = model.fit(X_train, y_train, validation_split=0.1, epochs=epochs, batch_size=batch_size)
         print(history)
