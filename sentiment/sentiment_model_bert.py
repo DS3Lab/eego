@@ -240,7 +240,11 @@ def lstm_classifier(features, labels, embedding_type, param_dict):
             fold_results['recall'] = [r]
             fold_results['fscore'] = [f]
         else:
-            fold_results['loss'].append(scores[0])
+            fold_results['train-loss'].append(history.history['loss'])
+            fold_results['train-accuracy'].append(history.history['accuracy'])
+            fold_results['val-loss'].append(history.history['val_loss'])
+            fold_results['val-accuracy'].append(history.history['val_accuracy'])
+            fold_results['test-loss'].append(scores[0])
             fold_results['test-accuracy'].append(scores[1])
             fold_results['precision'].append(p)
             fold_results['recall'].append(r)
