@@ -175,36 +175,29 @@ def lstm_classifier(features, labels, embedding_type, param_dict):
 
             createBertLayer()
 
-            model.add(tf.keras.layers.Input(shape=(max_length,), dtype='int32', name='input_ids'))
-            model.add(bert_layer(input_shape=(None, max_length)))
-            model.add(tf.keras.layers.Flatten())
+            def createModel():
+                global model
 
-            model.build(input_shape=(None, max_length))
+                model = tf.keras.Sequential([
+                    tf.keras.layers.Input(shape=(max_length,), dtype='int32', name='input_ids'),
+                    bert_layer,
+                    tf.keras.layers.Flatten(),
+                    tf.keras.layers.Dense(256, activation=tf.nn.relu),
+                    tf.keras.layers.Dropout(0.5),
+                    tf.keras.layers.Dense(256, activation=tf.nn.relu),
+                    tf.keras.layers.Dropout(0.5),
+                    tf.keras.layers.Dense(y_train.shape[1], activation=tf.nn.softmax)
+                ])
 
-        """
-        def createModel():
-            global model
+                model.build(input_shape=(None, max_length))
 
-            model = tf.keras.Sequential([
-                tf.keras.layers.Input(shape=(max_length,), dtype='int32', name='input_ids'),
-                bert_layer,
-                tf.keras.layers.Flatten(),
-                tf.keras.layers.Dense(256, activation=tf.nn.relu),
-                tf.keras.layers.Dropout(0.5),
-                tf.keras.layers.Dense(256, activation=tf.nn.relu),
-                tf.keras.layers.Dropout(0.5),
-                tf.keras.layers.Dense(y_train.shape[1], activation=tf.nn.softmax)
-            ])
-        
+                model.compile(loss='categorical_crossentropy', optimizer=tf.optimizers.Adam(lr=0.00001),
+                              metrics=['accuracy'])
 
-            model.build(input_shape=(None, max_length))
+                print(model.summary())
 
-            model.compile(loss='categorical_crossentropy', optimizer=tf.optimizers.Adam(lr=0.00001),
-                          metrics=['accuracy'])
+            createModel()
 
-            print(model.summary())
-
-        createModel()
         """
         model.summary()
         model.add(tf.keras.layers.LSTM(lstm_dim))
@@ -217,6 +210,7 @@ def lstm_classifier(features, labels, embedding_type, param_dict):
                       metrics=['accuracy'])
 
         model.summary()
+        """
 
         # train model
         print(X_train.shape)
