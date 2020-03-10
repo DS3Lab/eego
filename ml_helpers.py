@@ -116,6 +116,7 @@ def prepare_sequences_for_bert(X, max_seq_length):
 
     token_ids = map(lambda tids: tids + [0] * (max_seq_length - len(tids)), token_ids)
     token_ids = np.array(list(token_ids))
+    print(token_ids)
 
     return token_ids
 
