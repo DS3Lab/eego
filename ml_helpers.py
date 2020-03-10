@@ -6,7 +6,6 @@ import config
 #import tensorflow as tf
 from tensorflow.python.keras.preprocessing.sequence import pad_sequences
 import bert
-from bert import bert_tokenization
 from tensorflow import keras
 
 
