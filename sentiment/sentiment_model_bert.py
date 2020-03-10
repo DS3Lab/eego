@@ -1,7 +1,7 @@
 import os
 import numpy as np
 from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Input, Dense, Dropout, GlobalAveragePooling1D, LSTM, Embedding
+from tensorflow.keras.layers import Input, Dense, Dropout, GlobalAveragePooling1D, LSTM, Embedding, Flatten
 from tensorflow.python.keras import backend as K
 from tensorflow.python.keras.preprocessing.sequence import pad_sequences
 from tensorflow.python.keras.preprocessing.text import Tokenizer
@@ -148,16 +148,15 @@ def lstm_classifier(features, labels, embedding_type, param_dict):
 
             bert_layer = ml_helpers.createBertLayer()
 
-            model = tf.keras.Sequential([
-                tf.keras.layers.Input(shape=(max_length,), dtype='int32', name='input_ids'),
-                bert_layer,
-                tf.keras.layers.Flatten(),
-                tf.keras.layers.Dense(256, activation=tf.nn.relu),
-                tf.keras.layers.Dropout(0.5),
-                tf.keras.layers.Dense(256, activation=tf.nn.relu),
-                tf.keras.layers.Dropout(0.5),
-                tf.keras.layers.Dense(y_train.shape[1], activation=tf.nn.softmax)
-            ])
+            model.add(Input(shape=(max_length,), dtype='int32', name='input_ids'))
+            model.add(bert_layer)
+            model.add(Flatten())
+            model.add(Dense(256, activation=tf.nn.relu))
+            model.add(Dropout(0.5))
+              #  tf.keras.layers.Dense(256, activation=tf.nn.relu),
+              #  tf.keras.layers.Dropout(0.5),
+            model.add(Dense(y_train.shape[1], activation=tf.nn.softmax))
+
 
             model.build(input_shape=(None, max_length))
 
