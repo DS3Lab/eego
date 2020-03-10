@@ -10,8 +10,6 @@ from tensorflow import keras
 
 
 
-
-
 def plot_label_distribution(y):
 
     print(len(set(y)))
@@ -97,9 +95,13 @@ def createBertLayer():
 
     bert_params = bert.params_from_pretrained_ckpt(bertDir)
 
-    bert_layer = bert.BertModelLayer.from_params(bert_params, name="bert")
+    bert_layer = bert.BertModelLayer.from_params(bert_params, name="bert_layer")
 
     bert_layer.apply_adapter_freeze()
+
+    print(bert_layer)
+
+    print("Bert layer created")
 
 #def loadBertCheckpoint():
  #   modelsFolder = os.path.join(modelBertDir, "multi_cased_L-12_H-768_A-12")
