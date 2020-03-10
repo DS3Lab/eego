@@ -1,7 +1,7 @@
 import os
 import numpy as np
-from tensorflow.python.keras.models import Sequential
-from tensorflow.python.keras.layers import Input, Dense, Dropout, GlobalAveragePooling1D, LSTM, Embedding
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Input, Dense, Dropout, GlobalAveragePooling1D, LSTM, Embedding
 from tensorflow.python.keras import backend as K
 from tensorflow.python.keras.preprocessing.sequence import pad_sequences
 from tensorflow.python.keras.preprocessing.text import Tokenizer
