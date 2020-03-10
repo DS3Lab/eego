@@ -84,7 +84,7 @@ def createTokenizer():
     modelsFolder = os.path.join(modelBertDir, "multi_cased_L-12_H-768_A-12/")
     vocab_file = os.path.join(modelsFolder, "vocab.txt")
 
-    tokenizer = bert.bert_tokenization.FullTokenizer(vocab_file, do_lower_case=True)
+    tokenizer = bert.FullTokenizer(vocab_file, do_lower_case=True)
     return tokenizer
 
 
