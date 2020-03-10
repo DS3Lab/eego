@@ -1,8 +1,5 @@
 import os
 import numpy as np
-from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Input, Dense, Dropout, GlobalAveragePooling1D, LSTM, Embedding, Flatten
-from tensorflow.python.keras import backend as K
 from tensorflow.python.keras.preprocessing.sequence import pad_sequences
 from tensorflow.python.keras.preprocessing.text import Tokenizer
 from tensorflow.python.keras.utils import np_utils
@@ -126,7 +123,7 @@ def lstm_classifier(features, labels, embedding_type, param_dict):
 
         print("Preparing model...")
 
-        model = Sequential()
+        #model = Sequential()
 
         if embedding_type is 'none':
             embedding_layer = Embedding(num_words, 32, input_length=max_length, name='none_input_embeddings')
@@ -141,37 +138,27 @@ def lstm_classifier(features, labels, embedding_type, param_dict):
                                         trainable=False,
                                         name='glove_input_embeddings')
         elif embedding_type is 'bert':
-            #embedding_layer = Embedding(num_words, bert_dim, input_length=max_length, trainable=False, name='bert_input_embeddings')
-            # todo: try this
-            # https://medium.com/analytics-vidhya/bert-in-keras-tensorflow-2-0-using-tfhub-huggingface-81c08c5f81d8
-            #embedding_input = Input(shape=(max_length, bert_dim), name='bert_input_embeddings')
 
-            bert_layer = ml_helpers.createBertLayer()
+            def createModel():
+                global model
 
-            model.add(Input(shape=(max_length,), dtype='int32', name='input_ids'))
-            model.add(bert_layer)
-            model.add(Flatten())
-            model.add(Dense(256, activation=tf.nn.relu))
-            model.add(Dropout(0.5))
-              #  tf.keras.layers.Dense(256, activation=tf.nn.relu),
-              #  tf.keras.layers.Dropout(0.5),
-            model.add(Dense(y_train.shape[1], activation=tf.nn.softmax))
+                model = tf.keras.Sequential([
+                    tf.keras.layers.Input(shape=(max_length,), dtype='int32', name='input_ids'),
+                    ml_helpers.bert_layer,
+                    tf.keras.layers.Flatten(),
+                    tf.keras.layers.Dense(256, activation=tf.nn.relu),
+                    tf.keras.layers.Dropout(0.5),
+                    tf.keras.layers.Dense(256, activation=tf.nn.relu),
+                    tf.keras.layers.Dropout(0.5),
+                    tf.keras.layers.Dense(y_train.shape[1], activation=tf.nn.softmax)
+                ])
 
+                model.build(input_shape=(None, max_length))
 
-            model.build(input_shape=(None, max_length))
+                model.compile(loss='categorical_crossentropy', optimizer=tf.optimizers.Adam(lr=0.00001),
+                              metrics=['accuracy'])
 
-        #model.add(embedding_layer)
-        #model.summary()
-        #model.add(LSTM(lstm_dim))
-        #model.add(Dense(dense_dim, activation='relu'))
-        #model.add(Dropout(rate=dropout))
-        #model.add(Dense(y_train.shape[1], activation='softmax'))
-
-        model.compile(loss='categorical_crossentropy',
-                      optimizer=tf.keras.optimizers.Adam(lr=lr),
-                      metrics=['accuracy'])
-
-        model.summary()
+                print(model.summary())
 
         # train model
         history = model.fit(X_train, y_train, validation_split=0.1, epochs=epochs, batch_size=batch_size)
