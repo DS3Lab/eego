@@ -10,6 +10,7 @@ import ml_helpers
 import config
 import time
 from datetime import timedelta, date
+import bert
 
 
 # Machine learning model for TERNARY sentiment classification
@@ -21,6 +22,30 @@ import tensorflow as tf
 tf.random.set_seed(seed_value)
 import os
 os.environ['PYTHONHASHSEED']=str(seed_value)
+
+modelBertDir = "/mnt/ds3lab-scratch/noraho/embeddings/bert"
+
+
+def createBertLayer():
+    global bert_layer
+
+    bertDir = os.path.join(modelBertDir, "multi_cased_L-12_H-768_A-12")
+
+    bert_params = bert.params_from_pretrained_ckpt(bertDir)
+
+    bert_layer = bert.BertModelLayer.from_params(bert_params, name="bert_layer")
+
+    bert_layer.apply_adapter_freeze()
+
+    print(bert_layer)
+
+    print("Bert layer created")
+
+def loadBertCheckpoint():
+    modelsFolder = os.path.join(modelBertDir, "multi_cased_L-12_H-768_A-12")
+    checkpointName = os.path.join(modelsFolder, "bert_model.ckpt")
+
+    bert.load_stock_weights(bert_layer, checkpointName)
 
 
 def lstm_classifier(features, labels, embedding_type, param_dict):
@@ -139,12 +164,14 @@ def lstm_classifier(features, labels, embedding_type, param_dict):
                                         name='glove_input_embeddings')
         elif embedding_type is 'bert':
 
+            createBertLayer()
+
             def createModel():
                 global model
 
                 model = tf.keras.Sequential([
                     tf.keras.layers.Input(shape=(max_length,), dtype='int32', name='input_ids'),
-                    ml_helpers.bert_layer,
+                    bert_layer,
                     tf.keras.layers.Flatten(),
                     tf.keras.layers.Dense(256, activation=tf.nn.relu),
                     tf.keras.layers.Dropout(0.5),

@@ -103,11 +103,11 @@ def createBertLayer():
 
     print("Bert layer created")
 
-#def loadBertCheckpoint():
- #   modelsFolder = os.path.join(modelBertDir, "multi_cased_L-12_H-768_A-12")
-  #  checkpointName = os.path.join(modelsFolder, "bert_model.ckpt")
+def loadBertCheckpoint():
+    modelsFolder = os.path.join(modelBertDir, "multi_cased_L-12_H-768_A-12")
+    checkpointName = os.path.join(modelsFolder, "bert_model.ckpt")
 
-   # bert.load_stock_weights(bert_layer, checkpointName)
+    bert.load_stock_weights(bert_layer, checkpointName)
 
 def prepare_sequences_for_bert(X, max_seq_length):
     tokenizer = createTokenizer()
@@ -118,7 +118,7 @@ def prepare_sequences_for_bert(X, max_seq_length):
 
     token_ids = map(lambda tids: tids + [0] * (max_seq_length - len(tids)), token_ids)
     token_ids = np.array(list(token_ids))
-    print(token_ids)
+    #print(token_ids)
 
     return token_ids
 
