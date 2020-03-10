@@ -176,7 +176,7 @@ def lstm_classifier(features, labels, embedding_type, param_dict):
             createBertLayer()
 
             model.add(tf.keras.layers.Input(shape=(max_length,), dtype='int32', name='input_ids'))
-            model.add(bert_layer())
+            model.add(bert_layer(input_shape=(None, max_length)))
             model.add(tf.keras.layers.Flatten())
 
             model.build(input_shape=(None, max_length))
