@@ -1,10 +1,12 @@
 import matplotlib. pyplot as plt
 import os
 import numpy as np
-from transformers import *
+#from transformers import *
 import config
-import tensorflow as tf
+#import tensorflow as tf
 from tensorflow.python.keras.preprocessing.sequence import pad_sequences
+import bert
+from bert import bert_tokenization
 
 
 
@@ -74,8 +76,6 @@ def load_bert_embeddings(X, max_length, bert_dim):
     return np.asarray(X_bert_states_padded)
 
 
-import bert
-import os
 modelBertDir = "/mnt/ds3lab-scratch/noraho/embeddings/bert"
 
 
