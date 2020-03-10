@@ -78,6 +78,15 @@ import bert
 import os
 modelBertDir = "/mnt/ds3lab-scratch/noraho/embeddings/bert"
 
+
+def createTokenizer():
+    modelsFolder = os.path.join(modelBertDir, "multi_cased_L-12_H-768_A-12/")
+    vocab_file = os.path.join(modelsFolder, "vocab.txt")
+
+    tokenizer = bert.bert_tokenization.FullTokenizer(vocab_file, do_lower_case=True)
+    return tokenizer
+
+
 def createBertLayer():
     global bert_layer
 
@@ -89,9 +98,21 @@ def createBertLayer():
 
     bert_layer.apply_adapter_freeze()
 
-def loadBertCheckpoint():
-    modelsFolder = os.path.join(modelBertDir, "multi_cased_L-12_H-768_A-12")
-    checkpointName = os.path.join(modelsFolder, "bert_model.ckpt")
+#def loadBertCheckpoint():
+ #   modelsFolder = os.path.join(modelBertDir, "multi_cased_L-12_H-768_A-12")
+  #  checkpointName = os.path.join(modelsFolder, "bert_model.ckpt")
 
-    bert.load_stock_weights(bert_layer, checkpointName)
+   # bert.load_stock_weights(bert_layer, checkpointName)
+
+def prepare_sequences_for_bert(X, max_seq_length):
+    tokenizer = createTokenizer()
+
+    tokens = map(tokenizer.tokenize, X)
+    tokens = map(lambda tok: ["[CLS]"] + tok + ["[SEP]"], tokens)
+    token_ids = list(map(tokenizer.convert_tokens_to_ids, tokens))
+
+    token_ids = map(lambda tids: tids + [0] * (max_seq_length - len(tids)), token_ids)
+    token_ids = np.array(list(token_ids))
+
+    return token_ids
 
