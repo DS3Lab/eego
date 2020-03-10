@@ -76,8 +76,9 @@ def lstm_classifier(features, labels, embedding_type, param_dict):
 
     if embedding_type is 'bert':
         print("Prepare sequences for Bert ...")
-        X_data = ml_helpers.prepare_sequences_for_bert(X, max_length, bert_dim)
+        X_data = ml_helpers.prepare_sequences_for_bert(X, max_length)
         print("Bert sequences ready")
+        print(X_data.shape)
 
         print('Shape of data tensor:', X_data.shape)
         print('Shape of label tensor:', y.shape)
