@@ -29,6 +29,7 @@ modelBertDir = "/mnt/ds3lab-scratch/noraho/embeddings/bert"
 def createBertLayer():
     global bert_layer
 
+    # todo: model not the same as for tokenizer -- does it matter?
     bertDir = os.path.join(modelBertDir, "multi_cased_L-12_H-768_A-12")
 
     bert_params = bert.params_from_pretrained_ckpt(bertDir)
@@ -36,8 +37,6 @@ def createBertLayer():
     bert_layer = bert.BertModelLayer.from_params(bert_params, name="bert_layer")
 
     bert_layer.apply_adapter_freeze()
-
-    print(bert_layer)
 
     print("Bert layer created")
 
@@ -155,11 +154,11 @@ def lstm_classifier(features, labels, embedding_type, param_dict):
 
         print("Preparing model...")
 
-        #model = Sequential()
+        model = tf.keras.Sequential()
 
-        """
         if embedding_type is 'none':
             embedding_layer = tf.keras.layers.Embedding(num_words, 32, input_length=max_length, name='none_input_embeddings')
+            model.add(embedding_layer)
 
         elif embedding_type is 'glove':
             # load pre-trained word embeddings into an Embedding layer
@@ -170,11 +169,17 @@ def lstm_classifier(features, labels, embedding_type, param_dict):
                                         input_length=max_length,
                                         trainable=False,
                                         name='glove_input_embeddings')
+            model.add(embedding_layer)
+
         elif embedding_type is 'bert':
+
+            createBertLayer()
+
+            model.add(tf.keras.layers.Input(shape=(max_length,), dtype='int32', name='input_ids'))
+            model.add(bert_layer())
+            model.add(tf.keras.layers.Flatten())
+
         """
-
-        createBertLayer()
-
         def createModel():
             global model
 
@@ -188,6 +193,7 @@ def lstm_classifier(features, labels, embedding_type, param_dict):
                 tf.keras.layers.Dropout(0.5),
                 tf.keras.layers.Dense(y_train.shape[1], activation=tf.nn.softmax)
             ])
+        
 
             model.build(input_shape=(None, max_length))
 
@@ -197,6 +203,18 @@ def lstm_classifier(features, labels, embedding_type, param_dict):
             print(model.summary())
 
         createModel()
+        """
+        model.summary()
+        model.add(tf.keras.layers.LSTM(lstm_dim))
+        model.add(tf.keras.layers.Dense(dense_dim, activation='relu'))
+        model.add(tf.keras.layers.Dropout(rate=dropout))
+        model.add(tf.keras.layers.Dense(y_train.shape[1], activation='softmax'))
+
+        model.compile(loss='categorical_crossentropy',
+                      optimizer=tf.keras.optimizers.Adam(lr=lr),
+                      metrics=['accuracy'])
+
+        model.summary()
 
         # train model
         print(X_train.shape)
