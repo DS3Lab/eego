@@ -74,7 +74,6 @@ def load_bert_embeddings(X, max_length, bert_dim):
     return np.asarray(X_bert_states_padded)
 
 
-modelBertDir = "/mnt/ds3lab-scratch/noraho/embeddings/bert"
 
 
 def createTokenizer():
@@ -87,27 +86,6 @@ def createTokenizer():
     tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
     return tokenizer
 
-
-def createBertLayer():
-    global bert_layer
-
-    bertDir = os.path.join(modelBertDir, "multi_cased_L-12_H-768_A-12")
-
-    bert_params = bert.params_from_pretrained_ckpt(bertDir)
-
-    bert_layer = bert.BertModelLayer.from_params(bert_params, name="bert_layer")
-
-    bert_layer.apply_adapter_freeze()
-
-    print(bert_layer)
-
-    print("Bert layer created")
-
-def loadBertCheckpoint():
-    modelsFolder = os.path.join(modelBertDir, "multi_cased_L-12_H-768_A-12")
-    checkpointName = os.path.join(modelsFolder, "bert_model.ckpt")
-
-    bert.load_stock_weights(bert_layer, checkpointName)
 
 def prepare_sequences_for_bert(X, max_seq_length):
     tokenizer = createTokenizer()
