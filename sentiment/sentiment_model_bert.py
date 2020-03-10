@@ -197,6 +197,8 @@ def lstm_classifier(features, labels, embedding_type, param_dict):
         # train model
         print(X_train.shape)
         print(X_train[0].shape)
+        print(type(X_train))
+        print(type(X_train[0]))
         print(y_train.shape)
         history = model.fit(X_train, y_train, validation_split=0.1, epochs=epochs, batch_size=batch_size)
         print(history)
