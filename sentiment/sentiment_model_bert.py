@@ -134,7 +134,7 @@ def lstm_classifier(features, labels, embedding_type, param_dict):
         print(y_train.shape)
         print(y_test.shape)  # test labels
 
-        print(X_train[0])
+        print(X_train[0].shape)
         print(type(X_train[0]))
 
         # reset model
@@ -154,12 +154,12 @@ def lstm_classifier(features, labels, embedding_type, param_dict):
         #model = Sequential()
 
         if embedding_type is 'none':
-            embedding_layer = Embedding(num_words, 32, input_length=max_length, name='none_input_embeddings')
+            embedding_layer = tf.keras.layers.Embedding(num_words, 32, input_length=max_length, name='none_input_embeddings')
 
         elif embedding_type is 'glove':
             # load pre-trained word embeddings into an Embedding layer
             # note that we set trainable = False so as to keep the embeddings fixed
-            embedding_layer = Embedding(num_words,
+            embedding_layer = tf.keras.layers.Embedding(num_words,
                                         embedding_dim,
                                         embeddings_initializer=Constant(embedding_matrix),
                                         input_length=max_length,
