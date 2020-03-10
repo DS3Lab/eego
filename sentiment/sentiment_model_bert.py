@@ -193,6 +193,8 @@ def lstm_classifier(features, labels, embedding_type, param_dict):
             createModel()
 
         # train model
+        print(X_train.shape)
+        print(y_train.shape)
         history = model.fit(X_train, y_train, validation_split=0.1, epochs=epochs, batch_size=batch_size)
         print(history)
         # todo: add final validation accuracy + loss to fold results
