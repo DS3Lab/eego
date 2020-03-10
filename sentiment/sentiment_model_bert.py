@@ -146,9 +146,11 @@ def lstm_classifier(features, labels, embedding_type, param_dict):
             # https://medium.com/analytics-vidhya/bert-in-keras-tensorflow-2-0-using-tfhub-huggingface-81c08c5f81d8
             #embedding_input = Input(shape=(max_length, bert_dim), name='bert_input_embeddings')
 
+            bert_layer = ml_helpers.createBertLayer()
+
             model = tf.keras.Sequential([
                 tf.keras.layers.Input(shape=(max_length,), dtype='int32', name='input_ids'),
-                ml_helpers.bert_layer,
+                bert_layer,
                 tf.keras.layers.Flatten(),
                 tf.keras.layers.Dense(256, activation=tf.nn.relu),
                 tf.keras.layers.Dropout(0.5),
