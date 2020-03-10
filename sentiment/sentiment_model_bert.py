@@ -154,7 +154,8 @@ def lstm_classifier(features, labels, embedding_type, param_dict):
 
         print("Preparing model...")
 
-        model = tf.keras.Sequential()
+
+        #model = tf.keras.Sequential()
 
         if embedding_type is 'none':
             embedding_layer = tf.keras.layers.Embedding(num_words, 32, input_length=max_length, name='none_input_embeddings')
