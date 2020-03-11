@@ -27,8 +27,8 @@ lstm_dim = [128]
 dense_dim = [64]
 dropout = [0.5]
 batch_size = [20]
-epochs = [3]
-lr = [0.001]
+epochs = [3, 5]
+lr = [0.001, 0.01]
 
 # other parameters
 folds = 3
