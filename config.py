@@ -20,15 +20,15 @@ class_task = 'sentiment-bin' #'sentiment-bin'
 feature_set = 'text_only' #'gaze_features'
 
 # word embeddings {none, glove (300d), bert}
-embeddings = 'glove'
+embeddings = ['none', 'glove']
 
 # hyper-parameters
-lstm_dim = [128]
-dense_dim = [64]
-dropout = [0.5]
-batch_size = [20]
-epochs = [3, 5]
-lr = [0.001, 0.01]
+lstm_dim = [64, 128, 256, 512]
+dense_dim = [32, 64, 128, 256]
+dropout = [0.1, 0.3, 0.5]
+batch_size = [20, 30, 40, 60]
+epochs = [3, 5, 10, 20, 50]
+lr = [0.001, 0.01, 0.0001]
 
 # other parameters
-folds = 3
+folds = 5
