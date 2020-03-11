@@ -33,6 +33,24 @@ def save_results(fold_results_dict, task):
 
     result_file = open('sentiment/results/'+str(date.today()) + "_results_" + task + ".txt", 'a')
 
+    # print header
+    print("lstm_dim", "dense_dim", "dropout", "batch_size", "epochs", "lr", "embedding_type", "train_acc", "val_acc",
+          "test_acc", "test_std", "avg_precision", "std_precision", "avg_recall", "std_recall", "avg_fscore",
+          "std_fscore", file=result_file)
+
+    # training scores
+    train_acc = np.mean([ep[-1] for ep in fold_results_dict['train-accuracy']])
+    print(fold_results_dict['train-accuracy'])
+    print(train_acc)
+
+    # validation scores
+    val_acc = np.mean([ep[-1] for ep in fold_results_dict['val-accuracy']])
+    print(fold_results_dict['val-accuracy'])
+    print(val_acc)
+
+    # test scores
+    avg_accuracy = np.mean(fold_results_dict['test-accuracy'])
+    std_accuracy = np.std(fold_results_dict['test-accuracy'])
     avg_precision = np.mean(fold_results_dict['precision'])
     avg_recall = np.mean(fold_results_dict['recall'])
     avg_fscore = np.mean(fold_results_dict['fscore'])
@@ -40,7 +58,8 @@ def save_results(fold_results_dict, task):
     std_recall = np.std(fold_results_dict['recall'])
     std_fscore = np.std(fold_results_dict['fscore'])
 
-    print(" ".join(map(str, fold_results_dict['params'])),avg_precision, std_precision, avg_recall, std_recall, avg_fscore, std_fscore, file=result_file)
+    print(" ".join(map(str, fold_results_dict['params'])),train_acc, val_acc, avg_accuracy, std_accuracy, avg_precision,
+          std_precision, avg_recall, std_recall, avg_fscore, std_fscore, file=result_file)
 
 
 
