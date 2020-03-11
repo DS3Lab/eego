@@ -187,7 +187,7 @@ def lstm_classifier(features, labels, embedding_type, param_dict):
         """
         model.summary()
         # todo: try more layers
-        model.add(tf.keras.layers.LSTM(lstm_dim))
+        model.add(tf.keras.layers.CuDNNLSTM(lstm_dim))
         model.add(tf.keras.layers.Dense(dense_dim, activation='relu'))
         model.add(tf.keras.layers.Dropout(rate=dropout))
         model.add(tf.keras.layers.Dense(y_train.shape[1], activation='softmax'))
