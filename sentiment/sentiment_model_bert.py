@@ -4,6 +4,7 @@ from tensorflow.python.keras.preprocessing.sequence import pad_sequences
 from tensorflow.python.keras.preprocessing.text import Tokenizer
 from tensorflow.python.keras.utils import np_utils
 from tensorflow.python.keras.initializers import Constant
+import tensorflow.python.keras.backend as K
 import sklearn.metrics
 from sklearn.model_selection import KFold
 import ml_helpers
@@ -119,29 +120,14 @@ def lstm_classifier(features, labels, embedding_type, param_dict):
 
         print("FOLD: ", fold)
 
-        #print(np.array(X_data))
-
-        #print(np.array(X_data)[train_index])
-
         # print("TRAIN:", train_index, "TEST:", test_index)
-        # todo: why does this take so much time for BErt??
-        print("splitting X")
+        print("splitting train and test data...")
         y_train, y_test = y[train_index], y[test_index]
         X_train, X_test = X_data[train_index], X_data[test_index]
-        print("splitting y")
 
-
-        print(X_train.shape)
-        #print(X_train[0].shape)
-        print(X_test.shape)  # test samples
-        print(y_train.shape)
-        print(y_test.shape)  # test labels
-
-        print(X_train[0].shape)
-        print(type(X_train[0]))
 
         # reset model
-        #K.clear_session()
+        K.clear_session()
 
         lstm_dim = param_dict['lstm_dim']
         dense_dim = param_dict['dense_dim']
@@ -153,8 +139,6 @@ def lstm_classifier(features, labels, embedding_type, param_dict):
         fold_results['params'] = [lstm_dim, dense_dim, dropout, batch_size, epochs, lr, embedding_type]
 
         print("Preparing model...")
-
-
         model = tf.keras.Sequential()
 
         if embedding_type is 'none':
@@ -202,6 +186,7 @@ def lstm_classifier(features, labels, embedding_type, param_dict):
 
         """
         model.summary()
+        # todo: try more layers
         model.add(tf.keras.layers.LSTM(lstm_dim))
         model.add(tf.keras.layers.Dense(dense_dim, activation='relu'))
         model.add(tf.keras.layers.Dropout(rate=dropout))
@@ -215,8 +200,6 @@ def lstm_classifier(features, labels, embedding_type, param_dict):
 
         # train model
         history = model.fit(X_train, y_train, validation_split=0.1, epochs=epochs, batch_size=batch_size)
-        print(history.history.keys())
-        # todo: add final validation accuracy + loss to fold results
 
         # evaluate model
         scores = model.evaluate(X_test, y_test, verbose=0)
