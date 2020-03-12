@@ -182,7 +182,7 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
         """
 
         model.summary()
-        model.add(tf.keras.layers.LSTM(lstm_dim))
+        #model.add(tf.keras.layers.LSTM(lstm_dim))
 
         # todo: try bidirectional LSTM
         # todo: try multiple layers?
