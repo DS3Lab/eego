@@ -188,8 +188,8 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
         #model.add(tf.keras.layers.Bidirectional(tf.keras.layers.LSTM(lstm_dim)))
         for l in list(range(lstm_layers-1)):
             print("adding biLSTM layer ", l)
-            print(l, lstm_layers-1)
-            if l < lstm_layers-1:
+            print(l, lstm_layers-2)
+            if l < lstm_layers-2:
                 model.add(tf.keras.layers.Bidirectional(tf.keras.layers.LSTM(lstm_dim, return_sequences=True)))
             else:
                 print("heere")
