@@ -20,19 +20,19 @@ class_task = 'sentiment-bin' #'sentiment-bin'
 feature_set = 'text_only' #'gaze_features'
 
 # word embeddings {none, glove (300d), bert}
-embeddings = ['glove']
+embeddings = ['none', 'glove']
 # specify directory with bert model, if using
 modelBertDir = "/mnt/ds3lab-scratch/noraho/embeddings/bert"
 
 # hyper-parameters
 
 # GLOVE
-lstm_dim = [64, 128]  # 256, 512
-lstm_layers = [4]
+lstm_dim = [64, 128, 256, 512]
+lstm_layers = [1, 2, 3, 4]
 dense_dim = [32, 64, 128, 256]
 dropout = [0.1, 0.3, 0.5]
 batch_size = [20, 30, 40, 60]
-epochs = [5, 10, 20, 50, 100]  # 3
+epochs = [5, 10, 20, 50, 100]
 lr = [0.001, 0.01, 0.0001]
 
 # other parameters
