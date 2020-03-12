@@ -97,6 +97,7 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
     if embedding_type is 'bert':
         print("Prepare sequences for Bert ...")
         X_data_bert = ml_helpers.prepare_sequences_for_bert(X)
+        embedding_dim = 768
 
         X_data = pad_sequences(X_data_bert, maxlen=max_length)
 
@@ -137,6 +138,7 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
         model = tf.keras.Sequential()
 
         if embedding_type is 'none':
+            # todo: tune embedding dim?
             embedding_layer = tf.keras.layers.Embedding(num_words, 32, input_length=max_length, name='none_input_embeddings')
             model.add(embedding_layer)
 
@@ -186,8 +188,7 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
 
         # todo: try bidirectional LSTM
         # todo: try multiple layers?
-        model.add(tf.keras.layers.Bidirectional(tf.keras.layers.LSTM(lstm_dim, return_sequences=True)))
-        model.add(tf.keras.layers.Bidirectional(tf.keras.layers.LSTM(lstm_dim)))
+        model.add(tf.keras.layers.Bidirectional(tf.keras.layers.LSTM(lstm_dim, return_sequences=True, input_shape=[max_length, embedding_dim])))
         for _ in list(range(lstm_layers-1)):
             model.add(tf.keras.layers.Bidirectional(tf.keras.layers.LSTM(lstm_dim)))
         model.add(tf.keras.layers.Dense(dense_dim, activation='relu'))
