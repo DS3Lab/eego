@@ -113,12 +113,10 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
     for train_index, test_index in kf.split(X_data):
 
         print("FOLD: ", fold)
-
         # print("TRAIN:", train_index, "TEST:", test_index)
         print("splitting train and test data...")
         y_train, y_test = y[train_index], y[test_index]
         X_train, X_test = X_data[train_index], X_data[test_index]
-
 
         # reset model
         K.clear_session()
@@ -131,9 +129,9 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
         epochs = param_dict['epochs']
         lr = param_dict['lr']
 
-
         fold_results['params'] = [lstm_dim, lstm_layers, dense_dim, dropout, batch_size, epochs, lr, embedding_type, random_seed_value]
 
+        # define model
         print("Preparing model...")
         model = tf.keras.Sequential()
 
@@ -184,11 +182,8 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
         """
 
         model.summary()
-        #model.add(tf.keras.layers.LSTM(lstm_dim))
 
-        # todo: try bidirectional LSTM
-        # todo: try multiple layers?
-        model.add(tf.keras.layers.Bidirectional(tf.keras.layers.LSTM(lstm_dim, return_sequences=True, input_shape=[max_length, embedding_dim])))
+        model.add(tf.keras.layers.Bidirectional(tf.keras.layers.LSTM(lstm_dim, return_sequences=True, input_shape=[max_length, embedding_dim], name='bidir_basic')))
         for _ in list(range(lstm_layers-1)):
             model.add(tf.keras.layers.Bidirectional(tf.keras.layers.LSTM(lstm_dim)))
         model.add(tf.keras.layers.Dense(dense_dim, activation='relu'))
