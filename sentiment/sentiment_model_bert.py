@@ -183,9 +183,10 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
 
         model.summary()
 
-        model.add(tf.keras.layers.Bidirectional(tf.keras.layers.LSTM(lstm_dim, return_sequences=True, input_shape=[max_length, embedding_dim], name='bidir_basic')))
-        for _ in list(range(lstm_layers-1)):
-            model.add(tf.keras.layers.Bidirectional(tf.keras.layers.LSTM(lstm_dim, input_shape=[None, lstm_dim])))
+        #input_shape=[max_length, embedding_dim]
+        model.add(tf.keras.layers.Bidirectional(tf.keras.layers.LSTM(lstm_dim, return_sequences=True, name='bidir_basic')))
+        #for _ in list(range(lstm_layers-1)):
+         #   model.add(tf.keras.layers.Bidirectional(tf.keras.layers.LSTM(lstm_dim, input_shape=[None, lstm_dim])))
         model.add(tf.keras.layers.Dense(dense_dim, activation='relu'))
         model.add(tf.keras.layers.Dropout(rate=dropout))
         model.add(tf.keras.layers.Dense(y_train.shape[1], activation='softmax'))
