@@ -30,23 +30,22 @@ def load_matlab_files(task, subject):
 
 
 def save_results(fold_results_dict, task):
+    """aggegates the results in fold_results_dict over all folds and
+    saves hyper-parameters and results to a result file"""
 
     result_file = open('sentiment/results/'+str(date.today()) + "_results_" + task + ".txt", 'a')
 
     # print header
-    print("lstm_dim", "dense_dim", "dropout", "batch_size", "epochs", "lr", "embedding_type", "train_acc", "val_acc",
-          "test_acc", "test_std", "avg_precision", "std_precision", "avg_recall", "std_recall", "avg_fscore",
-          "std_fscore", file=result_file)
+    print("lstm_dim", "lstm_layers", "dense_dim", "dropout", "batch_size", "epochs", "lr", "embedding_type",
+          "random_seed", "train_acc", "val_acc", "test_acc", "test_std", "avg_precision", "std_precision",
+          "avg_recall", "std_recall", "avg_fscore", "std_fscore", file=result_file)
+
 
     # training scores
     train_acc = np.mean([ep[-1] for ep in fold_results_dict['train-accuracy']])
-    print(fold_results_dict['train-accuracy'])
-    print(train_acc)
 
     # validation scores
     val_acc = np.mean([ep[-1] for ep in fold_results_dict['val-accuracy']])
-    print(fold_results_dict['val-accuracy'])
-    print(val_acc)
 
     # test scores
     avg_accuracy = np.mean(fold_results_dict['test-accuracy'])

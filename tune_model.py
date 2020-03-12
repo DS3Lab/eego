@@ -38,7 +38,7 @@ def main():
                                     for e_val in config.epochs:
                                         parameter_dict = {"lr": lr_val, "lstm_dim": lstmDim, "lstm_layers": lstmLayers,
                                                           "dense_dim": denseDim, "dropout": drop, "batch_size": bs,
-                                                          "epochs": e_val}
+                                                          "epochs": e_val, "random_seed": rand}
 
                                         if config.class_task == 'reldetect':
                                             reldetect_model.lstm_classfier(feature_dict, label_dict)

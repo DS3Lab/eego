@@ -131,7 +131,7 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
         lr = param_dict['lr']
 
 
-        fold_results['params'] = [lstm_dim, lstm_layers, dense_dim, dropout, batch_size, epochs, lr, embedding_type]
+        fold_results['params'] = [lstm_dim, lstm_layers, dense_dim, dropout, batch_size, epochs, lr, embedding_type, random_seed_value]
 
         print("Preparing model...")
         model = tf.keras.Sequential()
@@ -181,9 +181,11 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
 
         """
         model.summary()
+        model.add(tf.keras.layers.LSTM(lstm_dim))
+
         # todo: try bidirectional LSTM
-        for l in list(range(lstm_layers)):
-            model.add(tf.keras.layers.LSTM(lstm_dim))
+        for l in list(range(lstm_layers-1)):
+            model.add(tf.keras.layers.LSTM(lstm_dim, input_shape=[None, 64]))
         model.add(tf.keras.layers.Dense(dense_dim, activation='relu'))
         model.add(tf.keras.layers.Dropout(rate=dropout))
         model.add(tf.keras.layers.Dense(y_train.shape[1], activation='softmax'))
