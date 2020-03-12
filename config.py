@@ -28,7 +28,7 @@ modelBertDir = "/mnt/ds3lab-scratch/noraho/embeddings/bert"
 
 # GLOVE
 lstm_dim = [64, 128]  # 256, 512
-lstm_layers = [1]
+lstm_layers = [4]
 dense_dim = [32, 64, 128, 256]
 dropout = [0.1, 0.3, 0.5]
 batch_size = [20, 30, 40, 60]
