@@ -27,33 +27,36 @@ def main():
     if len(feature_dict) != len(label_dict):
         print("WARNING: Not an equal number of sentences in features and labels!")
 
-    for emb in config.embeddings:
-        for lstmDim in config.lstm_dim:
-            for denseDim in config.dense_dim:
-                for drop in config.dropout:
-                    for bs in config.batch_size:
-                        for lr_val in config.lr:
-                            for e_val in config.epochs:
-                                parameter_dict = {"lr": lr_val, "lstm_dim": lstmDim, "dense_dim": denseDim,
-                                                  "dropout": drop, "batch_size": bs, "epochs": e_val}
+    for rand in config.random_seed_values:
+        for emb in config.embeddings:
+            for lstmDim in config.lstm_dim:
+                for lstmLayers in config.lstm_layers:
+                    for denseDim in config.dense_dim:
+                        for drop in config.dropout:
+                            for bs in config.batch_size:
+                                for lr_val in config.lr:
+                                    for e_val in config.epochs:
+                                        parameter_dict = {"lr": lr_val, "lstm_dim": lstmDim, "lstm_layers": lstmLayers,
+                                                          "dense_dim": denseDim, "dropout": drop, "batch_size": bs,
+                                                          "epochs": e_val}
 
-                                if config.class_task == 'reldetect':
-                                    reldetect_model.lstm_classfier(feature_dict, label_dict)
-                                elif config.class_task == 'sentiment-tri':
-                                    fold_results = sentiment_model.lstm_classifier(feature_dict, label_dict, config.embeddings, parameter_dict)
-                                    print(fold_results)
-                                    save_results(fold_results, config.class_task)
-                                elif config.class_task == 'sentiment-bin':
-                                    print(len(feature_dict), len(label_dict))
-                                    for s, label in list(label_dict.items()):
-                                        # delete neutral sentences
-                                        if label == 2:
-                                                del label_dict[s]
-                                                del feature_dict[s]
-                                    print(len(feature_dict), len(label_dict))
-                                    fold_results = sentiment_model_bert.lstm_classifier(feature_dict, label_dict, emb, parameter_dict)
-                                    print(fold_results)
-                                    save_results(fold_results, config.class_task)
+                                        if config.class_task == 'reldetect':
+                                            reldetect_model.lstm_classfier(feature_dict, label_dict)
+                                        elif config.class_task == 'sentiment-tri':
+                                            fold_results = sentiment_model.lstm_classifier(feature_dict, label_dict, emb, parameter_dict)
+                                            print(fold_results)
+                                            save_results(fold_results, config.class_task)
+                                        elif config.class_task == 'sentiment-bin':
+                                            print(len(feature_dict), len(label_dict))
+                                            for s, label in list(label_dict.items()):
+                                                # delete neutral sentences
+                                                if label == 2:
+                                                        del label_dict[s]
+                                                        del feature_dict[s]
+                                            print(len(feature_dict), len(label_dict))
+                                            fold_results = sentiment_model_bert.lstm_classifier(feature_dict, label_dict, emb, parameter_dict, rand)
+                                            print(fold_results)
+                                            save_results(fold_results, config.class_task)
 
 
 

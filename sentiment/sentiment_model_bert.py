@@ -10,28 +10,19 @@ from sklearn.model_selection import KFold
 import ml_helpers
 import config
 import time
-from datetime import timedelta, date
+from datetime import timedelta
 import bert
-
-
-# Machine learning model for TERNARY sentiment classification
-
-seed_value = 42
-os.environ['KERAS_BACKEND'] = 'tensorflow'
-np.random.seed(seed_value)
 import tensorflow as tf
-tf.random.set_seed(seed_value)
-import os
-os.environ['PYTHONHASHSEED']=str(seed_value)
 
-modelBertDir = "/mnt/ds3lab-scratch/noraho/embeddings/bert"
+os.environ['KERAS_BACKEND'] = 'tensorflow'
 
+# Machine learning model for sentiment classification (binary and ternary)
 
 def createBertLayer():
     global bert_layer
 
     # todo: model not the same as for tokenizer -- does it matter?
-    bertDir = os.path.join(modelBertDir, "multi_cased_L-12_H-768_A-12")
+    bertDir = os.path.join(config.modelBertDir, "multi_cased_L-12_H-768_A-12")
 
     bert_params = bert.params_from_pretrained_ckpt(bertDir)
 
@@ -41,14 +32,22 @@ def createBertLayer():
 
     print("Bert layer created")
 
+
+"""
 def loadBertCheckpoint():
     modelsFolder = os.path.join(modelBertDir, "multi_cased_L-12_H-768_A-12")
     checkpointName = os.path.join(modelsFolder, "bert_model.ckpt")
 
     bert.load_stock_weights(bert_layer, checkpointName)
+"""
 
 
-def lstm_classifier(features, labels, embedding_type, param_dict):
+def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_value):
+
+    # set random seed
+    np.random.seed(random_seed_value)
+    tf.random.set_seed(random_seed_value)
+    os.environ['PYTHONHASHSEED'] = str(random_seed_value)
 
     start = time.time()
 
@@ -94,24 +93,18 @@ def lstm_classifier(features, labels, embedding_type, param_dict):
         print("Loading Glove embeddings...")
         embedding_dim = 300
         embedding_matrix = ml_helpers.load_glove_embeddings(vocab_size, word_index, embedding_dim)
-        print(embedding_matrix)
-        print(embedding_matrix.shape)
 
     if embedding_type is 'bert':
         print("Prepare sequences for Bert ...")
-        X_data_bert = ml_helpers.prepare_sequences_for_bert(X, max_length)
+        X_data_bert = ml_helpers.prepare_sequences_for_bert(X)
 
         X_data = pad_sequences(X_data_bert, maxlen=max_length)
-
-        print("Bert sequences ready")
-        print(X_data.shape)
 
         print('Shape of data tensor:', X_data.shape)
         print('Shape of label tensor:', y.shape)
 
-
     # split data into train/test
-    kf = KFold(n_splits=config.folds, random_state=seed_value, shuffle=True)
+    kf = KFold(n_splits=config.folds, random_state=random_seed_value, shuffle=True)
 
     fold = 0
     fold_results = {}
@@ -130,13 +123,15 @@ def lstm_classifier(features, labels, embedding_type, param_dict):
         K.clear_session()
 
         lstm_dim = param_dict['lstm_dim']
+        lstm_layers = param_dict['lstm_layers']
         dense_dim = param_dict['dense_dim']
         dropout = param_dict['dropout']
         batch_size = param_dict['batch_size']
         epochs = param_dict['epochs']
         lr = param_dict['lr']
 
-        fold_results['params'] = [lstm_dim, dense_dim, dropout, batch_size, epochs, lr, embedding_type]
+
+        fold_results['params'] = [lstm_dim, lstm_layers, dense_dim, dropout, batch_size, epochs, lr, embedding_type]
 
         print("Preparing model...")
         model = tf.keras.Sequential()
@@ -186,8 +181,9 @@ def lstm_classifier(features, labels, embedding_type, param_dict):
 
         """
         model.summary()
-        # todo: try more layers
-        model.add(tf.keras.layers.LSTM(lstm_dim))
+        # todo: try bidirectional LSTM
+        for l in list(range(lstm_layers)):
+            model.add(tf.keras.layers.LSTM(lstm_dim))
         model.add(tf.keras.layers.Dense(dense_dim, activation='relu'))
         model.add(tf.keras.layers.Dropout(rate=dropout))
         model.add(tf.keras.layers.Dense(y_train.shape[1], activation='softmax'))
@@ -208,9 +204,9 @@ def lstm_classifier(features, labels, embedding_type, param_dict):
         rounded_predictions = [np.argmax(p) for p in predictions]
         rounded_labels = np.argmax(y_test, axis=1)
         p, r, f, support = sklearn.metrics.precision_recall_fscore_support(rounded_labels, rounded_predictions, average='macro')
-        print(p, r, f)
+        #print(p, r, f)
         conf_matrix = sklearn.metrics.confusion_matrix(rounded_labels, rounded_predictions)
-        print(conf_matrix)
+        #print(conf_matrix)
 
         if fold == 0:
             fold_results['train-loss'] = [history.history['loss']]
