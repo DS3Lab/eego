@@ -47,7 +47,7 @@ def load_glove_embeddings(vocab_size, word_index, EMBEDDING_DIM):
 
     return embedding_matrix
 
-
+"""
 def load_bert_embeddings(X, max_length, bert_dim):
     # Allocate a pipeline for feature extraction (= generates a tensor representation for the input sequence)
     # https://github.com/huggingface/transformers#quick-tour-of-pipelines
@@ -72,22 +72,23 @@ def load_bert_embeddings(X, max_length, bert_dim):
 
     #print(len(X_bert_states_padded))
     return np.asarray(X_bert_states_padded)
-
+"""
 
 
 
 def createTokenizer():
-    #odelsFolder = os.path.join(modelBertDir, "multi_cased_L-12_H-768_A-12/")
-    #vocab_file = os.path.join(modelsFolder, "vocab.txt")
-
-    #tokenizer = bert.FullTokenizer(vocab_file, do_lower_case=True)
-
+    """initialize Bert tokenizer"""
+    # bert implementationadapted from here:
+    # https://medium.com/@brn.pistone/bert-fine-tuning-for-tensorflow-2-0-with-keras-api-9913fc1348f6
 
     tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
     return tokenizer
 
 
-def prepare_sequences_for_bert(X, max_seq_length):
+def prepare_sequences_for_bert(X):
+    """ tokenize sentences and add special tokens needed for Bert"""
+
+
     tokenizer = createTokenizer()
 
     tokens = map(tokenizer.tokenize, X)
