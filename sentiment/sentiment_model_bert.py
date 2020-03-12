@@ -184,15 +184,12 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
         model.summary()
 
         #input_shape=[max_length, embedding_dim], return_sequences=True
-        model.add(tf.keras.layers.Bidirectional(tf.keras.layers.LSTM(lstm_dim, return_sequences=True)))
+        #model.add(tf.keras.layers.Bidirectional(tf.keras.layers.LSTM(lstm_dim, return_sequences=True)))
         #model.add(tf.keras.layers.Bidirectional(tf.keras.layers.LSTM(lstm_dim)))
-        for l in list(range(lstm_layers-1)):
-            print("adding biLSTM layer ", l)
-            print(l, lstm_layers-2)
-            if l < lstm_layers-2:
+        for l in list(range(lstm_layers)):
+            if l < lstm_layers-1:
                 model.add(tf.keras.layers.Bidirectional(tf.keras.layers.LSTM(lstm_dim, return_sequences=True)))
             else:
-                print("heere")
                 model.add(tf.keras.layers.Bidirectional(tf.keras.layers.LSTM(lstm_dim)))
         model.add(tf.keras.layers.Dense(dense_dim, activation='relu'))
         model.add(tf.keras.layers.Dropout(rate=dropout))
