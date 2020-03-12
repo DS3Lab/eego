@@ -136,6 +136,7 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
         print("Preparing model...")
         #model = tf.keras.Sequential()
 
+        """
         if embedding_type is 'none':
             # todo: tune embedding dim?
             embedding_layer = tf.keras.layers.Embedding(num_words, 32, input_length=max_length, name='none_input_embeddings')
@@ -151,8 +152,9 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
                                         trainable=False,
                                         name='glove_input_embeddings')
             model.add(embedding_layer)
+        """
 
-        elif embedding_type is 'bert':
+        if embedding_type is 'bert':
 
             createBertLayer()
 
@@ -162,7 +164,7 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
                 model = tf.keras.Sequential([
                     tf.keras.layers.Input(shape=(max_length,), dtype='int32', name='input_ids'),
                     bert_layer,
-                    tf.keras.layers.Flatten(),
+                    #tf.keras.layers.Flatten(),
                     #tf.keras.layers.Dense(256, activation=tf.nn.relu),
                     #tf.keras.layers.Dropout(0.5),
                     #tf.keras.layers.Dense(256, activation=tf.nn.relu),
