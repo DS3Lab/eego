@@ -16,6 +16,7 @@ def load_matlab_files(task, subject):
 
     elif task.startswith('reldetect'):
         if subject.startswith('Z'):  # subjects from ZuCo 1
+            # todo: add Sentiment data?
             filename_nr = config.rootdir_zuco1 + "results" + subject + "_NR.mat"
             f_nr = h5py.File(filename_nr, 'r')
             sentence_data_nr = f_nr['sentenceData']
@@ -27,6 +28,28 @@ def load_matlab_files(task, subject):
             print("UNDEFINED SUBJECT NAME")
 
         return [(f_nr, sentence_data_nr)]
+
+    elif task.startswith('ner'):
+        loaded_matlab_data = []
+        if subject.startswith('Z'):  # subjects from ZuCo 1
+            # load NR + sentiment task from ZuCo 1
+            filename_nr = config.rootdir_zuco1 + "results" + subject + "_NR.mat"
+            f_nr = h5py.File(filename_nr, 'r')
+            sentence_data_nr = f_nr['sentenceData']
+            loaded_matlab_data.append((f_nr, sentence_data_nr))
+            filename_sr = config.rootdir_zuco1 + "results" + subject + "_SR.mat"
+            f_sr = h5py.File(filename_sr, 'r')
+            sentence_data_sr = f_sr['sentenceData']
+            loaded_matlab_data.append((f_sr, sentence_data_sr))
+        elif subject.startswith('Y'):  # subjects from ZuCo 1
+            filename_nr = config.rootdir_zuco2 + "results" + subject + "_NR.mat"
+            f_nr = h5py.File(filename_nr, 'r')
+            sentence_data_nr = f_nr['sentenceData']
+            loaded_matlab_data.append((f_nr, sentence_data_nr))
+        else:
+            print("UNDEFINED SUBJECT NAME")
+
+        return loaded_matlab_data
 
 
 def save_results(fold_results_dict, task):
