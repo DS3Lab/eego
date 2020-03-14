@@ -1,10 +1,10 @@
 from . import data_loading_helpers as dh
 import config
+from spacy.tokenizer import Tokenizer
 from spacy.lang.en import English
 nlp = English()
-# Create a Tokenizer with the default settings for English
-# including punctuation rules and exceptions
-tokenizer = nlp.Defaults.create_tokenizer(nlp)
+# Create a blank Tokenizer with just the English vocab
+tokenizer = Tokenizer(nlp.vocab)
 
 
 def extract_sentences(sentence_data, sentence_dict):
