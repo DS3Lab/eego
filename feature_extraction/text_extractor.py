@@ -1,6 +1,6 @@
 from . import data_loading_helpers as dh
 import config
-from nltk import tokenize
+import nltk
 
 
 def extract_sentences(sentence_data, sentence_dict):
@@ -19,7 +19,7 @@ def extract_sentences(sentence_data, sentence_dict):
             sent = dh.load_matlab_string(f[obj_reference_content])
             split_tokens = sent.split()
             # todo: add tokenized version
-            spacy_tokens = tokenize(sent)
+            spacy_tokens = nltk.word_tokenize(sent)
             print(spacy_tokens)
 
             # for sentiment
