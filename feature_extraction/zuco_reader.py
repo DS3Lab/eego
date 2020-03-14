@@ -88,7 +88,7 @@ def extract_labels(feature_dict, label_dict, task, subject):
                     line = line.split('\t')
                     sent_tokens.append(line[0])
                     sent_labels.append(line[1].strip())
-                    print(sent_tokens)
+                    #print(sent_tokens)
 
             print('ZuCo 1 sentences not found:', count)
 

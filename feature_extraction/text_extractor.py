@@ -24,6 +24,7 @@ def extract_sentences(sentence_data, sentence_dict):
             split_tokens = sent.split()
             # todo: add tokenized version
             spacy_tokens = tokenizer(sent)
+            print(spacy_tokens)
 
             # for sentiment
             if config.class_task.startswith('sentiment'):
