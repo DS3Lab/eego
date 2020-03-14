@@ -73,10 +73,12 @@ def extract_labels(feature_dict, label_dict, task, subject):
                     print(sent_tokens)
                     print(sent_labels)
                     if sent_tokens in feature_dict.values():
+                        sent_str = list(feature_dict.keys())[list(feature_dict.values()).index(sent_tokens)]
+                        print(sent_str)
 
                         print(sent_tokens)
 
-                        label_dict[sent_tokens] = sent_labels
+                        label_dict[sent_str] = sent_labels
                     else:
                         print("Sentence not found in feature dict!")
                         print(sent_tokens)
