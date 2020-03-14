@@ -9,12 +9,12 @@ from . import text_extractor
 def extract_features(sent_data, feature_set, feature_dict):
     """"""
 
-    if "gaze" in feature_set:
-        gaze_extractor.word_level_et_features(sent_data)
-
     # extract only text for baseline models
     if feature_set == 'text_only':
         text_extractor.extract_sentences(sent_data, feature_dict)
+
+    if "gaze" in feature_set:
+        gaze_extractor.word_level_et_features(sent_data, feature_dict)
 
 
 def extract_labels(feature_dict, label_dict, task, subject):
@@ -22,7 +22,6 @@ def extract_labels(feature_dict, label_dict, task, subject):
     if task.startswith("sentiment"):
 
         count = 0
-        #label_names = {};
         label_names = {'0': 2, '1': 1, '-1': 0}
         i = 0
 
@@ -51,7 +50,40 @@ def extract_labels(feature_dict, label_dict, task, subject):
 
         print(label_names)
 
-    if task == 'reldetect':
+
+    elif task == 'ner':
+
+        count = 0
+        #label_names = {'0': 2, '1': 1, '-1': 0}
+        i = 0
+
+        if subject.startswith('Z'):  # subjects from ZuCo 1
+            # use NR + sentiment task from ZuCo 1
+            ner_ground_truth = open('labels/zuco1_nr_ner.bio', 'r').readlines() + open('labels/zuco1_nr_sentiment_ner.bio', 'r').readlines()
+            for line in ner_ground_truth:
+                # start of new setence
+                if line == '\n':
+                    print(sent_tokens)
+                    print(sent_labels)
+                    if sent_tokens in feature_dict:
+
+                        label_dict[sent_tokens] = sent_labels
+                    else:
+                        print("Sentence not found in feature dict!")
+                        print(sent_tokens)
+                        count += 1
+
+                    sent_tokens = []
+                    sent_labels = []
+                else:
+                    line = line.split('\t')
+                    sent_tokens.append(line[0])
+                    sent_labels.append(line[1])
+
+                print('ZuCo 1 sentences not found:', count)
+
+
+    elif task == 'reldetect':
 
         count = 0
         label_names = {}; i = 0

@@ -1,6 +1,7 @@
 import config
 from feature_extraction import zuco_reader
 from reldetect import reldetect_model
+from ner import ner_model
 from sentiment import sentiment_model, sentiment_model_bert
 from data_helpers import save_results, load_matlab_files
 
@@ -41,10 +42,14 @@ def main():
                                                           "epochs": e_val, "random_seed": rand}
 
                                         if config.class_task == 'reldetect':
-                                            reldetect_model.lstm_classfier(feature_dict, label_dict)
+                                            reldetect_model.lstm_classfier(feature_dict, label_dict, emb, parameter_dict, rand)
+
+                                        elif config.class_task == 'ner':
+                                            ner_model.lstm_classifier(feature_dict, label_dict, emb, parameter_dict, rand)
+
                                         elif config.class_task == 'sentiment-tri':
-                                            fold_results = sentiment_model.lstm_classifier(feature_dict, label_dict, emb, parameter_dict)
-                                            print(fold_results)
+                                            fold_results = sentiment_model.lstm_classifier(feature_dict, label_dict, emb, parameter_dict, rand)
+                                            #print(fold_results)
                                             save_results(fold_results, config.class_task)
                                         elif config.class_task == 'sentiment-bin':
                                             print(len(feature_dict), len(label_dict))
@@ -55,11 +60,8 @@ def main():
                                                         del feature_dict[s]
                                             print(len(feature_dict), len(label_dict))
                                             fold_results = sentiment_model_bert.lstm_classifier(feature_dict, label_dict, emb, parameter_dict, rand)
-                                            print(fold_results)
+                                            #print(fold_results)
                                             save_results(fold_results, config.class_task)
-
-
-
 
 
 if __name__ == '__main__':
