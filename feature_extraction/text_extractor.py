@@ -1,10 +1,6 @@
 from . import data_loading_helpers as dh
 import config
-from spacy.tokenizer import Tokenizer
-from spacy.lang.en import English
-nlp = English()
-# Create a blank Tokenizer with just the English vocab
-tokenizer = Tokenizer(nlp.vocab)
+from nltk import tokenize
 
 
 def extract_sentences(sentence_data, sentence_dict):
@@ -23,7 +19,7 @@ def extract_sentences(sentence_data, sentence_dict):
             sent = dh.load_matlab_string(f[obj_reference_content])
             split_tokens = sent.split()
             # todo: add tokenized version
-            spacy_tokens = tokenizer(sent)
+            spacy_tokens = tokenize(sent)
             print(spacy_tokens)
 
             # for sentiment
