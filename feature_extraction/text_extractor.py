@@ -26,10 +26,11 @@ def extract_sentences(sentence_data, sentence_dict):
             spacy_tokens = tokenizer(sent)
 
             # for sentiment
-            if sent not in sentence_dict:
-                sentence_dict[sent] = split_tokens
-            else:
-                print('duplicate!')
+            if config.class_task.startswith('sentiment'):
+                if sent not in sentence_dict:
+                    sentence_dict[sent] = split_tokens
+                else:
+                    print('duplicate!')
 
             # for ner
             if config.class_task == "ner":
