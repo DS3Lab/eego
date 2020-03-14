@@ -60,13 +60,16 @@ def extract_labels(feature_dict, label_dict, task, subject):
         if subject.startswith('Z'):  # subjects from ZuCo 1
             # use NR + sentiment task from ZuCo 1
             ner_ground_truth = open(config.base_dir+'eego/feature_extraction/labels/zuco1_nr_ner.bio', 'r').readlines() + open(config.base_dir+'eego/feature_extraction/labels/zuco1_nr_sentiment_ner.bio', 'r').readlines()
+
+            sent_tokens = []
+            sent_labels = []
             for line in ner_ground_truth:
-                sent_tokens = []
-                sent_labels = []
+
                 print(line)
 
                 # start of new sentence
                 if line == '\n':
+                    print("EMPYT LINE!!")
                     print(sent_tokens)
                     print(sent_labels)
                     if sent_tokens in feature_dict.values():
