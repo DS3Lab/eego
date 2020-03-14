@@ -19,6 +19,7 @@ def extract_features(sent_data, feature_set, feature_dict):
 
 def extract_labels(feature_dict, label_dict, task, subject):
     """"""
+
     if task.startswith("sentiment"):
 
         count = 0
@@ -50,7 +51,6 @@ def extract_labels(feature_dict, label_dict, task, subject):
 
         print(label_names)
 
-
     elif task == 'ner':
 
         count = 0
@@ -63,12 +63,14 @@ def extract_labels(feature_dict, label_dict, task, subject):
             for line in ner_ground_truth:
                 sent_tokens = []
                 sent_labels = []
-                
+
                 # start of new sentence
                 if line == '\n':
                     print(sent_tokens)
                     print(sent_labels)
-                    if sent_tokens in feature_dict:
+                    if sent_tokens in feature_dict.values():
+
+                        print(sent_tokens)
 
                         label_dict[sent_tokens] = sent_labels
                     else:
@@ -83,7 +85,7 @@ def extract_labels(feature_dict, label_dict, task, subject):
                     sent_tokens.append(line[0])
                     sent_labels.append(line[1])
 
-                print('ZuCo 1 sentences not found:', count)
+            print('ZuCo 1 sentences not found:', count)
 
 
     elif task == 'reldetect':
