@@ -1114,7 +1114,6 @@ were	O
 initially	O
 laughed	O
 off	O
-''	O
 by	O
 Reagan	B-PER
 ,	O
@@ -1134,6 +1133,7 @@ countless	O
 sleepless	O
 nights	O
 .	O
+''	O
 ''	O
 
 His	O
@@ -4490,7 +4490,32 @@ late	O
 and	O
 early	O
 1970	O
-'	O
+'s	O
+;	O
+One	O
+release	O
+,	O
+Watch	O
+It	O
+Sucker	O
+!	O
+,	O
+was	O
+titled	O
+after	O
+Aunt	O
+Esther	B-PER
+'s	O
+catchphrase	O
+to	O
+cash	O
+in	O
+on	O
+her	O
+newfound	O
+TV	O
+fame	O
+.	O
 
 Frank	B-PER
 J.	I-PER
