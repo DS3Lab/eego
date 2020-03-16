@@ -5040,7 +5040,9 @@ make	O
 like	O
 Laurel	B-PER
 and	O
-Hardy'n	O
+Hardy	O
+'n	O
+n	O
 the	O
 hood	O
 .	O
@@ -7306,8 +7308,7 @@ ability	O
 quickly	O
 derails	O
 the	O
-film	O
-.	O
+film.1	O
 
 ...	O
 a	O
@@ -8300,7 +8301,7 @@ video	O
 
 Ultimately	O
 feels	O
-empty	O
+emp11111ty	O
 and	O
 unsatisfying	O
 ,	O
