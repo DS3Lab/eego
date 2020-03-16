@@ -21,7 +21,7 @@ def extract_sentences(sentence_data, sentence_dict):
             # todo: add tokenized version
             spacy_tokens = nltk.word_tokenize(sent)
             #print(spacy_tokens)
-            if "Burial" in spacy_tokens:
+            if "Treasurer" in spacy_tokens:
                 print(spacy_tokens)
 
             # for sentiment
