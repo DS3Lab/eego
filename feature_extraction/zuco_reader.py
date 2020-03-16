@@ -69,14 +69,14 @@ def extract_labels(feature_dict, label_dict, task, subject):
 
                 # start of new sentence
                 if line == '\n':
-                    print("EMPYT LINE!!")
-                    print(sent_tokens)
-                    print(sent_labels)
+                    #print("EMPYT LINE!!")
+                    #print(sent_tokens)
+                    #print(sent_labels)
                     if sent_tokens in feature_dict.values():
                         sent_str = list(feature_dict.keys())[list(feature_dict.values()).index(sent_tokens)]
-                        print(sent_str)
+                        #print(sent_str)
 
-                        print(sent_tokens)
+                        #print(sent_tokens)
 
                         label_dict[sent_str] = sent_labels
                     else:
