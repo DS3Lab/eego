@@ -18,6 +18,7 @@ os.environ['KERAS_BACKEND'] = 'tensorflow'
 
 # Machine learning model for named entity recognition
 
+
 def createBertLayer():
     global bert_layer
 
@@ -49,6 +50,8 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
     # ml_helpers.plot_label_distribution(y)
 
     # convert class labels to one hot vectors
+    print(labels)
+    print(y)
     y = np_utils.to_categorical(y)
 
     vocab_size = 100000
