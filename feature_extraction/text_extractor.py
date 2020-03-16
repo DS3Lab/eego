@@ -20,9 +20,7 @@ def extract_sentences(sentence_data, sentence_dict):
             split_tokens = sent.split()
             # todo: add tokenized version
             spacy_tokens = nltk.word_tokenize(sent)
-            #print(spacy_tokens)
-            if "wafer" in spacy_tokens:
-                print(spacy_tokens)
+            print(spacy_tokens)
 
             # for sentiment
             if config.class_task.startswith('sentiment'):
@@ -38,4 +36,5 @@ def extract_sentences(sentence_data, sentence_dict):
 
                 else:
                     print('duplicate!')
+        print("-------------------------")
 
