@@ -21,6 +21,8 @@ def extract_sentences(sentence_data, sentence_dict):
             # todo: add tokenized version
             spacy_tokens = nltk.word_tokenize(sent)
             #print(spacy_tokens)
+            if "Leonard" in spacy_tokens:
+                print(spacy_tokens)
 
             # for sentiment
             if config.class_task.startswith('sentiment'):
@@ -33,6 +35,7 @@ def extract_sentences(sentence_data, sentence_dict):
             if config.class_task == "ner":
                 if sent not in sentence_dict:
                     sentence_dict[sent] = spacy_tokens
+
                 else:
                     print('duplicate!')
 
