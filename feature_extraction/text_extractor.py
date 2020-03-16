@@ -17,10 +17,10 @@ def extract_sentences(sentence_data, sentence_dict):
         for idx in range(len(rawData)):
             obj_reference_content = contentData[idx][0]
             sent = dh.load_matlab_string(f[obj_reference_content])
+            # whitespace tokenization
             split_tokens = sent.split()
-            # todo: add tokenized version
+            # linguistic tokenization
             spacy_tokens = nltk.word_tokenize(sent)
-            print(spacy_tokens)
 
             # for sentiment
             if config.class_task.startswith('sentiment'):
@@ -29,12 +29,11 @@ def extract_sentences(sentence_data, sentence_dict):
                 else:
                     print('duplicate!')
 
-            # for ner
+            # for ner (different tokenization needed for NER)
             if config.class_task == "ner":
                 if sent not in sentence_dict:
                     sentence_dict[sent] = spacy_tokens
 
                 else:
                     print('duplicate!')
-        print("-------------------------")
 

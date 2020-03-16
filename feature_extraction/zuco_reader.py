@@ -54,8 +54,7 @@ def extract_labels(feature_dict, label_dict, task, subject):
     elif task == 'ner':
 
         count = 0
-        #label_names = {'0': 2, '1': 1, '-1': 0}
-        i = 0
+        label_names = {'O': 0, 'B-PER': 1, 'I-PER': 2, 'B-ORG': 3, 'I-ORG': 4, 'B-LOC': 5, 'I-LOC': 6}
 
         if subject.startswith('Z'):  # subjects from ZuCo 1
             # use NR + sentiment task from ZuCo 1
@@ -78,7 +77,7 @@ def extract_labels(feature_dict, label_dict, task, subject):
 
                         #print(sent_tokens)
 
-                        label_dict[sent_str] = sent_labels
+                        label_dict[sent_str] = [label_names[s] for s in sent_labels]
                     else:
                         print("Sentence not found in feature dict!")
                         print(sent_tokens)

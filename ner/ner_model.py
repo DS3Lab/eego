@@ -50,9 +50,10 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
     # ml_helpers.plot_label_distribution(y)
 
     # convert class labels to one hot vectors
-    print(labels)
-    print(y)
-    y = np_utils.to_categorical(y)
+    #print(labels)
+    #print(y)
+
+    #y = np_utils.to_categorical(y)
 
     vocab_size = 100000
 
@@ -72,17 +73,20 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
     print('Found %s unique tokens.' % len(word_index))
     num_words = min(vocab_size, len(word_index) + 1)
 
+    # pad label sequences too
+    y_padded = pad_sequences(y, maxlen=max_length, value=0)
+
     if embedding_type is 'none':
 
         X_data = pad_sequences(sequences, maxlen=max_length)
         print('Shape of data tensor:', X_data.shape)
-        print('Shape of label tensor:', y.shape)
+        print('Shape of label tensor:', y_padded.shape)
 
     if embedding_type is 'glove':
 
         X_data = pad_sequences(sequences, maxlen=max_length)
         print('Shape of data tensor:', X_data.shape)
-        print('Shape of label tensor:', y.shape)
+        print('Shape of label tensor:', y_padded.shape)
 
         print("Loading Glove embeddings...")
         embedding_dim = 300
@@ -96,7 +100,7 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
         X_data = pad_sequences(X_data_bert, maxlen=max_length)
 
         print('Shape of data tensor:', X_data.shape)
-        print('Shape of label tensor:', y.shape)
+        print('Shape of label tensor:', y_padded.shape)
 
     # split data into train/test
     kf = KFold(n_splits=config.folds, random_state=random_seed_value, shuffle=True)
@@ -109,7 +113,7 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
         print("FOLD: ", fold)
         # print("TRAIN:", train_index, "TEST:", test_index)
         print("splitting train and test data...")
-        y_train, y_test = y[train_index], y[test_index]
+        y_train, y_test = y_padded[train_index], y_padded[test_index]
         X_train, X_test = X_data[train_index], X_data[test_index]
 
         # reset model
@@ -196,7 +200,7 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
 
         model.add(tf.keras.layers.TimeDistributed(tf.keras.layers.Dense(y_train.shape[1], activation='softmax')))
 
-        model.compile(loss='categorical_crossentropy',
+        model.compile(loss='sparse_categorical_crossentropy',
                       optimizer=tf.keras.optimizers.Adam(lr=lr),
                       metrics=['accuracy'])
 

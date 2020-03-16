@@ -24,9 +24,7 @@ embeddings = ['none', 'glove']
 # specify directory with bert model, if using
 modelBertDir = "/mnt/ds3lab-scratch/noraho/embeddings/bert"
 
-# hyper-parameters
-
-# GLOVE
+# hyper-parameters to test - general
 lstm_dim = [64, 128, 256, 512]
 lstm_layers = [1, 2, 3, 4]
 dense_dim = [32, 64, 128, 256]
@@ -37,4 +35,46 @@ lr = [0.001, 0.01, 0.0001]
 
 # other parameters
 folds = 5
-random_seed_values = [42, 13, 78, 22, 66]
+random_seed_values = [13, 78, 22, 66, 42]
+
+# NONE sentiment bin
+# todo: run again like this again to find best lstm_dim
+"""
+lstm_dim = [64, 128, 256, 512]
+lstm_layers = [1]  # 2, 3, 4
+dense_dim = [32, 64, 128]  # 256
+dropout = [0.1, 0.3, 0.5]
+batch_size = [20, 30, 40, 60]  # 30
+epochs = [10, 20, 50, 100]  # 5
+lr = [0.001, 0.01, 0.0001]
+"""
+
+# GLOVE sentiment bin
+"""
+lstm_dim = [64, 128, 256, 512]
+lstm_layers = [1, 2, 3, 4]
+dense_dim = [32, 64, 128, 256]
+dropout = [0.1, 0.3, 0.5]
+batch_size = [20, 30, 40, 60]
+epochs = [5, 10, 20, 50, 100]
+lr = [0.001, 0.01, 0.0001]
+"""
+
+# BERT sentiment bin
+# todo: run again only with dense layers, no LSTM
+"""
+lstm_dim = [128, 256, 512]  # 64
+lstm_layers = [1, 2, 3, 4]
+dense_dim = [32, 64, 128]  # 256
+dropout = [0.1, 0.3]  # 0.5
+batch_size = [20, 30, 40, 60]
+epochs = [10, 20, 50, 100]  # 5
+lr = [0.001, 0.0001]  # 0.01
+"""
+
+
+# NONE sentiment tri
+
+# GLOVE sentiment tri
+
+# BERT sentiment tri
