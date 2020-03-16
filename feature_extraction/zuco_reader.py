@@ -60,9 +60,6 @@ def extract_labels(feature_dict, label_dict, task, subject):
         if subject.startswith('Z'):  # subjects from ZuCo 1
             # use NR + sentiment task from ZuCo 1
             ner_ground_truth = open(config.base_dir+'eego/feature_extraction/labels/zuco1_nr_ner.bio', 'r').readlines() + open(config.base_dir+'eego/feature_extraction/labels/zuco1_nr_sentiment_ner.bio', 'r').readlines()
-        if subject.startswith('Y'):  # subjects from ZuCo 2
-            # use NR task from ZuCo 2
-            ner_ground_truth = open(config.base_dir+'eego/feature_extraction/labels/zuco2_nr_ner.bio', 'r').readlines()
 
             sent_tokens = []
             sent_labels = []
@@ -96,7 +93,43 @@ def extract_labels(feature_dict, label_dict, task, subject):
                     #print(sent_tokens)
 
             print('ZuCo 1 sentences not found:', count)
-        # todo: add ZuCo 2
+
+        if subject.startswith('Y'):  # subjects from ZuCo 2
+            # use NR task from ZuCo 2
+            ner_ground_truth = open(config.base_dir+'eego/feature_extraction/labels/zuco2_nr_ner.bio', 'r').readlines()
+
+            sent_tokens = []
+            sent_labels = []
+            for line in ner_ground_truth:
+
+                # print(line)
+
+                # start of new sentence
+                if line == '\n':
+                    # print("EMPYT LINE!!")
+                    # print(sent_tokens)
+                    # print(sent_labels)
+                    if sent_tokens in feature_dict.values():
+                        sent_str = list(feature_dict.keys())[list(feature_dict.values()).index(sent_tokens)]
+                        # print(sent_str)
+
+                        # print(sent_tokens)
+
+                        label_dict[sent_str] = sent_labels
+                    else:
+                        print("Sentence not found in feature dict!")
+                        print(sent_tokens)
+                        count += 1
+
+                    sent_tokens = []
+                    sent_labels = []
+                else:
+                    line = line.split('\t')
+                    sent_tokens.append(line[0])
+                    sent_labels.append(line[1].strip())
+                    # print(sent_tokens)
+
+            print('ZuCo 2 sentences not found:', count)
 
 
     elif task == 'reldetect':
