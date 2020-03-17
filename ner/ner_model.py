@@ -206,19 +206,20 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
 
         
 
-        out = []
+        out_pred = []
         for pred_i in predictions:
             out_i = []
             for p in pred_i:
+                print(p)
                 p_i = np.argmax(p)
                 #print(p_i)
                 out_i.append(label_names[p_i])
-            out.append(out_i)
-        print(out)
+            out_pred.append(out_i)
+        #print(out)
 
         print("************")
 
-        """
+
 
         out_test = []
         for pred_i in y_test:
@@ -226,12 +227,19 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
             for p in pred_i:
                 out_i.append(label_names[p])
             out_test.append(out_i)
-        print(out_test)
-        """
+        #print(out_test)
 
-        rounded_predictions = [np.argmax(p) for p in predictions]
-        rounded_labels = np.argmax(y_test, axis=1)
-        p, r, f, support = sklearn.metrics.precision_recall_fscore_support(rounded_labels, rounded_predictions, average='macro')
+        test_acc = sklearn.metrics.accuracy_score(out_test, out_pred, average='macro')
+        print(scores[1])
+        print(test_acc)
+        p, r, f, support = sklearn.metrics.precision_recall_fscore_support(out_test, out_pred,average='macro')
+        print(classification_report(test_labels, pred_labels))
+
+
+        #rounded_predictions = [np.argmax(p) for p in predictions]
+        #rounded_labels = np.argmax(y_test, axis=1)
+        #
+
         #print(p, r, f)
         #conf_matrix = sklearn.metrics.confusion_matrix(rounded_labels, rounded_predictions)
         #print(conf_matrix)
