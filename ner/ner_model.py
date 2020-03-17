@@ -45,16 +45,11 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
 
     X = list(features.keys())
     y = list(labels.values())
-    #print(y)
+
+    label_names = {0: 'O', 1: 'B-PER', 2: 'I-PER', 3: 'B-ORG', 4: 'I-ORG', 5: 'B-LOC', 6: 'I-LOC'}
 
     # plot sample distribution
     # ml_helpers.plot_label_distribution(y)
-
-    # convert class labels to one hot vectors
-    #print(labels)
-    #print(y)
-
-    #y = np_utils.to_categorical(y)
 
     vocab_size = 100000
 
@@ -192,7 +187,7 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
             model.add(tf.keras.layers.Bidirectional(tf.keras.layers.LSTM(lstm_dim, return_sequences=True)))
 
         #model.add(tf.keras.layers.TimeDistributed(tf.keras.layers.Dense(y_train.shape[1], activation='softmax')))
-        model.add(tf.keras.layers.TimeDistributed(tf.keras.layers.Dense(7, activation='softmax')))
+        model.add(tf.keras.layers.TimeDistributed(tf.keras.layers.Dense(len(label_names), activation='softmax')))
 
         model.compile(loss='sparse_categorical_crossentropy',
                       optimizer=tf.keras.optimizers.Adam(lr=lr),
@@ -208,21 +203,22 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
         predictions = model.predict(X_test)
 
         # get predictions
-        """
-        label_names = {0: 'O', 1: 'B-PER', 2: 'I-PER', 3: 'B-ORG', 4: 'I-ORG', 5: 'B-LOC', 6: 'I-LOC'}
+
+        
 
         out = []
         for pred_i in predictions:
             out_i = []
             for p in pred_i:
-                print(p)
                 p_i = np.argmax(p)
-                print(p_i)
+                #print(p_i)
                 out_i.append(label_names[p_i])
             out.append(out_i)
         print(out)
 
         print("************")
+
+        """
 
         out_test = []
         for pred_i in y_test:
