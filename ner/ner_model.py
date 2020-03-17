@@ -46,6 +46,8 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
     X = list(features.keys())
     y = list(labels.values())
 
+    for y in X:
+        print(y)
     max_length = max([len(s) for s in X])
     print("max sents: ", max_length)
 
