@@ -61,7 +61,6 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
     tokenizer = Tokenizer(num_words=vocab_size)
     tokenizer.fit_on_texts(X)
     sequences = tokenizer.texts_to_sequences(X)
-    print(type(sequences))
     max_length = max([len(s) for s in sequences])
     print("max sequences: ", max_length)
 
@@ -183,10 +182,8 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
         model.summary()
 
         for l in list(range(lstm_layers)):
-            print(l)
             model.add(tf.keras.layers.Bidirectional(tf.keras.layers.LSTM(lstm_dim, return_sequences=True)))
 
-        #model.add(tf.keras.layers.TimeDistributed(tf.keras.layers.Dense(y_train.shape[1], activation='softmax')))
         model.add(tf.keras.layers.TimeDistributed(tf.keras.layers.Dense(len(label_names), activation='softmax')))
 
         model.compile(loss='sparse_categorical_crossentropy',
@@ -216,24 +213,11 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
                 out_i_test.append(label_names[t])
             out_pred += out_i_pred
             out_test += out_i_test
-        print(len(out_pred))
-        print(len(out_test))
 
-        print("************")
-
-
-        test_acc = sklearn.metrics.accuracy_score(out_test, out_pred)
-        print(scores[1])
-        print(test_acc)
-        p, r, f, support = sklearn.metrics.precision_recall_fscore_support(out_test, out_pred,average='macro')
+        p, r, f, support = sklearn.metrics.precision_recall_fscore_support(out_test, out_pred, average='macro')
         print(sklearn.metrics.classification_report(out_test, out_pred))
 
-
-        #rounded_predictions = [np.argmax(p) for p in predictions]
-        #rounded_labels = np.argmax(y_test, axis=1)
-        #
-
-        #print(p, r, f)
+        print(p, r, f)
         #conf_matrix = sklearn.metrics.confusion_matrix(rounded_labels, rounded_predictions)
         #print(conf_matrix)
 
