@@ -45,7 +45,7 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
 
     X = list(features.keys())
     y = list(labels.values())
-    print(y)
+    #print(y)
 
     # plot sample distribution
     # ml_helpers.plot_label_distribution(y)
@@ -206,6 +206,8 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
             else:
                 print("adding LSTM layer ...")
                 model.add(tf.keras.layers.Bidirectional(tf.keras.layers.LSTM(lstm_dim)))
+
+        model.summary()
 
         model.add(tf.keras.layers.TimeDistributed(tf.keras.layers.Dense(y_train.shape[1], activation='softmax')))
 
