@@ -205,6 +205,8 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
         # evaluate model
         scores = model.evaluate(X_test, y_test, verbose=0)
         predictions = model.predict(X_test)
+        for value in predictions[0, :, 0]:
+            print(value)
         print(predictions.shape)
         print(predictions[0].shape)
 
