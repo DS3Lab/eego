@@ -5,7 +5,7 @@ import h5py
 
 
 def load_matlab_files(task, subject):
-    """loads matlab files depending on which files are required for the chosen classification task"""
+    """loads Matlab files depending on which files are required for the chosen classification task"""
 
     if task.startswith("sentiment"):
         filename_sr = config.rootdir_zuco1 + "results" + subject + "_SR.mat"
@@ -61,7 +61,7 @@ def save_results(fold_results_dict, task):
     # print header
     print("lstm_dim", "lstm_layers", "dense_dim", "dropout", "batch_size", "epochs", "lr", "embedding_type",
           "random_seed", "train_acc", "val_acc", "test_acc", "test_std", "avg_precision", "std_precision",
-          "avg_recall", "std_recall", "avg_fscore", "std_fscore", file=result_file)
+          "avg_recall", "std_recall", "avg_fscore", "std_fscore", "training_time", file=result_file)
 
 
     # training scores
@@ -81,7 +81,7 @@ def save_results(fold_results_dict, task):
     std_fscore = np.std(fold_results_dict['fscore'])
 
     print(" ".join(map(str, fold_results_dict['params'])),train_acc, val_acc, avg_accuracy, std_accuracy, avg_precision,
-          std_precision, avg_recall, std_recall, avg_fscore, std_fscore, file=result_file)
+          std_precision, avg_recall, std_recall, avg_fscore, std_fscore, fold_results_dict['training_time'], file=result_file)
 
 
 
