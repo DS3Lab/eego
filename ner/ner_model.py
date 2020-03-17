@@ -117,6 +117,11 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
         y_train, y_test = y_padded[train_index], y_padded[test_index]
         X_train, X_test = X_data[train_index], X_data[test_index]
 
+        print(y_train.shape)
+        print(y_test.shape)
+        print(X_train.shape)
+        print(X_test.shape)
+
         # reset model
         K.clear_session()
 
@@ -194,9 +199,12 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
         #model = Model(input_text, out)
 
         for l in list(range(lstm_layers)):
+            print(l)
             if l < lstm_layers-1:
+                print("last LSTM layer")
                 model.add(tf.keras.layers.Bidirectional(tf.keras.layers.LSTM(lstm_dim, return_sequences=True)))
             else:
+                print("adding LSTM layer ...")
                 model.add(tf.keras.layers.Bidirectional(tf.keras.layers.LSTM(lstm_dim)))
 
         model.add(tf.keras.layers.TimeDistributed(tf.keras.layers.Dense(y_train.shape[1], activation='softmax')))
