@@ -229,7 +229,7 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
             out_test.append(out_i)
         #print(out_test)
 
-        test_acc = sklearn.metrics.accuracy_score(out_test, out_pred, average='macro')
+        test_acc = sklearn.metrics.accuracy_score(out_test, out_pred)
         print(scores[1])
         print(test_acc)
         p, r, f, support = sklearn.metrics.precision_recall_fscore_support(out_test, out_pred,average='macro')
