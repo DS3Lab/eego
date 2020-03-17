@@ -187,29 +187,9 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
 
         model.summary()
 
-        # model from here: https://towardsdatascience.com/named-entity-recognition-ner-meeting-industrys-requirement-by-applying-state-of-the-art-deep-698d2b3b4ede
-        #input_text = Input(shape=(max_len,), dtype=tf.string)
-        #embedding = Lambda(ElmoEmbedding, output_shape=(max_len, 1024))(input_text)
-        #x = Bidirectional(LSTM(units=512, return_sequences=True,
-          #                     recurrent_dropout=0.2, dropout=0.2))(embedding)
-        #x_rnn = Bidirectional(LSTM(units=512, return_sequences=True,
-              #                     recurrent_dropout=0.2, dropout=0.2))(x)
-        #x = add([x, x_rnn])  # residual connection to the first biLSTM
-        #out = TimeDistributed(Dense(n_tags, activation="softmax"))(x)
-        #model = Model(input_text, out)
-
         for l in list(range(lstm_layers)):
             print(l)
-            if l < lstm_layers-1:
-                print("here")
-                model.add(tf.keras.layers.Bidirectional(tf.keras.layers.LSTM(lstm_dim, return_sequences=True)))
-            else:
-                print("now here")
-                model.add(tf.keras.layers.Bidirectional(tf.keras.layers.LSTM(lstm_dim, return_sequences=True)))
-
-        #model.add(tf.keras.layers.Bidirectional(tf.keras.layers.LSTM(lstm_dim, return_sequences=True)))
-
-        model.summary()
+            model.add(tf.keras.layers.Bidirectional(tf.keras.layers.LSTM(lstm_dim, return_sequences=True)))
 
         model.add(tf.keras.layers.TimeDistributed(tf.keras.layers.Dense(y_train.shape[1], activation='softmax')))
 
