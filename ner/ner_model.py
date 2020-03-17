@@ -233,7 +233,7 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
         print(scores[1])
         print(test_acc)
         p, r, f, support = sklearn.metrics.precision_recall_fscore_support(out_test, out_pred,average='macro')
-        print(classification_report(test_labels, pred_labels))
+        print(sklearn.metrics.classification_report(out_test, out_pred))
 
 
         #rounded_predictions = [np.argmax(p) for p in predictions]
