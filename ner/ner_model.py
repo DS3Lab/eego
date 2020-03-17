@@ -46,22 +46,6 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
     X = list(features.keys())
     y = list(labels.values())
 
-    for y in X:
-        print(y)
-    max_length = max([len(s) for s in X])
-    print("max sents: ", max_length)
-
-    # todo: shorten this - list comprehension
-    new_X = []
-    for seq in X:
-        new_seq = []
-        for i in range(max_length):
-            try:
-                new_seq.append(seq[i])
-            except:
-                new_seq.append("PADword")
-        new_X.append(new_seq)
-
     label_names = {0: 'O', 1: 'B-PER', 2: 'I-PER', 3: 'B-ORG', 4: 'I-ORG', 5: 'B-LOC', 6: 'I-LOC'}
 
     # plot sample distribution
@@ -72,11 +56,11 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
     # prepare text samples
     print('Processing text dataset')
 
-    print('Found %s sentences.' % len(new_X))
+    print('Found %s sentences.' % len(X))
 
     tokenizer = Tokenizer(num_words=vocab_size)
-    tokenizer.fit_on_texts(new_X)
-    sequences = tokenizer.texts_to_sequences(new_X)
+    tokenizer.fit_on_texts(X)
+    sequences = tokenizer.texts_to_sequences(X)
     print(type(sequences))
     max_length = max([len(s) for s in sequences])
     print("max sequences: ", max_length)
@@ -86,12 +70,10 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
     num_words = min(vocab_size, len(word_index) + 1)
 
     # pad label sequences too
-    # todo: remove padded values in the end, before calculating accuracy?
-    y_padded = pad_sequences(y, maxlen=max_length, value=0)
+    y_padded = pad_sequences(y, maxlen=max_length, value=7)
 
     if embedding_type is 'none':
 
-        # todo: pad with special char?
         X_data = pad_sequences(sequences, maxlen=max_length)
         print('Shape of data tensor:', X_data.shape)
         print('Shape of label tensor:', y_padded.shape)
@@ -234,6 +216,7 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
                 out_i_pred.append(label_names[p_i])
             for t in test_i:
                 out_i_test.append(label_names[t])
+            print(test_i)
             out_i_test2 = [t for t in test_i if t != 7]
             out_pred += out_i_pred
             out_test += out_i_test
