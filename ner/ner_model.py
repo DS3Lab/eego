@@ -205,10 +205,28 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
         # evaluate model
         scores = model.evaluate(X_test, y_test, verbose=0)
         predictions = model.predict(X_test)
-        for sent_pred in predictions:
-            print(sent_pred)
-        print(predictions.shape)
-        print(predictions[0].shape)
+
+        # get predictions
+        label_names = {'O': 0, 'B-PER': 1, 'I-PER': 2, 'B-ORG': 3, 'I-ORG': 4, 'B-LOC': 5, 'I-LOC': 6}
+
+        out = []
+        for pred_i in predictions:
+            out_i = []
+            for p in pred_i:
+                p_i = np.argmax(p)
+                out_i.append(label_names[p_i])
+            out.append(out_i)
+        print(out)
+
+        print("************")
+
+        out_test = []
+        for pred_i in y_test:
+            out_i = []
+            for p in pred_i:
+                out_i.append(label_names[p])
+            out_test.append(out_i)
+        print(out_test)
 
         rounded_predictions = [np.argmax(p) for p in predictions]
         rounded_labels = np.argmax(y_test, axis=1)
