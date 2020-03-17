@@ -17,6 +17,7 @@ import tensorflow as tf
 os.environ['KERAS_BACKEND'] = 'tensorflow'
 
 # Machine learning model for sentiment classification (binary and ternary)
+# Bert model
 
 def createBertLayer():
     global bert_layer
@@ -28,6 +29,7 @@ def createBertLayer():
 
     bert_layer = bert.BertModelLayer.from_params(bert_params, name="bert_layer")
 
+    # todo: is this needed?
     bert_layer.apply_adapter_freeze()
 
     print("Bert layer created")
@@ -133,8 +135,9 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
 
         # define model
         print("Preparing model...")
-        model = tf.keras.Sequential()
+        #model = tf.keras.Sequential()
 
+        """
         if embedding_type is 'none':
             # todo: tune embedding dim?
             embedding_layer = tf.keras.layers.Embedding(num_words, 32, input_length=max_length, name='none_input_embeddings')
@@ -150,9 +153,9 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
                                         trainable=False,
                                         name='glove_input_embeddings')
             model.add(embedding_layer)
-
         """
-        elif embedding_type is 'bert':
+
+        if embedding_type is 'bert':
 
             createBertLayer()
 
@@ -162,44 +165,44 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
                 model = tf.keras.Sequential([
                     tf.keras.layers.Input(shape=(max_length,), dtype='int32', name='input_ids'),
                     bert_layer,
-                    tf.keras.layers.Flatten(),
-                    tf.keras.layers.Dense(256, activation=tf.nn.relu),
-                    tf.keras.layers.Dropout(0.5),
-                    tf.keras.layers.Dense(256, activation=tf.nn.relu),
-                    tf.keras.layers.Dropout(0.5),
-                    tf.keras.layers.Dense(y_train.shape[1], activation=tf.nn.softmax)
+                    #tf.keras.layers.Flatten(),
+                    #tf.keras.layers.Dense(256, activation=tf.nn.relu),
+                    #tf.keras.layers.Dropout(0.5),
+                    #tf.keras.layers.Dense(256, activation=tf.nn.relu),
+                    #tf.keras.layers.Dropout(0.5),
+                    #tf.keras.layers.Dense(y_train.shape[1], activation=tf.nn.softmax)
+                    tf.keras.layers.Bidirectional(tf.keras.layers.LSTM(lstm_dim)),
+                    tf.keras.layers.Dense(dense_dim, activation='relu'),
+                    tf.keras.layers.Dropout(rate=dropout),
+                    tf.keras.layers.Dense(y_train.shape[1], activation='softmax'),
                 ])
 
                 model.build(input_shape=(None, max_length))
 
-                model.compile(loss='categorical_crossentropy', optimizer=tf.optimizers.Adam(lr=0.00001),
+                model.compile(loss='categorical_crossentropy',
+                              optimizer=tf.keras.optimizers.Adam(lr=lr),
                               metrics=['accuracy'])
 
                 print(model.summary())
 
             createModel()
 
-        """
+        #model.summary()
 
-        model.summary()
+        #for l in list(range(lstm_layers)):
+         #   if l < lstm_layers-1:
+          #      model.add(tf.keras.layers.Bidirectional(tf.keras.layers.LSTM(lstm_dim, return_sequences=True)))
+           # else:
+            #    model.add(tf.keras.layers.Bidirectional(tf.keras.layers.LSTM(lstm_dim)))
+        #model.add(tf.keras.layers.Dense(dense_dim, activation='relu'))
+        #model.add(tf.keras.layers.Dropout(rate=dropout))
+        #model.add(tf.keras.layers.Dense(y_train.shape[1], activation='softmax'))
 
-        #input_shape=[max_length, embedding_dim], return_sequences=True
-        #model.add(tf.keras.layers.Bidirectional(tf.keras.layers.LSTM(lstm_dim, return_sequences=True)))
-        #model.add(tf.keras.layers.Bidirectional(tf.keras.layers.LSTM(lstm_dim)))
-        for l in list(range(lstm_layers)):
-            if l < lstm_layers-1:
-                model.add(tf.keras.layers.Bidirectional(tf.keras.layers.LSTM(lstm_dim, return_sequences=True)))
-            else:
-                model.add(tf.keras.layers.Bidirectional(tf.keras.layers.LSTM(lstm_dim)))
-        model.add(tf.keras.layers.Dense(dense_dim, activation='relu'))
-        model.add(tf.keras.layers.Dropout(rate=dropout))
-        model.add(tf.keras.layers.Dense(y_train.shape[1], activation='softmax'))
+        #model.compile(loss='categorical_crossentropy',
+         #             optimizer=tf.keras.optimizers.Adam(lr=lr),
+          #            metrics=['accuracy'])
 
-        model.compile(loss='categorical_crossentropy',
-                      optimizer=tf.keras.optimizers.Adam(lr=lr),
-                      metrics=['accuracy'])
-
-        model.summary()
+        #model.summary()
 
         # train model
         history = model.fit(X_train, y_train, validation_split=0.1, epochs=epochs, batch_size=batch_size)
@@ -212,7 +215,7 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
         rounded_labels = np.argmax(y_test, axis=1)
         p, r, f, support = sklearn.metrics.precision_recall_fscore_support(rounded_labels, rounded_predictions, average='macro')
         #print(p, r, f)
-        conf_matrix = sklearn.metrics.confusion_matrix(rounded_labels, rounded_predictions)
+        #conf_matrix = sklearn.metrics.confusion_matrix(rounded_labels, rounded_predictions)
         #print(conf_matrix)
 
         if fold == 0:

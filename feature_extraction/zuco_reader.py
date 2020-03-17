@@ -114,7 +114,7 @@ def extract_labels(feature_dict, label_dict, task, subject):
 
                         # print(sent_tokens)
 
-                        label_dict[sent_str] = sent_labels
+                        label_dict[sent_str] = [label_names[s] for s in sent_labels]
                     else:
                         print("Sentence not found in feature dict!")
                         print(sent_tokens)
