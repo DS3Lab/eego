@@ -146,6 +146,7 @@ def extract_labels(feature_dict, label_dict, task, subject):
                 #config.base_dir + 'eego/feature_extraction/labels/zuco1_nr_sentiment_ner.bio', 'r').readlines()
 
             sent_tokens = []
+            print(feature_dict.keys())
             for line in ner_ground_truth:
 
                 # print(line)
@@ -158,7 +159,7 @@ def extract_labels(feature_dict, label_dict, task, subject):
                     label_dict[sent_str] = line[1:]
                 else:
                     print("Sentence not found in feature dict!")
-                    print(sent_tokens)
+                    print(sent_str)
                     count += 1
 
             print('ZuCo 1 sentences not found:', count)
@@ -182,7 +183,7 @@ def extract_labels(feature_dict, label_dict, task, subject):
                         label_dict[sent_str] = line[1:]
                     else:
                         print("Sentence not found in feature dict!")
-                        print(sent_tokens)
+                        print(sent_str)
                         count += 1
 
             print('ZuCo 2 sentences not found:', count)
