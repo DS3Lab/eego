@@ -198,17 +198,16 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
         #out = TimeDistributed(Dense(n_tags, activation="softmax"))(x)
         #model = Model(input_text, out)
 
-        """
         for l in list(range(lstm_layers)):
             print(l)
-            if l == lstm_layers-1:
-                print("last LSTM layer")
+            if l < lstm_layers-1:
+                print("here")
                 model.add(tf.keras.layers.Bidirectional(tf.keras.layers.LSTM(lstm_dim, return_sequences=True)))
             else:
-                print("adding LSTM layer ...")
+                print("now here")
                 model.add(tf.keras.layers.Bidirectional(tf.keras.layers.LSTM(lstm_dim)))
-        """
-        model.add(tf.keras.layers.Bidirectional(tf.keras.layers.LSTM(lstm_dim, return_sequences=True)))
+
+        #model.add(tf.keras.layers.Bidirectional(tf.keras.layers.LSTM(lstm_dim, return_sequences=True)))
 
         model.summary()
 
@@ -226,6 +225,7 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
         # evaluate model
         scores = model.evaluate(X_test, y_test, verbose=0)
         predictions = model.predict(X_test)
+        print(predictions)
 
         rounded_predictions = [np.argmax(p) for p in predictions]
         rounded_labels = np.argmax(y_test, axis=1)
