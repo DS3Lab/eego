@@ -200,7 +200,7 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
 
         for l in list(range(lstm_layers)):
             print(l)
-            if l == lstm_layers:
+            if l == lstm_layers-1:
                 print("last LSTM layer")
                 model.add(tf.keras.layers.Bidirectional(tf.keras.layers.LSTM(lstm_dim, return_sequences=True)))
             else:
