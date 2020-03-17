@@ -70,7 +70,7 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
     num_words = min(vocab_size, len(word_index) + 1)
 
     # pad label sequences too
-    y_padded = pad_sequences(y, maxlen=max_length, value=7)
+    y_padded = pad_sequences(y, maxlen=max_length, value=0)
 
     if embedding_type is 'none':
 
@@ -205,9 +205,7 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
         # get predictions
 
         out_pred = []
-        out_pred_padding_removed = []
         out_test = []
-        out_test_padding_removed = []
         for pred_i, test_i in zip(predictions, y_test):
             out_i_pred = []
             out_i_test = []
@@ -216,15 +214,10 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
                 out_i_pred.append(label_names[p_i])
             for t in test_i:
                 out_i_test.append(label_names[t])
-            print(test_i)
-            out_i_test2 = [t for t in test_i if t != 7]
             out_pred += out_i_pred
             out_test += out_i_test
-            out_test_padding_removed += out_i_test2
         print(len(out_pred))
-        print(len(out_pred_padding_removed))
         print(len(out_test))
-        print(len(out_test_padding_removed))
 
         print("************")
 
