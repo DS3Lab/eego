@@ -70,10 +70,12 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
     num_words = min(vocab_size, len(word_index) + 1)
 
     # pad label sequences too
+    # todo: remove padded values in the end, before calculating accuracy?
     y_padded = pad_sequences(y, maxlen=max_length, value=0)
 
     if embedding_type is 'none':
 
+        # todo: pad with special char?
         X_data = pad_sequences(sequences, maxlen=max_length)
         print('Shape of data tensor:', X_data.shape)
         print('Shape of label tensor:', y_padded.shape)
@@ -204,8 +206,6 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
 
         # get predictions
 
-        
-
         out_pred = []
         for pred_i in predictions:
             out_i = []
@@ -214,19 +214,17 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
                 p_i = np.argmax(p)
                 #print(p_i)
                 out_i.append(label_names[p_i])
-            out_pred.append(out_i)
+            out_pred += out_i
         #print(out)
 
         print("************")
-
-
 
         out_test = []
         for pred_i in y_test:
             out_i = []
             for p in pred_i:
                 out_i.append(label_names[p])
-            out_test.append(out_i)
+            out_test += out_i
         #print(out_test)
 
         test_acc = sklearn.metrics.accuracy_score(out_test, out_pred)
