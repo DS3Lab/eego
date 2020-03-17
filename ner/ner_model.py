@@ -225,7 +225,8 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
         # evaluate model
         scores = model.evaluate(X_test, y_test, verbose=0)
         predictions = model.predict(X_test)
-        print(predictions)
+        print(predictions.shape)
+        print(predictions[0].shape)
 
         rounded_predictions = [np.argmax(p) for p in predictions]
         rounded_labels = np.argmax(y_test, axis=1)
