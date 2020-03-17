@@ -207,25 +207,26 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
         # get predictions
 
         out_pred = []
-        for pred_i in predictions:
-            out_i = []
+        out_pred_padding_removed = []
+        out_test = []
+        out_test_padding_removed = []
+        for pred_i, test_i in zip(predictions, y_test):
+            out_i_pred = []
+            out_i_test = []
             for p in pred_i:
-                print(p)
                 p_i = np.argmax(p)
-                #print(p_i)
-                out_i.append(label_names[p_i])
-            out_pred += out_i
-        #print(out)
+                out_i_pred.append(label_names[p_i])
+            for t in test_i:
+                out_i_test.append(label_names[t])
+            out_pred += out_i_pred
+            out_test += out_i_test
+        print(len(out_pred))
+        print(len(out_pred_padding_removed))
+        print(len(out_test))
+        print(len(out_test_padding_removed))
 
         print("************")
 
-        out_test = []
-        for pred_i in y_test:
-            out_i = []
-            for p in pred_i:
-                out_i.append(label_names[p])
-            out_test += out_i
-        #print(out_test)
 
         test_acc = sklearn.metrics.accuracy_score(out_test, out_pred)
         print(scores[1])
