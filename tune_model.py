@@ -42,10 +42,12 @@ def main():
                                                           "epochs": e_val, "random_seed": rand}
 
                                         if config.class_task == 'reldetect':
-                                            reldetect_model.lstm_classfier(feature_dict, label_dict, emb, parameter_dict, rand)
+                                            fold_results = reldetect_model.lstm_classfier(feature_dict, label_dict, emb, parameter_dict, rand)
+                                            save_results(fold_results, config.class_task)
 
                                         elif config.class_task == 'ner':
-                                            ner_model.lstm_classifier(feature_dict, label_dict, emb, parameter_dict, rand)
+                                            fold_results = ner_model.lstm_classifier(feature_dict, label_dict, emb, parameter_dict, rand)
+                                            save_results(fold_results, config.class_task)
 
                                         elif config.class_task == 'sentiment-tri':
                                             fold_results = sentiment_model.lstm_classifier(feature_dict, label_dict, emb, parameter_dict, rand)
@@ -59,7 +61,7 @@ def main():
                                                         del label_dict[s]
                                                         del feature_dict[s]
                                             print(len(feature_dict), len(label_dict))
-                                            fold_results = sentiment_model_bert.lstm_classifier(feature_dict, label_dict, emb, parameter_dict, rand)
+                                            fold_results = sentiment_model.lstm_classifier(feature_dict, label_dict, emb, parameter_dict, rand)
                                             #print(fold_results)
                                             save_results(fold_results, config.class_task)
 
