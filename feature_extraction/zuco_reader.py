@@ -145,17 +145,16 @@ def extract_labels(feature_dict, label_dict, task, subject):
                                #+ open(
                 #config.base_dir + 'eego/feature_extraction/labels/zuco1_nr_sentiment_ner.bio', 'r').readlines()
 
-            print(feature_dict.values())
             sent_tokens = []
             for line in ner_ground_truth:
 
                 # print(line)
 
                 line = line.split("\t")
-                sent_str = line[0].split()
-                print(sent_str)
+                sent_str = line[0]
+                #print(sent_str)
 
-                if sent_tokens in feature_dict.values():
+                if sent_str in feature_dict:
                     label_dict[sent_str] = line[1:]
                 else:
                     print("Sentence not found in feature dict!")
@@ -176,10 +175,10 @@ def extract_labels(feature_dict, label_dict, task, subject):
                     # print(line)
 
                     line = line.split("\t")
-                    sent_str = line[0].split()
+                    sent_str = line[0]
                     #print(sent_str)
 
-                    if sent_tokens in feature_dict.values():
+                    if sent_str in feature_dict:
                         label_dict[sent_str] = line[1:]
                     else:
                         print("Sentence not found in feature dict!")
