@@ -152,7 +152,7 @@ def extract_labels(feature_dict, label_dict, task, subject):
                 # print(line)
 
                 line = line.split("\t")
-                sent_str = line[0]
+                sent_str = line[0].split()
                 print(sent_str)
 
                 if sent_tokens in feature_dict.values():
@@ -176,7 +176,7 @@ def extract_labels(feature_dict, label_dict, task, subject):
                     # print(line)
 
                     line = line.split("\t")
-                    sent_str = line[0]
+                    sent_str = line[0].split()
                     #print(sent_str)
 
                     if sent_tokens in feature_dict.values():
