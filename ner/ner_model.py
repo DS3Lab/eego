@@ -191,7 +191,8 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
             print(l)
             model.add(tf.keras.layers.Bidirectional(tf.keras.layers.LSTM(lstm_dim, return_sequences=True)))
 
-        model.add(tf.keras.layers.TimeDistributed(tf.keras.layers.Dense(y_train.shape[1], activation='softmax')))
+        #model.add(tf.keras.layers.TimeDistributed(tf.keras.layers.Dense(y_train.shape[1], activation='softmax')))
+        model.add(tf.keras.layers.TimeDistributed(tf.keras.layers.Dense(7, activation='softmax')))
 
         model.compile(loss='sparse_categorical_crossentropy',
                       optimizer=tf.keras.optimizers.Adam(lr=lr),
@@ -207,6 +208,7 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
         predictions = model.predict(X_test)
 
         # get predictions
+        """
         label_names = {0: 'O', 1: 'B-PER', 2: 'I-PER', 3: 'B-ORG', 4: 'I-ORG', 5: 'B-LOC', 6: 'I-LOC'}
 
         out = []
@@ -229,6 +231,7 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
                 out_i.append(label_names[p])
             out_test.append(out_i)
         print(out_test)
+        """
 
         rounded_predictions = [np.argmax(p) for p in predictions]
         rounded_labels = np.argmax(y_test, axis=1)
