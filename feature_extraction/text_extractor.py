@@ -23,7 +23,7 @@ def extract_sentences(sentence_data, sentence_dict):
             spacy_tokens = nltk.word_tokenize(sent)
 
             # for sentiment
-            if config.class_task.startswith('sentiment'):
+            if config.class_task.startswith('sentiment') or config.class_task == "reldetect":
                 if sent not in sentence_dict:
                     sentence_dict[sent] = split_tokens
                 else:

@@ -134,58 +134,62 @@ def extract_labels(feature_dict, label_dict, task, subject):
     elif task == 'reldetect':
 
         count = 0
-        label_names = {}; i = 0
-
-        # todo: update this to take labels from brat!!! original labels are not complete
+        label_names = ["Visited", "Founder", "Nationality", "Wife", "PoliticalAffiliation", "JobTitle", "Education",
+                          "Employer", "Awarded", "BirthPlace", "DeathPlace"]
 
         if subject.startswith('Z'):  # subjects from ZuCo 1
-            with open(config.base_dir+'eego/feature_extraction/labels/zuco1_relations_nr_labels_cleaned.csv', 'r') as csv_file:
-                csv_reader = csv.reader(csv_file, delimiter=',')
-                next(csv_reader, None)
-                for row in csv_reader:
-                    sent = row[2]
-                    # todo: what to do with sentences with multiple labels?!
-                    # one approach: evaluate on single classes, i.e. change test set?
-                    # another approach: randomly assign one relation and train multiple runs
-                    label = row[4].split(";")[0]
+            # use NR + sentiment task from ZuCo 1
+            ner_ground_truth = open(config.base_dir + 'eego/feature_extraction/labels/zuco1_nr_rel.bio',
+                                    'r').readlines()
+            # todo: should sentiment be added for more negative examples? - test
+                               #+ open(
+                #config.base_dir + 'eego/feature_extraction/labels/zuco1_nr_sentiment_ner.bio', 'r').readlines()
 
-                    if label not in label_names:
-                        label_names[label] = i
-                        i += 1
+            sent_tokens = []
+            sent_labels = []
+            for line in ner_ground_truth:
 
-                    if sent in feature_dict:
-                        #print(zuco2_relations_normal_reading_labels.csv[sent])
-                        label_dict[sent] = label_names[label]
-                    else:
-                        print("Sentence not found in feature dict!")
-                        print(sent)
-                        count += 1
+                # print(line)
+
+                line = line.split("\t")
+                sent_str = line[0]
+                # print(sent_str)
+
+                if sent_tokens in feature_dict.values():
+                    label_dict[sent_str] = line[1:]
+                else:
+                    print("Sentence not found in feature dict!")
+                    print(sent_tokens)
+                    count += 1
+
             print('ZuCo 1 sentences not found:', count)
 
-        elif subject.startswith('Y'):  # subjects from ZuCo 2
-            count = 0
-            with open(config.basedir+'eego/feature_extraction/labels/zuco2_relations_nr_labels_cleaned.csv', 'r') as csv_file:
-                csv_reader = csv.reader(csv_file, delimiter=',')
-                next(csv_reader, None)
-                for row in csv_reader:
-                    sent = row[2]
-                    # todo: what to do with sentences with multiple labels?!
-                    # one approach: evaluate on single classes, i.e. change test set?
-                    # another approach: randomly assign one relation and train multiple runs
-                    label = row[4].split(";")[0]
+        if subject.startswith('Y'):  # subjects from ZuCo 2
+            # use NR task from ZuCo 2
+            ner_ground_truth = open(config.base_dir + 'eego/feature_extraction/labels/zuco2_nr_rel.bio',
+                                    'r').readlines()
 
-                    if label not in label_names:
-                        label_names[label] = i
-                        i += 1
+            sent_tokens = []
+            sent_labels = []
+            for line in ner_ground_truth:
 
-                    if sent in feature_dict:
-                        #print(zuco2_relations_normal_reading_labels.csv[sent])
-                        label_dict[sent] = label_names[label]
+                for line in ner_ground_truth:
+                    # print(line)
+
+                    line = line.split("\t")
+                    sent_str = line[0]
+                    # print(sent_str)
+
+                    if sent_tokens in feature_dict.values():
+                        label_dict[sent_str] = line[1:]
                     else:
                         print("Sentence not found in feature dict!")
-                        print(sent)
+                        print(sent_tokens)
                         count += 1
+
             print('ZuCo 2 sentences not found:', count)
+
+
 
 
 
