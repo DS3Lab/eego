@@ -198,6 +198,7 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
         #out = TimeDistributed(Dense(n_tags, activation="softmax"))(x)
         #model = Model(input_text, out)
 
+        """
         for l in list(range(lstm_layers)):
             print(l)
             if l == lstm_layers-1:
@@ -206,6 +207,8 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
             else:
                 print("adding LSTM layer ...")
                 model.add(tf.keras.layers.Bidirectional(tf.keras.layers.LSTM(lstm_dim)))
+        """
+        model.add(tf.keras.layers.Bidirectional(tf.keras.layers.LSTM(lstm_dim)))
 
         model.summary()
 
