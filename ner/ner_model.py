@@ -207,13 +207,15 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
         predictions = model.predict(X_test)
 
         # get predictions
-        label_names = {'O': 0, 'B-PER': 1, 'I-PER': 2, 'B-ORG': 3, 'I-ORG': 4, 'B-LOC': 5, 'I-LOC': 6}
+        #label_names = {'O': 0, 'B-PER': 1, 'I-PER': 2, 'B-ORG': 3, 'I-ORG': 4, 'B-LOC': 5, 'I-LOC': 6}
+        label_names = {0: 'O', 1: 'B-PER', 2: 'I-PER', 3: 'B-ORG', 4: 'I-ORG', 5: 'B-LOC', 6: 'I-LOC'}
 
         out = []
         for pred_i in predictions:
             out_i = []
             for p in pred_i:
                 p_i = np.argmax(p)
+                print(p_i)
                 out_i.append(label_names[p_i])
             out.append(out_i)
         print(out)
