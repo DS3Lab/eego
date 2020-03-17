@@ -22,7 +22,7 @@ os.environ['KERAS_BACKEND'] = 'tensorflow'
 def createBertLayer():
     global bert_layer
 
-    # todo: model not the same as for tokenizer -- does it matter?
+    # todo: Bert model not the same as for Bert tokenizer -- does it matter?
     bertDir = os.path.join(config.modelBertDir, "multi_cased_L-12_H-768_A-12")
 
     bert_params = bert.params_from_pretrained_ckpt(bertDir)
@@ -71,7 +71,7 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
 
     # pad label sequences too
     # todo: remove padded values in the end, before calculating accuracy?
-    y_padded = pad_sequences(y, maxlen=max_length, value=0)
+    y_padded = pad_sequences(y, maxlen=max_length, value="PAD")
 
     if embedding_type is 'none':
 
@@ -218,8 +218,10 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
                 out_i_pred.append(label_names[p_i])
             for t in test_i:
                 out_i_test.append(label_names[t])
+            out_i_test2 = [t for t in test_i if t != "PAD"]
             out_pred += out_i_pred
             out_test += out_i_test
+            out_test_padding_removed += out_i_test2
         print(len(out_pred))
         print(len(out_pred_padding_removed))
         print(len(out_test))
