@@ -90,7 +90,7 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
     if embedding_type is 'none':
 
         # todo: pad with special char?
-        X_data = pad_sequences(sequences, maxlen=max_length, value=)
+        X_data = pad_sequences(sequences, maxlen=max_length)
         print('Shape of data tensor:', X_data.shape)
         print('Shape of label tensor:', y_padded.shape)
 
