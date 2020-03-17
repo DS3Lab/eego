@@ -71,7 +71,7 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
 
     # pad label sequences too
     # todo: remove padded values in the end, before calculating accuracy?
-    y_padded = pad_sequences(y, maxlen=max_length, value="PAD")
+    y_padded = pad_sequences(y, maxlen=max_length, value=7)
 
     if embedding_type is 'none':
 
@@ -218,7 +218,7 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
                 out_i_pred.append(label_names[p_i])
             for t in test_i:
                 out_i_test.append(label_names[t])
-            out_i_test2 = [t for t in test_i if t != "PAD"]
+            out_i_test2 = [t for t in test_i if t != 7]
             out_pred += out_i_pred
             out_test += out_i_test
             out_test_padding_removed += out_i_test2
