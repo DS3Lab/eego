@@ -188,7 +188,7 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
 
         model.compile(loss='sparse_categorical_crossentropy',
                       optimizer=tf.keras.optimizers.Adam(lr=lr),
-                      metrics=['accuracy'])
+                      metrics=['accuracy', 'sparse_categorical_accuracy'])
 
         model.summary()
 
