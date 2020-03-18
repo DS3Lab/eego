@@ -45,6 +45,7 @@ def load_matlab_files(task, subject):
             sentence_data_sr = f_sr['sentenceData']
             loaded_matlab_data.append((f_sr, sentence_data_sr))
         elif subject.startswith('Y'):  # subjects from ZuCo 1
+            # load NR task from ZuCo 2
             filename_nr = config.rootdir_zuco2 + "results" + subject + "_NR.mat"
             f_nr = h5py.File(filename_nr, 'r')
             sentence_data_nr = f_nr['sentenceData']
@@ -59,7 +60,12 @@ def save_results(fold_results_dict, task):
     """aggegates the results in fold_results_dict over all folds and
     saves hyper-parameters and results to a result file"""
 
-    result_file = open('sentiment/results/'+str(date.today()) + "_results_" + task + ".txt", 'a')
+    if config.class_task.startswith("sentiment"):
+        result_file = open('sentiment/results/'+str(date.today()) + "_results_" + task + ".txt", 'a')
+    elif config.class_task == "ner":
+        result_file = open('ner/results/' + str(date.today()) + "_results_" + task + ".txt", 'a')
+    elif config.class_task == "reldetect":
+        result_file = open('reldetect/results/' + str(date.today()) + "_results_" + task + ".txt", 'a')
 
     # print header
     print("lstm_dim", "lstm_layers", "dense_dim", "dropout", "batch_size", "epochs", "lr", "embedding_type",
