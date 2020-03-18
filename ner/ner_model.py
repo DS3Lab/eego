@@ -69,17 +69,17 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
     num_words = min(vocab_size, len(word_index) + 1)
 
     # pad label sequences too
-    y_padded = pad_sequences(y, maxlen=max_length, value=0)
+    y_padded = pad_sequences(y, maxlen=max_length, value=0, padding='post', truncating='post')
 
     if embedding_type is 'none':
 
-        X_data = pad_sequences(sequences, maxlen=max_length)
+        X_data = pad_sequences(sequences, maxlen=max_length, padding='post', truncating='post')
         print('Shape of data tensor:', X_data.shape)
         print('Shape of label tensor:', y_padded.shape)
 
     if embedding_type is 'glove':
 
-        X_data = pad_sequences(sequences, maxlen=max_length)
+        X_data = pad_sequences(sequences, maxlen=max_length, padding='post', truncating='post')
         print('Shape of data tensor:', X_data.shape)
         print('Shape of label tensor:', y_padded.shape)
 
@@ -92,7 +92,7 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
         X_data_bert = ml_helpers.prepare_sequences_for_bert(X)
         embedding_dim = 768
 
-        X_data = pad_sequences(X_data_bert, maxlen=max_length)
+        X_data = pad_sequences(X_data_bert, maxlen=max_length, padding='post', truncating='post')
 
         print('Shape of data tensor:', X_data.shape)
         print('Shape of label tensor:', y_padded.shape)
