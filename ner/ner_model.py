@@ -184,13 +184,13 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
         for l in list(range(lstm_layers)):
             model.add(tf.keras.layers.Bidirectional(tf.keras.layers.LSTM(lstm_dim, return_sequences=True)))
 
+        # todo: try without time dist.
         model.add(tf.keras.layers.TimeDistributed(tf.keras.layers.Dense(len(label_names), activation='softmax')))
 
-        #model.add(tf.keras.layers.Dense(len(label_names), activation='softmax'))
-
-        model.compile(loss='categorical_crossentropy',
+        # todo: try to train for a loooong time
+        model.compile(loss='sparse_categorical_crossentropy',
                       optimizer=tf.keras.optimizers.Adam(lr=lr),
-                      metrics=['categorical_accuracy'])
+                      metrics=['accuracy'])
 
         model.summary()
 
