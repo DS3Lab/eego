@@ -125,9 +125,10 @@ def extract_labels(feature_dict, label_dict, task, subject):
 
                 line = line.split("\t")
                 sent_str = line[0]
+                labels = [int(l.strip()) for l in line[1:]]
 
                 if sent_str in feature_dict:
-                    label_dict[sent_str] = line[1:]
+                    label_dict[sent_str] = labels
                 else:
                     print("Sentence not found in feature dict!")
                     print(sent_str)
@@ -144,9 +145,10 @@ def extract_labels(feature_dict, label_dict, task, subject):
 
                 line = line.split("\t")
                 sent_str = line[0]
+                labels = [int(l.strip()) for l in line[1:]]
 
                 if sent_str in feature_dict:
-                    label_dict[sent_str] = line[1:]
+                    label_dict[sent_str] = labels
                 else:
                     print("Sentence not found in feature dict!")
                     print(sent_str)
