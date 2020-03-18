@@ -118,6 +118,11 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
         y_train, y_test = y[train_index], y[test_index]
         X_train, X_test = X_data[train_index], X_data[test_index]
 
+        print(y_train.shape)
+        print(y_test.shape)
+        print(X_train.shape)
+        print(X_test.shape)
+
         # reset model
         K.clear_session()
 
