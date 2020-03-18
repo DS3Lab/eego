@@ -213,6 +213,7 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
                 out_i_test.append(label_names[t])
             for x in sent_i:
                 print(x)
+            print("---------")
             out_pred += out_i_pred
             out_test += out_i_test
 
