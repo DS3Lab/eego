@@ -192,7 +192,7 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
         model.add(tf.keras.layers.Dropout(rate=dropout))
         model.add(tf.keras.layers.Dense(y_train.shape[1], activation='softmax'))
 
-        model.compile(loss='categorical_crossentropy',
+        model.compile(loss='sparse_categorical_crossentropy',
                       optimizer=tf.keras.optimizers.Adam(lr=lr),
                       metrics=['accuracy'])
 
