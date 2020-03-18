@@ -200,23 +200,25 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
         predictions = model.predict(X_test)
 
         # get predictions
-        # todo: take out padded parts
+        # remove padded tokens at end of sentence
         out_pred = []
         out_test = []
         for pred_i, test_i, sent_i in zip(predictions, y_test, X_test):
+            x_cut = [x for x in sent_i if x != 0]
+            original_sent_length = len(x_cut)
             out_i_pred = []
             out_i_test = []
-            for p in pred_i:
+            for p in pred_i[:original_sent_length]:
                 p_i = np.argmax(p)
                 out_i_pred.append(label_names[p_i])
-            for t in test_i:
+            for t in test_i[:original_sent_length]:
                 out_i_test.append(label_names[t])
-            for x in sent_i:
-                print(x)
-            print("---------")
+
             out_pred += out_i_pred
             out_test += out_i_test
 
+        print(scores[1])
+        print(sklearn.metrics.accuracy_score(out_test,out_pred))
         p, r, f, support = sklearn.metrics.precision_recall_fscore_support(out_test, out_pred, average='macro')
         print(sklearn.metrics.classification_report(out_test, out_pred))
 
