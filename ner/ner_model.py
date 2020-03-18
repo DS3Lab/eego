@@ -70,6 +70,7 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
 
     # pad label sequences too
     y_padded = pad_sequences(y, maxlen=max_length, value=0, padding='post', truncating='post')
+    y = np_utils.to_categorical(y, num_classes=len(label_names))
 
     if embedding_type is 'none':
 
@@ -188,7 +189,7 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
 
         model.compile(loss='categorical_crossentropy',
                       optimizer=tf.keras.optimizers.Adam(lr=lr),
-                      metrics=[tf.keras.metrics.Precision()])
+                      metrics=['categorical_aacuracy'])
 
         model.summary()
 
