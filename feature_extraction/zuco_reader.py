@@ -30,7 +30,6 @@ def extract_labels(feature_dict, label_dict, task, subject):
             with open(config.base_dir+'eego/feature_extraction/labels/sentiment_sents_labels-corrected.txt', 'r') as csv_file:
                 csv_reader = csv.reader(csv_file, delimiter=';')
                 for row in csv_reader:
-                    #print(row)
                     sent = row[1]
                     label = row[-1]
 
@@ -64,19 +63,10 @@ def extract_labels(feature_dict, label_dict, task, subject):
             sent_labels = []
             for line in ner_ground_truth:
 
-                #print(line)
-
                 # start of new sentence
                 if line == '\n':
-                    #print("EMPYT LINE!!")
-                    #print(sent_tokens)
-                    #print(sent_labels)
                     if sent_tokens in feature_dict.values():
                         sent_str = list(feature_dict.keys())[list(feature_dict.values()).index(sent_tokens)]
-                        #print(sent_str)
-
-                        #print(sent_tokens)
-
                         label_dict[sent_str] = [label_names[s] for s in sent_labels]
                     else:
                         print("Sentence not found in feature dict!")
@@ -89,7 +79,6 @@ def extract_labels(feature_dict, label_dict, task, subject):
                     line = line.split('\t')
                     sent_tokens.append(line[0])
                     sent_labels.append(line[1].strip())
-                    #print(sent_tokens)
 
             print('ZuCo 1 sentences not found:', count)
 
@@ -101,19 +90,10 @@ def extract_labels(feature_dict, label_dict, task, subject):
             sent_labels = []
             for line in ner_ground_truth:
 
-                # print(line)
-
                 # start of new sentence
                 if line == '\n':
-                    # print("EMPYT LINE!!")
-                    # print(sent_tokens)
-                    # print(sent_labels)
                     if sent_tokens in feature_dict.values():
                         sent_str = list(feature_dict.keys())[list(feature_dict.values()).index(sent_tokens)]
-                        # print(sent_str)
-
-                        # print(sent_tokens)
-
                         label_dict[sent_str] = [label_names[s] for s in sent_labels]
                     else:
                         print("Sentence not found in feature dict!")
@@ -126,10 +106,8 @@ def extract_labels(feature_dict, label_dict, task, subject):
                     line = line.split('\t')
                     sent_tokens.append(line[0])
                     sent_labels.append(line[1].strip())
-                    # print(sent_tokens)
 
             print('ZuCo 2 sentences not found:', count)
-
 
     elif task == 'reldetect':
 
@@ -141,18 +119,12 @@ def extract_labels(feature_dict, label_dict, task, subject):
             # use NR + sentiment task from ZuCo 1
             ner_ground_truth = open(config.base_dir + 'eego/feature_extraction/labels/zuco1_nr_rel.bio',
                                     'r').readlines()
-            # todo: should sentiment be added for more negative examples? - test
-                               #+ open(
-                #config.base_dir + 'eego/feature_extraction/labels/zuco1_nr_sentiment_ner.bio', 'r').readlines()
 
             print(feature_dict.keys())
             for line in ner_ground_truth:
 
-                # print(line)
-
                 line = line.split("\t")
                 sent_str = line[0]
-                #print(sent_str)
 
                 if sent_str in feature_dict:
                     label_dict[sent_str] = line[1:]
@@ -167,14 +139,11 @@ def extract_labels(feature_dict, label_dict, task, subject):
             # use NR task from ZuCo 2
             ner_ground_truth = open(config.base_dir + 'eego/feature_extraction/labels/zuco2_nr_rel.bio',
                                     'r').readlines()
-            print(len(ner_ground_truth))
-            print(len(feature_dict))
-            print(feature_dict.keys())
+
             for line in ner_ground_truth:
 
                 line = line.split("\t")
                 sent_str = line[0]
-                #print(sent_str)
 
                 if sent_str in feature_dict:
                     label_dict[sent_str] = line[1:]
