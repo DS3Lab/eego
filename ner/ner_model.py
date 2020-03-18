@@ -186,7 +186,7 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
 
         model.add(tf.keras.layers.TimeDistributed(tf.keras.layers.Dense(len(label_names), activation='softmax')))
 
-        model.compile(loss='sparse_categorical_crossentropy',
+        model.compile(loss='categorical_crossentropy',
                       optimizer=tf.keras.optimizers.Adam(lr=lr),
                       metrics=[tf.keras.metrics.Precision()])
 
