@@ -200,10 +200,10 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
         predictions = model.predict(X_test)
 
         # get predictions
-
+        # todo: take out padded parts
         out_pred = []
         out_test = []
-        for pred_i, test_i in zip(predictions, y_test):
+        for pred_i, test_i, sent_i in zip(predictions, y_test, X_test):
             out_i_pred = []
             out_i_test = []
             for p in pred_i:
@@ -211,6 +211,8 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
                 out_i_pred.append(label_names[p_i])
             for t in test_i:
                 out_i_test.append(label_names[t])
+            for x in sent_i:
+                print(x)
             out_pred += out_i_pred
             out_test += out_i_test
 
