@@ -106,7 +106,7 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
         print("FOLD: ", fold)
         # print("TRAIN:", train_index, "TEST:", test_index)
         print("splitting train and test data...")
-        y_train, y_test = y[train_index], y[test_index]
+        y_train, y_test = np.array(y)[train_index], np.array(y)[test_index]
         X_train, X_test = X_data[train_index], X_data[test_index]
 
         # reset model
