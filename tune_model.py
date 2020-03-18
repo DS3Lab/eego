@@ -42,7 +42,7 @@ def main():
                                                           "epochs": e_val, "random_seed": rand}
 
                                         if config.class_task == 'reldetect':
-                                            fold_results = reldetect_model.lstm_classfier(feature_dict, label_dict, emb, parameter_dict, rand)
+                                            fold_results = reldetect_model.lstm_classifier(feature_dict, label_dict, emb, parameter_dict, rand)
                                             save_results(fold_results, config.class_task)
 
                                         elif config.class_task == 'ner':
