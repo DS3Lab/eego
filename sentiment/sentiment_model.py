@@ -123,6 +123,8 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
         print(X_train.shape)
         print(X_test.shape)
 
+        print(y_train)
+
         # reset model
         K.clear_session()
 
