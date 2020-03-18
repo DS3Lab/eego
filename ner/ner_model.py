@@ -246,7 +246,7 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
 
     elapsed = (time.time() - start)
     print("Training time (all folds):", str(timedelta(seconds=elapsed)))
-    fold_results['training_time'] = [elapsed]
+    fold_results['training_time'] = elapsed
 
     return fold_results
 
