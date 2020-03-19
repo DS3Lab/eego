@@ -97,7 +97,7 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
         print(X_train.shape)
         print(X_test.shape)
 
-        print(X_train[0:1].shape)
+        print(np.array([X_train]).shape)
 
         # reset model
         K.clear_session()
@@ -170,7 +170,7 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
         model.summary()
 
         # train model
-        history = model.fit(X_train[0:1], y_train, validation_split=0.1, epochs=epochs, batch_size=batch_size)
+        history = model.fit(np.array([X_train]), y_train, validation_split=0.1, epochs=epochs, batch_size=batch_size)
 
         # evaluate model
         scores = model.evaluate(X_test, y_test, verbose=0)
