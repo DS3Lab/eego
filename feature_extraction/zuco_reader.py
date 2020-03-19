@@ -120,7 +120,6 @@ def extract_labels(feature_dict, label_dict, task, subject):
             ner_ground_truth = open(config.base_dir + 'eego/feature_extraction/labels/zuco1_nr_rel.bio',
                                     'r').readlines()
 
-            print(feature_dict.keys())
             for line in ner_ground_truth:
 
                 line = line.split("\t")

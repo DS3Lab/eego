@@ -30,15 +30,12 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
 
     X = list(features.keys())
     y = list(labels.values())
+    # these are already one hot categorical encodings
     y = np.asarray(y)
-    #print(y.shape)
 
     # todo: check number of rels per sentence
     # plot sample distribution
     # ml_helpers.plot_label_distribution(y)
-
-    # convert class labels to one hot vectors
-    #y = np_utils.to_categorical(y)
 
     vocab_size = 100000
 
@@ -62,13 +59,13 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
 
         X_data = pad_sequences(sequences, maxlen=max_length)
         print('Shape of data tensor:', X_data.shape)
-        #print('Shape of label tensor:', y.shape)
+        print('Shape of label tensor:', y.shape)
 
     if embedding_type is 'glove':
 
         X_data = pad_sequences(sequences, maxlen=max_length)
         print('Shape of data tensor:', X_data.shape)
-        #print('Shape of label tensor:', y.shape)
+        print('Shape of label tensor:', y.shape)
 
         print("Loading Glove embeddings...")
         embedding_dim = 300
@@ -82,7 +79,7 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
         X_data = pad_sequences(X_data_bert, maxlen=max_length)
 
         print('Shape of data tensor:', X_data.shape)
-        #print('Shape of label tensor:', y.shape)
+        print('Shape of label tensor:', y.shape)
 
     # split data into train/test
     kf = KFold(n_splits=config.folds, random_state=random_seed_value, shuffle=True)
@@ -102,8 +99,6 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
         print(y_test.shape)
         print(X_train.shape)
         print(X_test.shape)
-
-        print(y_train)
 
         # reset model
         K.clear_session()
@@ -181,7 +176,8 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
 
         model.compile(loss='binary_crossentropy',
                       optimizer=tf.keras.optimizers.Adam(lr=lr),
-                      metrics=['accuracy'])
+                      metrics=[tf.keras.metrics.Precision()])
+                      #metrics=['accuracy'])
 
         model.summary()
 
