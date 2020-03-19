@@ -105,7 +105,7 @@ def createTokenizer():
     return tokenizer
 
 
-def prepare_sequences_for_bert(X, max_seq_length):
+def prepare_sequences_for_bert(X):
     """ tokenize sentences and add special tokens needed for Bert"""
 
 
@@ -114,9 +114,6 @@ def prepare_sequences_for_bert(X, max_seq_length):
     tokens = map(tokenizer.tokenize, X)
     tokens = map(lambda tok: ["[CLS]"] + tok + ["[SEP]"], tokens)
     token_ids = list(map(tokenizer.convert_tokens_to_ids, tokens))
-
-    #token_ids = map(lambda tids: tids + [0] * (max_seq_length - len(tids)), token_ids)
-    #train_token_ids = np.array(list(train_token_ids))
 
     token_ids = np.array(list(token_ids))
 
