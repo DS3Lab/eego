@@ -19,12 +19,6 @@ os.environ['KERAS_BACKEND'] = 'tensorflow'
 
 # Machine learning model for sentiment classification (binary and ternary)
 
-def loadBertCheckpoint():
-    modelsFolder = os.path.join(config.modelBertDir, "uncased_L-12_H-768_A-12")
-    checkpointName = os.path.join(modelsFolder, "bert_model.ckpt")
-
-    bert.load_stock_weights(ml_helpers.bert_layer, checkpointName)
-
 
 def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_value):
     # set random seed
@@ -77,7 +71,6 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
     if embedding_type is 'bert':
         print("Prepare sequences for Bert ...")
         X_data_bert = ml_helpers.prepare_sequences_for_bert(X)
-        #X_data = ml_helpers.prepare_sequences_for_bert(X, max_length)
         embedding_dim = 768
 
         X_data = pad_sequences(X_data_bert, maxlen=max_length, padding='post', truncating='post')
@@ -176,27 +169,8 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
 
         model.summary()
 
-        modelsFolder = os.path.join(config.modelBertDir, "uncased_L-12_H-768_A-12")
-        checkpointName = os.path.join(modelsFolder, "bert_faq.ckpt")
-
-        # Create a callback that saves the model's weights
-        cp_callback = tf.keras.callbacks.ModelCheckpoint(filepath=checkpointName,
-                                                         save_weights_only=True,
-                                                         verbose=1)
-
-        # callback = StopTrainingClassComplete()
-
-        history = model.fit(
-            X_train,
-            y_train,
-            epochs=300,
-            validation_split=0.1,
-            verbose=1,
-            callbacks=[cp_callback]
-        )
-
         # train model
-        #history = model.fit(np.array([X_train])[0:1], y_train, validation_split=0.1, epochs=epochs, batch_size=batch_size)
+        history = model.fit(X_train, y_train, validation_split=0.1, epochs=epochs, batch_size=batch_size)
 
         # evaluate model
         scores = model.evaluate(X_test, y_test, verbose=0)
