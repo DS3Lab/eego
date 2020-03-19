@@ -12,6 +12,8 @@ import time
 from datetime import timedelta
 import tensorflow as tf
 from keras_contrib.layers import CRF
+from keras_contrib.losses import crf_loss
+from keras_contrib.metrics import crf_viterbi_accuracy
 
 os.environ['KERAS_BACKEND'] = 'tensorflow'
 
@@ -143,11 +145,11 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
             model.add(tf.keras.layers.Bidirectional(tf.keras.layers.LSTM(lstm_dim, return_sequences=True)))
 
         # todo: try without time dist.
-        model.add(tf.keras.layers.TimeDistributed(tf.keras.layers.Dense(len(label_names), activation='softmax')))
+        #model.add(tf.keras.layers.TimeDistributed(tf.keras.layers.Dense(len(label_names), activation='softmax')))
         #model.add(tf.keras.layers.Dense(len(label_names), activation='softmax'))
 
-        crf = CRF()
-        model.add(crf(len(label_names) + 1)) #  n_tags+1(PAD)
+        crf = CRF(len(label_names), sparse_target=True)
+        model.add(crf)
 
         # todo: try diffrent loss/metric --> invalid shape error
         model.compile(loss=crf.loss_function,
