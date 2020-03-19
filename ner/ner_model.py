@@ -144,7 +144,8 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
             model.add(tf.keras.layers.Bidirectional(tf.keras.layers.LSTM(lstm_dim, return_sequences=True)))
 
         # todo: try without time dist.
-        model.add(tf.keras.layers.TimeDistributed(tf.keras.layers.Dense(len(label_names), activation='softmax')))
+        #model.add(tf.keras.layers.TimeDistributed(tf.keras.layers.Dense(len(label_names), activation='softmax')))
+        model.add(tf.keras.layers.Dense(len(label_names), activation='softmax'))
 
         # todo: try diffrent loss/metric --> invalid shape error
         model.compile(loss='sparse_categorical_crossentropy',
