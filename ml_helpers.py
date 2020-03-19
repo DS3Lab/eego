@@ -18,7 +18,7 @@ def plot_label_distribution(y):
         label_names = ["Visited", "Founder", "Nationality", "Wife", "PoliticalAffiliation", "JobTitle", "Education",
                        "Employer", "Awarded", "BirthPlace", "DeathPlace"]
         all_relations = np.sum(y, 0)
-        plt.hist(all, bins=len(all_relations), alpha=0.5)
+        plt.bar(all_relations, alpha=0.5)
         plt.xticks(labels=label_names, fontsize=10)
         plt.savefig('label-distribution-' + config.class_task + '.png')
 
