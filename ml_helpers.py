@@ -99,3 +99,17 @@ def prepare_sequences_for_bert(X):
 
     return token_ids
 
+
+def createBertLayer():
+    global bert_layer
+
+    # todo: model not the same as for tokenizer -- does it matter?
+    bertDir = os.path.join(config.modelBertDir, "multi_cased_L-12_H-768_A-12")
+
+    bert_params = bert.params_from_pretrained_ckpt(bertDir)
+
+    bert_layer = bert.BertModelLayer.from_params(bert_params, name="bert_layer")
+
+    bert_layer.apply_adapter_freeze()
+
+    print("Bert layer created")

@@ -18,22 +18,6 @@ os.environ['KERAS_BACKEND'] = 'tensorflow'
 
 # Machine learning model for sentiment classification (binary and ternary)
 
-def createBertLayer():
-    global bert_layer
-
-    # todo: model not the same as for tokenizer -- does it matter?
-    bertDir = os.path.join(config.modelBertDir, "multi_cased_L-12_H-768_A-12")
-
-    bert_params = bert.params_from_pretrained_ckpt(bertDir)
-
-    bert_layer = bert.BertModelLayer.from_params(bert_params, name="bert_layer")
-
-    bert_layer.apply_adapter_freeze()
-
-    print("Bert layer created")
-
-
-
 
 def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_value):
 
@@ -47,8 +31,9 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
     X = list(features.keys())
     y = list(labels.values())
     y = np.asarray(y)
-    print(y.shape)
+    #print(y.shape)
 
+    # todo: check number of rels per sentence
     # plot sample distribution
     # ml_helpers.plot_label_distribution(y)
 
@@ -156,7 +141,7 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
         """
         elif embedding_type is 'bert':
 
-            createBertLayer()
+            ml_helpers.createBertLayer()
 
             def createModel():
                 global model
@@ -198,10 +183,6 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
                       optimizer=tf.keras.optimizers.Adam(lr=lr),
                       metrics=['accuracy'])
 
-        # todo: try
-        #model.compile(loss="binary_crossentropy", optimizer=opt,
-	    #metrics=["accuracy"])
-
         model.summary()
 
         # train model
@@ -213,11 +194,29 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
 
         rounded_predictions = [np.argmax(p) for p in predictions]
         rounded_labels = np.argmax(y_test, axis=1)
-        p, r, f, support = sklearn.metrics.precision_recall_fscore_support(rounded_labels, rounded_predictions, average='macro')
-        #print(p, r, f)
-        #conf_matrix = sklearn.metrics.confusion_matrix(rounded_labels, rounded_predictions)
-        #print(conf_matrix)
 
+        # todo: micro or macro for multulabel?
+        p, r, f, support = sklearn.metrics.precision_recall_fscore_support(rounded_labels, rounded_predictions, average='macro')
+
+        # todo: add f1-score threshold
+        # https://medium.com/towards-artificial-intelligence/keras-for-multi-label-text-classification-86d194311d0e
+        thresholds = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
+        for val in thresholds:
+            print("For threshold:", val)
+            pred = predictions.copy()
+
+            pred[pred >= val] = 1
+            pred[pred < val] = 0
+
+            precision = sklearn.metrics.precision_score(y_test, pred, average='micro')
+            recall = sklearn.metrics.recall_score(y_test, pred, average='micro')
+            f1 = sklearn.metrics.f1_score(y_test, pred, average='micro')
+
+            print("Micro-average quality numbers")
+            print("Precision: {:.4f}, Recall: {:.4f}, F1-measure: {:.4f}".format(precision, recall, f1))
+            print("-----")
+
+        # save results
         if fold == 0:
             fold_results['train-loss'] = [history.history['loss']]
             fold_results['train-accuracy'] = [history.history['accuracy']]
