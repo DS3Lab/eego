@@ -57,13 +57,13 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
 
     if embedding_type is 'none':
 
-        X_data = pad_sequences(sequences, maxlen=max_length)
+        X_data = pad_sequences(sequences, maxlen=max_length, padding='post', truncating='post')
         print('Shape of data tensor:', X_data.shape)
         print('Shape of label tensor:', y.shape)
 
     if embedding_type is 'glove':
 
-        X_data = pad_sequences(sequences, maxlen=max_length)
+        X_data = pad_sequences(sequences, maxlen=max_length, padding='post', truncating='post')
         print('Shape of data tensor:', X_data.shape)
         print('Shape of label tensor:', y.shape)
 
@@ -76,7 +76,7 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
         X_data_bert = ml_helpers.prepare_sequences_for_bert(X)
         embedding_dim = 768
 
-        X_data = pad_sequences(X_data_bert, maxlen=max_length)
+        X_data = pad_sequences(X_data_bert, maxlen=max_length, padding='post', truncating='post')
 
         print('Shape of data tensor:', X_data.shape)
         print('Shape of label tensor:', y.shape)
@@ -115,14 +115,15 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
 
         # define model
         print("Preparing model...")
-        model = tf.keras.Sequential()
 
         if embedding_type is 'none':
             # todo: tune embedding dim?
+            model = tf.keras.Sequential()
             embedding_layer = tf.keras.layers.Embedding(num_words, 32, input_length=max_length, name='none_input_embeddings')
             model.add(embedding_layer)
 
         elif embedding_type is 'glove':
+            model = tf.keras.Sequential()
             # load pre-trained word embeddings into an Embedding layer
             # note that we set trainable = False so as to keep the embeddings fixed
             embedding_layer = tf.keras.layers.Embedding(num_words,
@@ -133,10 +134,9 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
                                         name='glove_input_embeddings')
             model.add(embedding_layer)
 
-        """
         elif embedding_type is 'bert':
 
-            ml_helpers.createBertLayer()
+            bert_layer = ml_helpers.createBertLayer()
 
             def createModel():
                 global model
@@ -144,24 +144,27 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
                 model = tf.keras.Sequential([
                     tf.keras.layers.Input(shape=(max_length,), dtype='int32', name='input_ids'),
                     bert_layer,
-                    tf.keras.layers.Flatten(),
-                    tf.keras.layers.Dense(256, activation=tf.nn.relu),
-                    tf.keras.layers.Dropout(0.5),
-                    tf.keras.layers.Dense(256, activation=tf.nn.relu),
-                    tf.keras.layers.Dropout(0.5),
-                    tf.keras.layers.Dense(y_train.shape[1], activation=tf.nn.softmax)
+                    # tf.keras.layers.Flatten(),
+                    # tf.keras.layers.Dense(256, activation=tf.nn.relu),
+                    # tf.keras.layers.Dropout(0.5),
+                    # tf.keras.layers.Dense(256, activation=tf.nn.relu),
+                    # tf.keras.layers.Dropout(0.5),
+                    # tf.keras.layers.Dense(y_train.shape[1], activation=tf.nn.softmax)
+                    tf.keras.layers.Bidirectional(tf.keras.layers.LSTM(lstm_dim)),
+                    tf.keras.layers.Dense(dense_dim, activation='relu'),
+                    tf.keras.layers.Dropout(rate=dropout),
+                    tf.keras.layers.Dense(y_train.shape[1], activation='softmax'),
                 ])
 
                 model.build(input_shape=(None, max_length))
 
-                model.compile(loss='categorical_crossentropy', optimizer=tf.optimizers.Adam(lr=0.00001),
+                model.compile(loss='categorical_crossentropy',
+                              optimizer=tf.keras.optimizers.Adam(lr=lr),
                               metrics=['accuracy'])
 
                 print(model.summary())
 
             createModel()
-
-        """
 
         model.summary()
 
@@ -176,7 +179,7 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
 
         model.compile(loss='binary_crossentropy',
                       optimizer=tf.keras.optimizers.Adam(lr=lr),
-                      metrics=[tf.keras.metrics.Precision()])
+                      metrics=[tf.keras.metrics.Precision(), 'accuracy'])
                       #metrics=['accuracy'])
 
         model.summary()
