@@ -11,39 +11,15 @@ import ml_helpers
 import config
 import time
 from datetime import timedelta
-import bert
 import tensorflow as tf
 
 os.environ['KERAS_BACKEND'] = 'tensorflow'
 
+
 # Machine learning model for sentiment classification (binary and ternary)
-
-def createBertLayer():
-    global bert_layer
-
-    # todo: model not the same as for tokenizer -- does it matter?
-    bertDir = os.path.join(config.modelBertDir, "multi_cased_L-12_H-768_A-12")
-
-    bert_params = bert.params_from_pretrained_ckpt(bertDir)
-
-    bert_layer = bert.BertModelLayer.from_params(bert_params, name="bert_layer")
-
-    bert_layer.apply_adapter_freeze()
-
-    print("Bert layer created")
-
-
-"""
-def loadBertCheckpoint():
-    modelsFolder = os.path.join(modelBertDir, "multi_cased_L-12_H-768_A-12")
-    checkpointName = os.path.join(modelsFolder, "bert_model.ckpt")
-
-    bert.load_stock_weights(bert_layer, checkpointName)
-"""
 
 
 def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_value):
-
     # set random seed
     np.random.seed(random_seed_value)
     tf.random.set_seed(random_seed_value)
@@ -79,14 +55,12 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
     num_words = min(vocab_size, len(word_index) + 1)
 
     if embedding_type is 'none':
-
-        X_data = pad_sequences(sequences, maxlen=max_length)
+        X_data = pad_sequences(sequences, maxlen=max_length, padding='post', truncating='post')
         print('Shape of data tensor:', X_data.shape)
         print('Shape of label tensor:', y.shape)
 
     if embedding_type is 'glove':
-
-        X_data = pad_sequences(sequences, maxlen=max_length)
+        X_data = pad_sequences(sequences, maxlen=max_length, padding='post', truncating='post')
         print('Shape of data tensor:', X_data.shape)
         print('Shape of label tensor:', y.shape)
 
@@ -99,7 +73,7 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
         X_data_bert = ml_helpers.prepare_sequences_for_bert(X)
         embedding_dim = 768
 
-        X_data = pad_sequences(X_data_bert, maxlen=max_length)
+        X_data = pad_sequences(X_data_bert, maxlen=max_length, padding='post', truncating='post')
 
         print('Shape of data tensor:', X_data.shape)
         print('Shape of label tensor:', y.shape)
@@ -136,7 +110,8 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
         epochs = param_dict['epochs']
         lr = param_dict['lr']
 
-        fold_results['params'] = [lstm_dim, lstm_layers, dense_dim, dropout, batch_size, epochs, lr, embedding_type, random_seed_value]
+        fold_results['params'] = [lstm_dim, lstm_layers, dense_dim, dropout, batch_size, epochs, lr, embedding_type,
+                                  random_seed_value]
 
         # define model
         print("Preparing model...")
@@ -144,54 +119,31 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
 
         if embedding_type is 'none':
             # todo: tune embedding dim?
-            embedding_layer = tf.keras.layers.Embedding(num_words, 32, input_length=max_length, name='none_input_embeddings')
+            embedding_layer = tf.keras.layers.Embedding(num_words, 32, input_length=max_length,
+                                                        name='none_input_embeddings')
             model.add(embedding_layer)
 
         elif embedding_type is 'glove':
             # load pre-trained word embeddings into an Embedding layer
             # note that we set trainable = False so as to keep the embeddings fixed
             embedding_layer = tf.keras.layers.Embedding(num_words,
-                                        embedding_dim,
-                                        embeddings_initializer=Constant(embedding_matrix),
-                                        input_length=max_length,
-                                        trainable=False,
-                                        name='glove_input_embeddings')
+                                                        embedding_dim,
+                                                        embeddings_initializer=Constant(embedding_matrix),
+                                                        input_length=max_length,
+                                                        trainable=False,
+                                                        name='glove_input_embeddings')
             model.add(embedding_layer)
 
-        """
         elif embedding_type is 'bert':
-
-            createBertLayer()
-
-            def createModel():
-                global model
-
-                model = tf.keras.Sequential([
-                    tf.keras.layers.Input(shape=(max_length,), dtype='int32', name='input_ids'),
-                    bert_layer,
-                    tf.keras.layers.Flatten(),
-                    tf.keras.layers.Dense(256, activation=tf.nn.relu),
-                    tf.keras.layers.Dropout(0.5),
-                    tf.keras.layers.Dense(256, activation=tf.nn.relu),
-                    tf.keras.layers.Dropout(0.5),
-                    tf.keras.layers.Dense(y_train.shape[1], activation=tf.nn.softmax)
-                ])
-
-                model.build(input_shape=(None, max_length))
-
-                model.compile(loss='categorical_crossentropy', optimizer=tf.optimizers.Adam(lr=0.00001),
-                              metrics=['accuracy'])
-
-                print(model.summary())
-
-            createModel()
-
-        """
+            model = tf.keras.Sequential()
+            model.add(tf.keras.layers.Input(shape=(max_length,), dtype='int32', name='input_ids'))
+            bert_layer = ml_helpers.createBertLayer()
+            model.add(bert_layer)
 
         model.summary()
 
         for l in list(range(lstm_layers)):
-            if l < lstm_layers-1:
+            if l < lstm_layers - 1:
                 model.add(tf.keras.layers.Bidirectional(tf.keras.layers.LSTM(lstm_dim, return_sequences=True)))
             else:
                 model.add(tf.keras.layers.Bidirectional(tf.keras.layers.LSTM(lstm_dim)))
@@ -214,10 +166,11 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
 
         rounded_predictions = [np.argmax(p) for p in predictions]
         rounded_labels = np.argmax(y_test, axis=1)
-        p, r, f, support = sklearn.metrics.precision_recall_fscore_support(rounded_labels, rounded_predictions, average='macro')
-        #print(p, r, f)
-        #conf_matrix = sklearn.metrics.confusion_matrix(rounded_labels, rounded_predictions)
-        #print(conf_matrix)
+        p, r, f, support = sklearn.metrics.precision_recall_fscore_support(rounded_labels, rounded_predictions,
+                                                                           average='macro')
+        # print(p, r, f)
+        # conf_matrix = sklearn.metrics.confusion_matrix(rounded_labels, rounded_predictions)
+        # print(conf_matrix)
 
         if fold == 0:
             fold_results['train-loss'] = [history.history['loss']]
@@ -244,9 +197,6 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
 
     elapsed = (time.time() - start)
     print("Training time (all folds):", str(timedelta(seconds=elapsed)))
-    fold_results['training_time'] = [elapsed]
+    fold_results['training_time'] = elapsed
 
     return fold_results
-
-
-
