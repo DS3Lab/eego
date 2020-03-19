@@ -1,4 +1,5 @@
 # dataset {zuco1, zuco2, zuco1+2}
+# todo: do we need this one?
 dataset = 'zuco1'
 
 # dataset directories
@@ -37,19 +38,55 @@ lr = [0.001, 0.01, 0.0001]
 folds = 5
 random_seed_values = [13, 78, 22, 66, 42]
 
+# only for Relation Detection:
+rel_thresholds = [0.3, 0.5, 0.7]
+
 # NONE sentiment bin
-# todo: run again like this again to find best lstm_dim
 """
-lstm_dim = [64, 128, 256, 512]
+lstm_dim = [64, 128, 256]  # 512
 lstm_layers = [1]  # 2, 3, 4
 dense_dim = [32, 64, 128]  # 256
 dropout = [0.1, 0.3, 0.5]
-batch_size = [20, 30, 40, 60]  # 30
-epochs = [10, 20, 50, 100]  # 5
-lr = [0.001, 0.01, 0.0001]
+batch_size = [40, 60]  # 20, 30
+epochs = [50, 100]  # 5, 10, 20
+lr = [0.001, 0.0001]  # 0.01
 """
 
 # GLOVE sentiment bin
+"""
+lstm_dim = [256, 512]  # 64, 128
+lstm_layers = [1, 2]  #  3, 4
+dense_dim = [64, 128, 256]  # 32
+dropout = [0.1, 0.3, 0.5]
+batch_size = [20, 30, 40, 60]
+epochs = [50, 100]  # 5, 10, 20
+lr = [0.001, 0.01, 0.0001]  
+"""
+
+# BERT sentiment bin
+"""
+lstm_dim = [128, 256, 512]  # 64
+lstm_layers = [1, 2, 3, 4]  # 1
+dense_dim = [64, 128]  # 32, 256
+dropout = [0.1, 0.3]  # 0.5
+batch_size = [20, 30, 40]  # 60
+epochs = [10, 20, 50, 100]  # 5
+lr = [0.001, 0.0001]  # 0.01
+"""
+
+
+# NONE sentiment tri
+"""
+lstm_dim = [256, 512]  # 64, 128
+lstm_layers = [1, 2]  # 3, 4
+dense_dim = [64, 128, 256]  # 32
+dropout = [0.1, 0.3, 0.5]
+batch_size = [20, 30, 40, 60]
+epochs = [20, 50, 100]  # 5, 10
+lr = [0.001, 0.0001]  # 0.01
+"""
+
+# GLOVE sentiment tri
 """
 lstm_dim = [64, 128, 256, 512]
 lstm_layers = [1, 2, 3, 4]
@@ -60,21 +97,13 @@ epochs = [5, 10, 20, 50, 100]
 lr = [0.001, 0.01, 0.0001]
 """
 
-# BERT sentiment bin
-# todo: run again only with dense layers, no LSTM
-"""
-lstm_dim = [128, 256, 512]  # 64
-lstm_layers = [1, 2, 3, 4]
-dense_dim = [32, 64, 128]  # 256
-dropout = [0.1, 0.3]  # 0.5
-batch_size = [20, 30, 40, 60]
-epochs = [10, 20, 50, 100]  # 5
-lr = [0.001, 0.0001]  # 0.01
-"""
-
-
-# NONE sentiment tri
-
-# GLOVE sentiment tri
-
 # BERT sentiment tri
+"""
+lstm_dim = [64, 128, 256, 512]  
+lstm_layers = [1, 2, 3, 4]  
+dense_dim = [32, 64, 128, 256]  
+dropout = [0.1, 0.3, 0.5]
+batch_size = [20, 30, 40, 60]  
+epochs = [5, 10, 20, 50, 100]  
+lr = [0.001, 0.01, 0.0001]  
+"""
