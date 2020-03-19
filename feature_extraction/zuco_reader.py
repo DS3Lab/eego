@@ -3,11 +3,11 @@ import config
 from . import gaze_extractor
 from . import text_extractor
 
-# wrapper script to read matlab files and extract gaze and/or EEG features
+# Read matlab files and extract gaze and/or EEG features
 
 
 def extract_features(sent_data, feature_set, feature_dict):
-    """"""
+    """Extract features from ZuCo Matlab files"""
 
     # extract only text for baseline models
     if feature_set == 'text_only':
@@ -18,7 +18,7 @@ def extract_features(sent_data, feature_set, feature_dict):
 
 
 def extract_labels(feature_dict, label_dict, task, subject):
-    """"""
+    """Get ground truth labels for all tasks"""
 
     if task.startswith("sentiment"):
 

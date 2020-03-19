@@ -189,12 +189,8 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
         scores = model.evaluate(X_test, y_test, verbose=0)
         predictions = model.predict(X_test)
 
-        # todo: add f1-score threshold
-        # https://medium.com/towards-artificial-intelligence/keras-for-multi-label-text-classification-86d194311d0e
-
         print("For threshold:", threshold)
         pred = predictions.copy()
-
         pred[pred >= threshold] = 1
         pred[pred < threshold] = 0
 
@@ -205,10 +201,6 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
         print("Micro-average quality numbers")
         print("Precision: {:.4f}, Recall: {:.4f}, F1-measure: {:.4f}".format(precision, recall, f1))
         print("-----")
-
-        # check confusion matrix
-        conf_matrix = sklearn.metrics.confusion_matrix(y_test, pred)
-        print(conf_matrix)
 
         # save results
         if fold == 0:
