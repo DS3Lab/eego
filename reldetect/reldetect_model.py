@@ -28,12 +28,13 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
 
     X = list(features.keys())
     y = list(labels.values())
-    # these are already one hot categorical encodings
-    y = np.asarray(y)
 
     # todo: check number of rels per sentence
     # plot sample distribution
     ml_helpers.plot_label_distribution(y)
+
+    # these are already one hot categorical encodings
+    y = np.asarray(y)
 
     vocab_size = 100000
 

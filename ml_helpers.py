@@ -9,14 +9,14 @@ import bert
 from tensorflow import keras
 
 
-
 def plot_label_distribution(y):
 
     print(len(set(y)))
 
     plt.hist(y, bins=len(set(y)), alpha=0.5)
     plt.xticks(rotation=90, fontsize=7)
-    plt.show()
+    plt.savefig('label-distribution-'+config.class_task+'.png')
+    #plt.show()
 
 
 def load_glove_embeddings(vocab_size, word_index, EMBEDDING_DIM):
