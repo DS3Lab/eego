@@ -191,11 +191,11 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
         scores = model.evaluate(X_test, y_test, verbose=0)
         predictions = model.predict(X_test)
 
-        rounded_predictions = [np.argmax(p) for p in predictions]
-        rounded_labels = np.argmax(y_test, axis=1)
+        #rounded_predictions = [np.argmax(p) for p in predictions]
+        #rounded_labels = np.argmax(y_test, axis=1)
 
         # todo: micro or macro for multulabel?
-        p, r, f, support = sklearn.metrics.precision_recall_fscore_support(rounded_labels, rounded_predictions, average='macro')
+        #p, r, f, support = sklearn.metrics.precision_recall_fscore_support(rounded_labels, rounded_predictions, average='macro')
 
         # todo: add f1-score threshold
         # https://medium.com/towards-artificial-intelligence/keras-for-multi-label-text-classification-86d194311d0e
@@ -211,8 +211,14 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
             recall = sklearn.metrics.recall_score(y_test, pred, average='micro')
             f1 = sklearn.metrics.f1_score(y_test, pred, average='micro')
 
+            ma_precision = sklearn.metrics.precision_score(y_test, pred, average='macro')
+            ma_recall = sklearn.metrics.recall_score(y_test, pred, average='macro')
+            ma_f1 = sklearn.metrics.f1_score(y_test, pred, average='macro')
+
             print("Micro-average quality numbers")
             print("Precision: {:.4f}, Recall: {:.4f}, F1-measure: {:.4f}".format(precision, recall, f1))
+            print("Macro-average quality numbers")
+            print("Precision: {:.4f}, Recall: {:.4f}, F1-measure: {:.4f}".format(ma_precision, ma_recall, ma_f1))
             print("-----")
 
         # save results
@@ -233,9 +239,9 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
             fold_results['val-accuracy'].append(history.history['val_accuracy'])
             fold_results['test-loss'].append(scores[0])
             fold_results['test-accuracy'].append(scores[1])
-            fold_results['precision'].append(p)
-            fold_results['recall'].append(r)
-            fold_results['fscore'].append(f)
+            fold_results['precision'].append(ma_precision)
+            fold_results['recall'].append(ma_recall)
+            fold_results['fscore'].append(ma_f1)
 
         fold += 1
 
