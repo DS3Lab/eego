@@ -20,6 +20,7 @@ def plot_label_distribution(y):
         plt.bar(range(len(all_relations)), all_relations, alpha=0.5)
         plt.xticks(ticks=np.arange(len(all_relations)), labels=label_names, fontsize=10)
         plt.savefig('label-distribution-' + config.class_task + '.png')
+        plt.clf()
 
         # plot number of relation types per sentence
         rels_per_sentence = [sum(s) for s in y]
