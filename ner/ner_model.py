@@ -149,7 +149,7 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
         #model.add(tfa.layers.CRF(len(label_names)))
 
         # todo: try diffrent loss/metric --> invalid shape error
-        model.compile(loss='sparse_categorical_entropy',
+        model.compile(loss='sparse_categorical_crossentropy',
                       optimizer=tf.keras.optimizers.RMSprop(lr=lr),
                       metrics=['accuracy'])
 
