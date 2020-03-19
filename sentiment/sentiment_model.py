@@ -170,7 +170,7 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
         model.summary()
 
         # train model
-        history = model.fit(X_train, y_train, validation_split=0.1, epochs=epochs, batch_size=batch_size)
+        history = model.fit(X_train[0:1], y_train, validation_split=0.1, epochs=epochs, batch_size=batch_size)
 
         # evaluate model
         scores = model.evaluate(X_test, y_test, verbose=0)
