@@ -115,7 +115,7 @@ def prepare_sequences_for_bert(X, max_seq_length):
     tokens = map(lambda tok: ["[CLS]"] + tok + ["[SEP]"], tokens)
     token_ids = list(map(tokenizer.convert_tokens_to_ids, tokens))
 
-    token_ids = map(lambda tids: tids + [0] * (max_seq_length - len(tids)), token_ids)
+    #token_ids = map(lambda tids: tids + [0] * (max_seq_length - len(tids)), token_ids)
     #train_token_ids = np.array(list(train_token_ids))
 
     token_ids = np.array(list(token_ids))
@@ -138,3 +138,5 @@ def createBertLayer():
     print("Bert layer created")
 
     return bert_layer
+
+
