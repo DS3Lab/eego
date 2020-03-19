@@ -11,9 +11,7 @@ import config
 import time
 from datetime import timedelta
 import tensorflow as tf
-from keras_contrib.layers import CRF
-from keras_contrib.losses import crf_loss
-from keras_contrib.metrics import crf_viterbi_accuracy
+import tensorflow_addons as tfa
 
 os.environ['KERAS_BACKEND'] = 'tensorflow'
 
@@ -148,13 +146,12 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
         #model.add(tf.keras.layers.TimeDistributed(tf.keras.layers.Dense(len(label_names), activation='softmax')))
         #model.add(tf.keras.layers.Dense(len(label_names), activation='softmax'))
 
-        crf = CRF(len(label_names), sparse_target=True)
-        model.add(crf)
+        model.add(tfa.text.crf.CrfDecodeForwardRnnCell(len(label_names)))
 
         # todo: try diffrent loss/metric --> invalid shape error
-        model.compile(loss=crf.loss_function,
+        model.compile(loss='sparse_categorical_entropy',
                       optimizer=tf.keras.optimizers.RMSprop(lr=lr),
-                      metrics=[crf.accuracy])
+                      metrics=['accuracy'])
 
         #model.compile(loss='sparse_categorical_crossentropy',
          #             optimizer=tf.keras.optimizers.Adam(lr=lr),
