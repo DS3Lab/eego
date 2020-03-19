@@ -10,13 +10,20 @@ from tensorflow import keras
 
 
 def plot_label_distribution(y):
+    """Analyze label distribution of dataset"""
 
-    print(len(set(y)))
+    if config.class_task == "reldetect":
+        # plot number of relation types per sentence
+        rels_per_sentence = [sum(s) for s in y]
+        plt.hist(rels_per_sentence, bins=max(rels_per_sentence), alpha=0.5)
+        plt.xticks(rotation=90, fontsize=7)
+        plt.savefig('label-distribution-' + config.class_task + '.png')
 
-    plt.hist(y, bins=len(set(y)), alpha=0.5)
-    plt.xticks(rotation=90, fontsize=7)
-    plt.savefig('label-distribution-'+config.class_task+'.png')
-    #plt.show()
+    else:
+        plt.hist(y, bins=len(set(y)), alpha=0.5)
+        plt.xticks(rotation=90, fontsize=7)
+        plt.savefig('label-distribution-' + config.class_task + '.png')
+        # plt.show()
 
 
 def load_glove_embeddings(vocab_size, word_index, EMBEDDING_DIM):
