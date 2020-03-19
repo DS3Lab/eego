@@ -146,8 +146,8 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
         model.add(tf.keras.layers.TimeDistributed(tf.keras.layers.Dense(len(label_names), activation='softmax')))
         #model.add(tf.keras.layers.Dense(len(label_names), activation='softmax'))
 
-        crf = CRF(len(label_names) + 1)  # CRF layer, n_tags+1(PAD)
-        model.add(crf)
+        crf = CRF()
+        model.add(crf(len(label_names) + 1)) #  n_tags+1(PAD)
 
         # todo: try diffrent loss/metric --> invalid shape error
         model.compile(loss=crf.loss_function,
