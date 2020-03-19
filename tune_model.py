@@ -2,7 +2,7 @@ import config
 from feature_extraction import zuco_reader
 from reldetect import reldetect_model
 from ner import ner_model
-from sentiment import sentiment_model, sentiment_model_bert
+from sentiment import sentiment_model
 from data_helpers import save_results, load_matlab_files
 
 # Usage on spaceml:
@@ -55,7 +55,7 @@ def main():
                                         elif config.class_task == 'sentiment-bin':
                                             print(len(feature_dict), len(label_dict))
                                             for s, label in list(label_dict.items()):
-                                                # delete neutral sentences
+                                                # drop neutral sentences for binary sentiment classification
                                                 if label == 2:
                                                         del label_dict[s]
                                                         del feature_dict[s]

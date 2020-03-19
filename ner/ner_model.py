@@ -19,21 +19,6 @@ os.environ['KERAS_BACKEND'] = 'tensorflow'
 # Machine learning model for named entity recognition
 
 
-def createBertLayer():
-    global bert_layer
-
-    # todo: Bert model not the same as for Bert tokenizer -- does it matter?
-    bertDir = os.path.join(config.modelBertDir, "multi_cased_L-12_H-768_A-12")
-
-    bert_params = bert.params_from_pretrained_ckpt(bertDir)
-
-    bert_layer = bert.BertModelLayer.from_params(bert_params, name="bert_layer")
-
-    bert_layer.apply_adapter_freeze()
-
-    print("Bert layer created")
-
-
 def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_value):
 
     # set random seed
@@ -149,35 +134,11 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
                                         name='glove_input_embeddings')
             model.add(embedding_layer)
 
-        """
         elif embedding_type is 'bert':
-
-            createBertLayer()
-
-            def createModel():
-                global model
-
-                model = tf.keras.Sequential([
-                    tf.keras.layers.Input(shape=(max_length,), dtype='int32', name='input_ids'),
-                    bert_layer,
-                    tf.keras.layers.Flatten(),
-                    tf.keras.layers.Dense(256, activation=tf.nn.relu),
-                    tf.keras.layers.Dropout(0.5),
-                    tf.keras.layers.Dense(256, activation=tf.nn.relu),
-                    tf.keras.layers.Dropout(0.5),
-                    tf.keras.layers.Dense(y_train.shape[1], activation=tf.nn.softmax)
-                ])
-
-                model.build(input_shape=(None, max_length))
-
-                model.compile(loss='categorical_crossentropy', optimizer=tf.optimizers.Adam(lr=0.00001),
-                              metrics=['accuracy'])
-
-                print(model.summary())
-
-            createModel()
-
-        """
+            model = tf.keras.Sequential()
+            model.add(tf.keras.layers.Input(shape=(max_length,), dtype='int32', name='input_ids'))
+            bert_layer = ml_helpers.createBertLayer()
+            model.add(bert_layer)
 
         model.summary()
 
@@ -187,7 +148,7 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
         # todo: try without time dist.
         model.add(tf.keras.layers.TimeDistributed(tf.keras.layers.Dense(len(label_names), activation='softmax')))
 
-        # todo: try to train for a loooong time
+        # todo: try diffrent loss/metric --> invalid shape error
         model.compile(loss='sparse_categorical_crossentropy',
                       optimizer=tf.keras.optimizers.Adam(lr=lr),
                       metrics=['accuracy'])
