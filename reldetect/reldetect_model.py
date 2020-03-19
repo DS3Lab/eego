@@ -134,9 +134,15 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
             model.add(embedding_layer)
 
         elif embedding_type is 'bert':
-
+            model = tf.keras.Sequential()
+            model.add(tf.keras.layers.Input(shape=(max_length,), dtype='int32', name='input_ids'))
             bert_layer = ml_helpers.createBertLayer()
+            model.add(bert_layer)
 
+            print(model.summary())
+            #model.add(tf.keras.layers.Bidirectional(tf.keras.layers.LSTM(lstm_dim)))
+
+            """
             def createModel():
                 global model
 
@@ -164,6 +170,7 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
                 print(model.summary())
 
             createModel()
+            """
 
         model.summary()
 

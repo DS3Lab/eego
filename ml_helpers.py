@@ -13,11 +13,23 @@ def plot_label_distribution(y):
     """Analyze label distribution of dataset"""
 
     if config.class_task == "reldetect":
+
+
+        label_names = ["Visited", "Founder", "Nationality", "Wife", "PoliticalAffiliation", "JobTitle", "Education",
+                       "Employer", "Awarded", "BirthPlace", "DeathPlace"]
+        all_relations = np.sum(y, 0)
+        plt.hist(all, bins=len(all_relations), alpha=0.5)
+        plt.xticks(labels=label_names, fontsize=10)
+        plt.savefig('label-distribution-' + config.class_task + '.png')
+
+
         # plot number of relation types per sentence
         rels_per_sentence = [sum(s) for s in y]
         plt.hist(rels_per_sentence, bins=max(rels_per_sentence), alpha=0.5)
-        plt.xticks(rotation=90, fontsize=7)
-        plt.savefig('label-distribution-' + config.class_task + '.png')
+        plt.xticks(fontsize=10)
+        plt.xlabel('no. of relations')
+        plt.ylabel('no. of sentences')
+        plt.savefig('relation-distribution-' + config.class_task + '.png')
 
     else:
         plt.hist(y, bins=len(set(y)), alpha=0.5)
