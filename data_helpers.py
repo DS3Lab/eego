@@ -70,7 +70,7 @@ def save_results(fold_results_dict, task):
     # print header
     print("lstm_dim", "lstm_layers", "dense_dim", "dropout", "batch_size", "epochs", "lr", "embedding_type",
           "random_seed", "train_acc", "val_acc", "test_acc", "test_std", "avg_precision", "std_precision",
-          "avg_recall", "std_recall", "avg_fscore", "std_fscore", "training_time", file=result_file)
+          "avg_recall", "std_recall", "avg_fscore", "std_fscore", "threshold", "training_time", file=result_file)
 
 
     # training scores
@@ -88,9 +88,10 @@ def save_results(fold_results_dict, task):
     std_precision = np.std(fold_results_dict['precision'])
     std_recall = np.std(fold_results_dict['recall'])
     std_fscore = np.std(fold_results_dict['fscore'])
+    threshold = fold_results_dict['threshold'] if 'threshold' in fold_results_dict else "-"
 
     print(" ".join(map(str, fold_results_dict['params'])),train_acc, val_acc, avg_accuracy, std_accuracy, avg_precision,
-          std_precision, avg_recall, std_recall, avg_fscore, std_fscore, fold_results_dict['training_time'], file=result_file)
+          std_precision, avg_recall, std_recall, avg_fscore, std_fscore, threshold, fold_results_dict['training_time'], file=result_file)
 
 
 

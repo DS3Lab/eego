@@ -6,8 +6,8 @@ from sentiment import sentiment_model, sentiment_model_bert
 from data_helpers import save_results, load_matlab_files
 
 # Usage on spaceml:
-# conda activate env-eego
-# CUDA_VISIBLE_DEVICES=7 python tune_model.py
+# $ conda activate env-eego
+# $ CUDA_VISIBLE_DEVICES=7 python tune_model.py
 
 
 def main():
@@ -21,7 +21,6 @@ def main():
         loaded_data = load_matlab_files(config.class_task, subject)
 
         zuco_reader.extract_features(loaded_data, config.feature_set, feature_dict)
-        # todo: fix label extraction for relation detection
         zuco_reader.extract_labels(feature_dict, label_dict, config.class_task, subject)
 
     print(len(feature_dict), len(label_dict))
@@ -52,7 +51,6 @@ def main():
 
                                         elif config.class_task == 'sentiment-tri':
                                             fold_results = sentiment_model.lstm_classifier(feature_dict, label_dict, emb, parameter_dict, rand)
-                                            #print(fold_results)
                                             save_results(fold_results, config.class_task)
                                         elif config.class_task == 'sentiment-bin':
                                             print(len(feature_dict), len(label_dict))
@@ -63,7 +61,6 @@ def main():
                                                         del feature_dict[s]
                                             print(len(feature_dict), len(label_dict))
                                             fold_results = sentiment_model.lstm_classifier(feature_dict, label_dict, emb, parameter_dict, rand)
-                                            #print(fold_results)
                                             save_results(fold_results, config.class_task)
 
 
