@@ -3,10 +3,7 @@ import os
 import numpy as np
 from transformers import *
 import config
-#import tensorflow as tf
-from tensorflow.python.keras.preprocessing.sequence import pad_sequences
 import bert
-from tensorflow import keras
 
 
 def plot_label_distribution(y):
@@ -121,7 +118,8 @@ def createBertLayer():
     global bert_layer
 
     # todo: model not the same as for tokenizer -- does it matter?
-    bertDir = os.path.join(config.modelBertDir, "multi_cased_L-12_H-768_A-12")
+    #bertDir = os.path.join(config.modelBertDir, "multi_cased_L-12_H-768_A-12")
+    bertDir = os.path.join(config.modelBertDir, "uncased_L-12_H-768_A-12")
 
     bert_params = bert.params_from_pretrained_ckpt(bertDir)
 
