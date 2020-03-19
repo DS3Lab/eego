@@ -14,10 +14,14 @@ Word embeddings available at: `/mnt/ds3lab-scratch/noraho/embeddings/glove-6B/` 
 
 ## NER
 
+sequence to sequence word-level classification
+
 ## Relation detection
+
+multi-label sentence-level classification
 
 ## Sentiment analysis
 
-binary or ternary
+binary or ternary sentence-level classification
 only SR sentences from ZuCo 1
 
