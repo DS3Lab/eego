@@ -105,7 +105,7 @@ def createTokenizer():
     return tokenizer
 
 
-def prepare_sequences_for_bert(X):
+def prepare_sequences_for_bert(X, max_seq_length):
     """ tokenize sentences and add special tokens needed for Bert"""
 
 
@@ -115,6 +115,9 @@ def prepare_sequences_for_bert(X):
     tokens = map(lambda tok: ["[CLS]"] + tok + ["[SEP]"], tokens)
     token_ids = list(map(tokenizer.convert_tokens_to_ids, tokens))
 
+    token_ids = map(lambda tids: tids + [0] * (max_seq_length - len(tids)), token_ids)
+    #train_token_ids = np.array(list(train_token_ids))
+
     token_ids = np.array(list(token_ids))
 
     return token_ids
@@ -123,14 +126,13 @@ def prepare_sequences_for_bert(X):
 def createBertLayer():
     global bert_layer
 
-    # todo: model not the same as for tokenizer -- does it matter?
-    #bertDir = os.path.join(config.modelBertDir, "multi_cased_L-12_H-768_A-12")
     bertDir = os.path.join(config.modelBertDir, "uncased_L-12_H-768_A-12")
 
     bert_params = bert.params_from_pretrained_ckpt(bertDir)
 
     bert_layer = bert.BertModelLayer.from_params(bert_params, name="bert_layer")
 
+    # todo: test if freezing is necessary?
     bert_layer.apply_adapter_freeze()
 
     print("Bert layer created")
