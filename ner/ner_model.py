@@ -39,7 +39,7 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
     vocab_size = 100000
 
     # prepare text samples
-    print('Processing text dataset')
+    print('Processing text dataset...')
 
     print('Found %s sentences.' % len(X))
 
@@ -47,7 +47,7 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
     tokenizer.fit_on_texts(X)
     sequences = tokenizer.texts_to_sequences(X)
     max_length = max([len(s) for s in sequences])
-    print("max sequences: ", max_length)
+    print("Maximum sentence length: ", max_length)
 
     word_index = tokenizer.word_index
     print('Found %s unique tokens.' % len(word_index))
@@ -57,13 +57,11 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
     y_padded = pad_sequences(y, maxlen=max_length, value=0, padding='post', truncating='post')
 
     if embedding_type is 'none':
-
         X_data = pad_sequences(sequences, maxlen=max_length, padding='post', truncating='post')
         print('Shape of data tensor:', X_data.shape)
         print('Shape of label tensor:', y_padded.shape)
 
     if embedding_type is 'glove':
-
         X_data = pad_sequences(sequences, maxlen=max_length, padding='post', truncating='post')
         print('Shape of data tensor:', X_data.shape)
         print('Shape of label tensor:', y_padded.shape)
@@ -142,7 +140,7 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
 
         model.summary()
 
-        for l in list(range(lstm_layers)):
+        for _ in list(range(lstm_layers)):
             model.add(tf.keras.layers.Bidirectional(tf.keras.layers.LSTM(lstm_dim, return_sequences=True)))
 
         # todo: try without time dist.
@@ -180,14 +178,11 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
             out_pred += out_i_pred
             out_test += out_i_test
 
-        print(scores[1])
-        print(sklearn.metrics.accuracy_score(out_test,out_pred))
+        print("Accuracy with padded:", scores[1])
+        print("Accuracy without padded:", sklearn.metrics.accuracy_score(out_test, out_pred))
         p, r, f, support = sklearn.metrics.precision_recall_fscore_support(out_test, out_pred, average='macro')
         print(sklearn.metrics.classification_report(out_test, out_pred))
-
         print(p, r, f)
-        #conf_matrix = sklearn.metrics.confusion_matrix(rounded_labels, rounded_predictions)
-        #print(conf_matrix)
 
         if fold == 0:
             fold_results['train-loss'] = [history.history['loss']]
