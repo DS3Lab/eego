@@ -14,14 +14,12 @@ def plot_label_distribution(y):
 
     if config.class_task == "reldetect":
 
-
         label_names = ["Visited", "Founder", "Nationality", "Wife", "PoliticalAffiliation", "JobTitle", "Education",
                        "Employer", "Awarded", "BirthPlace", "DeathPlace"]
         all_relations = np.sum(y, 0)
         plt.bar(range(len(all_relations)), all_relations, alpha=0.5)
-        plt.xticks(labels=label_names, fontsize=10)
+        plt.xticks(ticks=np.arange(len(all_relations)), labels=label_names, fontsize=10)
         plt.savefig('label-distribution-' + config.class_task + '.png')
-
 
         # plot number of relation types per sentence
         rels_per_sentence = [sum(s) for s in y]
@@ -35,7 +33,6 @@ def plot_label_distribution(y):
         plt.hist(y, bins=len(set(y)), alpha=0.5)
         plt.xticks(rotation=90, fontsize=7)
         plt.savefig('label-distribution-' + config.class_task + '.png')
-        # plt.show()
 
 
 def load_glove_embeddings(vocab_size, word_index, EMBEDDING_DIM):
