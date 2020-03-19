@@ -95,7 +95,13 @@ def createTokenizer():
     # bert implementationadapted from here:
     # https://medium.com/@brn.pistone/bert-fine-tuning-for-tensorflow-2-0-with-keras-api-9913fc1348f6
 
-    tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
+    #tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
+    #return tokenizer
+
+    modelsFolder = os.path.join(config.modelBertDir, "uncased_L-12_H-768_A-12")
+    vocab_file = os.path.join(modelsFolder, "vocab.txt")
+
+    tokenizer = bert.bert_tokenization.FullTokenizer(vocab_file, do_lower_case=True)
     return tokenizer
 
 
