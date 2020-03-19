@@ -2,7 +2,6 @@ import os
 import numpy as np
 from tensorflow.python.keras.preprocessing.sequence import pad_sequences
 from tensorflow.python.keras.preprocessing.text import Tokenizer
-from tensorflow.python.keras.utils import np_utils
 from tensorflow.python.keras.initializers import Constant
 import tensorflow.python.keras.backend as K
 import sklearn.metrics
@@ -11,8 +10,8 @@ import ml_helpers
 import config
 import time
 from datetime import timedelta
-import bert
 import tensorflow as tf
+from keras_contrib.layers import CRF
 
 os.environ['KERAS_BACKEND'] = 'tensorflow'
 
@@ -144,13 +143,20 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
             model.add(tf.keras.layers.Bidirectional(tf.keras.layers.LSTM(lstm_dim, return_sequences=True)))
 
         # todo: try without time dist.
-        #model.add(tf.keras.layers.TimeDistributed(tf.keras.layers.Dense(len(label_names), activation='softmax')))
-        model.add(tf.keras.layers.Dense(len(label_names), activation='softmax'))
+        model.add(tf.keras.layers.TimeDistributed(tf.keras.layers.Dense(len(label_names), activation='softmax')))
+        #model.add(tf.keras.layers.Dense(len(label_names), activation='softmax'))
+
+        crf = CRF(len(label_names) + 1)  # CRF layer, n_tags+1(PAD)
+        model.add(crf)
 
         # todo: try diffrent loss/metric --> invalid shape error
-        model.compile(loss='sparse_categorical_crossentropy',
-                      optimizer=tf.keras.optimizers.Adam(lr=lr),
-                      metrics=['sparse_categorical_accuracy'])
+        model.compile(loss=crf.loss_function,
+                      optimizer=tf.keras.optimizers.RMSprop(lr=lr),
+                      metrics=[crf.accuracy])
+
+        #model.compile(loss='sparse_categorical_crossentropy',
+         #             optimizer=tf.keras.optimizers.Adam(lr=lr),
+          #            metrics=['accuracy'])
 
         model.summary()
 
