@@ -41,14 +41,13 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
     # prepare text samples
     print('Processing text dataset')
 
-    print('Found %s texts.' % len(X))
+    print('Found %s sentences.' % len(X))
 
     tokenizer = Tokenizer(num_words=vocab_size)
     tokenizer.fit_on_texts(X)
     sequences = tokenizer.texts_to_sequences(X)
-    print(type(sequences))
     max_length = max([len(s) for s in sequences])
-    print("max: ", max_length)
+    print("Maximum sentence length: ", max_length)
 
     word_index = tokenizer.word_index
     print('Found %s unique tokens.' % len(word_index))
@@ -96,8 +95,6 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
         print(y_test.shape)
         print(X_train.shape)
         print(X_test.shape)
-
-        print(y_train)
 
         # reset model
         K.clear_session()
