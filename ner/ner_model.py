@@ -146,7 +146,7 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
         #model.add(tf.keras.layers.TimeDistributed(tf.keras.layers.Dense(len(label_names), activation='softmax')))
         #model.add(tf.keras.layers.Dense(len(label_names), activation='softmax'))
 
-        model.add(tfa.text.crf.CrfDecodeForwardRnnCell(len(label_names)))
+        model.add(tfa.text.crf.CrfDecodeForwardRnnCell())
 
         # todo: try diffrent loss/metric --> invalid shape error
         model.compile(loss='sparse_categorical_entropy',
