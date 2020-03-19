@@ -2,7 +2,6 @@ import os
 import numpy as np
 from tensorflow.python.keras.preprocessing.sequence import pad_sequences
 from tensorflow.python.keras.preprocessing.text import Tokenizer
-from tensorflow.python.keras.utils import np_utils
 from tensorflow.python.keras.initializers import Constant
 import tensorflow.python.keras.backend as K
 import sklearn.metrics
@@ -11,7 +10,6 @@ import ml_helpers
 import config
 import time
 from datetime import timedelta
-import bert
 import tensorflow as tf
 
 os.environ['KERAS_BACKEND'] = 'tensorflow'
@@ -35,7 +33,7 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
 
     # todo: check number of rels per sentence
     # plot sample distribution
-    # ml_helpers.plot_label_distribution(y)
+    ml_helpers.plot_label_distribution(y)
 
     vocab_size = 100000
 
@@ -116,7 +114,8 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
         print("Preparing model...")
 
         if embedding_type is 'none':
-            # todo: tune embedding dim?
+            # todo: tune embedding dim? but too many things to tune already...
+            # no embeddings isn't going to give us the best results anyway
             model = tf.keras.Sequential()
             embedding_layer = tf.keras.layers.Embedding(num_words, 32, input_length=max_length, name='none_input_embeddings')
             model.add(embedding_layer)
