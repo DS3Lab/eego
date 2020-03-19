@@ -113,3 +113,5 @@ def createBertLayer():
     bert_layer.apply_adapter_freeze()
 
     print("Bert layer created")
+
+    return bert_layer
