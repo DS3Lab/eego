@@ -39,7 +39,7 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
     vocab_size = 100000
 
     # prepare text samples
-    print('Processing text dataset')
+    print('Processing text dataset...')
 
     print('Found %s sentences.' % len(X))
 

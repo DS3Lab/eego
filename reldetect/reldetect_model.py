@@ -139,39 +139,6 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
             bert_layer = ml_helpers.createBertLayer()
             model.add(bert_layer)
 
-            print(model.summary())
-            #model.add(tf.keras.layers.Bidirectional(tf.keras.layers.LSTM(lstm_dim)))
-
-            """
-            def createModel():
-                global model
-
-                model = tf.keras.Sequential([
-                    tf.keras.layers.Input(shape=(max_length,), dtype='int32', name='input_ids'),
-                    bert_layer,
-                    # tf.keras.layers.Flatten(),
-                    # tf.keras.layers.Dense(256, activation=tf.nn.relu),
-                    # tf.keras.layers.Dropout(0.5),
-                    # tf.keras.layers.Dense(256, activation=tf.nn.relu),
-                    # tf.keras.layers.Dropout(0.5),
-                    # tf.keras.layers.Dense(y_train.shape[1], activation=tf.nn.softmax)
-                    tf.keras.layers.Bidirectional(tf.keras.layers.LSTM(lstm_dim)),
-                    tf.keras.layers.Dense(dense_dim, activation='relu'),
-                    tf.keras.layers.Dropout(rate=dropout),
-                    tf.keras.layers.Dense(y_train.shape[1], activation='softmax'),
-                ])
-
-                model.build(input_shape=(None, max_length))
-
-                model.compile(loss='categorical_crossentropy',
-                              optimizer=tf.keras.optimizers.Adam(lr=lr),
-                              metrics=['accuracy'])
-
-                print(model.summary())
-
-            createModel()
-            """
-
         model.summary()
 
         for l in list(range(lstm_layers)):

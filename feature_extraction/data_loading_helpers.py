@@ -296,6 +296,7 @@ def extract_sentence_level_data(subject, eeg_float_resolution=np.float16):
         sentence_level_data[idx] = data_dict
     return sentence_level_data
 
+
 def create_all_subjects_data(filename, eeg_float_resolution=np.float16):
     """
     Creates all subject training data dictionaries and saves them via pickle named filename_subject.pickle

@@ -8,9 +8,9 @@ def extract_sentences(sentence_data, sentence_dict):
 
     for tup in sentence_data:
 
+        # read Matlab v7.3 structures
         f = tup[0]
         s_data = tup[1]
-
         rawData = s_data['rawData']
         contentData = s_data['content']
 
