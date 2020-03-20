@@ -13,7 +13,7 @@ def extract_features(sent_data, feature_set, feature_dict, eeg_dict):
     # extract text for all models
     text_extractor.extract_sentences(sent_data, feature_dict)
 
-    if 'eeg' in feature_set:
+    if 'eeg_raw' in feature_set:
         eeg_extractor.extract_raw_eeg(sent_data, eeg_dict)
 
     if "gaze" in feature_set:
