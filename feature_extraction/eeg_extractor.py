@@ -29,8 +29,10 @@ def extract_raw_eeg(sentence_data, eeg_dict):
             # for sentiment and relation detection
             if config.class_task.startswith('sentiment') or config.class_task == "reldetect":
                 if sent not in eeg_dict:
+                    print("adding to EEG dict")
                     eeg_dict[sent] = {'mean_raw_sent_eeg': [mean_raw_sent_eeg]}
                 else:
+                    print("EEG dups")
                     eeg_dict[sent]['mean_raw_sent_eeg'].append(mean_raw_sent_eeg)
                     #print('duplicate!')
 
