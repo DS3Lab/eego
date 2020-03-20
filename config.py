@@ -11,14 +11,14 @@ rootdir_zuco2 = base_dir+"zuco2/"
 
 # subjects
 #subjects = ['YAC', 'YAG', 'YAK', 'YDG', 'YDR', 'YFR', 'YFS', 'YHS', 'YIS', 'YLS', 'YMD', 'YMS', 'YRH', 'YRK', 'YRP', 'YSD', 'YSL', 'YTL']  # exclude YMH
-subjects = ["ZKW"]#,"ZJS", "ZDN", "ZJN"]#, "ZPH", "ZAB", "ZJM", "ZKB", "ZKH", "ZMG", "ZGW", "ZKW", "ZDM"]
+subjects = ["ZKW", "ZJS", "ZDN"]#, "ZJN"]#, "ZPH", "ZAB", "ZJM", "ZKB", "ZKH", "ZMG", "ZGW", "ZKW", "ZDM"]
 
 
 # ML task {sentiment-bin, sentiment-tri, ner, reldetect}
 class_task = 'sentiment-bin' #'sentiment-bin'
 
 # Features sets {'text_only', 'gaze_feats', 'eeg_feats'}
-feature_set = 'eeg_raw' # 'text_only' #'gaze_features'
+feature_set = ['eeg_raw'] # 'text_only' #'gaze_features'
 
 # word embeddings {none, glove (300d), bert}
 embeddings = ['none', 'glove']
