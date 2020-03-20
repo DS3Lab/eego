@@ -84,16 +84,17 @@ def lstm_classifier(features, labels, eeg, embedding_type, param_dict, random_se
     fold = 0
     fold_results = {}
 
-    all_arr1 = np.array([])
+    eeg_X = []
     for s in eeg.values():
+        # try: n = [float(sum(col))/len(col) for col in zip(*data)]
         print(len(s['mean_raw_sent_eeg']))
-        n = np.mean(s['mean_raw_sent_eeg'], axis=1)
+        n = np.mean(s['mean_raw_sent_eeg'], axis=0)
         print(type(n))
         print(n.shape)
-        all_arr1 = np.stack(([all_arr1, n]))
-    print(all_arr1.shape)
+        eeg_X.append(n)
+    print(len(eeg_X))
+    X_data = np.array(eeg_X)
 
-    X_data = np.array([s['mean_raw_sent_eeg'] for s in eeg.values()])
     print("X = EEG")
     print(X_data.shape)
 
