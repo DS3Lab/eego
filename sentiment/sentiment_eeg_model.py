@@ -161,12 +161,13 @@ def lstm_classifier(features, labels, eeg, embedding_type, param_dict, random_se
 
         model.summary()
 
-
+        """
         for l in list(range(lstm_layers)):
             if l < lstm_layers - 1:
                 model.add(tf.keras.layers.Bidirectional(tf.keras.layers.LSTM(lstm_dim, return_sequences=True)))
             else:
                 model.add(tf.keras.layers.Bidirectional(tf.keras.layers.LSTM(lstm_dim)))
+        """
         model.add(tf.keras.layers.Dense(dense_dim, activation='relu'))
         model.add(tf.keras.layers.Dropout(rate=dropout))
         model.add(tf.keras.layers.Dense(y_train.shape[1], activation='softmax'))
