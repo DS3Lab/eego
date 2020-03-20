@@ -84,7 +84,9 @@ def lstm_classifier(features, labels, eeg, embedding_type, param_dict, random_se
     fold = 0
     fold_results = {}
 
-    X_data = eeg
+    X_data = np.array([s['mean_raw_sent_eeg'] for s in eeg.values()])
+    print(X_data.shape)
+
 
     for train_index, test_index in kf.split(X_data):
 

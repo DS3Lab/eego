@@ -2,7 +2,7 @@ import config
 from feature_extraction import zuco_reader
 from reldetect import reldetect_model
 from ner import ner_model
-from sentiment import sentiment_model
+from sentiment import sentiment_model, sentiment_eeg_model
 from data_helpers import save_results, load_matlab_files
 
 # Usage on spaceml:
@@ -59,7 +59,7 @@ def main():
                                                 if label == 2:
                                                         del label_dict[s]
                                                         del feature_dict[s]
-                                            fold_results = sentiment_model.lstm_classifier(feature_dict, label_dict, eeg_dict, emb, parameter_dict, rand)
+                                            fold_results = sentiment_eeg_model.lstm_classifier(feature_dict, label_dict, eeg_dict, emb, parameter_dict, rand)
                                             save_results(fold_results, config.class_task)
 
 
