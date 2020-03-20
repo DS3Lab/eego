@@ -94,6 +94,7 @@ def lstm_classifier(features, labels, eeg, embedding_type, param_dict, random_se
         eeg_X.append(n)
     print(len(eeg_X))
     X_data = np.array(eeg_X)
+    max_length = X_data.shape[1]
 
     print("X = EEG")
     print(X_data.shape)
@@ -147,7 +148,6 @@ def lstm_classifier(features, labels, eeg, embedding_type, param_dict, random_se
             model.add(embedding_layer)
 
         elif embedding_type is 'bert':
-            model = tf.keras.Sequential()
             model.add(tf.keras.layers.Input(shape=(max_length,), dtype='int32', name='input_ids'))
             bert_layer = ml_helpers.createBertLayer()
             model.add(bert_layer)
