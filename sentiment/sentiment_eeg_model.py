@@ -84,6 +84,8 @@ def lstm_classifier(features, labels, eeg, embedding_type, param_dict, random_se
     fold = 0
     fold_results = {}
 
+    X_data = eeg
+
     for train_index, test_index in kf.split(X_data):
 
         print("FOLD: ", fold)
