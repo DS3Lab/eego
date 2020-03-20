@@ -59,6 +59,7 @@ def main():
                                                 if label == 2:
                                                         del label_dict[s]
                                                         del feature_dict[s]
+                                                        del eeg_dict[s]
                                             fold_results = sentiment_eeg_model.lstm_classifier(feature_dict, label_dict, eeg_dict, emb, parameter_dict, rand)
                                             save_results(fold_results, config.class_task)
 
