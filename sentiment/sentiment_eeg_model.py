@@ -93,11 +93,12 @@ def lstm_classifier(features, labels, eeg, embedding_type, param_dict, random_se
         print(n.shape)
         eeg_X.append(n)
     print(len(eeg_X))
-    X_data = np.array(eeg_X)
-    max_length = X_data.shape[1]
+    X_data_eeg = np.array(eeg_X)
+    max_length_eeg = X_data_eeg.shape[1]
 
-    print("X = EEG")
-    print(X_data.shape)
+    X_data_final = np.concatenate((X_data, X_data_eeg))
+    print(X_data_final.shape)
+    max_length = X_data_final.shape[1]
 
     for train_index, test_index in kf.split(X_data):
 
@@ -130,7 +131,7 @@ def lstm_classifier(features, labels, eeg, embedding_type, param_dict, random_se
         print("Preparing model...")
         model = tf.keras.Sequential()
 
-        model.add(tf.keras.layers.Input(shape=(max_length,), dtype='int32', name='input_eeg'))
+        model.add(tf.keras.layers.Input(shape=(max_length_eeg,), dtype='int32', name='input_eeg'))
         model.add(tf.keras.layers.Dense(64, activation=tf.nn.relu))
         model.add(tf.keras.layers.Dropout(0.3))
         model.add(tf.keras.layers.Dense(64, activation=tf.nn.relu))

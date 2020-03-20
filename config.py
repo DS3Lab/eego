@@ -35,7 +35,7 @@ epochs = [5, 10, 20, 50, 100]
 lr = [0.001, 0.01, 0.0001]
 
 # other parameters
-folds = 5
+folds = 3
 random_seed_values = [13, 78, 22, 66, 42]
 
 # only for Relation Detection:
