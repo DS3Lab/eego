@@ -18,7 +18,10 @@ def extract_raw_eeg(sentence_data, sentence_dict):
 
         for idx in range(len(rawData)):
 
-            print(rawData[idx][0])
+            raw_sent_eeg_ref = rawData[idx][0]
+            raw_sent_eeg = f[raw_sent_eeg_ref]
+            print(raw_sent_eeg)
+            print(raw_sent_eeg.shape)
 
             obj_reference_content = contentData[idx][0]
             sent = dh.load_matlab_string(f[obj_reference_content])
