@@ -161,7 +161,7 @@ def lstm_classifier(features, labels, eeg, embedding_type, param_dict, random_se
 
         model.summary()
 
-        """
+
         for l in list(range(lstm_layers)):
             if l < lstm_layers - 1:
                 model.add(tf.keras.layers.Bidirectional(tf.keras.layers.LSTM(lstm_dim, return_sequences=True)))
@@ -172,11 +172,7 @@ def lstm_classifier(features, labels, eeg, embedding_type, param_dict, random_se
         model.add(tf.keras.layers.Dense(y_train.shape[1], activation='softmax'))
 
         model.compile(loss='categorical_crossentropy',
-                      optimizer=tf.keras.optimizers.Adam(lr=lr),
-                      metrics=['accuracy'])
-        """
-        model.compile(loss='categorical_crossentropy',
-                      optimizer=tf.keras.optimizers.Adam(lr=0.00001),
+                      optimizer=tf.keras.optimizers.Adam(lr=0.0001),
                       metrics=['accuracy'])
 
         model.summary()
