@@ -130,6 +130,14 @@ def lstm_classifier(features, labels, eeg, embedding_type, param_dict, random_se
         print("Preparing model...")
         model = tf.keras.Sequential()
 
+        model.add(tf.keras.layers.Input(shape=(max_length,), dtype='int32', name='input_eeg'))
+        model.add(tf.keras.layers.Dense(64, activation=tf.nn.relu))
+        model.add(tf.keras.layers.Dropout(0.3))
+        model.add(tf.keras.layers.Dense(64, activation=tf.nn.relu))
+        model.add(tf.keras.layers.Dropout(0.3))
+        model.add(tf.keras.layers.Dense(y_train.shape[1], activation=tf.nn.softmax))
+
+        """
         if embedding_type is 'none':
             # todo: tune embedding dim?
             embedding_layer = tf.keras.layers.Embedding(num_words, 32, input_length=max_length,
@@ -161,16 +169,16 @@ def lstm_classifier(features, labels, eeg, embedding_type, param_dict, random_se
 
         model.summary()
 
-        """
         for l in list(range(lstm_layers)):
             if l < lstm_layers - 1:
                 model.add(tf.keras.layers.Bidirectional(tf.keras.layers.LSTM(lstm_dim, return_sequences=True)))
             else:
                 model.add(tf.keras.layers.Bidirectional(tf.keras.layers.LSTM(lstm_dim)))
-        """
+
         model.add(tf.keras.layers.Dense(dense_dim, activation='relu'))
         model.add(tf.keras.layers.Dropout(rate=dropout))
         model.add(tf.keras.layers.Dense(y_train.shape[1], activation='softmax'))
+        """
 
         model.compile(loss='categorical_crossentropy',
                       optimizer=tf.keras.optimizers.Adam(lr=0.0001),
