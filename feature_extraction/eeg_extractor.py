@@ -23,7 +23,7 @@ def extract_raw_eeg(sentence_data, sentence_dict):
             raw_sent_eeg = f[raw_sent_eeg_ref]
             #print(type(raw_sent_eeg))
             print(raw_sent_eeg.shape)
-            mean_raw_sent_eeg = np.nanmean(raw_sent_eeg, axis=1)
+            mean_raw_sent_eeg = np.nanmean(raw_sent_eeg, axis=0)
             print(mean_raw_sent_eeg.shape)
 
             obj_reference_content = contentData[idx][0]
