@@ -2,6 +2,7 @@ import csv
 import config
 from . import gaze_extractor
 from . import text_extractor
+from . import eeg_extractor
 
 # Read matlab files and extract gaze and/or EEG features
 
@@ -12,6 +13,9 @@ def extract_features(sent_data, feature_set, feature_dict):
     # extract only text for baseline models
     if feature_set == 'text_only':
         text_extractor.extract_sentences(sent_data, feature_dict)
+
+    if 'eeg' in feature_set:
+        eeg_extractor.extract_raw_eeg(sent_data, feature_dict)
 
     if "gaze" in feature_set:
         gaze_extractor.word_level_et_features(sent_data, feature_dict)

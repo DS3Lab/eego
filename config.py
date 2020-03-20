@@ -18,7 +18,7 @@ subjects = ["ZKW"]#,"ZJS", "ZDN", "ZJN"]#, "ZPH", "ZAB", "ZJM", "ZKB", "ZKH", "Z
 class_task = 'sentiment-bin' #'sentiment-bin'
 
 # Features sets {'text_only', 'gaze_feats', 'eeg_feats'}
-feature_set = 'text_only' #'gaze_features'
+feature_set = 'eeg_raw' # 'text_only' #'gaze_features'
 
 # word embeddings {none, glove (300d), bert}
 embeddings = ['none', 'glove']
