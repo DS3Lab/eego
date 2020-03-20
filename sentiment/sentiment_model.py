@@ -180,7 +180,7 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
         rounded_labels = np.argmax(y_test, axis=1)
         p, r, f, support = sklearn.metrics.precision_recall_fscore_support(rounded_labels, rounded_predictions,
                                                                            average='macro')
-        # print(p, r, f)
+        print(p, r, f)
         # conf_matrix = sklearn.metrics.confusion_matrix(rounded_labels, rounded_predictions)
         # print(conf_matrix)
 

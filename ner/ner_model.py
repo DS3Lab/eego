@@ -139,23 +139,15 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
 
         model.summary()
 
+        # todo: try dropout here
         for _ in list(range(lstm_layers)):
             model.add(tf.keras.layers.Bidirectional(tf.keras.layers.LSTM(512, recurrent_dropout=0.2, dropout=0.2, return_sequences=True)))
 
-        # todo: try without time dist.
         model.add(tf.keras.layers.TimeDistributed(tf.keras.layers.Dense(len(label_names), activation='softmax')))
-        #model.add(tf.keras.layers.Dense(len(label_names), activation='softmax'))
 
-        #model.add(tfa.layers.CRF(len(label_names)))
-
-        # todo: try diffrent loss/metric --> invalid shape error
         model.compile(loss='sparse_categorical_crossentropy',
-                      optimizer=tf.keras.optimizers.RMSprop(lr=lr),
+                      optimizer=tf.keras.optimizers.Adam(lr=lr),
                       metrics=['accuracy'])
-
-        #model.compile(loss='sparse_categorical_crossentropy',
-         #             optimizer=tf.keras.optimizers.Adam(lr=lr),
-          #            metrics=['accuracy'])
 
         model.summary()
 
