@@ -2,6 +2,7 @@
 from . import data_loading_helpers as dh
 import config
 import nltk
+import numpy as np
 
 
 # get raw EEG features (mean word level activity)
@@ -20,8 +21,10 @@ def extract_raw_eeg(sentence_data, sentence_dict):
 
             raw_sent_eeg_ref = rawData[idx][0]
             raw_sent_eeg = f[raw_sent_eeg_ref]
-            print(raw_sent_eeg)
+            print(type(raw_sent_eeg))
             print(raw_sent_eeg.shape)
+            mean_raw_sent_eeg = np.nanmean(raw_sent_eeg, axis=1)
+            print(mean_raw_sent_eeg.shape)
 
             obj_reference_content = contentData[idx][0]
             sent = dh.load_matlab_string(f[obj_reference_content])
