@@ -14,6 +14,7 @@ def plot_label_distribution(y):
         label_names = ["Visited", "Founder", "Nationality", "Wife", "PoliticalAffiliation", "JobTitle", "Education",
                        "Employer", "Awarded", "BirthPlace", "DeathPlace"]
         all_relations = np.sum(y, 0)
+        plt.clf()
         plt.bar(range(len(all_relations)), all_relations, alpha=0.5)
         plt.xticks(ticks=np.arange(len(all_relations)), labels=label_names, fontsize=10)
         plt.savefig('label-distribution-' + config.class_task + '.png')
@@ -26,11 +27,13 @@ def plot_label_distribution(y):
         plt.xlabel('no. of relations')
         plt.ylabel('no. of sentences')
         plt.savefig('relation-distribution-' + config.class_task + '.png')
+        plt.clf()
 
     else:
         plt.hist(y, bins=len(set(y)), alpha=0.5)
         plt.xticks(rotation=90, fontsize=7)
         plt.savefig('label-distribution-' + config.class_task + '.png')
+        plt.clf()
 
 
 def load_glove_embeddings(vocab_size, word_index, EMBEDDING_DIM):
@@ -130,7 +133,7 @@ def createBertLayer():
     bert_layer = bert.BertModelLayer.from_params(bert_params, name="bert_layer")
 
     # todo: test if freezing is necessary?
-    bert_layer.apply_adapter_freeze()
+    #bert_layer.apply_adapter_freeze()
 
     print("Bert layer created")
 

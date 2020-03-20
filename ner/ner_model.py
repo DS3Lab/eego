@@ -140,6 +140,8 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
         model.summary()
 
         # todo: try dropout here
+        model.add(tf.keras.layers.Dropout(0.5))
+
         for _ in list(range(lstm_layers)):
             model.add(tf.keras.layers.Bidirectional(tf.keras.layers.LSTM(512, recurrent_dropout=0.2, dropout=0.2, return_sequences=True)))
 
