@@ -24,8 +24,8 @@ def main():
         zuco_reader.extract_features(loaded_data, config.feature_set, feature_dict, eeg_dict)
         zuco_reader.extract_labels(feature_dict, label_dict, config.class_task, subject)
 
-    print(len(feature_dict), len(label_dict))
-    if len(feature_dict) != len(label_dict):
+    print(len(feature_dict), len(label_dict), len(eeg_dict))
+    if len(feature_dict) != len(label_dict) != len(eeg_dict):
         print("WARNING: Not an equal number of sentences in features and labels!")
 
     for rand in config.random_seed_values:
@@ -54,14 +54,12 @@ def main():
                                             fold_results = sentiment_model.lstm_classifier(feature_dict, label_dict, emb, parameter_dict, rand)
                                             save_results(fold_results, config.class_task)
                                         elif config.class_task == 'sentiment-bin':
-                                            print(len(feature_dict), len(label_dict))
                                             for s, label in list(label_dict.items()):
                                                 # drop neutral sentences for binary sentiment classification
                                                 if label == 2:
                                                         del label_dict[s]
                                                         del feature_dict[s]
-                                            print(len(feature_dict), len(label_dict))
-                                            fold_results = sentiment_model.lstm_classifier(feature_dict, label_dict, emb, parameter_dict, rand)
+                                            fold_results = sentiment_model.lstm_classifier(feature_dict, label_dict, eeg_dict, emb, parameter_dict, rand)
                                             save_results(fold_results, config.class_task)
 
 
