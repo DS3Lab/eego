@@ -96,7 +96,7 @@ def lstm_classifier(features, labels, eeg, embedding_type, param_dict, random_se
     X_data_eeg = np.array(eeg_X)
     max_length_eeg = X_data_eeg.shape[1]
 
-    X_data_final = np.concatenate((X_data, X_data_eeg))
+    X_data_final = np.concatenate((X_data, X_data_eeg), axis=1)
     print(X_data_final.shape)
     max_length = X_data_final.shape[1]
 
