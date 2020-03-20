@@ -10,9 +10,8 @@ from . import eeg_extractor
 def extract_features(sent_data, feature_set, feature_dict, eeg_dict):
     """Extract features from ZuCo Matlab files"""
 
-    # extract only text for baseline models
-    if feature_set == 'text_only':
-        text_extractor.extract_sentences(sent_data, feature_dict)
+    # extract text for all models
+    text_extractor.extract_sentences(sent_data, feature_dict)
 
     if 'eeg' in feature_set:
         eeg_extractor.extract_raw_eeg(sent_data, eeg_dict)
