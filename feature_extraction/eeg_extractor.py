@@ -41,7 +41,7 @@ def extract_sent_raw_eeg(sentence_data, eeg_dict):
 
 def get_freq_band_data():
 
-    if 'theta' in config.feature_set:
+    if 'eeg_theta' in config.feature_set:
         band1 = 'mean_t1'
         band2 = 'mean_t2'
 
