@@ -72,7 +72,7 @@ def extract_sent_freq_eeg(sentence_data, eeg_dict):
             sent_t2 = f[sent_t2_ref]
             print(sent_t2.shape)
 
-            mean_sent_t = (sent_t1 + sent_t2) / 2
+            mean_sent_t = np.mean(np.array([sent_t1, sent_t2]), axis=0)
             print(mean_sent_t.shape)
 
             obj_reference_content = contentData[idx][0]
