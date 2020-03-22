@@ -61,9 +61,9 @@ def save_results(fold_results_dict, task):
     saves hyper-parameters and results to a result file"""
 
     if config.class_task.startswith("sentiment"):
-        result_file = open('sentiment/results/'+str(date.today()) + "_results_" + task + ".txt", 'a')
+        result_file = open('sentiment/results/'+str(date.today()) + "_results_" + task + "-".join(config.feature_set) + ".txt", 'a')
     elif config.class_task == "ner":
-        result_file = open('ner/results/' + str(date.today()) + "_results_" + task + ".txt", 'a')
+        result_file = open('ner/results/' + str(date.today()) + "_results_" + task + "-".join(config.feature_set) + ".txt", 'a')
     elif config.class_task == "reldetect":
         result_file = open('reldetect/results/' + str(date.today()) + "_results_" + task + "_" + "-".join(config.feature_set) + ".txt", 'a')
 
@@ -71,7 +71,6 @@ def save_results(fold_results_dict, task):
     print("lstm_dim", "lstm_layers", "dense_dim", "dropout", "batch_size", "epochs", "lr", "embedding_type",
           "random_seed", "train_acc", "val_acc", "test_acc", "test_std", "avg_precision", "std_precision",
           "avg_recall", "std_recall", "avg_fscore", "std_fscore", "threshold", "folds", "training_time", file=result_file)
-
 
     # training scores
     train_acc = np.mean([ep[-1] for ep in fold_results_dict['train-accuracy']])
