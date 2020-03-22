@@ -75,7 +75,7 @@ def extract_sent_freq_eeg(sentence_data, eeg_dict):
             # average over all timestamps
             mean_sent_t2 = np.nanmean(sent_t2, axis=0)
 
-            mean_sent_t = np.mean(np.hstack((mean_sent_t1, mean_sent_t2)), axis=0)
+            mean_sent_t = (mean_sent_t1 + mean_sent_t2) / 2
             print(mean_sent_t.shape)
 
             obj_reference_content = contentData[idx][0]
