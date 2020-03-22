@@ -2,8 +2,9 @@ import config
 from feature_extraction import zuco_reader
 from reldetect import reldetect_model
 from ner import ner_model
-from sentiment import sentiment_model, sentiment_eeg_model
+from sentiment import sentiment_model, sentiment_eeg_model, sentiment_combi_model
 from data_helpers import save_results, load_matlab_files
+
 
 # Usage on spaceml:
 # $ conda activate env-eego
@@ -43,24 +44,38 @@ def main():
 
                                         if config.class_task == 'reldetect':
                                             for threshold in config.rel_thresholds:
-                                                fold_results = reldetect_model.lstm_classifier(feature_dict, label_dict, emb, parameter_dict, rand, threshold)
+                                                fold_results = reldetect_model.lstm_classifier(feature_dict, label_dict,
+                                                                                               emb, parameter_dict,
+                                                                                               rand, threshold)
                                                 save_results(fold_results, config.class_task)
 
                                         elif config.class_task == 'ner':
-                                            fold_results = ner_model.lstm_classifier(feature_dict, label_dict, emb, parameter_dict, rand)
+                                            fold_results = ner_model.lstm_classifier(feature_dict, label_dict, emb,
+                                                                                     parameter_dict, rand)
                                             save_results(fold_results, config.class_task)
 
                                         elif config.class_task == 'sentiment-tri':
-                                            fold_results = sentiment_model.lstm_classifier(feature_dict, label_dict, emb, parameter_dict, rand)
+                                            fold_results = sentiment_model.lstm_classifier(feature_dict, label_dict,
+                                                                                           emb, parameter_dict, rand)
                                             save_results(fold_results, config.class_task)
                                         elif config.class_task == 'sentiment-bin':
                                             for s, label in list(label_dict.items()):
                                                 # drop neutral sentences for binary sentiment classification
                                                 if label == 2:
-                                                        del label_dict[s]
-                                                        del feature_dict[s]
-                                                        del eeg_dict[s]
-                                            fold_results = sentiment_eeg_model.lstm_classifier(feature_dict, label_dict, eeg_dict, emb, parameter_dict, rand)
+                                                    del label_dict[s]
+                                                    del feature_dict[s]
+                                                    del eeg_dict[s]
+                                            if 'combi_concat' in config.feature_set:
+                                                print("Starting EEG + text combi model")
+                                                fold_results = sentiment_combi_model.lstm_classifier(feature_dict,
+                                                                                                   label_dict, eeg_dict,
+                                                                                                   emb, parameter_dict,
+                                                                                                   rand)
+                                            else:
+                                                fold_results = sentiment_eeg_model.lstm_classifier(feature_dict,
+                                                                                                   label_dict, eeg_dict,
+                                                                                                   emb, parameter_dict,
+                                                                                                   rand)
                                             save_results(fold_results, config.class_task)
 
 
