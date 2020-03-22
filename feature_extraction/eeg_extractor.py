@@ -22,6 +22,7 @@ def extract_sent_raw_eeg(sentence_data, eeg_dict):
             raw_sent_eeg_ref = rawData[idx][0]
             raw_sent_eeg = f[raw_sent_eeg_ref]
             mean_raw_sent_eeg = np.nanmean(raw_sent_eeg, axis=0)
+            print(mean_raw_sent_eeg)
 
             obj_reference_content = contentData[idx][0]
             sent = dh.load_matlab_string(f[obj_reference_content])
@@ -32,7 +33,6 @@ def extract_sent_raw_eeg(sentence_data, eeg_dict):
                     eeg_dict[sent] = {'mean_raw_sent_eeg': [mean_raw_sent_eeg]}
                 else:
                     eeg_dict[sent]['mean_raw_sent_eeg'].append(mean_raw_sent_eeg)
-                    #print('duplicate!')
 
             # for ner (different tokenization needed for NER)
             #if config.class_task == "ner":
@@ -44,6 +44,18 @@ def get_freq_band_data():
     if 'eeg_theta' in config.feature_set:
         band1 = 'mean_t1'
         band2 = 'mean_t2'
+
+    if 'eeg_alpha' in config.feature_set:
+        band1 = 'mean_a1'
+        band2 = 'mean_a2'
+
+    if 'eeg_beta' in config.feature_set:
+        band1 = 'mean_b1'
+        band2 = 'mean_b2'
+
+    if 'eeg_gamma' in config.feature_set:
+        band1 = 'mean_g1'
+        band2 = 'mean_g2'
 
     return band1, band2
 
@@ -70,10 +82,8 @@ def extract_sent_freq_eeg(sentence_data, eeg_dict):
 
             sent_t2_ref = meanB2data[idx][0]
             sent_t2 = f[sent_t2_ref]
-            print(sent_t2.shape)
 
-            mean_sent_t = np.mean(np.array([sent_t1, sent_t2]), axis=0)
-            print(mean_sent_t.shape)
+            mean_sent_t = (np.array(sent_t1) + np.array(sent_t2)) / 2.0
 
             obj_reference_content = contentData[idx][0]
             sent = dh.load_matlab_string(f[obj_reference_content])
@@ -84,8 +94,3 @@ def extract_sent_freq_eeg(sentence_data, eeg_dict):
                     eeg_dict[sent] = {'mean_raw_sent_eeg': [mean_sent_t]}
                 else:
                     eeg_dict[sent]['mean_raw_sent_eeg'].append(mean_sent_t)
-                    #print('duplicate!')
-
-            # for ner (different tokenization needed for NER)
-            #if config.class_task == "ner":
-            # todo: how to handle for word-level models?
