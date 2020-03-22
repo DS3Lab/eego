@@ -5,7 +5,7 @@ from tensorflow.python.keras.preprocessing.text import Tokenizer
 from tensorflow.python.keras.utils import np_utils
 from tensorflow.python.keras.initializers import Constant
 import tensorflow.python.keras.backend as K
-from tensorflow.python.keras.layers import Input, Dense, concatenate, Embedding, LSTM, Bidirectional, Flatten
+from tensorflow.python.keras.layers import Input, Dense, concatenate, Embedding, LSTM, Bidirectional, Flatten, Dropout
 from tensorflow.python.keras.models import Model
 import sklearn.metrics
 from sklearn.model_selection import KFold
@@ -142,11 +142,14 @@ def lstm_classifier(features, labels, eeg, embedding_type, param_dict, random_se
         text_model = Flatten()(text_model)
 
         text_model = Dense(8, activation="relu")(text_model)
+        text_model = Dropout(0.3)(text_model)
         text_model = Dense(4, activation="relu")(text_model)
         text_model = Model(inputs=input_text, outputs=text_model)
         # the second branch opreates on the second input
         eeg_model = Dense(64, activation="relu")(input_eeg)
+        eeg_model = Dropout(0.3)(eeg_model)
         eeg_model = Dense(32, activation="relu")(eeg_model)
+        eeg_model = Dropout(0.3)(eeg_model)
         eeg_model = Dense(4, activation="relu")(eeg_model)
         eeg_model = Model(inputs=input_eeg, outputs=eeg_model)
         # combine the output of the two branches
