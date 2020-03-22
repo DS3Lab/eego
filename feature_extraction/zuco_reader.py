@@ -16,6 +16,9 @@ def extract_features(sent_data, feature_set, feature_dict, eeg_dict):
     if 'eeg_raw' in feature_set:
         eeg_extractor.extract_raw_eeg(sent_data, eeg_dict)
 
+    if 'eeg_theta' in feature_set:
+        eeg_extractor.extract_sent_freq_eeg(sent_data, eeg_dict)
+
     if "gaze" in feature_set:
         gaze_extractor.word_level_et_features(sent_data, feature_dict)
 
