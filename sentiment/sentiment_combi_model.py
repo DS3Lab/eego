@@ -18,9 +18,10 @@ os.environ['KERAS_BACKEND'] = 'tensorflow'
 
 
 # Machine learning model for sentiment classification (binary and ternary)
+# Jointly learning from text and EEG features
 
 
-def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_value):
+def lstm_classifier(features, labels, eeg, embedding_type, param_dict, random_seed_value):
     # set random seed
     np.random.seed(random_seed_value)
     tf.random.set_seed(random_seed_value)
@@ -55,13 +56,13 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
     num_words = min(vocab_size, len(word_index) + 1)
 
     if embedding_type is 'none':
-        X_data = pad_sequences(sequences, maxlen=max_length, padding='post', truncating='post')
-        print('Shape of data tensor:', X_data.shape)
+        X_data_text = pad_sequences(sequences, maxlen=max_length, padding='post', truncating='post')
+        print('Shape of data tensor:', X_data_text.shape)
         print('Shape of label tensor:', y.shape)
 
     if embedding_type is 'glove':
-        X_data = pad_sequences(sequences, maxlen=max_length, padding='post', truncating='post')
-        print('Shape of data tensor:', X_data.shape)
+        X_data_text = pad_sequences(sequences, maxlen=max_length, padding='post', truncating='post')
+        print('Shape of data tensor:', X_data_text.shape)
         print('Shape of label tensor:', y.shape)
 
         print("Loading Glove embeddings...")
@@ -73,10 +74,25 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
         X_data_bert = ml_helpers.prepare_sequences_for_bert(X)
         embedding_dim = 768
 
-        X_data = pad_sequences(X_data_bert, maxlen=max_length, padding='post', truncating='post')
+        X_data_text = pad_sequences(X_data_bert, maxlen=max_length, padding='post', truncating='post')
 
-        print('Shape of data tensor:', X_data.shape)
+        print('Shape of data tensor:', X_data_text.shape)
         print('Shape of label tensor:', y.shape)
+
+    # prepare EEG data
+    eeg_X = []
+    for s in eeg.values():
+        # average over all subjects
+        n = np.mean(s['mean_raw_sent_eeg'], axis=0)
+        eeg_X.append(n)
+    X_data_eeg = np.array(eeg_X)
+    max_length_eeg = X_data_eeg.shape[1]
+    print("Maximum EEG length: ", max_length_eeg)
+
+    X_data = np.concatenate((X_data_text, X_data_eeg), axis=1)
+    print(X_data.shape)
+    max_length = X_data.shape[1]
+    print(max_length)
 
     # split data into train/test
     kf = KFold(n_splits=config.folds, random_state=random_seed_value, shuffle=True)
