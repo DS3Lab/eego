@@ -5,6 +5,8 @@ from tensorflow.python.keras.preprocessing.text import Tokenizer
 from tensorflow.python.keras.utils import np_utils
 from tensorflow.python.keras.initializers import Constant
 import tensorflow.python.keras.backend as K
+from tensorflow.python.keras.layers import Input, Dense, concatenate
+from tensorflow.python.keras.models import Model
 import sklearn.metrics
 from sklearn.model_selection import KFold
 import ml_helpers
@@ -89,29 +91,27 @@ def lstm_classifier(features, labels, eeg, embedding_type, param_dict, random_se
     max_length_eeg = X_data_eeg.shape[1]
     print("Maximum EEG length: ", max_length_eeg)
 
-    X_data = np.concatenate((X_data_text, X_data_eeg), axis=1)
-    print(X_data.shape)
-    max_length = X_data.shape[1]
-    print(max_length)
-
     # split data into train/test
     kf = KFold(n_splits=config.folds, random_state=random_seed_value, shuffle=True)
 
     fold = 0
     fold_results = {}
 
-    for train_index, test_index in kf.split(X_data):
+    for train_index, test_index in kf.split(X_data_text):
 
         print("FOLD: ", fold)
         # print("TRAIN:", train_index, "TEST:", test_index)
         print("splitting train and test data...")
         y_train, y_test = y[train_index], y[test_index]
-        X_train, X_test = X_data[train_index], X_data[test_index]
+        X_train_text, X_test_text = X_data_text[train_index], X_data_text[test_index]
+        X_train_eeg, X_test_eeg = X_data_eeg[train_index], X_data_eeg[test_index]
 
         print(y_train.shape)
         print(y_test.shape)
-        print(X_train.shape)
-        print(X_test.shape)
+        print(X_train_text.shape)
+        print(X_test_text.shape)
+        print(X_train_eeg.shape)
+        print(X_test_eeg.shape)
 
         # reset model
         K.clear_session()
@@ -129,8 +129,31 @@ def lstm_classifier(features, labels, eeg, embedding_type, param_dict, random_se
 
         # define model
         print("Preparing model...")
-        model = tf.keras.Sequential()
 
+        # define two sets of inputs
+        input_text = Input(shape=(32,))
+        input_eeg = Input(shape=(128,))
+
+        # the first branch operates on the first input
+        x = Dense(8, activation="relu")(input_text)
+        x = Dense(4, activation="relu")(x)
+        x = Model(inputs=input_text, outputs=x)
+        # the second branch opreates on the second input
+        y = Dense(64, activation="relu")(input_eeg)
+        y = Dense(32, activation="relu")(y)
+        y = Dense(4, activation="relu")(y)
+        y = Model(inputs=input_eeg, outputs=y)
+        # combine the output of the two branches
+        combined = concatenate([x.output, y.output])
+        # apply a FC layer and then a regression prediction on the
+        # combined outputs
+        z = Dense(2, activation="relu")(combined)
+        z = Dense(1, activation="linear")(z)
+        # our model will accept the inputs of the two branches and
+        # then output a single value
+        model = Model(inputs=[x.input, y.input], outputs=z)
+
+        """
         if embedding_type is 'none':
             # todo: tune embedding dim?
             embedding_layer = tf.keras.layers.Embedding(num_words, 32, input_length=max_length,
@@ -163,7 +186,6 @@ def lstm_classifier(features, labels, eeg, embedding_type, param_dict, random_se
 
         model.summary()
 
-
         for l in list(range(lstm_layers)):
             if l < lstm_layers - 1:
                 model.add(tf.keras.layers.Bidirectional(tf.keras.layers.LSTM(lstm_dim, return_sequences=True)))
@@ -172,6 +194,7 @@ def lstm_classifier(features, labels, eeg, embedding_type, param_dict, random_se
         model.add(tf.keras.layers.Dense(dense_dim, activation='relu'))
         model.add(tf.keras.layers.Dropout(rate=dropout))
         model.add(tf.keras.layers.Dense(y_train.shape[1], activation='softmax'))
+        """
 
         model.compile(loss='categorical_crossentropy',
                       optimizer=tf.keras.optimizers.Adam(lr=lr),
@@ -180,11 +203,11 @@ def lstm_classifier(features, labels, eeg, embedding_type, param_dict, random_se
         model.summary()
 
         # train model
-        history = model.fit(X_train, y_train, validation_split=0.1, epochs=epochs, batch_size=batch_size)
+        history = model.fit([X_train_text, X_train_eeg], y_train, validation_split=0.1, epochs=epochs, batch_size=batch_size)
 
         # evaluate model
-        scores = model.evaluate(X_test, y_test, verbose=0)
-        predictions = model.predict(X_test)
+        scores = model.evaluate([X_test_text, X_test_eeg], y_test, verbose=0)
+        predictions = model.predict([X_test_text, X_test_eeg])
 
         rounded_predictions = [np.argmax(p) for p in predictions]
         rounded_labels = np.argmax(y_test, axis=1)
