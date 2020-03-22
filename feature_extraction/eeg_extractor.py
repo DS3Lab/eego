@@ -67,16 +67,12 @@ def extract_sent_freq_eeg(sentence_data, eeg_dict):
 
             sent_t1_ref = meanB1data[idx][0]
             sent_t1 = f[sent_t1_ref]
-            # average over all timestamps
-            mean_sent_t1 = np.nanmean(sent_t1, axis=0)
 
             sent_t2_ref = meanB2data[idx][0]
             sent_t2 = f[sent_t2_ref]
-            # average over all timestamps
-            mean_sent_t2 = np.nanmean(sent_t2, axis=0)
-            print(mean_sent_t2.shape)
+            print(sent_t2.shape)
 
-            mean_sent_t = (mean_sent_t1 + mean_sent_t2) / 2
+            mean_sent_t = (sent_t1 + sent_t2) / 2
             print(mean_sent_t.shape)
 
             obj_reference_content = contentData[idx][0]
