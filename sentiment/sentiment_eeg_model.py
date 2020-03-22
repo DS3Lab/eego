@@ -47,20 +47,20 @@ def lstm_classifier(features, labels, eeg, embedding_type, param_dict, random_se
     tokenizer = Tokenizer(num_words=vocab_size)
     tokenizer.fit_on_texts(X)
     sequences = tokenizer.texts_to_sequences(X)
-    max_length = max([len(s) for s in sequences])
-    print("Maximum sentence length: ", max_length)
+    max_length_text = max([len(s) for s in sequences])
+    print("Maximum sentence length: ", max_length_text)
 
     word_index = tokenizer.word_index
     print('Found %s unique tokens.' % len(word_index))
     num_words = min(vocab_size, len(word_index) + 1)
 
     if embedding_type is 'none':
-        X_data = pad_sequences(sequences, maxlen=max_length, padding='post', truncating='post')
+        X_data = pad_sequences(sequences, maxlen=max_length_text, padding='post', truncating='post')
         print('Shape of data tensor:', X_data.shape)
         print('Shape of label tensor:', y.shape)
 
     if embedding_type is 'glove':
-        X_data = pad_sequences(sequences, maxlen=max_length, padding='post', truncating='post')
+        X_data = pad_sequences(sequences, maxlen=max_length_text, padding='post', truncating='post')
         print('Shape of data tensor:', X_data.shape)
         print('Shape of label tensor:', y.shape)
 
@@ -73,7 +73,7 @@ def lstm_classifier(features, labels, eeg, embedding_type, param_dict, random_se
         X_data_bert = ml_helpers.prepare_sequences_for_bert(X)
         embedding_dim = 768
 
-        X_data = pad_sequences(X_data_bert, maxlen=max_length, padding='post', truncating='post')
+        X_data = pad_sequences(X_data_bert, maxlen=max_length_text, padding='post', truncating='post')
 
         print('Shape of data tensor:', X_data.shape)
         print('Shape of label tensor:', y.shape)
@@ -96,9 +96,12 @@ def lstm_classifier(features, labels, eeg, embedding_type, param_dict, random_se
     X_data_eeg = np.array(eeg_X)
     max_length_eeg = X_data_eeg.shape[1]
 
-    X_data_final = np.concatenate((X_data, X_data_eeg), axis=1)
-    print(X_data_final.shape)
-    max_length = X_data_final.shape[1]
+    #X_data_final = np.concatenate((X_data, X_data_eeg), axis=1)
+    #print(X_data_final.shape)
+    #max_length_text = X_data_final.shape[1]
+
+    X_data = X_data_eeg
+    max_length = max_length_eeg
 
     for train_index, test_index in kf.split(X_data):
 
@@ -131,7 +134,7 @@ def lstm_classifier(features, labels, eeg, embedding_type, param_dict, random_se
         print("Preparing model...")
         model = tf.keras.Sequential()
 
-        model.add(tf.keras.layers.Input(shape=(max_length_eeg,), dtype='int32', name='input_eeg'))
+        model.add(tf.keras.layers.Input(shape=(max_length,), dtype='int32', name='input_eeg'))
         model.add(tf.keras.layers.Dense(64, activation=tf.nn.relu))
         model.add(tf.keras.layers.Dropout(0.3))
         model.add(tf.keras.layers.Dense(64, activation=tf.nn.relu))
@@ -141,7 +144,7 @@ def lstm_classifier(features, labels, eeg, embedding_type, param_dict, random_se
         """
         if embedding_type is 'none':
             # todo: tune embedding dim?
-            embedding_layer = tf.keras.layers.Embedding(num_words, 32, input_length=max_length,
+            embedding_layer = tf.keras.layers.Embedding(num_words, 32, input_length=max_length_text,
                                                         name='none_input_embeddings')
             model.add(embedding_layer)
 
@@ -151,13 +154,13 @@ def lstm_classifier(features, labels, eeg, embedding_type, param_dict, random_se
             embedding_layer = tf.keras.layers.Embedding(num_words,
                                                         embedding_dim,
                                                         embeddings_initializer=Constant(embedding_matrix),
-                                                        input_length=max_length,
+                                                        input_length=max_length_text,
                                                         trainable=False,
                                                         name='glove_input_embeddings')
             model.add(embedding_layer)
 
         elif embedding_type is 'bert':
-            model.add(tf.keras.layers.Input(shape=(max_length,), dtype='int32', name='input_ids'))
+            model.add(tf.keras.layers.Input(shape=(max_length_text,), dtype='int32', name='input_ids'))
             bert_layer = ml_helpers.createBertLayer()
             model.add(bert_layer)
             # test:
