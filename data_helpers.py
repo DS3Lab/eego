@@ -65,7 +65,7 @@ def save_results(fold_results_dict, task):
     elif config.class_task == "ner":
         result_file = open('ner/results/' + str(date.today()) + "_results_" + task + ".txt", 'a')
     elif config.class_task == "reldetect":
-        result_file = open('reldetect/results/' + str(date.today()) + "_results_" + task + ".txt", 'a')
+        result_file = open('reldetect/results/' + str(date.today()) + "_results_" + task + "_" + "-".join(config.feature_set) + ".txt", 'a')
 
     # print header
     print("lstm_dim", "lstm_layers", "dense_dim", "dropout", "batch_size", "epochs", "lr", "embedding_type",
