@@ -17,8 +17,8 @@ subjects = ["ZKW", "ZJS", "ZDN"]#, "ZJN"]#, "ZPH", "ZAB", "ZJM", "ZKB", "ZKH", "
 # ML task {sentiment-bin, sentiment-tri, ner, reldetect}
 class_task = 'sentiment-bin' #'sentiment-bin'
 
-# Features sets {'text_only', 'gaze_feats', 'eeg_feats'}
-feature_set = ['eeg_raw']  # 'text_only' , 'eeg_raw'
+# Features sets {'text_only' , 'eeg_raw', 'eeg_theta', 'eeg_alpha', 'eeg_beta', 'eeg_gamma'}
+feature_set = ['combi_concat']
 
 # word embeddings {none, glove (300d), bert}
 embeddings = ['none', 'glove']
