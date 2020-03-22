@@ -134,8 +134,7 @@ def lstm_classifier(features, labels, eeg, embedding_type, param_dict, random_se
         input_text = Input(shape=(X_train_text.shape[1],))
         input_eeg = Input(shape=(X_train_eeg.shape[1],))
 
-        # the first branch operates on the first input
-
+        # the first branch operates on the first input (word embeddings)
         if embedding_type is 'none':
             text_model = Embedding(num_words, 32, input_length=X_train_text.shape[1],
                   name='none_input_embeddings')(input_text)
@@ -149,21 +148,23 @@ def lstm_classifier(features, labels, eeg, embedding_type, param_dict, random_se
         text_model = Bidirectional(LSTM(lstm_dim, return_sequences=True))(text_model)
         text_model = Flatten()(text_model)
 
-        text_model = Dense(8, activation="relu")(text_model)
-        text_model = Dropout(0.3)(text_model)
+        text_model = Dense(dense_dim, activation="relu")(text_model)
+        text_model = Dropout(dropout)(text_model)
+        # todo: 4?
         text_model = Dense(4, activation="relu")(text_model)
         text_model = Model(inputs=input_text, outputs=text_model)
-        # the second branch opreates on the second input
-        eeg_model = Dense(64, activation="relu")(input_eeg)
-        eeg_model = Dropout(0.3)(eeg_model)
-        eeg_model = Dense(32, activation="relu")(eeg_model)
-        eeg_model = Dropout(0.3)(eeg_model)
+
+        # the second branch operates on the second input (EEG data)
+        eeg_model = Dense(dense_dim, activation="relu")(input_eeg)
+        eeg_model = Dropout(dropout)(eeg_model)
+        eeg_model = Dense(dense_dim, activation="relu")(eeg_model)
+        eeg_model = Dropout(dropout)(eeg_model)
         eeg_model = Dense(4, activation="relu")(eeg_model)
         eeg_model = Model(inputs=input_eeg, outputs=eeg_model)
         # combine the output of the two branches
         combined = concatenate([text_model.output, eeg_model.output])
-        # apply a FC layer and then a regression prediction on the
-        # combined outputs
+        # apply another dense layer and then a softmax prediction on the combined outputs
+        # todo: also train this dense latent dim?
         combi_model = Dense(2, activation="relu")(combined)
         combi_model = Dense(y_train.shape[1], activation="softmax")(combi_model)
         # our model will accept the inputs of the two branches and

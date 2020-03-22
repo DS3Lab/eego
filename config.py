@@ -21,11 +21,12 @@ class_task = 'sentiment-bin' #'sentiment-bin'
 feature_set = ['combi_concat']
 
 # word embeddings {none, glove (300d), bert}
-embeddings = ['glove', 'glove']
+embeddings = ['glove']
 # specify directory with bert model, if using
 modelBertDir = "/mnt/ds3lab-scratch/noraho/embeddings/bert"
 
 # hyper-parameters to test - general
+"""
 lstm_dim = [64, 128, 256, 512]
 lstm_layers = [1, 2, 3, 4]
 dense_dim = [32, 64, 128, 256]
@@ -33,9 +34,10 @@ dropout = [0.1, 0.3, 0.5]
 batch_size = [20, 30, 40, 60]
 epochs = [5, 10, 20, 50, 100]
 lr = [0.00001, 0.001, 0.01, 0.0001]
+"""
 
 # other parameters
-folds = 3
+folds = 5
 random_seed_values = [13, 78, 22, 66, 42]
 
 # only for Relation Detection:
@@ -118,3 +120,12 @@ batch_size = [20, 30, 40, 60]
 epochs = [5, 10, 20, 50, 100, 200, 500]
 lr = [0.00001, 0.001, 0.01, 0.0001]
 """
+
+# EEG + glove - sentiment bin
+lstm_dim = [64, 128, 256, 512]
+lstm_layers = [1]
+dense_dim = [32, 64, 128, 256]
+dropout = [0.1, 0.3, 0.5]
+batch_size = [20, 30, 40, 60]
+epochs = [5, 10, 20, 50, 100, 200]
+lr = [0.00001, 0.001, 0.01, 0.0001]
