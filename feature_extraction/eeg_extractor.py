@@ -39,6 +39,15 @@ def extract_sent_raw_eeg(sentence_data, eeg_dict):
             # todo: how to handle for word-level models? of fixation level? or timestamp level?
 
 
+def get_freq_band_data():
+
+    if 'theta' in config.feature_set:
+        band1 = 'mean_t1'
+        band2 = 'mean_t2'
+
+    return band1, band2
+
+
 def extract_sent_freq_eeg(sentence_data, eeg_dict):
     """extract sentence-level frequency band EEG of all sentences."""
 
@@ -47,15 +56,27 @@ def extract_sent_freq_eeg(sentence_data, eeg_dict):
         # read Matlab v7.3 structures
         f = tup[0]
         s_data = tup[1]
-        meanT1data = s_data['mean_t1']
+
+        band1, band2 = get_freq_band_data()
+
+        meanB1data = s_data[band1]
+        meanB2data = s_data[band2]
         contentData = s_data['content']
 
-        for idx in range(len(meanT1data)):
+        for idx in range(len(meanB1data)):
 
-            raw_sent_eeg_ref = meanT1data[idx][0]
-            raw_sent_eeg = f[raw_sent_eeg_ref]
+            sent_t1_ref = meanB1data[idx][0]
+            sent_t1 = f[sent_t1_ref]
             # average over all timestamps
-            mean_raw_sent_eeg = np.nanmean(raw_sent_eeg, axis=0)
+            mean_sent_t1 = np.nanmean(sent_t1, axis=0)
+
+            sent_t2_ref = meanB2data[idx][0]
+            sent_t2 = f[sent_t2_ref]
+            # average over all timestamps
+            mean_sent_t2 = np.nanmean(sent_t2, axis=0)
+
+            mean_sent_t = np.mean(np.hstack(mean_sent_t1, mean_sent_t2), axis=0)
+            print(mean_sent_t.shape)
 
             obj_reference_content = contentData[idx][0]
             sent = dh.load_matlab_string(f[obj_reference_content])
@@ -63,9 +84,9 @@ def extract_sent_freq_eeg(sentence_data, eeg_dict):
             # for sentiment and relation detection
             if config.class_task.startswith('sentiment') or config.class_task == "reldetect":
                 if sent not in eeg_dict:
-                    eeg_dict[sent] = {'mean_raw_sent_eeg': [mean_raw_sent_eeg]}
+                    eeg_dict[sent] = {'mean_raw_sent_eeg': [mean_sent_t]}
                 else:
-                    eeg_dict[sent]['mean_raw_sent_eeg'].append(mean_raw_sent_eeg)
+                    eeg_dict[sent]['mean_raw_sent_eeg'].append(mean_sent_t)
                     #print('duplicate!')
 
             # for ner (different tokenization needed for NER)
