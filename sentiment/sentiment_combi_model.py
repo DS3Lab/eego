@@ -151,7 +151,7 @@ def lstm_classifier(features, labels, eeg, embedding_type, param_dict, random_se
         combi_model = Dense(y_train.shape[1], activation="softmax")(combi_model)
         # our model will accept the inputs of the two branches and
         # then output a single value
-        model = Model(inputs=[input_text.input, input_eeg.input], outputs=combi_model)
+        model = Model(inputs=[text_model.input, eeg_model.input], outputs=combi_model)
 
         """
         if embedding_type is 'none':
