@@ -131,8 +131,8 @@ def lstm_classifier(features, labels, eeg, embedding_type, param_dict, random_se
         print("Preparing model...")
 
         # define two sets of inputs
-        input_text = Input(shape=(32,))
-        input_eeg = Input(shape=(128,))
+        input_text = Input(shape=(X_train_text.shape[1],))
+        input_eeg = Input(shape=(X_train_eeg.shape[1],))
 
         # the first branch operates on the first input
         x = Dense(8, activation="relu")(input_text)
