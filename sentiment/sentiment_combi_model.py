@@ -5,7 +5,7 @@ from tensorflow.python.keras.preprocessing.text import Tokenizer
 from tensorflow.python.keras.utils import np_utils
 from tensorflow.python.keras.initializers import Constant
 import tensorflow.python.keras.backend as K
-from tensorflow.python.keras.layers import Input, Dense, concatenate, Embedding
+from tensorflow.python.keras.layers import Input, Dense, concatenate, Embedding, LSTM, Bidirectional
 from tensorflow.python.keras.models import Model
 import sklearn.metrics
 from sklearn.model_selection import KFold
@@ -138,6 +138,7 @@ def lstm_classifier(features, labels, eeg, embedding_type, param_dict, random_se
 
         text_model = Embedding(num_words, 32, input_length=X_train_text.shape[1],
                   name='none_input_embeddings')(input_text)
+        text_model = Bidirectional(LSTM(lstm_dim, return_sequences=True))(text_model)
 
         text_model = Dense(8, activation="relu")(text_model)
         text_model = Dense(4, activation="relu")(text_model)
