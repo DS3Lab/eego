@@ -148,7 +148,7 @@ def lstm_classifier(features, labels, eeg, embedding_type, param_dict, random_se
         # apply a FC layer and then a regression prediction on the
         # combined outputs
         z = Dense(2, activation="relu")(combined)
-        z = Dense(1, activation="linear")(z)
+        z = Dense(y_train.shape[1], activation="softmax")(z)
         # our model will accept the inputs of the two branches and
         # then output a single value
         model = Model(inputs=[x.input, y.input], outputs=z)
