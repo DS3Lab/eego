@@ -18,10 +18,10 @@ subjects = ["ZKW", "ZJS", "ZDN"]#, "ZJN"]#, "ZPH", "ZAB", "ZJM", "ZKB", "ZKH", "
 class_task = 'sentiment-bin' #'sentiment-bin'
 
 # Features sets {'text_only', 'gaze_feats', 'eeg_feats'}
-feature_set = ['eeg_raw'] # 'text_only' #'gaze_features'
+feature_set = ['eeg_raw']  # 'text_only' #'gaze_features'
 
 # word embeddings {none, glove (300d), bert}
-embeddings = ['none', 'glove']
+embeddings = ['bert', 'none', 'glove']
 # specify directory with bert model, if using
 modelBertDir = "/mnt/ds3lab-scratch/noraho/embeddings/bert"
 
@@ -32,7 +32,7 @@ dense_dim = [32, 64, 128, 256]
 dropout = [0.1, 0.3, 0.5]
 batch_size = [20, 30, 40, 60]
 epochs = [5, 10, 20, 50, 100]
-lr = [0.001, 0.01, 0.0001]
+lr = [0.00001, 0.001, 0.01, 0.0001]
 
 # other parameters
 folds = 3
