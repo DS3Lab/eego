@@ -22,7 +22,7 @@ def extract_sent_raw_eeg(sentence_data, eeg_dict):
             raw_sent_eeg_ref = rawData[idx][0]
             raw_sent_eeg = f[raw_sent_eeg_ref]
             mean_raw_sent_eeg = np.nanmean(raw_sent_eeg, axis=0)
-            print(mean_raw_sent_eeg)
+            #print(mean_raw_sent_eeg)
 
             obj_reference_content = contentData[idx][0]
             sent = dh.load_matlab_string(f[obj_reference_content])
@@ -84,7 +84,6 @@ def extract_sent_freq_eeg(sentence_data, eeg_dict):
             sent_t2 = f[sent_t2_ref]
 
             mean_sent_t = (np.array(sent_t1) + np.array(sent_t2)) / 2.0
-            print(mean_sent_t.shape)
             mean_sent_t = mean_sent_t[:, 0]
             print(mean_sent_t.shape)
 
