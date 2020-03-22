@@ -136,8 +136,16 @@ def lstm_classifier(features, labels, eeg, embedding_type, param_dict, random_se
 
         # the first branch operates on the first input
 
-        text_model = Embedding(num_words, 32, input_length=X_train_text.shape[1],
+        if embedding_type is 'none':
+            text_model = Embedding(num_words, 32, input_length=X_train_text.shape[1],
                   name='none_input_embeddings')(input_text)
+        elif embedding_type is 'glove':
+            Embedding(num_words,
+                      embedding_dim,
+                      embeddings_initializer=Constant(embedding_matrix),
+                      input_length=X_train_text.shape[1],
+                      trainable=False,
+                      name='glove_input_embeddings')
         text_model = Bidirectional(LSTM(lstm_dim, return_sequences=True))(text_model)
         text_model = Flatten()(text_model)
 
