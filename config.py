@@ -21,7 +21,7 @@ class_task = 'sentiment-bin' #'sentiment-bin'
 feature_set = ['combi_concat']
 
 # word embeddings {none, glove (300d), bert}
-embeddings = ['none', 'glove']
+embeddings = ['glove', 'glove']
 # specify directory with bert model, if using
 modelBertDir = "/mnt/ds3lab-scratch/noraho/embeddings/bert"
 
