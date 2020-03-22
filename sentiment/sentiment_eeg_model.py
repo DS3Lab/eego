@@ -21,6 +21,7 @@ os.environ['KERAS_BACKEND'] = 'tensorflow'
 # Learning on EEG data only!
 
 def lstm_classifier(features, labels, eeg, embedding_type, param_dict, random_seed_value):
+
     # set random seed
     np.random.seed(random_seed_value)
     tf.random.set_seed(random_seed_value)
@@ -28,7 +29,6 @@ def lstm_classifier(features, labels, eeg, embedding_type, param_dict, random_se
 
     start = time.time()
 
-    X = list(features.keys())
     y = list(labels.values())
 
     # plot sample distribution
@@ -36,47 +36,6 @@ def lstm_classifier(features, labels, eeg, embedding_type, param_dict, random_se
 
     # convert class labels to one hot vectors
     y = np_utils.to_categorical(y)
-
-    vocab_size = 100000
-
-    # prepare text samples
-    print('Processing text dataset...')
-
-    print('Found %s sentences.' % len(X))
-
-    tokenizer = Tokenizer(num_words=vocab_size)
-    tokenizer.fit_on_texts(X)
-    sequences = tokenizer.texts_to_sequences(X)
-    max_length_text = max([len(s) for s in sequences])
-    print("Maximum sentence length: ", max_length_text)
-
-    word_index = tokenizer.word_index
-    print('Found %s unique tokens.' % len(word_index))
-    num_words = min(vocab_size, len(word_index) + 1)
-
-    if embedding_type is 'none':
-        X_data = pad_sequences(sequences, maxlen=max_length_text, padding='post', truncating='post')
-        print('Shape of data tensor:', X_data.shape)
-        print('Shape of label tensor:', y.shape)
-
-    if embedding_type is 'glove':
-        X_data = pad_sequences(sequences, maxlen=max_length_text, padding='post', truncating='post')
-        print('Shape of data tensor:', X_data.shape)
-        print('Shape of label tensor:', y.shape)
-
-        print("Loading Glove embeddings...")
-        embedding_dim = 300
-        embedding_matrix = ml_helpers.load_glove_embeddings(vocab_size, word_index, embedding_dim)
-
-    if embedding_type is 'bert':
-        print("Prepare sequences for Bert ...")
-        X_data_bert = ml_helpers.prepare_sequences_for_bert(X)
-        embedding_dim = 768
-
-        X_data = pad_sequences(X_data_bert, maxlen=max_length_text, padding='post', truncating='post')
-
-        print('Shape of data tensor:', X_data.shape)
-        print('Shape of label tensor:', y.shape)
 
     # prepare EEG data
     eeg_X = []
@@ -127,13 +86,11 @@ def lstm_classifier(features, labels, eeg, embedding_type, param_dict, random_se
         print("Preparing model...")
         model = tf.keras.Sequential()
 
-
-        # todo: fix model to take params from config
         model.add(tf.keras.layers.Input(shape=(max_length,), dtype='int32', name='input_eeg'))
-        model.add(tf.keras.layers.Dense(64, activation=tf.nn.relu))
-        model.add(tf.keras.layers.Dropout(0.3))
-        model.add(tf.keras.layers.Dense(64, activation=tf.nn.relu))
-        model.add(tf.keras.layers.Dropout(0.3))
+        model.add(tf.keras.layers.Dense(dense_dim, activation=tf.nn.relu))
+        model.add(tf.keras.layers.Dropout(dropout))
+        model.add(tf.keras.layers.Dense(dense_dim, activation=tf.nn.relu))
+        model.add(tf.keras.layers.Dropout(dropout))
         model.add(tf.keras.layers.Dense(y_train.shape[1], activation=tf.nn.softmax))
 
         model.compile(loss='categorical_crossentropy',
