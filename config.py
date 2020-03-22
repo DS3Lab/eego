@@ -18,7 +18,7 @@ subjects = ["ZKW", "ZJS", "ZDN"]#, "ZJN"]#, "ZPH", "ZAB", "ZJM", "ZKB", "ZKH", "
 class_task = 'sentiment-bin' #'sentiment-bin'
 
 # Features sets {'text_only', 'gaze_feats', 'eeg_feats'}
-feature_set = ['eeg_theta']  # 'text_only' , 'eeg_raw'
+feature_set = ['eeg_raw']  # 'text_only' , 'eeg_raw'
 
 # word embeddings {none, glove (300d), bert}
 embeddings = ['bert', 'none', 'glove']
@@ -35,7 +35,7 @@ epochs = [5, 10, 20, 50, 100]
 lr = [0.00001, 0.001, 0.01, 0.0001]
 
 # other parameters
-folds = 3
+folds = 5
 random_seed_values = [13, 78, 22, 66, 42]
 
 # only for Relation Detection:
@@ -107,3 +107,12 @@ batch_size = [20, 30, 40, 60]
 epochs = [5, 10, 20, 50, 100]  
 lr = [0.001, 0.01, 0.0001]  
 """
+
+# EEG only - sentiment bin
+lstm_dim = ["-"]
+lstm_layers = ["-"]
+dense_dim = [32, 64]
+dropout = [0.1, 0.3, 0.5]
+batch_size = [20, 30, 40, 60]
+epochs = [5, 10, 20, 50, 100, 200, 500]
+lr = [0.00001, 0.001, 0.01, 0.0001]

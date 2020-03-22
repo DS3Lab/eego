@@ -18,9 +18,9 @@ os.environ['KERAS_BACKEND'] = 'tensorflow'
 
 
 # Machine learning model for sentiment classification (binary and ternary)
-# Learning on EEG data only!
 
-def lstm_classifier(features, labels, eeg, embedding_type, param_dict, random_seed_value):
+
+def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_value):
     # set random seed
     np.random.seed(random_seed_value)
     tf.random.set_seed(random_seed_value)
@@ -47,20 +47,20 @@ def lstm_classifier(features, labels, eeg, embedding_type, param_dict, random_se
     tokenizer = Tokenizer(num_words=vocab_size)
     tokenizer.fit_on_texts(X)
     sequences = tokenizer.texts_to_sequences(X)
-    max_length_text = max([len(s) for s in sequences])
-    print("Maximum sentence length: ", max_length_text)
+    max_length = max([len(s) for s in sequences])
+    print("Maximum sentence length: ", max_length)
 
     word_index = tokenizer.word_index
     print('Found %s unique tokens.' % len(word_index))
     num_words = min(vocab_size, len(word_index) + 1)
 
     if embedding_type is 'none':
-        X_data = pad_sequences(sequences, maxlen=max_length_text, padding='post', truncating='post')
+        X_data = pad_sequences(sequences, maxlen=max_length, padding='post', truncating='post')
         print('Shape of data tensor:', X_data.shape)
         print('Shape of label tensor:', y.shape)
 
     if embedding_type is 'glove':
-        X_data = pad_sequences(sequences, maxlen=max_length_text, padding='post', truncating='post')
+        X_data = pad_sequences(sequences, maxlen=max_length, padding='post', truncating='post')
         print('Shape of data tensor:', X_data.shape)
         print('Shape of label tensor:', y.shape)
 
@@ -73,22 +73,10 @@ def lstm_classifier(features, labels, eeg, embedding_type, param_dict, random_se
         X_data_bert = ml_helpers.prepare_sequences_for_bert(X)
         embedding_dim = 768
 
-        X_data = pad_sequences(X_data_bert, maxlen=max_length_text, padding='post', truncating='post')
+        X_data = pad_sequences(X_data_bert, maxlen=max_length, padding='post', truncating='post')
 
         print('Shape of data tensor:', X_data.shape)
         print('Shape of label tensor:', y.shape)
-
-    # prepare EEG data
-    eeg_X = []
-    for s in eeg.values():
-        # average over all subjects
-        n = np.mean(s['mean_raw_sent_eeg'], axis=0)
-        eeg_X.append(n)
-    X_data_eeg = np.array(eeg_X)
-    max_length_eeg = X_data_eeg.shape[1]
-
-    X_data = X_data_eeg
-    max_length = max_length_eeg
 
     # split data into train/test
     kf = KFold(n_splits=config.folds, random_state=random_seed_value, shuffle=True)
@@ -127,17 +115,54 @@ def lstm_classifier(features, labels, eeg, embedding_type, param_dict, random_se
         print("Preparing model...")
         model = tf.keras.Sequential()
 
+        if embedding_type is 'none':
+            # todo: tune embedding dim?
+            embedding_layer = tf.keras.layers.Embedding(num_words, 32, input_length=max_length,
+                                                        name='none_input_embeddings')
+            model.add(embedding_layer)
 
-        # todo: fix model to take params from config
-        model.add(tf.keras.layers.Input(shape=(max_length,), dtype='int32', name='input_eeg'))
-        model.add(tf.keras.layers.Dense(64, activation=tf.nn.relu))
-        model.add(tf.keras.layers.Dropout(0.3))
-        model.add(tf.keras.layers.Dense(64, activation=tf.nn.relu))
-        model.add(tf.keras.layers.Dropout(0.3))
-        model.add(tf.keras.layers.Dense(y_train.shape[1], activation=tf.nn.softmax))
+        elif embedding_type is 'glove':
+            # load pre-trained word embeddings into an Embedding layer
+            # note that we set trainable = False so as to keep the embeddings fixed
+            embedding_layer = tf.keras.layers.Embedding(num_words,
+                                                        embedding_dim,
+                                                        embeddings_initializer=Constant(embedding_matrix),
+                                                        input_length=max_length,
+                                                        trainable=False,
+                                                        name='glove_input_embeddings')
+            model.add(embedding_layer)
+
+        elif embedding_type is 'bert':
+            model = tf.keras.Sequential()
+            model.add(tf.keras.layers.Input(shape=(max_length,), dtype='int32', name='input_ids'))
+            bert_layer = ml_helpers.createBertLayer()
+            model.add(bert_layer)
+            # test:
+            model.add(tf.keras.layers.Flatten())
+            model.add(tf.keras.layers.Dense(256, activation=tf.nn.relu))
+            model.add(tf.keras.layers.Dropout(0.5))
+            model.add(tf.keras.layers.Dense(256, activation=tf.nn.relu))
+            model.add(tf.keras.layers.Dropout(0.5))
+            model.add(tf.keras.layers.Dense(y_train.shape[1], activation=tf.nn.softmax))
+
+        model.summary()
+
+        """
+        for l in list(range(lstm_layers)):
+            if l < lstm_layers - 1:
+                model.add(tf.keras.layers.Bidirectional(tf.keras.layers.LSTM(lstm_dim, return_sequences=True)))
+            else:
+                model.add(tf.keras.layers.Bidirectional(tf.keras.layers.LSTM(lstm_dim)))
+        model.add(tf.keras.layers.Dense(dense_dim, activation='relu'))
+        model.add(tf.keras.layers.Dropout(rate=dropout))
+        model.add(tf.keras.layers.Dense(y_train.shape[1], activation='softmax'))
 
         model.compile(loss='categorical_crossentropy',
-                      optimizer=tf.keras.optimizers.Adam(lr=0.0001),
+                      optimizer=tf.keras.optimizers.Adam(lr=lr),
+                      metrics=['accuracy'])
+        """
+        model.compile(loss='categorical_crossentropy',
+                      optimizer=tf.keras.optimizers.Adam(lr=0.00001),
                       metrics=['accuracy'])
 
         model.summary()
