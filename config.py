@@ -21,7 +21,7 @@ class_task = 'sentiment-bin' #'sentiment-bin'
 feature_set = ['eeg_raw']  # 'text_only' , 'eeg_raw'
 
 # word embeddings {none, glove (300d), bert}
-embeddings = ['bert', 'none', 'glove']
+embeddings = ['none', 'glove']
 # specify directory with bert model, if using
 modelBertDir = "/mnt/ds3lab-scratch/noraho/embeddings/bert"
 
@@ -35,7 +35,7 @@ epochs = [5, 10, 20, 50, 100]
 lr = [0.00001, 0.001, 0.01, 0.0001]
 
 # other parameters
-folds = 5
+folds = 3
 random_seed_values = [13, 78, 22, 66, 42]
 
 # only for Relation Detection:
@@ -109,6 +109,7 @@ lr = [0.001, 0.01, 0.0001]
 """
 
 # EEG only - sentiment bin
+"""
 lstm_dim = ["-"]
 lstm_layers = ["-"]
 dense_dim = [32, 64]
@@ -116,3 +117,4 @@ dropout = [0.1, 0.3, 0.5]
 batch_size = [20, 30, 40, 60]
 epochs = [5, 10, 20, 50, 100, 200, 500]
 lr = [0.00001, 0.001, 0.01, 0.0001]
+"""
