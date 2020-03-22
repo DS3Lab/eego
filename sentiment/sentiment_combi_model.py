@@ -135,23 +135,23 @@ def lstm_classifier(features, labels, eeg, embedding_type, param_dict, random_se
         input_eeg = Input(shape=(X_train_eeg.shape[1],))
 
         # the first branch operates on the first input
-        x = Dense(8, activation="relu")(input_text)
-        x = Dense(4, activation="relu")(x)
-        x = Model(inputs=input_text, outputs=x)
+        text_model = Dense(8, activation="relu")(input_text)
+        text_model = Dense(4, activation="relu")(text_model)
+        text_model = Model(inputs=input_text, outputs=text_model)
         # the second branch opreates on the second input
-        y = Dense(64, activation="relu")(input_eeg)
-        y = Dense(32, activation="relu")(y)
-        y = Dense(4, activation="relu")(y)
-        y = Model(inputs=input_eeg, outputs=y)
+        eeg_model = Dense(64, activation="relu")(input_eeg)
+        eeg_model = Dense(32, activation="relu")(eeg_model)
+        eeg_model = Dense(4, activation="relu")(eeg_model)
+        eeg_model = Model(inputs=input_eeg, outputs=eeg_model)
         # combine the output of the two branches
-        combined = concatenate([x.output, y.output])
+        combined = concatenate([text_model.output, eeg_model.output])
         # apply a FC layer and then a regression prediction on the
         # combined outputs
-        z = Dense(2, activation="relu")(combined)
-        z = Dense(y_train.shape[1], activation="softmax")(z)
+        combi_model = Dense(2, activation="relu")(combined)
+        combi_model = Dense(y_train.shape[1], activation="softmax")(combi_model)
         # our model will accept the inputs of the two branches and
         # then output a single value
-        model = Model(inputs=[x.input, y.input], outputs=z)
+        model = Model(inputs=[input_text.input, input_eeg.input], outputs=combi_model)
 
         """
         if embedding_type is 'none':
