@@ -2,7 +2,7 @@ import config
 from feature_extraction import zuco_reader
 from reldetect import reldetect_model
 from ner import ner_model
-from sentiment import sentiment_model
+from sentiment import sentiment_text_model
 from data_helpers import save_results, load_matlab_files
 
 # Usage on spaceml:
@@ -51,7 +51,7 @@ def main():
                                             save_results(fold_results, config.class_task)
 
                                         elif config.class_task == 'sentiment-tri':
-                                            fold_results = sentiment_model.lstm_classifier(feature_dict, label_dict, emb, parameter_dict, rand)
+                                            fold_results = sentiment_text_model.lstm_classifier(feature_dict, label_dict, emb, parameter_dict, rand)
                                             save_results(fold_results, config.class_task)
                                         elif config.class_task == 'sentiment-bin':
                                             print(len(feature_dict), len(label_dict))
@@ -61,7 +61,7 @@ def main():
                                                         del label_dict[s]
                                                         del feature_dict[s]
                                             print(len(feature_dict), len(label_dict))
-                                            fold_results = sentiment_model.lstm_classifier(feature_dict, label_dict, emb, parameter_dict, rand)
+                                            fold_results = sentiment_text_model.lstm_classifier(feature_dict, label_dict, emb, parameter_dict, rand)
                                             save_results(fold_results, config.class_task)
 
 
