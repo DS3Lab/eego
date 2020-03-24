@@ -41,12 +41,14 @@ def word_level_et_features(sentence_data, gaze_dict):
             if word_data:
                 for widx in range(len(word_data)):
                     word = word_data[widx]['content']
-                    print(word)
+                    #print(word)
                     for feature in gaze_features:
+                        feat = []
                         if word_data[widx][feature] is not None:
-                            word_features[feature].append(float(word_data[widx][feature]))
+                            feat.append(float(word_data[widx][feature]))
                         else:
-                            word_features[feature].append(0.0)
+                            feat.append(0.0)
+                        word_features[feature].append(feat)
 
             else:
                 print("NO word data available!")
@@ -55,7 +57,7 @@ def word_level_et_features(sentence_data, gaze_dict):
             if config.class_task.startswith('sentiment') or config.class_task == "reldetect":
                 if sent not in gaze_dict:
                     gaze_dict[sent] = word_features
-                    print(gaze_dict[sent])
+                    #print(gaze_dict[sent])
                 else:
                     gaze_dict[sent]['nFix'].append(word_features['nFix'])
                     gaze_dict[sent]['FFD'].append(word_features['FFD'])
