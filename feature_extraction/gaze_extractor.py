@@ -40,13 +40,14 @@ def word_level_et_features(sentence_data, gaze_dict):
 
                 word_features = {'tokens': split_tokens, 'nFix': [], 'FFD': [], 'TRT': [], 'GD': [], 'GPT': []}
                 if word_data:
+                    feat = []
                     for widx in range(len(word_data)):
                         word = word_data[widx]['content']
                         #print(word)
                         for feature in gaze_features:
-                            feat = []
+
                             if word_data[widx][feature] is not None:
-                                feat.append(float(word_data[widx][feature][0]))
+                                feat.append(float(word_data[widx][feature]))
                             else:
                                 feat.append(0.0)
                             word_features[feature].append(feat)
