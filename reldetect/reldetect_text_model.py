@@ -36,8 +36,8 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
     # plot sample distribution
     # ml_helpers.plot_label_distribution(y)
 
-    # convert class labels to one hot vectors
-    y = np_utils.to_categorical(y)
+    # these are already one hot categorical encodings
+    y = np.asarray(y)
 
     vocab_size = 100000
 
