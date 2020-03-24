@@ -4,8 +4,56 @@ import config
 import nltk
 import numpy as np
 
+def extract_word_raw_eeg(sentence_data, eeg_dict):
+    """extract word-level raw EEG data of all sentences.
+    word-level EEG data = mean activity over all fixations of a word"""
 
-# get raw EEG features (mean sentence level activity)
+    """extract word level eye-tracking features from Matlab files"""
+
+    for tup in sentence_data:
+
+        # read Matlab v7.3 structures
+        f = tup[0]
+        s_data = tup[1]
+        rawData = s_data['rawData']
+        contentData = s_data['content']
+        wordData = s_data['word']
+
+        for idx in range(len(rawData)):
+
+            obj_reference_content = contentData[idx][0]
+            sent = dh.load_matlab_string(f[obj_reference_content])
+            # whitespace tokenization
+            split_tokens = sent.split()
+            # linguistic tokenization
+            spacy_tokens = nltk.word_tokenize(sent)
+
+            sent_features = {}
+            # get word level data
+            try:
+                word_data = dh.extract_word_level_data(f, f[wordData[idx][0]],
+                                                   eeg_float_resolution=dh.eeg_float_resolution)
+
+                if word_data:
+                    for widx in range(len(word_data)):
+                        word = word_data[widx]['content']
+                        word_eeg = word_data[widx]["RAW_EEG"]
+                        sent_features[widx] = [word_eeg]
+                else:
+                    print("NO word data available!")
+            except ValueError:
+                print("NO sentence data available!")
+
+            # for sentiment and relation detection
+            if config.class_task.startswith('sentiment') or config.class_task == "reldetect":
+                if sent not in eeg_dict:
+                    eeg_dict[sent] = sent_features
+                else:
+                    for widx, fts in eeg_dict[sent].items():
+                        eeg_dict[sent][widx].append(sent_features[widx])
+
+
+
 def extract_sent_raw_eeg(sentence_data, eeg_dict):
     """extract sentence-level raw EEG data of all sentences."""
 
@@ -93,6 +141,6 @@ def extract_sent_freq_eeg(sentence_data, eeg_dict):
             # for sentiment and relation detection
             if config.class_task.startswith('sentiment') or config.class_task == "reldetect":
                 if sent not in eeg_dict:
-                    eeg_dict[sent] = {'mean_raw_sent_eeg': [mean_sent_t]}
+                    eeg_dict[sent] = {config.feature_set[0]+'_sent_eeg': [mean_sent_t]}
                 else:
-                    eeg_dict[sent]['mean_raw_sent_eeg'].append(mean_sent_t)
+                    eeg_dict[sent][config.feature_set[0]+'_sent_eeg'].append(mean_sent_t)
