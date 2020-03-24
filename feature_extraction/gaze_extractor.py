@@ -34,23 +34,22 @@ def word_level_et_features(sentence_data, gaze_dict):
             # linguistic tokenization
             spacy_tokens = nltk.word_tokenize(sent)
 
+            sent_features = {}
             # get word level data
             try:
                 word_data = dh.extract_word_level_data(f, f[wordData[idx][0]],
                                                    eeg_float_resolution=dh.eeg_float_resolution)
 
-                word_features = {'tokens': split_tokens, 'nFix': [], 'FFD': [], 'TRT': [], 'GD': [], 'GPT': []}
                 if word_data:
-                    for feature in gaze_features:
-                        feat = []
-                        for widx in range(len(word_data)):
-                            word = word_data[widx]['content']
-                            #print(word)
+                    for widx in range(len(word_data)):
+                        word = word_data[widx]['content']
+                        word_feats = []
+                        for feature in gaze_features:
                             if word_data[widx][feature] is not None:
-                                feat.append(float(word_data[widx][feature]))
+                                word_feats.append(float(word_data[widx][feature]))
                             else:
-                                feat.append(0.0)
-                        word_features[feature] = feat
+                                word_feats.append(0.0)
+                        sent_features[widx] = [word_feats]
                 else:
                     print("NO word data available!")
             except ValueError:
@@ -59,12 +58,9 @@ def word_level_et_features(sentence_data, gaze_dict):
             # for sentiment and relation detection
             if config.class_task.startswith('sentiment') or config.class_task == "reldetect":
                 if sent not in gaze_dict:
-                    gaze_dict[sent] = word_features
+                    gaze_dict[sent] = sent_features
                     #print(gaze_dict[sent])
                 else:
-                    gaze_dict[sent]['nFix'].append(word_features['nFix'])
-                    gaze_dict[sent]['FFD'].append(word_features['FFD'])
-                    gaze_dict[sent]['TRT'].append(word_features['TRT'])
-                    gaze_dict[sent]['GD'].append(word_features['GD'])
-                    gaze_dict[sent]['GPT'].append(word_features['GPT'])
+                    for widx, fts in gaze_dict[sent].items():
+                        gaze_dict[sent][widx].append(sent_features[widx])
 

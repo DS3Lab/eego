@@ -42,9 +42,15 @@ def lstm_classifier(labels, gaze, embedding_type, param_dict, random_seed_value)
     gaze_X = []
     for s in gaze.values():
         # average over all subjects
-        print(len(s['nFix']))
-        n = np.mean(s['nFix'], axis=0)
-        gaze_X.append(n)
+        sent_feats = []
+        for w, fts in s.items():
+            #print(len(fts))
+            subj_mean_word_feats = np.mean(fts, axis=0)
+            print(w, subj_mean_word_feats)
+            sent_feats.append(subj_mean_word_feats)
+        print(len(sent_feats))
+        gaze_X.append(sent_feats)
+    print(len(gaze_X))
 
     X_data_gaze = np.array(gaze_X)
     max_length_gaze = X_data_gaze.shape[1]
