@@ -7,7 +7,7 @@ from . import eeg_extractor
 # Read matlab files and extract gaze and/or EEG features
 
 
-def extract_features(sent_data, feature_set, feature_dict, eeg_dict):
+def extract_features(sent_data, feature_set, feature_dict, eeg_dict, gaze_dict):
     """Extract features from ZuCo Matlab files"""
 
     # extract text for all models
@@ -20,7 +20,7 @@ def extract_features(sent_data, feature_set, feature_dict, eeg_dict):
         eeg_extractor.extract_sent_freq_eeg(sent_data, eeg_dict)
 
     if "eye_tracking" in feature_set:
-        gaze_extractor.word_level_et_features(sent_data, feature_dict)
+        gaze_extractor.word_level_et_features(sent_data, gaze_dict)
 
 
 def extract_labels(feature_dict, label_dict, task, subject):

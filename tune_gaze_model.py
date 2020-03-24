@@ -12,6 +12,7 @@ from data_helpers import save_results, load_matlab_files
 def main():
     feature_dict = {}
     label_dict = {}
+    eeg_dict = {}
     gaze_dict = {}
     print("TASK: ", config.class_task)
     print("extracting", config.feature_set, "features....")
@@ -20,7 +21,7 @@ def main():
 
         loaded_data = load_matlab_files(config.class_task, subject)
 
-        zuco_reader.extract_features(loaded_data, config.feature_set, feature_dict, gaze_dict)
+        zuco_reader.extract_features(loaded_data, config.feature_set, feature_dict, eeg_dict, gaze_dict)
         zuco_reader.extract_labels(feature_dict, label_dict, config.class_task, subject)
 
     print(gaze_dict)
