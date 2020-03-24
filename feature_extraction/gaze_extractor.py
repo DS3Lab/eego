@@ -55,6 +55,7 @@ def word_level_et_features(sentence_data, gaze_dict):
             if config.class_task.startswith('sentiment') or config.class_task == "reldetect":
                 if sent not in gaze_dict:
                     gaze_dict[sent] = word_features
+                    print(gaze_dict[sent])
                 else:
                     gaze_dict[sent]['nFix'].append(word_features['nFix'])
                     gaze_dict[sent]['FFD'].append(word_features['FFD'])
