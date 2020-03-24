@@ -1,7 +1,3 @@
-# dataset {zuco1, zuco2, zuco1+2}
-# todo: do we need this one?
-dataset = 'zuco1'
-
 # dataset directories
 #rootdir_zuco1 = "/Volumes/methlab/NLP/Ce_ETH/OSF-ZuCo1.0-200107/mat7.3/"
 #rootdir_zuco2 = "/Volumes/methlab/NLP/Ce_ETH/2019/FirstLevel_V2/"
@@ -9,16 +5,16 @@ base_dir = "/mnt/ds3lab-scratch/noraho/coling2020/"
 rootdir_zuco1 = base_dir+"zuco1/"
 rootdir_zuco2 = base_dir+"zuco2/"
 
-# subjects
+# subjects (subejcts starting with "Z" are from ZuCo 1, subjects starting with "Y" are from ZuCo 2)
 #subjects = ['YAC', 'YAG', 'YAK', 'YDG', 'YDR', 'YFR', 'YFS', 'YHS', 'YIS', 'YLS', 'YMD', 'YMS', 'YRH', 'YRK', 'YRP', 'YSD', 'YSL', 'YTL']  # exclude YMH
 subjects = ["ZKW", "ZJS", "ZDN"]#, "ZJN"]#, "ZPH", "ZAB", "ZJM", "ZKB", "ZKH", "ZMG", "ZGW", "ZKW", "ZDM"]
 
 
 # ML task {sentiment-bin, sentiment-tri, ner, reldetect}
-class_task = 'sentiment-bin' #'sentiment-bin'
+class_task = 'sentiment-bin'
 
-# Features sets {'text_only' , 'eeg_raw', 'eeg_theta', 'eeg_alpha', 'eeg_beta', 'eeg_gamma'}
-feature_set = ['combi_concat']
+# Features sets {'text_only' , 'eeg_raw', 'eeg_theta', 'eeg_alpha', 'eeg_beta', 'eeg_gamma', 'combi_concat'}
+feature_set = ['eye_tracking']
 
 # word embeddings {none, glove (300d), bert}
 embeddings = ['glove']
