@@ -2,7 +2,7 @@ import config
 from feature_extraction import zuco_reader
 from sentiment import sentiment_gaze_model
 from data_helpers import save_results, load_matlab_files
-import json
+import ast
 
 
 # Usage on spaceml:
@@ -25,12 +25,8 @@ def main():
         zuco_reader.extract_features(loaded_data, config.feature_set, feature_dict, eeg_dict, gaze_dict)
         zuco_reader.extract_labels(feature_dict, label_dict, config.class_task, subject)
 
-
-    with open("gaze_feats_file.json", 'r') as f:
-        s = f.read()
-        s = s.replace("\'", "\"")
-        print(s)
-        gaze_dict = json.loads(s)
+    with open("gaze_feats_file.json", "r") as data:
+        gaze_dict = ast.literal_eval(data.read())
 
 
 
