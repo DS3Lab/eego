@@ -57,12 +57,10 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
     if embedding_type is 'none':
         X_data_text = pad_sequences(sequences, maxlen=max_length, padding='post', truncating='post')
         print('Shape of data tensor:', X_data_text.shape)
-        print('Shape of label tensor:', y.shape)
 
     if embedding_type is 'glove':
         X_data_text = pad_sequences(sequences, maxlen=max_length, padding='post', truncating='post')
         print('Shape of data tensor:', X_data_text.shape)
-        print('Shape of label tensor:', y.shape)
 
         print("Loading Glove embeddings...")
         embedding_dim = 300
@@ -77,11 +75,11 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
 
         print('Shape of data tensor:', X_data_text.shape)
         print('Shape of data (masks) tensor:', X_data_masks.shape)
-        print('Shape of label tensor:', y.shape)
 
     print("Maximum sentence length: ", max_length)
     # pad label sequences too
     y_padded = pad_sequences(y, maxlen=max_length, value=0, padding='post', truncating='post')
+    print('Shape of label tensor:', y_padded.shape)
 
     # split data into train/test
     kf = KFold(n_splits=config.folds, random_state=random_seed_value, shuffle=True)
