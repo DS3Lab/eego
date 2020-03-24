@@ -13,6 +13,8 @@ import time
 from datetime import timedelta
 import tensorflow as tf
 from tensorflow.python.keras.layers import Input, Dense, concatenate, Embedding, LSTM, Bidirectional, Flatten, Dropout
+from tensorflow.python.keras.models import Model
+
 
 
 os.environ['KERAS_BACKEND'] = 'tensorflow'
@@ -28,8 +30,7 @@ def lstm_classifier(labels, gaze, embedding_type, param_dict, random_seed_value)
     tf.random.set_seed(random_seed_value)
     os.environ['PYTHONHASHSEED'] = str(random_seed_value)
 
-    start = time.time()
-
+    X_text = list(gaze.keys())
     y = list(labels.values())
 
     # plot sample distribution
@@ -37,6 +38,23 @@ def lstm_classifier(labels, gaze, embedding_type, param_dict, random_seed_value)
 
     # convert class labels to one hot vectors
     y = np_utils.to_categorical(y)
+
+    vocab_size = 100000
+
+    # prepare text samples
+    print('Processing text dataset...')
+
+    print('Found %s sentences.' % len(X_text))
+
+    tokenizer = Tokenizer(num_words=vocab_size)
+    tokenizer.fit_on_texts(X_text)
+
+    word_index = tokenizer.word_index
+    print('Found %s unique tokens.' % len(word_index))
+    num_words = min(vocab_size, len(word_index) + 1)
+
+    start = time.time()
+
 
     # prepare EEG data
     gaze_X = []
@@ -58,6 +76,7 @@ def lstm_classifier(labels, gaze, embedding_type, param_dict, random_seed_value)
     print(len(gaze_X))
     print(max_len)
 
+    # todo: pad gaze sequences
     for s in gaze_X:
         print(len(s))
         while len(s) < max_len:
@@ -69,7 +88,7 @@ def lstm_classifier(labels, gaze, embedding_type, param_dict, random_seed_value)
 
     max_length_gaze = max_len
 
-    # todo: pad gaze sequences
+
 
     X_data = X_data_gaze
     max_length = max_length_gaze
@@ -109,15 +128,21 @@ def lstm_classifier(labels, gaze, embedding_type, param_dict, random_seed_value)
 
         # define model
         print("Preparing model...")
-        model = tf.keras.Sequential()
+        #model = tf.keras.Sequential()
 
-        model.add(tf.keras.layers.Input(shape=(max_length,), dtype='int32', name='input_eeg'))
+        input_text = Input(shape=X_train.shape[1], dtype=tf.int32)
+
+        # the first branch operates on the first input (word embeddings)
+        text_model = Embedding(num_words, 32, input_length=X_train.shape[1],
+                                   name='none_input_embeddings')(input_text)
 
         text_model = Bidirectional(LSTM(lstm_dim, return_sequences=True))(text_model)
         text_model = Flatten()(text_model)
         text_model = Dense(dense_dim, activation="relu")(text_model)
         text_model = Dropout(dropout)(text_model)
         text_model = Dense(y_train.shape[1], activation="softmax")(text_model)
+
+        model = Model(inputs=input_text, outputs=text_model)
 
         model.compile(loss='categorical_crossentropy',
                       optimizer=tf.keras.optimizers.Adam(lr=lr),

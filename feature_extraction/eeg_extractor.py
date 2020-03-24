@@ -43,6 +43,7 @@ def extract_word_raw_eeg(sentence_data, eeg_dict):
 
                         # average over multiple fixations
                         word_eeg = np.nanmean(word_eeg)
+                        print(len(word_eeg))
 
                         sent_features[widx] = word_eeg
                 else:
@@ -50,15 +51,16 @@ def extract_word_raw_eeg(sentence_data, eeg_dict):
             except ValueError:
                 print("NO sentence data available!")
 
-            # for sentiment and relation detection
-            if config.class_task.startswith('sentiment') or config.class_task == "reldetect":
-                if sent not in eeg_dict:
-                    eeg_dict[sent] = {}
-                    for widx, fts in sent_features.items():
-                        eeg_dict[sent][widx] = [fts]
-                else:
-                    for widx, fts in eeg_dict[sent].items():
-                        eeg_dict[sent][widx].append(sent_features[widx])
+            if sent_features:
+                # for sentiment and relation detection
+                if config.class_task.startswith('sentiment') or config.class_task == "reldetect":
+                    if sent not in eeg_dict:
+                        eeg_dict[sent] = {}
+                        for widx, fts in sent_features.items():
+                            eeg_dict[sent][widx] = [fts]
+                    else:
+                        for widx, fts in eeg_dict[sent].items():
+                            eeg_dict[sent][widx].append(sent_features[widx])
 
 
 
