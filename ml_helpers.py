@@ -81,6 +81,7 @@ def get_bert_max_len(X):
 
     return max_len
 
+
 def prepare_sequences_for_bert_with_mask(X, max_length):
     
     tokenizer = BertTokenizer.from_pretrained("bert-base-uncased", do_lower_case=True)

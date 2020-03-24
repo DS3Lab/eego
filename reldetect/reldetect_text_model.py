@@ -19,10 +19,10 @@ os.environ['KERAS_BACKEND'] = 'tensorflow'
 
 
 # Machine learning model for sentiment classification (binary and ternary)
-# Only learning from text 
+# Only learning from text
 
 
-def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_value):
+def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_value, threshold):
     # set random seed
     np.random.seed(random_seed_value)
     tf.random.set_seed(random_seed_value)
@@ -50,8 +50,6 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
     tokenizer.fit_on_texts(X)
     sequences = tokenizer.texts_to_sequences(X)
     max_length = max([len(s) for s in sequences])
-    # TODO Bert Tokenizer seems to result in more tokens!
-    print("Maximum sentence length: ", max_length)
 
     word_index = tokenizer.word_index
     print('Found %s unique tokens.' % len(word_index))
@@ -73,12 +71,16 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
 
     if embedding_type is 'bert':
         print("Prepare sequences for Bert ...")
+
+        # todo: is tokenizing twice really necessary?
+        max_length = ml_helpers.get_bert_max_len(X)
         X_data_text, X_data_masks = ml_helpers.prepare_sequences_for_bert_with_mask(X, max_length)
-        embedding_dim = 768
 
         print('Shape of data tensor:', X_data_text.shape)
         print('Shape of data (masks) tensor:', X_data_masks.shape)
         print('Shape of label tensor:', y.shape)
+
+    print("Maximum sentence length: ", max_length)
 
     # split data into train/test
     kf = KFold(n_splits=config.folds, random_state=random_seed_value, shuffle=True)
@@ -93,7 +95,7 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
         print("splitting train and test data...")
         y_train, y_test = y[train_index], y[test_index]
         X_train_text, X_test_text = X_data_text[train_index], X_data_text[test_index]
-    
+
         if embedding_type is 'bert':
             X_train_masks, X_test_masks = X_data_masks[train_index], X_data_masks[test_index]
 
@@ -120,20 +122,21 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
         print("Preparing model...")
 
         # define two sets of inputs
-        input_text = Input(shape=(X_train_text.shape[1],)) if embedding_type is not 'bert' else Input(shape=(X_train_text.shape[1],), dtype=tf.int32)
+        input_text = Input(shape=(X_train_text.shape[1],)) if embedding_type is not 'bert' else Input(
+            shape=(X_train_text.shape[1],), dtype=tf.int32)
         input_list = [input_text]
 
         # the first branch operates on the first input (word embeddings)
         if embedding_type is 'none':
             text_model = Embedding(num_words, 32, input_length=X_train_text.shape[1],
-                  name='none_input_embeddings')(input_text)
+                                   name='none_input_embeddings')(input_text)
         elif embedding_type is 'glove':
             text_model = Embedding(num_words,
-                      embedding_dim,
-                      embeddings_initializer=Constant(embedding_matrix),
-                      input_length=X_train_text.shape[1],
-                      trainable=False,
-                      name='glove_input_embeddings')(input_text)
+                                   embedding_dim,
+                                   embeddings_initializer=Constant(embedding_matrix),
+                                   input_length=X_train_text.shape[1],
+                                   trainable=False,
+                                   name='glove_input_embeddings')(input_text)
         elif embedding_type is 'bert':
             input_mask = tf.keras.layers.Input((X_train_masks.shape[1],), dtype=tf.int32)
             input_list.append(input_mask)
@@ -148,28 +151,32 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
         text_model = Flatten()(text_model)
         text_model = Dense(dense_dim, activation="relu")(text_model)
         text_model = Dropout(dropout)(text_model)
-        text_model = Dense(y_train.shape[1], activation="softmax")(text_model)
-
+        text_model = Dense(y_train.shape[1], activation="sigmoid")(text_model)
 
         model = Model(inputs=input_list, outputs=text_model)
 
-        model.compile(loss='categorical_crossentropy',
+        model.compile(loss='binary_crossentropy',
                       optimizer=tf.keras.optimizers.Adam(lr=lr),
-                      metrics=['accuracy'])
+                      metrics=[tf.keras.metrics.Precision(), 'accuracy'])
 
         model.summary()
 
         # train model
-        history = model.fit([X_train_text] if embedding_type is not 'bert' else [X_train_text, X_train_masks], y_train, validation_split=0.1, epochs=epochs, batch_size=batch_size)
+        history = model.fit([X_train_text] if embedding_type is not 'bert' else [X_train_text, X_train_masks], y_train,
+                            validation_split=0.1, epochs=epochs, batch_size=batch_size)
 
         # evaluate model
-        scores = model.evaluate([X_test_text] if embedding_type is not 'bert' else [X_test_text, X_test_masks], y_test, verbose=0)
+        scores = model.evaluate([X_test_text] if embedding_type is not 'bert' else [X_test_text, X_test_masks], y_test,
+                                verbose=0)
         predictions = model.predict([X_test_text] if embedding_type is not 'bert' else [X_test_text, X_test_masks])
 
-        rounded_predictions = [np.argmax(p) for p in predictions]
-        rounded_labels = np.argmax(y_test, axis=1)
-        p, r, f, support = sklearn.metrics.precision_recall_fscore_support(rounded_labels, rounded_predictions,
-                                                                           average='macro')
+        print("For threshold:", threshold)
+        pred = predictions.copy()
+        pred[pred >= threshold] = 1
+        pred[pred < threshold] = 0
+
+        p, r, f, support = sklearn.metrics.precision_recall_fscore_support(y_test, pred,
+                                                                           average='micro')
         print(p, r, f)
         # conf_matrix = sklearn.metrics.confusion_matrix(rounded_labels, rounded_predictions)
         # print(conf_matrix)
@@ -184,6 +191,7 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
             fold_results['precision'] = [p]
             fold_results['recall'] = [r]
             fold_results['fscore'] = [f]
+            fold_results['threshold'] = threshold
         else:
             fold_results['train-loss'].append(history.history['loss'])
             fold_results['train-accuracy'].append(history.history['accuracy'])
