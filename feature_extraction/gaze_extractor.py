@@ -46,7 +46,7 @@ def word_level_et_features(sentence_data, gaze_dict):
                         for feature in gaze_features:
                             feat = []
                             if word_data[widx][feature] is not None:
-                                feat.append(float(word_data[widx][feature]))
+                                feat.append(float(word_data[widx][feature][0]))
                             else:
                                 feat.append(0.0)
                             word_features[feature].append(feat)
