@@ -44,7 +44,8 @@ def lstm_classifier(labels, gaze, embedding_type, param_dict, random_seed_value)
         # average over all subjects
         sent_feats = []
         for w, fts in s.items():
-            #print(len(fts))
+            print(len(fts))
+            print(fts)
             subj_mean_word_feats = np.mean(fts, axis=0)
             print(w, subj_mean_word_feats)
             sent_feats.append(subj_mean_word_feats)

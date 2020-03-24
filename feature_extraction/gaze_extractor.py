@@ -22,11 +22,6 @@ def word_level_et_features(sentence_data, gaze_dict):
 
         for idx in range(len(rawData)):
 
-            #raw_sent_eeg_ref = rawData[idx][0]
-            #raw_sent_eeg = f[raw_sent_eeg_ref]
-            #mean_raw_sent_eeg = np.nanmean(raw_sent_eeg, axis=0)
-            # print(mean_raw_sent_eeg)
-
             obj_reference_content = contentData[idx][0]
             sent = dh.load_matlab_string(f[obj_reference_content])
             # whitespace tokenization
@@ -47,8 +42,8 @@ def word_level_et_features(sentence_data, gaze_dict):
                         for feature in gaze_features:
                             if word_data[widx][feature] is not None:
                                 word_feats.append(float(word_data[widx][feature]))
-                            else:
-                                word_feats.append(0.0)
+                            #else:
+                                #word_feats.append(0.0)
                         sent_features[widx] = [word_feats]
                 else:
                     print("NO word data available!")
