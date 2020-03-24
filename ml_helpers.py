@@ -66,34 +66,6 @@ def load_glove_embeddings(vocab_size, word_index, EMBEDDING_DIM):
     return embedding_matrix
 
 """
-def load_bert_embeddings(X, max_length, bert_dim):
-    # Allocate a pipeline for feature extraction (= generates a tensor representation for the input sequence)
-    # https://github.com/huggingface/transformers#quick-tour-of-pipelines
-
-    X_bert_states_padded = []
-
-    tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
-    model = TFBertModel.from_pretrained('bert-base-uncased')
-
-    for sent in X:
-
-        input_ids = tf.constant(tokenizer.encode(sent, max_length=max_length, add_special_tokens=True, pad_to_max_length=True))[None, :]  # Batch size 1
-        #print(input_ids)
-
-        outputs = model(input_ids)
-
-        last_hidden_states = outputs[0]  # The last hidden-state is the first element of the output tuple
-        cls_embeddings = last_hidden_states[0] # Use hidden states of the [CLS] token of the last layer as sentence embedding for classification
-        #print(last_hidden_states)
-        #print(cls_embeddings.shape)
-        X_bert_states_padded.append(cls_embeddings)
-
-    #print(len(X_bert_states_padded))
-    return np.asarray(X_bert_states_padded)
-"""
-
-
-
 def createTokenizer():
     """initialize Bert tokenizer"""
     # bert implementationadapted from here:
@@ -139,6 +111,7 @@ def createBertLayer():
     print("Bert layer created")
 
     return bert_layer
+"""
 
 
 def prepare_sequences_for_bert_with_mask(X, max_length):
