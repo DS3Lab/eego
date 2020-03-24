@@ -39,7 +39,8 @@ def extract_word_raw_eeg(sentence_data, eeg_dict):
                     for widx in range(len(word_data)):
                         word = word_data[widx]['content']
                         word_eeg = word_data[widx]["RAW_EEG"]
-                        sent_features[widx] = [word_eeg]
+                        print(type(word_eeg))
+                        sent_features[widx] = word_eeg
                 else:
                     print("NO word data available!")
             except ValueError:
@@ -48,7 +49,9 @@ def extract_word_raw_eeg(sentence_data, eeg_dict):
             # for sentiment and relation detection
             if config.class_task.startswith('sentiment') or config.class_task == "reldetect":
                 if sent not in eeg_dict:
-                    eeg_dict[sent] = sent_features
+                    eeg_dict[sent] = {}
+                    for widx, fts in sent_features.items():
+                        eeg_dict[sent][widx] = [fts]
                 else:
                     for widx, fts in eeg_dict[sent].items():
                         eeg_dict[sent][widx].append(sent_features[widx])
