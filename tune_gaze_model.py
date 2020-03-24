@@ -55,8 +55,7 @@ def main():
                                             save_results(fold_results, config.class_task)
 
                                         elif config.class_task == 'sentiment-tri':
-                                            fold_results = sentiment_gaze_model.lstm_classifier(feature_dict,
-                                                                                                   label_dict, gaze_dict,
+                                            fold_results = sentiment_gaze_model.lstm_classifier(label_dict, gaze_dict,
                                                                                                    emb, parameter_dict,
                                                                                                    rand)
                                             save_results(fold_results, config.class_task)
@@ -67,8 +66,7 @@ def main():
                                                     del label_dict[s]
                                                     del feature_dict[s]
                                                     del gaze_dict[s]
-                                            fold_results = sentiment_gaze_model.lstm_classifier(feature_dict,
-                                                                                                   label_dict, gaze_dict,
+                                            fold_results = sentiment_gaze_model.lstm_classifier(label_dict, gaze_dict,
                                                                                                    emb, parameter_dict,
                                                                                                    rand)
                                             save_results(fold_results, config.class_task)

@@ -12,7 +12,8 @@ import config
 import time
 from datetime import timedelta
 import tensorflow as tf
-import bert
+from tensorflow.python.keras.layers import Input, Dense, concatenate, Embedding, LSTM, Bidirectional, Flatten, Dropout
+
 
 os.environ['KERAS_BACKEND'] = 'tensorflow'
 
@@ -44,8 +45,11 @@ def lstm_classifier(labels, gaze, embedding_type, param_dict, random_seed_value)
         print(len(s['nFix']))
         n = np.mean(s['nFix'], axis=0)
         gaze_X.append(n)
+
     X_data_gaze = np.array(gaze_X)
     max_length_gaze = X_data_gaze.shape[1]
+
+    # todo: pad gaze sequences
 
     X_data = X_data_gaze
     max_length = max_length_gaze
@@ -88,11 +92,12 @@ def lstm_classifier(labels, gaze, embedding_type, param_dict, random_seed_value)
         model = tf.keras.Sequential()
 
         model.add(tf.keras.layers.Input(shape=(max_length,), dtype='int32', name='input_eeg'))
-        model.add(tf.keras.layers.Dense(dense_dim, activation=tf.nn.relu))
-        model.add(tf.keras.layers.Dropout(dropout))
-        model.add(tf.keras.layers.Dense(dense_dim, activation=tf.nn.relu))
-        model.add(tf.keras.layers.Dropout(dropout))
-        model.add(tf.keras.layers.Dense(y_train.shape[1], activation=tf.nn.softmax))
+
+        text_model = Bidirectional(LSTM(lstm_dim, return_sequences=True))(text_model)
+        text_model = Flatten()(text_model)
+        text_model = Dense(dense_dim, activation="relu")(text_model)
+        text_model = Dropout(dropout)(text_model)
+        text_model = Dense(y_train.shape[1], activation="softmax")(text_model)
 
         model.compile(loss='categorical_crossentropy',
                       optimizer=tf.keras.optimizers.Adam(lr=lr),

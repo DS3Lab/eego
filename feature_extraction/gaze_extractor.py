@@ -5,6 +5,7 @@ import config
 
 # extract eye-tracking features: nFix, FFD, TRT, GD, GPT
 
+
 def word_level_et_features(sentence_data, gaze_dict):
     """extract word level eye-tracking features from Matlab files"""
 
@@ -21,9 +22,9 @@ def word_level_et_features(sentence_data, gaze_dict):
 
         for idx in range(len(rawData)):
 
-            raw_sent_eeg_ref = rawData[idx][0]
-            raw_sent_eeg = f[raw_sent_eeg_ref]
-            mean_raw_sent_eeg = np.nanmean(raw_sent_eeg, axis=0)
+            #raw_sent_eeg_ref = rawData[idx][0]
+            #raw_sent_eeg = f[raw_sent_eeg_ref]
+            #mean_raw_sent_eeg = np.nanmean(raw_sent_eeg, axis=0)
             # print(mean_raw_sent_eeg)
 
             obj_reference_content = contentData[idx][0]
@@ -40,18 +41,16 @@ def word_level_et_features(sentence_data, gaze_dict):
 
                 word_features = {'tokens': split_tokens, 'nFix': [], 'FFD': [], 'TRT': [], 'GD': [], 'GPT': []}
                 if word_data:
-                    feat = []
-                    for widx in range(len(word_data)):
-                        word = word_data[widx]['content']
-                        #print(word)
-                        for feature in gaze_features:
-
+                    for feature in gaze_features:
+                        feat = []
+                        for widx in range(len(word_data)):
+                            word = word_data[widx]['content']
+                            #print(word)
                             if word_data[widx][feature] is not None:
                                 feat.append(float(word_data[widx][feature]))
                             else:
                                 feat.append(0.0)
-                            word_features[feature].append(feat)
-
+                        word_features[feature].append(feat)
                 else:
                     print("NO word data available!")
             except ValueError:
