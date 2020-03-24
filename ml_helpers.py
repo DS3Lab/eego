@@ -66,12 +66,9 @@ def load_glove_embeddings(vocab_size, word_index, EMBEDDING_DIM):
     return embedding_matrix
 
 
-def prepare_sequences_for_bert_with_mask(X, max_length):
-    
+def get_bert_max_len(X):
+
     tokenizer = BertTokenizer.from_pretrained("bert-base-uncased", do_lower_case=True)
-    # Tokenize all of the sentences and map the tokens to thier word IDs.
-    input_ids = []
-    attention_masks = []
 
     max_len = 0
     # For every sentence...
@@ -81,6 +78,15 @@ def prepare_sequences_for_bert_with_mask(X, max_length):
         # Update the maximum sentence length.
         max_len = max(max_len, len(input_ids))
     print('Max sentence length: ', max_len)
+
+    return max_len
+
+def prepare_sequences_for_bert_with_mask(X, max_length):
+    
+    tokenizer = BertTokenizer.from_pretrained("bert-base-uncased", do_lower_case=True)
+    # Tokenize all of the sentences and map the tokens to thier word IDs.
+    input_ids = []
+    attention_masks = []
 
     # For every sentence...
     for sent in X:
