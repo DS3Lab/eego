@@ -41,6 +41,8 @@ def lstm_classifier(labels, gaze, embedding_type, param_dict, random_seed_value)
     # prepare EEG data
     gaze_X = []
     max_len = 0
+    gaze_feats_file = open('gaze_feats_file.py', 'w')
+    print(gaze, file=gaze_feats_file)
     for s in gaze.values():
         # average over all subjects
         sent_feats = []
