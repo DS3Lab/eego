@@ -60,7 +60,10 @@ def extract_word_raw_eeg(sentence_data, eeg_dict):
                             eeg_dict[sent][widx] = [fts]
                     else:
                         for widx, fts in eeg_dict[sent].items():
-                            eeg_dict[sent][widx].append(sent_features[widx])
+                            if widx in sent_features:
+                                eeg_dict[sent][widx].append(sent_features[widx])
+                            else:
+                                print("missing word....")
 
 
 
