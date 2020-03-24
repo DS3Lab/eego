@@ -34,24 +34,27 @@ def word_level_et_features(sentence_data, gaze_dict):
             spacy_tokens = nltk.word_tokenize(sent)
 
             # get word level data
-            word_data = dh.extract_word_level_data(f, f[wordData[idx][0]],
+            try:
+                word_data = dh.extract_word_level_data(f, f[wordData[idx][0]],
                                                    eeg_float_resolution=dh.eeg_float_resolution)
 
-            word_features = {'tokens': split_tokens, 'nFix': [], 'FFD': [], 'TRT': [], 'GD': [], 'GPT': []}
-            if word_data:
-                for widx in range(len(word_data)):
-                    word = word_data[widx]['content']
-                    #print(word)
-                    for feature in gaze_features:
-                        feat = []
-                        if word_data[widx][feature] is not None:
-                            feat.append(float(word_data[widx][feature]))
-                        else:
-                            feat.append(0.0)
-                        word_features[feature].append(feat)
+                word_features = {'tokens': split_tokens, 'nFix': [], 'FFD': [], 'TRT': [], 'GD': [], 'GPT': []}
+                if word_data:
+                    for widx in range(len(word_data)):
+                        word = word_data[widx]['content']
+                        #print(word)
+                        for feature in gaze_features:
+                            feat = []
+                            if word_data[widx][feature] is not None:
+                                feat.append(float(word_data[widx][feature]))
+                            else:
+                                feat.append(0.0)
+                            word_features[feature].append(feat)
 
-            else:
-                print("NO word data available!")
+                else:
+                    print("NO word data available!")
+            except ValueError:
+                print("NO sentence data available!")
 
             # for sentiment and relation detection
             if config.class_task.startswith('sentiment') or config.class_task == "reldetect":
