@@ -15,6 +15,7 @@ def word_level_et_features(sentence_data, gaze_dict):
         s_data = tup[1]
         rawData = s_data['rawData']
         contentData = s_data['content']
+        wordData = sentence_data['word']
 
         gaze_features = ['nFix', 'FFD', 'TRT', 'GD', 'GPT']
 
@@ -43,9 +44,9 @@ def word_level_et_features(sentence_data, gaze_dict):
                     print(word)
                     for feature in gaze_features:
                         if word_data[widx][feature] is not None:
-                            sentence_features[feature].append(float(word_data[widx][feature]))
+                            word_features[feature].append(float(word_data[widx][feature]))
                         else:
-                            sentence_features[feature].append(0.0)
+                            word_features[feature].append(0.0)
 
             else:
                 print("NO word data available!")
