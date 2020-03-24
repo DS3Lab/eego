@@ -77,7 +77,7 @@ def get_bert_max_len(X):
         input_ids = tokenizer.encode(sent, add_special_tokens=True)
         # Update the maximum sentence length.
         max_len = max(max_len, len(input_ids))
-    print('Max sentence length: ', max_len)
+    print('Max Bert sentence length: ', max_len)
 
     return max_len
 
@@ -100,7 +100,7 @@ def prepare_sequences_for_bert_with_mask(X, max_length):
         encoded_dict = tokenizer.encode_plus(
                             sent,                      # Sentence to encode.
                             add_special_tokens = True, # Add '[CLS]' and '[SEP]'
-                            max_length = max_len,           # Pad & truncate all sentences.
+                            max_length = max_length,           # Pad & truncate all sentences.
                             pad_to_max_length = True,
                             return_attention_mask = True,   # Construct attn. masks.
                        )

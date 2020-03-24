@@ -14,7 +14,6 @@ import config
 import time
 from datetime import timedelta
 import tensorflow as tf
-import bert
 
 os.environ['KERAS_BACKEND'] = 'tensorflow'
 
@@ -74,8 +73,8 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
 
     if embedding_type is 'bert':
         print("Prepare sequences for Bert ...")
+        max_length = ml_helpers.get_bert_max_len(X)
         X_data_text, X_data_masks = ml_helpers.prepare_sequences_for_bert_with_mask(X, max_length)
-        embedding_dim = 768
 
         print('Shape of data tensor:', X_data_text.shape)
         print('Shape of data (masks) tensor:', X_data_masks.shape)
