@@ -103,9 +103,6 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
         print(X_train_text.shape)
         print(X_test_text.shape)
 
-        print(X_data_text[0])
-        print(X_data_masks[0])
-
         # reset model
         K.clear_session()
 
@@ -156,7 +153,7 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
         #text_model = Dense(len(label_names), activation="softmax")(text_model)
 
         text_model = Dropout(0.2)(text_model)
-        
+
         for _ in list(range(lstm_layers)):
             text_model = Bidirectional(LSTM(lstm_dim, recurrent_dropout=0.2, dropout=0.2, return_sequences=True))(text_model)
 

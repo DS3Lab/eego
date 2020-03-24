@@ -177,6 +177,7 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
 
         p, r, f, support = sklearn.metrics.precision_recall_fscore_support(y_test, pred,
                                                                            average='micro')
+        print(sklearn.metrics.classification_report(y_test, pred))
         print(p, r, f)
         # conf_matrix = sklearn.metrics.confusion_matrix(rounded_labels, rounded_predictions)
         # print(conf_matrix)
