@@ -132,7 +132,7 @@ def extract_word_level_data(data_container, word_objects, eeg_float_resolution =
                                     together with the reading order, indexed by "word_reading_order"
     """
     available_objects = list(word_objects)
-    print(available_objects)
+    #print(available_objects)
     contentData = word_objects['content']
     fixations_order_per_word = []
     if "rawEEG" in available_objects:
@@ -165,7 +165,6 @@ def extract_word_level_data(data_container, word_objects, eeg_float_resolution =
                 data_dict["RAW_EEG"] = extract_all_fixations(data_container, raw_eegs_obj[0], eeg_float_resolution)
                 #data_dict["ICA_EEG"] = extract_all_fixations(data_container, ica_eegs_obj[0], eeg_float_resolution)
                 data_dict["RAW_ET"] = extract_all_fixations(data_container, ets_obj[0], np.float32)
-                # TODO: Fill the following in!!! <---- IMPORTANT TO DO ASAP
                 data_dict["FFD"] = data_container[ffd[0]].value[0, 0] if len(data_container[ffd[0]].value.shape) == 2 else None
                 data_dict["GD"] = data_container[gd[0]].value[0, 0] if len(data_container[gd[0]].value.shape) == 2 else None
                 data_dict["GPT"] = data_container[gpt[0]].value[0, 0] if len(data_container[gpt[0]].value.shape) == 2 else None
