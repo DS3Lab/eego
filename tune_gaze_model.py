@@ -2,7 +2,7 @@ import config
 from feature_extraction import zuco_reader
 from sentiment import sentiment_gaze_model
 from data_helpers import save_results, load_matlab_files
-import gaze_feats_file
+import json
 
 
 # Usage on spaceml:
@@ -23,10 +23,11 @@ def main():
         loaded_data = load_matlab_files(config.class_task, subject)
 
         zuco_reader.extract_features(loaded_data, config.feature_set, feature_dict, eeg_dict, gaze_dict)
-        gaze_dict = gaze_feats_file.gaze_dict
         zuco_reader.extract_labels(feature_dict, label_dict, config.class_task, subject)
 
-    print(gaze_dict)
+    gaze_dict = json.load(open("gaze_feats_file.json "))
+
+    #print(gaze_dict)
     print(len(feature_dict), len(label_dict), len(gaze_dict))
     if len(feature_dict) != len(label_dict) != len(gaze_dict):
         print("WARNING: Not an equal number of sentences in features and labels!")
