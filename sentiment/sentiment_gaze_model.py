@@ -20,7 +20,7 @@ os.environ['KERAS_BACKEND'] = 'tensorflow'
 # Machine learning model for sentiment classification (binary and ternary)
 # Learning on EEG data only!
 
-def lstm_classifier(features, labels, eeg, embedding_type, param_dict, random_seed_value):
+def lstm_classifier(labels, gaze, embedding_type, param_dict, random_seed_value):
 
     # set random seed
     np.random.seed(random_seed_value)
@@ -38,16 +38,17 @@ def lstm_classifier(features, labels, eeg, embedding_type, param_dict, random_se
     y = np_utils.to_categorical(y)
 
     # prepare EEG data
-    eeg_X = []
-    for s in eeg.values():
+    gaze_X = []
+    for s in gaze.values():
         # average over all subjects
-        n = np.mean(s['mean_raw_sent_eeg'], axis=0)
-        eeg_X.append(n)
-    X_data_eeg = np.array(eeg_X)
-    max_length_eeg = X_data_eeg.shape[1]
+        print(len(s['nFix']))
+        n = np.mean(s['nFix'], axis=0)
+        gaze_X.append(n)
+    X_data_gaze = np.array(gaze_X)
+    max_length_gaze = X_data_gaze.shape[1]
 
-    X_data = X_data_eeg
-    max_length = max_length_eeg
+    X_data = X_data_gaze
+    max_length = max_length_gaze
 
     # split data into train/test
     kf = KFold(n_splits=config.folds, random_state=random_seed_value, shuffle=True)
