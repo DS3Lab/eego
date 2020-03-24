@@ -6,39 +6,7 @@ import config
 # extract eye-tracking features: nFix, FFD, TRT, GD, GPT
 
 def word_level_et_features(sentence_data, gaze_dict):
-    """extract word level eye-tracking features from Matlab struct"""
-
-    gaze_features = ['nFix', 'FFD', 'TRT', 'GD', 'GPT']
-
-    rawData = sentence_data['rawData']
-    contentData = sentence_data['content']
-    wordData = sentence_data['word']
-
-    all_sents_features = {}
-
-    for idx in range(len(rawData)):
-        obj_reference_content = contentData[idx][0]
-        sent = dh.load_matlab_string(f[obj_reference_content])
-        #print(sent)
-        tokens = sent.split()
-
-        # get word level data
-        word_data = dh.extract_word_level_data(f, f[wordData[idx][0]],
-                                               eeg_float_resolution=dh.eeg_float_resolution)
-
-        sentence_features = {'tokens': tokens, 'nFix': [], 'FFD': [], 'TRT': [], 'GD': [], 'GPT': []}
-        if word_data:
-            for widx in range(len(word_data)):
-                for feature in gaze_features:
-                    if word_data[widx][feature] is not None:
-                        sentence_features[feature].append(float(word_data[widx][feature]))
-                    else:
-                        sentence_features[feature].append(0.0)
-
-        else:
-            print("NO word data available!")
-
-    """extract word-level eye-tracking features of all sentences."""
+    """extract word level eye-tracking features from Matlab files"""
 
     for tup in sentence_data:
 
