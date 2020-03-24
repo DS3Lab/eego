@@ -41,8 +41,8 @@ def word_level_et_features(sentence_data, gaze_dict):
                         for feature in gaze_features:
                             if word_data[widx][feature] is not None:
                                 word_feats.append(float(word_data[widx][feature]))
-                            #else:
-                                #word_feats.append(0.0)
+                            else:
+                                word_feats.append(np.nan)
                         if word_feats:
                             sent_features[widx] = word_feats
                 else:
@@ -53,8 +53,9 @@ def word_level_et_features(sentence_data, gaze_dict):
             # for sentiment and relation detection
             if config.class_task.startswith('sentiment') or config.class_task == "reldetect":
                 if sent not in gaze_dict:
-                    gaze_dict[sent] = sent_features
-                    #print(gaze_dict[sent])
+                    gaze_dict[sent] = {}
+                    for widx, fts in sent_features.items():
+                        gaze_dict[sent][widx] = [fts]
                 else:
                     for widx, fts in gaze_dict[sent].items():
                         gaze_dict[sent][widx].append(sent_features[widx])
