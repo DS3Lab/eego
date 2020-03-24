@@ -40,21 +40,24 @@ def lstm_classifier(labels, gaze, embedding_type, param_dict, random_seed_value)
 
     # prepare EEG data
     gaze_X = []
+    max_len = 0
     for s in gaze.values():
         # average over all subjects
         sent_feats = []
+        max_len = len(s) if len(s) > max_len else max_len
         for w, fts in s.items():
             print(len(fts))
             print(fts)
-            subj_mean_word_feats = np.mean(fts, axis=0)
+            subj_mean_word_feats = np.nanmean(fts, axis=0)
             print(w, subj_mean_word_feats)
             sent_feats.append(subj_mean_word_feats)
         print(len(sent_feats))
         gaze_X.append(sent_feats)
     print(len(gaze_X))
+    print(max_len)
 
     X_data_gaze = np.array(gaze_X)
-    max_length_gaze = X_data_gaze.shape[1]
+    max_length_gaze = max_len
 
     # todo: pad gaze sequences
 
