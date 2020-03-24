@@ -46,8 +46,8 @@ def lstm_classifier(labels, gaze, embedding_type, param_dict, random_seed_value)
         sent_feats = []
         max_len = len(s) if len(s) > max_len else max_len
         for w, fts in s.items():
-            print(len(fts))
-            print(fts)
+            #print(len(fts))
+            #print(fts)
             subj_mean_word_feats = np.nanmean(fts, axis=0)
             print(w, subj_mean_word_feats)
             sent_feats.append(subj_mean_word_feats)
@@ -56,7 +56,15 @@ def lstm_classifier(labels, gaze, embedding_type, param_dict, random_seed_value)
     print(len(gaze_X))
     print(max_len)
 
+    for s in gaze_X:
+        print(len(s))
+        while len(s) < max_len:
+            s.append(np.zeros(5))
+        print(len(s))
+
     X_data_gaze = np.array(gaze_X)
+    print(X_data_gaze.shape)
+
     max_length_gaze = max_len
 
     # todo: pad gaze sequences
