@@ -25,9 +25,9 @@ def word_level_et_features(sentence_data, gaze_dict):
             obj_reference_content = contentData[idx][0]
             sent = dh.load_matlab_string(f[obj_reference_content])
             # whitespace tokenization
-            split_tokens = sent.split()
+            # split_tokens = sent.split()
             # linguistic tokenization
-            spacy_tokens = nltk.word_tokenize(sent)
+            #spacy_tokens = nltk.word_tokenize(sent)
 
             sent_features = {}
             # get word level data
@@ -43,7 +43,7 @@ def word_level_et_features(sentence_data, gaze_dict):
                                 word_feats.append(float(word_data[widx][feature]))
                             #else:
                                 #word_feats.append(0.0)
-                        sent_features[widx] = [word_feats]
+                        sent_features[widx] = word_feats
                 else:
                     print("NO word data available!")
             except ValueError:
