@@ -14,6 +14,7 @@ from datetime import timedelta
 import tensorflow as tf
 from tensorflow.python.keras.layers import Input, Dense, concatenate, Embedding, LSTM, Bidirectional, Flatten, Dropout
 from tensorflow.python.keras.models import Model
+import json
 
 
 
@@ -59,8 +60,8 @@ def lstm_classifier(labels, gaze, embedding_type, param_dict, random_seed_value)
     # prepare EEG data
     gaze_X = []
     max_len = 0
-    gaze_feats_file = open('gaze_feats_file.py', 'w')
-    print(gaze, file=gaze_feats_file)
+    gaze_feats_file = open('gaze_feats_file.json', 'w')
+    json.dump(gaze, gaze_feats_file)
     for s in gaze.values():
         # average over all subjects
         sent_feats = []

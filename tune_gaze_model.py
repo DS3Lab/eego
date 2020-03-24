@@ -25,8 +25,8 @@ def main():
         zuco_reader.extract_features(loaded_data, config.feature_set, feature_dict, eeg_dict, gaze_dict)
         zuco_reader.extract_labels(feature_dict, label_dict, config.class_task, subject)
 
-    with open("gaze_feats_file.json", "r") as data:
-        gaze_dict = ast.literal_eval(data.read())
+    #with open("gaze_feats_file.json", "r") as data:
+     #   gaze_dict = ast.literal_eval(data.read())
 
 
 
