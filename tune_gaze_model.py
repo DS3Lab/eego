@@ -29,6 +29,7 @@ def main():
     with open("gaze_feats_file.json", 'r') as f:
         s = f.read()
         s = s.replace("\'", "\"")
+        print(s)
         gaze_dict = json.loads(s)
 
 
