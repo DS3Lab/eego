@@ -1,13 +1,13 @@
 import config
 from feature_extraction import zuco_reader
-from reldetect import reldetect_model
+from reldetect import reldetect_text_model
 from ner import ner_model
 from sentiment import sentiment_text_model
 from data_helpers import save_results, load_matlab_files
 
 # Usage on spaceml:
 # $ conda activate env-eego
-# $ CUDA_VISIBLE_DEVICES=7 python tune_model.py
+# $ CUDA_VISIBLE_DEVICES=7 python tune_text_model.py
 
 
 def main():
@@ -43,7 +43,7 @@ def main():
 
                                         if config.class_task == 'reldetect':
                                             for threshold in config.rel_thresholds:
-                                                fold_results = reldetect_model.lstm_classifier(feature_dict, label_dict, emb, parameter_dict, rand, threshold)
+                                                fold_results = reldetect_text_model.lstm_classifier(feature_dict, label_dict, emb, parameter_dict, rand, threshold)
                                                 save_results(fold_results, config.class_task)
 
                                         elif config.class_task == 'ner':
