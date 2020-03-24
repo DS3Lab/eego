@@ -34,7 +34,6 @@ def word_level_et_features(sentence_data, gaze_dict):
             try:
                 word_data = dh.extract_word_level_data(f, f[wordData[idx][0]],
                                                    eeg_float_resolution=dh.eeg_float_resolution)
-
                 if word_data:
                     for widx in range(len(word_data)):
                         word = word_data[widx]['content']

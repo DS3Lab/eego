@@ -171,48 +171,6 @@ def lstm_classifier(features, labels, eeg, embedding_type, param_dict, random_se
         # then output a single value
         model = Model(inputs=[text_model.input, eeg_model.input], outputs=combi_model)
 
-        """
-        if embedding_type is 'none':
-            # todo: tune embedding dim?
-            embedding_layer = tf.keras.layers.Embedding(num_words, 32, input_length=max_length,
-                                                        name='none_input_embeddings')
-            model.add(embedding_layer)
-
-        elif embedding_type is 'glove':
-            # load pre-trained word embeddings into an Embedding layer
-            # note that we set trainable = False so as to keep the embeddings fixed
-            embedding_layer = tf.keras.layers.Embedding(num_words,
-                                                        embedding_dim,
-                                                        embeddings_initializer=Constant(embedding_matrix),
-                                                        input_length=max_length,
-                                                        trainable=False,
-                                                        name='glove_input_embeddings')
-            model.add(embedding_layer)
-
-        elif embedding_type is 'bert':
-            model = tf.keras.Sequential()
-            model.add(tf.keras.layers.Input(shape=(max_length,), dtype='int32', name='input_ids'))
-            bert_layer = ml_helpers.createBertLayer()
-            model.add(bert_layer)
-            # test:
-            model.add(tf.keras.layers.Flatten())
-            model.add(tf.keras.layers.Dense(256, activation=tf.nn.relu))
-            model.add(tf.keras.layers.Dropout(0.5))
-            model.add(tf.keras.layers.Dense(256, activation=tf.nn.relu))
-            model.add(tf.keras.layers.Dropout(0.5))
-            model.add(tf.keras.layers.Dense(y_train.shape[1], activation=tf.nn.softmax))
-
-        model.summary()
-
-        for l in list(range(lstm_layers)):
-            if l < lstm_layers - 1:
-                model.add(tf.keras.layers.Bidirectional(tf.keras.layers.LSTM(lstm_dim, return_sequences=True)))
-            else:
-                model.add(tf.keras.layers.Bidirectional(tf.keras.layers.LSTM(lstm_dim)))
-        model.add(tf.keras.layers.Dense(dense_dim, activation='relu'))
-        model.add(tf.keras.layers.Dropout(rate=dropout))
-        model.add(tf.keras.layers.Dense(y_train.shape[1], activation='softmax'))
-        """
 
         model.compile(loss='categorical_crossentropy',
                       optimizer=tf.keras.optimizers.Adam(lr=lr),

@@ -4,6 +4,7 @@ import config
 import nltk
 import numpy as np
 
+
 def extract_word_raw_eeg(sentence_data, eeg_dict):
     """extract word-level raw EEG data of all sentences.
     word-level EEG data = mean activity over all fixations of a word"""

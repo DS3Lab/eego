@@ -38,16 +38,21 @@ def lstm_classifier(features, labels, eeg, embedding_type, param_dict, random_se
     y = np_utils.to_categorical(y)
 
     # prepare EEG data
+    # prepare EEG data
     eeg_X = []
+    print(eeg)
     for s in eeg.values():
         # average over all subjects
-        n = np.mean(s['mean_raw_sent_eeg'], axis=0)
-        eeg_X.append(n)
-    X_data_eeg = np.array(eeg_X)
-    max_length_eeg = X_data_eeg.shape[1]
-
-    X_data = X_data_eeg
-    max_length = max_length_eeg
+        sent_feats = []
+        for w, fts in s.items():
+            print(len(fts))
+            print(fts)
+            subj_mean_word_feats = np.mean(fts, axis=0)
+            print(w, subj_mean_word_feats)
+            sent_feats.append(subj_mean_word_feats)
+        print(len(sent_feats))
+        eeg_X.append(sent_feats)
+    print(len(eeg_X))
 
     # split data into train/test
     kf = KFold(n_splits=config.folds, random_state=random_seed_value, shuffle=True)

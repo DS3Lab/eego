@@ -50,8 +50,6 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
     tokenizer.fit_on_texts(X)
     sequences = tokenizer.texts_to_sequences(X)
     max_length = max([len(s) for s in sequences])
-    # TODO Bert Tokenizer seems to result in more tokens!
-    print("Maximum sentence length: ", max_length)
 
     word_index = tokenizer.word_index
     print('Found %s unique tokens.' % len(word_index))
@@ -73,12 +71,15 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
 
     if embedding_type is 'bert':
         print("Prepare sequences for Bert ...")
+
         max_length = ml_helpers.get_bert_max_len(X)
         X_data_text, X_data_masks = ml_helpers.prepare_sequences_for_bert_with_mask(X, max_length)
 
         print('Shape of data tensor:', X_data_text.shape)
         print('Shape of data (masks) tensor:', X_data_masks.shape)
         print('Shape of label tensor:', y.shape)
+
+    print("Maximum sentence length: ", max_length)
 
     # split data into train/test
     kf = KFold(n_splits=config.folds, random_state=random_seed_value, shuffle=True)
@@ -144,12 +145,12 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
                 text_model = Bidirectional(LSTM(lstm_dim, return_sequences=True))(text_model)
             else:
                 text_model = Bidirectional(LSTM(lstm_dim, return_sequences=True))(text_model)
+
         text_model = Bidirectional(LSTM(lstm_dim, return_sequences=True))(text_model)
         text_model = Flatten()(text_model)
         text_model = Dense(dense_dim, activation="relu")(text_model)
         text_model = Dropout(dropout)(text_model)
         text_model = Dense(y_train.shape[1], activation="softmax")(text_model)
-
 
         model = Model(inputs=input_list, outputs=text_model)
 

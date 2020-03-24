@@ -175,6 +175,7 @@ def extract_word_level_data(data_container, word_objects, eeg_float_resolution =
 
                 #print([data_container[obj[word_idx][0]].value for obj in Alpha_features_data])
 
+
                 data_dict["ALPHA_EEG"] = np.concatenate([data_container[obj[word_idx][0]].value
                                                          if len(data_container[obj[word_idx][0]].value.shape) == 2 else []
                                                          for obj in Alpha_features_data], 0)
