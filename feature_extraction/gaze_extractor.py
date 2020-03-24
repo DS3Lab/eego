@@ -15,7 +15,7 @@ def word_level_et_features(sentence_data, gaze_dict):
         s_data = tup[1]
         rawData = s_data['rawData']
         contentData = s_data['content']
-        wordData = sentence_data['word']
+        wordData = s_data['word']
 
         gaze_features = ['nFix', 'FFD', 'TRT', 'GD', 'GPT']
 
