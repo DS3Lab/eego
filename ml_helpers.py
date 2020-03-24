@@ -65,54 +65,6 @@ def load_glove_embeddings(vocab_size, word_index, EMBEDDING_DIM):
 
     return embedding_matrix
 
-"""
-def createTokenizer():
-    """initialize Bert tokenizer"""
-    # bert implementationadapted from here:
-    # https://medium.com/@brn.pistone/bert-fine-tuning-for-tensorflow-2-0-with-keras-api-9913fc1348f6
-
-    #tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
-    #return tokenizer
-
-    modelsFolder = os.path.join(config.modelBertDir, "uncased_L-12_H-768_A-12")
-    vocab_file = os.path.join(modelsFolder, "vocab.txt")
-
-    tokenizer = bert.bert_tokenization.FullTokenizer(vocab_file, do_lower_case=True)
-    return tokenizer
-
-
-def prepare_sequences_for_bert(X):
-    """ tokenize sentences and add special tokens needed for Bert"""
-
-
-    tokenizer = createTokenizer()
-
-    tokens = map(tokenizer.tokenize, X)
-    tokens = map(lambda tok: ["[CLS]"] + tok + ["[SEP]"], tokens)
-    token_ids = list(map(tokenizer.convert_tokens_to_ids, tokens))
-
-    token_ids = np.array(list(token_ids))
-
-    return token_ids
-
-
-def createBertLayer():
-    global bert_layer
-
-    bertDir = os.path.join(config.modelBertDir, "uncased_L-12_H-768_A-12")
-
-    bert_params = bert.params_from_pretrained_ckpt(bertDir)
-
-    bert_layer = bert.BertModelLayer.from_params(bert_params, name="bert_layer")
-
-    # todo: test if freezing is necessary?
-    #bert_layer.apply_adapter_freeze()
-
-    print("Bert layer created")
-
-    return bert_layer
-"""
-
 
 def prepare_sequences_for_bert_with_mask(X, max_length):
     
@@ -149,6 +101,7 @@ def prepare_sequences_for_bert_with_mask(X, max_length):
     attention_masks = np.vstack(attention_masks)
 
     return input_ids, attention_masks
+
 
 def create_new_bert_layer():
     bert = TFBertModel.from_pretrained("bert-base-uncased")
