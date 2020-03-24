@@ -85,7 +85,7 @@ def prepare_sequences_for_bert_with_mask(X, max_length):
         encoded_dict = tokenizer.encode_plus(
                             sent,                      # Sentence to encode.
                             add_special_tokens = True, # Add '[CLS]' and '[SEP]'
-                            #max_length = max_length,           # Pad & truncate all sentences.
+                            max_length = max_length,           # Pad & truncate all sentences.
                             pad_to_max_length = True,
                             return_attention_mask = True,   # Construct attn. masks.
                        )
