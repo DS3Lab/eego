@@ -50,7 +50,7 @@ def word_level_et_features(sentence_data, gaze_dict):
                                 feat.append(float(word_data[widx][feature]))
                             else:
                                 feat.append(0.0)
-                        word_features[feature].append(feat)
+                        word_features[feature] = feat
                 else:
                     print("NO word data available!")
             except ValueError:
