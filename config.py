@@ -22,8 +22,6 @@ feature_set = ['combi_concat']
 
 # word embeddings {none, glove (300d), bert}
 embeddings = ['glove']
-# specify directory with bert model, if using
-modelBertDir = "/mnt/ds3lab-scratch/noraho/embeddings/bert"
 
 # hyper-parameters to test - general
 """
@@ -32,7 +30,7 @@ lstm_layers = [1, 2, 3, 4]
 dense_dim = [32, 64, 128, 256]
 dropout = [0.1, 0.3, 0.5]
 batch_size = [20, 30, 40, 60]
-epochs = [5, 10, 20, 50, 100]
+epochs = [10, 20, 50, 100]
 lr = [0.00001, 0.001, 0.01, 0.0001]
 """
 

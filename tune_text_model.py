@@ -1,7 +1,7 @@
 import config
 from feature_extraction import zuco_reader
 from reldetect import reldetect_text_model
-from ner import ner_model
+from ner import ner_text_model
 from sentiment import sentiment_text_model
 from data_helpers import save_results, load_matlab_files
 
@@ -47,7 +47,7 @@ def main():
                                                 save_results(fold_results, config.class_task)
 
                                         elif config.class_task == 'ner':
-                                            fold_results = ner_model.lstm_classifier(feature_dict, label_dict, emb, parameter_dict, rand)
+                                            fold_results = ner_text_model.lstm_classifier(feature_dict, label_dict, emb, parameter_dict, rand)
                                             save_results(fold_results, config.class_task)
 
                                         elif config.class_task == 'sentiment-tri':
