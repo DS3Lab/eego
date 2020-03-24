@@ -73,6 +73,15 @@ def prepare_sequences_for_bert_with_mask(X, max_length):
     input_ids = []
     attention_masks = []
 
+    max_len = 0
+    # For every sentence...
+    for sent in X:
+        # Tokenize the text and add [CLS] and [SEP] tokens.
+        input_ids = tokenizer.encode(sent, add_special_tokens=True)
+        # Update the maximum sentence length.
+        max_len = max(max_len, len(input_ids))
+    print('Max sentence length: ', max_len)
+
     # For every sentence...
     for sent in X:
         # `encode_plus` will:
@@ -85,7 +94,7 @@ def prepare_sequences_for_bert_with_mask(X, max_length):
         encoded_dict = tokenizer.encode_plus(
                             sent,                      # Sentence to encode.
                             add_special_tokens = True, # Add '[CLS]' and '[SEP]'
-                            #max_length = max_length,           # Pad & truncate all sentences.
+                            max_length = max_len,           # Pad & truncate all sentences.
                             pad_to_max_length = True,
                             return_attention_mask = True,   # Construct attn. masks.
                        )
@@ -98,9 +107,6 @@ def prepare_sequences_for_bert_with_mask(X, max_length):
 
     # Convert the lists into tensors.
     input_ids = np.vstack(input_ids)
-
-    max_len = len(encoded_dict['input_ids'])
-    print('Max Bert sentence length: ', max_len)
 
     attention_masks = np.vstack(attention_masks)
 
