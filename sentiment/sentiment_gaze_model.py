@@ -114,6 +114,8 @@ def lstm_classifier(labels, gaze, embedding_type, param_dict, random_seed_value)
         print("Preparing model...")
         input_text = Input(shape=(X_train.shape[1], X_train.shape[2]), dtype=tf.float64, name='gaze_input_tensor')
         text_model = Bidirectional(LSTM(lstm_dim, return_sequences=True))(input_text)
+        for _ in list(range(lstm_layers-1)):
+            text_model = Bidirectional(LSTM(lstm_dim, recurrent_dropout=0.2, dropout=0.2, return_sequences=True))(text_model)
         text_model = Flatten()(text_model)
         text_model = Dense(dense_dim, activation="relu")(text_model)
         text_model = Dropout(dropout)(text_model)
