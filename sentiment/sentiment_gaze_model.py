@@ -68,7 +68,7 @@ def lstm_classifier(labels, gaze, embedding_type, param_dict, random_seed_value)
         max_len = len(s) if len(s) > max_len else max_len
         for w, fts in s.items():
             #print(len(fts))
-            #print(fts)
+            print(fts)
             subj_mean_word_feats = np.nanmean(fts, axis=0)
             print(w, subj_mean_word_feats)
             sent_feats.append(subj_mean_word_feats)
@@ -90,7 +90,8 @@ def lstm_classifier(labels, gaze, embedding_type, param_dict, random_seed_value)
 
     X_data_gaze = np.array(gaze_X)
     print(X_data_gaze.shape)
-    print(X_data_gaze[0])
+    print(X_data_gaze[0][4][0])
+    print(type(X_data_gaze[0][4][0]))
 
     max_length_gaze = max_len
 
