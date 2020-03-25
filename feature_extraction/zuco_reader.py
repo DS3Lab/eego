@@ -27,7 +27,6 @@ def extract_features(sent_data, feature_set, feature_dict, eeg_dict, gaze_dict):
         gaze_extractor.word_level_et_features(sent_data, gaze_dict)
 
 
-
 def extract_labels(feature_dict, label_dict, task, subject):
     """Get ground truth labels for all tasks"""
 

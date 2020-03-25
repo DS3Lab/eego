@@ -26,9 +26,6 @@ def main():
         zuco_reader.extract_features(loaded_data, config.feature_set, feature_dict, eeg_dict, gaze_dict)
         zuco_reader.extract_labels(feature_dict, label_dict, config.class_task, subject)
 
-
-
-    print(len(feature_dict.keys()), len(label_dict))
     feature_dict = collections.OrderedDict(sorted(feature_dict.items()))
     label_dict = collections.OrderedDict(sorted(label_dict.items()))
     print(len(feature_dict.keys()), len(label_dict))
