@@ -58,8 +58,6 @@ def extract_labels(feature_dict, label_dict, task, subject):
         else:
             print("Sentiment analysis only possible for ZuCo 1!!!")
 
-        print(label_names)
-
     elif task == 'ner':
 
         count = 0
