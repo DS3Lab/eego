@@ -28,22 +28,22 @@ def extract_word_raw_eeg(sentence_data, eeg_dict):
                                                    eeg_float_resolution=dh.eeg_float_resolution)
 
                 #if word_data:
-                    for widx in range(len(word_data)):
-                        word = word_data[widx]['content']
-                        fixations_eeg = word_data[widx]["RAW_EEG"]
-                        #print(type(word_eeg))
-                        print(len(fixations_eeg))
-                        #print(word_eeg)
-                        word_eeg = []
-                        for fixation in fixations_eeg:
-                            fix = np.nanmean(fixation, axis=0)
-                            word_eeg.append(fix)
+                for widx in range(len(word_data)):
+                    word = word_data[widx]['content']
+                    fixations_eeg = word_data[widx]["RAW_EEG"]
+                    #print(type(word_eeg))
+                    print(len(fixations_eeg))
+                    #print(word_eeg)
+                    word_eeg = []
+                    for fixation in fixations_eeg:
+                        fix = np.nanmean(fixation, axis=0)
+                        word_eeg.append(fix)
 
-                        # average over multiple fixations
-                        word_eeg = np.nanmean(word_eeg, axis=0)
-                        print(word_eeg.shape)
+                    # average over multiple fixations
+                    word_eeg = np.nanmean(word_eeg, axis=0)
+                    print(word_eeg.shape)
 
-                        sent_features[widx] = word_eeg
+                    sent_features[widx] = word_eeg
                 #else:
                     #print("NO word data available!")
             except ValueError:
