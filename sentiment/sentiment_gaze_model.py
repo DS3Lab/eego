@@ -31,7 +31,6 @@ def lstm_classifier(labels, gaze, embedding_type, param_dict, random_seed_value)
     tf.random.set_seed(random_seed_value)
     os.environ['PYTHONHASHSEED'] = str(random_seed_value)
 
-    X_text = list(gaze.keys())
     y = list(labels.values())
 
     # plot sample distribution
@@ -39,20 +38,6 @@ def lstm_classifier(labels, gaze, embedding_type, param_dict, random_seed_value)
 
     # convert class labels to one hot vectors
     y = np_utils.to_categorical(y)
-
-    vocab_size = 100000
-
-    # prepare text samples
-    print('Processing text dataset...')
-
-    print('Found %s sentences.' % len(X_text))
-
-    tokenizer = Tokenizer(num_words=vocab_size)
-    tokenizer.fit_on_texts(X_text)
-
-    word_index = tokenizer.word_index
-    print('Found %s unique tokens.' % len(word_index))
-    num_words = min(vocab_size, len(word_index) + 1)
 
     start = time.time()
 
