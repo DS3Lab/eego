@@ -30,10 +30,14 @@ def extract_word_raw_eeg(sentence_data, eeg_dict):
                 if word_data:
                     for widx in range(len(word_data)):
                         word = word_data[widx]['content']
-                        word_eeg = word_data[widx]["RAW_EEG"]
-                        print(type(word_eeg))
-                        print(len(word_eeg))
-                        print(word_eeg)
+                        fixations_eeg = word_data[widx]["RAW_EEG"]
+                        #print(type(word_eeg))
+                        #print(len(word_eeg))
+                        #print(word_eeg)
+                        word_eeg = []
+                        for fixation in fixations_eeg:
+                            fix = np.nanmean(fixation, axis=0)
+                            word_eeg.append(fix)
 
                         # average over multiple fixations
                         word_eeg = np.nanmean(word_eeg, axis=0)
