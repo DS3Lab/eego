@@ -1,9 +1,6 @@
 from . import data_loading_helpers as dh
-import nltk
 import numpy as np
 import config
-
-# extract eye-tracking features: nFix, FFD, TRT, GD, GPT
 
 
 def word_level_et_features(sentence_data, gaze_dict):
@@ -18,6 +15,11 @@ def word_level_et_features(sentence_data, gaze_dict):
         contentData = s_data['content']
         wordData = s_data['word']
 
+        # nFix: number of fixations
+        # FFD: first fixation duration
+        # TRT: total reading time
+        # GD: gaze duration
+        # GPT: go-past time
         gaze_features = ['nFix', 'FFD', 'TRT', 'GD', 'GPT']
 
         for idx in range(len(rawData)):
@@ -47,6 +49,7 @@ def word_level_et_features(sentence_data, gaze_dict):
                 print("NO sentence data available!")
 
             # for sentiment and relation detection
+            print(sent_features)
             if config.class_task.startswith('sentiment') or config.class_task == "reldetect":
                 if sent not in gaze_dict:
                     gaze_dict[sent] = {}
