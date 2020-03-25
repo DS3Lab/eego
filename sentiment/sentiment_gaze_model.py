@@ -70,6 +70,7 @@ def lstm_classifier(labels, gaze, embedding_type, param_dict, random_seed_value)
             #print(len(fts))
             print(fts)
             subj_mean_word_feats = np.nanmean(fts, axis=0)
+            subj_mean_word_feats[np.isnan(subj_mean_word_feats)] = 0.0
             print(w, subj_mean_word_feats)
             sent_feats.append(subj_mean_word_feats)
         print(len(sent_feats))
