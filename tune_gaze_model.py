@@ -25,6 +25,7 @@ def main():
         zuco_reader.extract_features(loaded_data, config.feature_set, feature_dict, eeg_dict, gaze_dict)
         zuco_reader.extract_labels(feature_dict, label_dict, config.class_task, subject)
 
+    print("Reading gaze features from file!!")
     gaze_dict = json.load(open("gaze_feats_file.json"))
 
     #print(gaze_dict)
@@ -68,7 +69,7 @@ def main():
                                                 if label == 2:
                                                     del label_dict[s]
                                                     del feature_dict[s]
-                                                    del gaze_dict[s]
+                                                    #del gaze_dict[s]
                                             fold_results = sentiment_gaze_model.lstm_classifier(label_dict, gaze_dict,
                                                                                                    emb, parameter_dict,
                                                                                                    rand)
