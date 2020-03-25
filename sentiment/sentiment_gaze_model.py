@@ -136,14 +136,14 @@ def lstm_classifier(labels, gaze, embedding_type, param_dict, random_seed_value)
         print("Preparing model...")
         #model = tf.keras.Sequential()
 
-        input_text = Input(shape=(X_train.shape[1], X_train.shape[1]), dtype=tf.int32)
+        input_text = Input(shape=(X_train.shape[1], X_train.shape[2]), dtype=tf.int32)
 
         # directly into lstm layer?
         # input, flatten, lstm
 
         # the first branch operates on the first input (word embeddings)
-        text_model = Embedding(num_words, 32, input_length=X_train.shape[1],
-                                   name='none_input_embeddings')(input_text)
+        #text_model = Embedding(num_words, 32, input_length=X_train.shape[1],
+         #                          name='none_input_embeddings')(input_text)
 
         text_model = Bidirectional(LSTM(lstm_dim, return_sequences=True))(text_model)
         text_model = Flatten()(text_model)
