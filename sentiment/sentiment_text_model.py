@@ -39,6 +39,14 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
     print(y[0])
     print(y_sents[0])
 
+    print(X[1])
+    print(y[1])
+    print(y_sents[1])
+
+    print(X[2])
+    print(y[2])
+    print(y_sents[2])
+
     # plot sample distribution
     # ml_helpers.plot_label_distribution(y)
 
