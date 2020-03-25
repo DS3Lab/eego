@@ -34,8 +34,8 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
     y = list(labels.values())
     X_tokenized = list(features.values())
     print(X[0])
-    print(X_tokenized[0])
-    print(X_tokenized[1])
+    print(len(X_tokenized[0]))
+    print(len(X_tokenized[1]))
 
     n = 100000
     seqs = []
@@ -44,8 +44,11 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
                                            lower=True, split=' ')
         seqs.append(seq)
 
-    print(seqs[0])
-    print(seqs[1])
+    print(len(seqs[0]))
+    print(len(seqs[1]))
+
+    print(len(y[0]))
+    print(len(y[1]))
 
     label_names = {0: 'O', 1: 'B-PER', 2: 'I-PER', 3: 'B-ORG', 4: 'I-ORG', 5: 'B-LOC', 6: 'I-LOC'}
 
