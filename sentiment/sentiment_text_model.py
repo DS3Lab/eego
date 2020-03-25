@@ -146,11 +146,11 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
            # else:
             #    text_model = Bidirectional(LSTM(lstm_dim, return_sequences=True))(text_model)
 
-        text_model = Bidirectional(LSTM(lstm_dim, return_sequences=True))(text_model)
-        if lstm_layers > 1:
-            for l in list(range(lstm_layers-1)):
-                print(l)
-                text_model = Bidirectional(LSTM(lstm_dim, return_sequences=True))(text_model)
+        #text_model = Bidirectional(LSTM(lstm_dim, return_sequences=True))(text_model)
+        #if lstm_layers > 1:
+        for l in list(range(lstm_layers)):
+            print(l)
+            text_model = Bidirectional(LSTM(lstm_dim, return_sequences=True))(text_model)
         text_model = Flatten()(text_model)
         text_model = Dense(dense_dim, activation="relu")(text_model)
         text_model = Dropout(dropout)(text_model)
