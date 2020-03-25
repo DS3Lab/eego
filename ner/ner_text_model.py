@@ -39,9 +39,15 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
 
     vocab_size = 100000
     sequences = []
+    word_index = {}
     for sent in list(features.values()):
         seq = hashing_trick(' '.join(sent), vocab_size, hash_function=None, filters='',
                                            lower=True, split=' ')
+        for token, number in zip(sent, seq):
+            if token not in word_index:
+                word_index[token] = number
+            else:
+                print(token, word_index[token], number)
         sequences.append(seq)
 
     print(len(sequences[0]))
@@ -70,7 +76,7 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
     max_length = max([len(s) for s in sequences])
 
     word_index = tokenizer.word_index
-    print(word_index)
+    #print(word_index)
     print('Found %s unique tokens.' % len(word_index))
     num_words = min(vocab_size, len(word_index) + 1)
 
