@@ -23,34 +23,35 @@ def extract_word_raw_eeg(sentence_data, eeg_dict):
 
             sent_features = {}
             # get word level data
-            try:
-                word_data = dh.extract_word_level_data(f, f[wordData[idx][0]],
-                                                   eeg_float_resolution=dh.eeg_float_resolution)
 
-                #if word_data:
-                for widx in range(len(word_data)):
-                    word = word_data[widx]['content']
-                    fixations_eeg = word_data[widx]["RAW_EEG"]
-                    #print(type(word_eeg))
-                    #print(len(fixations_eeg))
-                    #print(word_eeg)
-                    word_eeg = []
-                    for fixation in fixations_eeg:
-                        fix = np.nanmean(fixation, axis=0)
-                        word_eeg.append(fix)
+            #try:
+            word_data = dh.extract_word_level_data(f, f[wordData[idx][0]],
+                                               eeg_float_resolution=dh.eeg_float_resolution)
 
-                    # average over multiple fixations
-                    word_eeg = np.nanmean(word_eeg, axis=0)
-                    if word_eeg:
-                        sent_features[widx] = word_eeg
-                    else:
-                        nan_array = np.empty((105,))
-                        nan_array[:] = np.NaN
-                        sent_features[widx] = nan_array
+            #if word_data:
+            for widx in range(len(word_data)):
+                word = word_data[widx]['content']
+                fixations_eeg = word_data[widx]["RAW_EEG"]
+                #print(type(word_eeg))
+                #print(len(fixations_eeg))
+                #print(word_eeg)
+                word_eeg = []
+                for fixation in fixations_eeg:
+                    fix = np.nanmean(fixation, axis=0)
+                    word_eeg.append(fix)
+
+                # average over multiple fixations
+                word_eeg = np.nanmean(word_eeg, axis=0)
+                if word_eeg:
+                    sent_features[widx] = word_eeg
+                else:
+                    nan_array = np.empty((105,))
+                    nan_array[:] = np.NaN
+                    sent_features[widx] = nan_array
                 #else:
                     #print("NO word data available!")
-            except ValueError:
-                print("NO sentence data available!")
+            #except ValueError:
+             #   print("NO sentence data available!")
 
             #if sent_features:
             # for sentiment and relation detection
