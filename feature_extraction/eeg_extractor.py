@@ -41,9 +41,12 @@ def extract_word_raw_eeg(sentence_data, eeg_dict):
 
                     # average over multiple fixations
                     word_eeg = np.nanmean(word_eeg, axis=0)
-                    print(word_eeg.shape)
-
-                    sent_features[widx] = word_eeg
+                    if word_eeg:
+                        sent_features[widx] = word_eeg
+                    else:
+                        nan_array = np.empty((105,))
+                        nan_array[:] = np.NaN
+                        sent_features[widx] = nan_array
                 #else:
                     #print("NO word data available!")
             except ValueError:
@@ -57,8 +60,10 @@ def extract_word_raw_eeg(sentence_data, eeg_dict):
                         for widx, fts in sent_features.items():
                             eeg_dict[sent][widx] = [fts]
                     else:
-                        for widx, fts in eeg_dict[sent].items():
-                            if widx in sent_features:
+                        for widx, fts in sent_features.items():
+                            if not widx in eeg_dict[sent]:
+                                eeg_dict[sent][widx] = [fts]
+                            else:
                                 eeg_dict[sent][widx].append(sent_features[widx])
 
 
