@@ -46,8 +46,8 @@ def lstm_classifier(labels, gaze, embedding_type, param_dict, random_seed_value)
     max_len = 0
 
     # save gaze feats
-    gaze_feats_file = open('gaze_feats_file.json', 'w')
-    json.dump(gaze, gaze_feats_file)
+    #gaze_feats_file = open('gaze_feats_file.json', 'w')
+    #json.dump(gaze, gaze_feats_file)
 
     for s in gaze.values():
         # average over all subjects
