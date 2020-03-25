@@ -140,9 +140,8 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
             input_list.append(input_mask)
             text_model = ml_helpers.create_new_bert_layer()(input_text, attention_mask=input_mask)[0]
 
-
         for _ in list(range(lstm_layers)):
-            model.add(tf.keras.layers.Bidirectional(tf.keras.layers.LSTM(lstm_dim, return_sequences=True)(text_model)))
+            text_model = Bidirectional(LSTM(lstm_dim, return_sequences=True)(text_model))
 
         #text_model = Bidirectional(LSTM(lstm_dim, return_sequences=True))(text_model)
         text_model = Flatten()(text_model)
