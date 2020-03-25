@@ -37,9 +37,10 @@ def extract_word_raw_eeg(sentence_data, eeg_dict):
                 #print(word_eeg)
                 word_eeg = []
                 if len(fixations_eeg) > 0:
+                    print(len(fixations_eeg))
                     for fixation in fixations_eeg:
+                        print(fixation)
                         fix = np.nanmean(fixation, axis=0)
-                        print(np.isnan(fix))
                         if not np.isnan(fix):
                             word_eeg.append(fix)
 
