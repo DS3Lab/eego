@@ -4,6 +4,7 @@ from reldetect import reldetect_text_model
 from ner import ner_text_model
 from sentiment import sentiment_text_model
 from data_helpers import save_results, load_matlab_files
+import collections
 
 # Usage on spaceml:
 # $ conda activate env-eego
@@ -25,7 +26,13 @@ def main():
         zuco_reader.extract_features(loaded_data, config.feature_set, feature_dict, eeg_dict, gaze_dict)
         zuco_reader.extract_labels(feature_dict, label_dict, config.class_task, subject)
 
-    print(len(feature_dict), len(label_dict))
+
+
+    print(len(feature_dict.keys()), len(label_dict))
+    feature_dict = collections.OrderedDict(sorted(feature_dict.items()))
+    label_dict = collections.OrderedDict(sorted(label_dict.items()))
+    print(len(feature_dict.keys()), len(label_dict))
+
     if len(feature_dict) != len(label_dict):
         print("WARNING: Not an equal number of sentences in features and labels!")
 
