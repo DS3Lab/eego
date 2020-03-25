@@ -30,12 +30,14 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
 
     start = time.time()
 
+    X = list(features.keys())
     y = list(labels.values())
+    X_tokenized = list(features.values())
 
     vocab_size = 4633
     sequences = []
     word_index = {}
-    for sent in list(features.values()):
+    for sent in X_tokenized:
         seq = hashing_trick(' '.join(sent), vocab_size, hash_function=None, filters='',
                                            lower=True, split=' ')
         for token, number in zip(sent, seq):
