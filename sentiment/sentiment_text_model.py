@@ -140,13 +140,17 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
             input_list.append(input_mask)
             text_model = ml_helpers.create_new_bert_layer()(input_text, attention_mask=input_mask)[0]
 
-        for l in list(range(lstm_layers)):
-            if l < lstm_layers - 1:
-                text_model = Bidirectional(LSTM(lstm_dim, return_sequences=True))(text_model)
-            else:
-                text_model = Bidirectional(LSTM(lstm_dim, return_sequences=True))(text_model)
+        #for l in list(range(lstm_layers)):
+         #   if l < lstm_layers - 1:
+          #      text_model = Bidirectional(LSTM(lstm_dim, return_sequences=True))(text_model)
+           # else:
+            #    text_model = Bidirectional(LSTM(lstm_dim, return_sequences=True))(text_model)
 
         text_model = Bidirectional(LSTM(lstm_dim, return_sequences=True))(text_model)
+        if lstm_layers > 1:
+            for l in list(range(lstm_layers-1)):
+                print(l)
+                text_model = Bidirectional(LSTM(lstm_dim, return_sequences=True))(text_model)
         text_model = Flatten()(text_model)
         text_model = Dense(dense_dim, activation="relu")(text_model)
         text_model = Dropout(dropout)(text_model)
