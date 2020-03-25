@@ -29,24 +29,24 @@ def word_level_et_features(sentence_data, gaze_dict):
 
             sent_features = {}
             # get word level data
-            try:
-                word_data = dh.extract_word_level_data(f, f[wordData[idx][0]],
-                                                   eeg_float_resolution=dh.eeg_float_resolution)
-                if word_data:
-                    for widx in range(len(word_data)):
-                        word = word_data[widx]['content']
-                        word_feats = []
-                        for feature in gaze_features:
-                            if word_data[widx][feature] is not None:
-                                word_feats.append(float(word_data[widx][feature]))
-                            else:
-                                word_feats.append(np.nan)
-                        if word_feats:
-                            sent_features[widx] = word_feats
-                else:
-                    print("NO word data available!")
-            except ValueError:
-                print("NO sentence data available!")
+            #try:
+            word_data = dh.extract_word_level_data(f, f[wordData[idx][0]],
+                                               eeg_float_resolution=dh.eeg_float_resolution)
+            #if word_data:
+            for widx in range(len(word_data)):
+                word = word_data[widx]['content']
+                word_feats = []
+                for feature in gaze_features:
+                    if word_data[widx][feature] is not None:
+                        word_feats.append(float(word_data[widx][feature]))
+                    else:
+                        word_feats.append(np.nan)
+                #if word_feats:
+                sent_features[widx] = word_feats
+            #else:
+             #   print("NO word data available!")
+            #except ValueError:
+             #   print("NO sentence data available!")
 
             # for sentiment and relation detection
             #if sent_features:
