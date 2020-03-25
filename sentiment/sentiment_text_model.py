@@ -90,7 +90,6 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
     for train_index, test_index in kf.split(X_data_text):
 
         print("FOLD: ", fold)
-        # print("TRAIN:", train_index, "TEST:", test_index)
         print("splitting train and test data...")
         y_train, y_test = y[train_index], y[test_index]
         X_train_text, X_test_text = X_data_text[train_index], X_data_text[test_index]
@@ -140,14 +139,6 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
             input_list.append(input_mask)
             text_model = ml_helpers.create_new_bert_layer()(input_text, attention_mask=input_mask)[0]
 
-        #for l in list(range(lstm_layers)):
-         #   if l < lstm_layers - 1:
-          #      text_model = Bidirectional(LSTM(lstm_dim, return_sequences=True))(text_model)
-           # else:
-            #    text_model = Bidirectional(LSTM(lstm_dim, return_sequences=True))(text_model)
-
-        #text_model = Bidirectional(LSTM(lstm_dim, return_sequences=True))(text_model)
-        #if lstm_layers > 1:
         for l in list(range(lstm_layers)):
             print(l)
             text_model = Bidirectional(LSTM(lstm_dim, return_sequences=True))(text_model)
