@@ -24,10 +24,6 @@ def word_level_et_features(sentence_data, gaze_dict):
 
             obj_reference_content = contentData[idx][0]
             sent = dh.load_matlab_string(f[obj_reference_content])
-            # whitespace tokenization
-            # split_tokens = sent.split()
-            # linguistic tokenization
-            #spacy_tokens = nltk.word_tokenize(sent)
 
             sent_features = {}
             # get word level data
