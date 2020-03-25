@@ -134,7 +134,7 @@ def lstm_classifier(labels, gaze, embedding_type, param_dict, random_seed_value)
         print("Preparing model...")
         #model = tf.keras.Sequential()
 
-        input_text = Input(shape=(X_train.shape[1], X_train.shape[2]), dtype=tf.int32)
+        input_text = Input(shape=(X_train.shape[1], X_train.shape[2]), dtype=tf.float64)
 
         # directly into lstm layer?
         # input, flatten, lstm
