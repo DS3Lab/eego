@@ -60,8 +60,8 @@ def lstm_classifier(labels, gaze, embedding_type, param_dict, random_seed_value)
     # prepare EEG data
     gaze_X = []
     max_len = 0
-    gaze_feats_file = open('gaze_feats_file.json', 'w')
-    json.dump(gaze, gaze_feats_file)
+    #gaze_feats_file = open('gaze_feats_file.json', 'w')
+    #json.dump(gaze, gaze_feats_file)
     for s in gaze.values():
         # average over all subjects
         sent_feats = []
@@ -74,18 +74,23 @@ def lstm_classifier(labels, gaze, embedding_type, param_dict, random_seed_value)
             sent_feats.append(subj_mean_word_feats)
         print(len(sent_feats))
         gaze_X.append(sent_feats)
+
     print(len(gaze_X))
     print(max_len)
 
+
+    # todo scale features
+
     # todo: pad gaze sequences
     for s in gaze_X:
-        print(len(s))
+        #print(len(s))
         while len(s) < max_len:
             s.append(np.zeros(5))
-        print(len(s))
+        #print(len(s))
 
     X_data_gaze = np.array(gaze_X)
     print(X_data_gaze.shape)
+    print(X_data_gaze[0])
 
     max_length_gaze = max_len
 
@@ -132,6 +137,9 @@ def lstm_classifier(labels, gaze, embedding_type, param_dict, random_seed_value)
         #model = tf.keras.Sequential()
 
         input_text = Input(shape=X_train.shape[1], dtype=tf.int32)
+
+        # directly into lstm layer?
+        # input, flatten, lstm
 
         # the first branch operates on the first input (word embeddings)
         text_model = Embedding(num_words, 32, input_length=X_train.shape[1],
