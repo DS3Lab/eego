@@ -82,12 +82,10 @@ def lstm_classifier(labels, gaze, embedding_type, param_dict, random_seed_value)
 
     # todo scale features
 
-    # todo: pad gaze sequences
+    # pad gaze sequences
     for s in gaze_X:
-        #print(len(s))
         while len(s) < max_len:
             s.append(np.zeros(5))
-        #print(len(s))
 
     X_data_gaze = np.array(gaze_X)
     print(X_data_gaze.shape)
@@ -138,7 +136,7 @@ def lstm_classifier(labels, gaze, embedding_type, param_dict, random_seed_value)
         print("Preparing model...")
         #model = tf.keras.Sequential()
 
-        input_text = Input(shape=X_train.shape[1], dtype=tf.int32)
+        input_text = Input(shape=(X_train.shape[1], X_train.shape[1]), dtype=tf.int32)
 
         # directly into lstm layer?
         # input, flatten, lstm
