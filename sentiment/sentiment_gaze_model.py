@@ -89,8 +89,6 @@ def lstm_classifier(labels, gaze, embedding_type, param_dict, random_seed_value)
 
     X_data_gaze = np.array(gaze_X)
     print(X_data_gaze.shape)
-    print(X_data_gaze[0][4][0])
-    print(type(X_data_gaze[0][4][0]))
 
     max_length_gaze = max_len
 
@@ -145,7 +143,7 @@ def lstm_classifier(labels, gaze, embedding_type, param_dict, random_seed_value)
         #text_model = Embedding(num_words, 32, input_length=X_train.shape[1],
          #                          name='none_input_embeddings')(input_text)
 
-        text_model = Bidirectional(LSTM(lstm_dim, return_sequences=True))(text_model)
+        text_model = Bidirectional(LSTM(lstm_dim, return_sequences=True))(input_text)
         text_model = Flatten()(text_model)
         text_model = Dense(dense_dim, activation="relu")(text_model)
         text_model = Dropout(dropout)(text_model)
