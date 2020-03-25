@@ -35,12 +35,17 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
     X_tokenized = list(features.values())
     print(X[0])
     print(X_tokenized[0])
+    print(X_tokenized[1])
 
     n = 100000
-    seqs = hashing_trick([' '.join(s) for s in X_tokenized], n, hash_function=None, filters='',
+    seqs = []
+    for s in list(features.values()):
+        seq = hashing_trick(' '.join(s), n, hash_function=None, filters='',
                                            lower=True, split=' ')
+        seqs.append(seq)
 
     print(seqs[0])
+    print(seqs[1])
 
     label_names = {0: 'O', 1: 'B-PER', 2: 'I-PER', 3: 'B-ORG', 4: 'I-ORG', 5: 'B-LOC', 6: 'I-LOC'}
 
