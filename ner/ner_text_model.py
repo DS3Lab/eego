@@ -37,7 +37,7 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
     print(len(X_tokenized[0]))
     print(len(X_tokenized[1]))
 
-    vocab_size = 100000
+    vocab_size = 4633
     sequences = []
     word_index = {}
     for sent in list(features.values()):
