@@ -46,10 +46,6 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
         for token, number in zip(sent, seq):
             if token not in word_index:
                 word_index[token] = number
-            else:
-                if number != word_index[token]:
-                    print("WARNING: s")
-                    print(token, word_index[token], number)
         sequences.append(seq)
 
     print(len(sequences[0]))
@@ -68,16 +64,16 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
     # prepare text samples
     print('Processing text dataset...')
 
-    print('Found %s sentences.' % len(X))
+    print('Found %s sentences.' % len(sequences))
 
-    tokenizer = Tokenizer(num_words=vocab_size)
-    tokenizer.fit_on_texts(X)
+    #tokenizer = Tokenizer(num_words=vocab_size)
+    #tokenizer.fit_on_texts(X)
     #print(X[0])
-    sequences = tokenizer.texts_to_sequences(X)
-    print(sequences[0])
+    #sequences = tokenizer.texts_to_sequences(X)
+    #print(sequences[0])
     max_length = max([len(s) for s in sequences])
 
-    word_index = tokenizer.word_index
+    #word_index = tokenizer.word_index
     #print(word_index)
     print('Found %s unique tokens.' % len(word_index))
     num_words = min(vocab_size, len(word_index) + 1)
