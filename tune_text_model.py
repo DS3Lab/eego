@@ -14,6 +14,7 @@ def main():
     feature_dict = {}
     label_dict = {}
     eeg_dict = {}
+    gaze_dict = {}
     print("TASK: ", config.class_task)
     print("extracting", config.feature_set, "features....")
     for subject in config.subjects:
@@ -21,7 +22,7 @@ def main():
 
         loaded_data = load_matlab_files(config.class_task, subject)
 
-        zuco_reader.extract_features(loaded_data, config.feature_set, feature_dict, eeg_dict)
+        zuco_reader.extract_features(loaded_data, config.feature_set, feature_dict, eeg_dict, gaze_dict)
         zuco_reader.extract_labels(feature_dict, label_dict, config.class_task, subject)
 
     print(len(feature_dict), len(label_dict))
