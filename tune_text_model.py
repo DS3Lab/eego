@@ -26,8 +26,6 @@ def main():
         zuco_reader.extract_labels(feature_dict, label_dict, config.class_task, subject)
 
     print(len(feature_dict), len(label_dict))
-    print(feature_dict[0])
-    print(label_dict[0])
     if len(feature_dict) != len(label_dict):
         print("WARNING: Not an equal number of sentences in features and labels!")
 
