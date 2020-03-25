@@ -38,19 +38,22 @@ def extract_word_raw_eeg(sentence_data, eeg_dict):
                     print(len(fixations_eeg))
                     for fixation in fixations_eeg:
                         fix = np.nanmean(fixation, axis=0)
-                        word_eeg.append(fix)
+                        if not np.isnan(fix).any():
+                            word_eeg.append(fix)
+                        else:
+                            print(fix)
 
-                    print(len(word_eeg))
+                    #print(len(word_eeg))
                     # average over multiple fixations
                     #print(word_eeg)
                     #print(len(word_eeg[0]))
                     # cover this stupid special case:
-                    try:
-                        word_eeg = np.nanmean(word_eeg, axis=0)
-                    except ValueError:
-                        print(word_eeg)
-                        word_eeg = np.nanmean(word_eeg[1:], axis=0)
-                    print(len(word_eeg))
+
+                    word_eeg = np.nanmean(word_eeg, axis=0)
+                    #except ValueError:
+                     #   print(word_eeg)
+                      #  word_eeg = np.nanmean(word_eeg[1:], axis=0)
+                    #print(len(word_eeg))
                     sent_features[widx] = word_eeg
                 else:
                     nan_array = np.empty((105,))
