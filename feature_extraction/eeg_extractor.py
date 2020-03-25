@@ -32,7 +32,7 @@ def extract_word_raw_eeg(sentence_data, eeg_dict):
                     word = word_data[widx]['content']
                     fixations_eeg = word_data[widx]["RAW_EEG"]
                     #print(type(word_eeg))
-                    print(len(fixations_eeg))
+                    #print(len(fixations_eeg))
                     #print(word_eeg)
                     word_eeg = []
                     for fixation in fixations_eeg:
@@ -52,19 +52,19 @@ def extract_word_raw_eeg(sentence_data, eeg_dict):
             except ValueError:
                 print("NO sentence data available!")
 
-            if sent_features:
-                # for sentiment and relation detection
-                if config.class_task.startswith('sentiment') or config.class_task == "reldetect":
-                    if sent not in eeg_dict:
-                        eeg_dict[sent] = {}
-                        for widx, fts in sent_features.items():
+            #if sent_features:
+            # for sentiment and relation detection
+            if config.class_task.startswith('sentiment') or config.class_task == "reldetect":
+                if sent not in eeg_dict:
+                    eeg_dict[sent] = {}
+                    for widx, fts in sent_features.items():
+                        eeg_dict[sent][widx] = [fts]
+                else:
+                    for widx, fts in sent_features.items():
+                        if not widx in eeg_dict[sent]:
                             eeg_dict[sent][widx] = [fts]
-                    else:
-                        for widx, fts in sent_features.items():
-                            if not widx in eeg_dict[sent]:
-                                eeg_dict[sent][widx] = [fts]
-                            else:
-                                eeg_dict[sent][widx].append(sent_features[widx])
+                        else:
+                            eeg_dict[sent][widx].append(sent_features[widx])
 
 
 
