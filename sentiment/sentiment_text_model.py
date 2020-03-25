@@ -5,7 +5,7 @@ from tensorflow.python.keras.preprocessing.text import Tokenizer
 from tensorflow.python.keras.utils import np_utils
 from tensorflow.python.keras.initializers import Constant
 import tensorflow.python.keras.backend as K
-from tensorflow.python.keras.layers import Input, Dense, concatenate, Embedding, LSTM, Bidirectional, Flatten, Dropout
+from tensorflow.python.keras.layers import Input, Dense, Embedding, LSTM, Bidirectional, Flatten, Dropout
 from tensorflow.python.keras.models import Model
 import sklearn.metrics
 from sklearn.model_selection import KFold
@@ -140,13 +140,11 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
             input_list.append(input_mask)
             text_model = ml_helpers.create_new_bert_layer()(input_text, attention_mask=input_mask)[0]
 
-        for l in list(range(lstm_layers)):
-            if l < lstm_layers - 1:
-                text_model = Bidirectional(LSTM(lstm_dim, return_sequences=True))(text_model)
-            else:
-                text_model = Bidirectional(LSTM(lstm_dim, return_sequences=True))(text_model)
 
-        text_model = Bidirectional(LSTM(lstm_dim, return_sequences=True))(text_model)
+        for _ in list(range(lstm_layers)):
+            model.add(tf.keras.layers.Bidirectional(tf.keras.layers.LSTM(lstm_dim, return_sequences=True)(text_model)))
+
+        #text_model = Bidirectional(LSTM(lstm_dim, return_sequences=True))(text_model)
         text_model = Flatten()(text_model)
         text_model = Dense(dense_dim, activation="relu")(text_model)
         text_model = Dropout(dropout)(text_model)
