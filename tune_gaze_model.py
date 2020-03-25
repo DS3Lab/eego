@@ -69,7 +69,7 @@ def main():
                                                 if label == 2:
                                                     del label_dict[s]
                                                     del feature_dict[s]
-                                                    del gaze_dict[s]
+                                                    #del gaze_dict[s]
                                             fold_results = sentiment_gaze_model.lstm_classifier(label_dict, gaze_dict,
                                                                                                    emb, parameter_dict,
                                                                                                    rand)
