@@ -43,7 +43,6 @@ def extract_word_raw_eeg(sentence_data, eeg_dict):
                     print(len(word_eeg))
                     # average over multiple fixations
                     print(word_eeg)
-                    print(word_eeg.shape)
                     print(len(word_eeg[0]))
                     word_eeg = np.nanmean(word_eeg, axis=0)
                     print(len(word_eeg))
