@@ -27,12 +27,12 @@ def extract_word_raw_eeg(sentence_data, eeg_dict):
                 word_data = dh.extract_word_level_data(f, f[wordData[idx][0]],
                                                    eeg_float_resolution=dh.eeg_float_resolution)
 
-                if word_data:
+                #if word_data:
                     for widx in range(len(word_data)):
                         word = word_data[widx]['content']
                         fixations_eeg = word_data[widx]["RAW_EEG"]
                         #print(type(word_eeg))
-                        #print(len(word_eeg))
+                        print(len(fixations_eeg))
                         #print(word_eeg)
                         word_eeg = []
                         for fixation in fixations_eeg:
@@ -44,8 +44,8 @@ def extract_word_raw_eeg(sentence_data, eeg_dict):
                         print(word_eeg.shape)
 
                         sent_features[widx] = word_eeg
-                else:
-                    print("NO word data available!")
+                #else:
+                    #print("NO word data available!")
             except ValueError:
                 print("NO sentence data available!")
 
