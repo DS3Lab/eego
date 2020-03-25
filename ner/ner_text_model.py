@@ -37,15 +37,15 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
     print(len(X_tokenized[0]))
     print(len(X_tokenized[1]))
 
-    n = 100000
-    seqs = []
-    for s in list(features.values()):
-        seq = hashing_trick(' '.join(s), n, hash_function=None, filters='',
+    vocab_size = 100000
+    sequences = []
+    for sent in list(features.values()):
+        seq = hashing_trick(' '.join(sent), vocab_size, hash_function=None, filters='',
                                            lower=True, split=' ')
-        seqs.append(seq)
+        sequences.append(seq)
 
-    print(len(seqs[0]))
-    print(len(seqs[1]))
+    print(len(sequences[0]))
+    print(len(sequences[1]))
 
     print(len(y[0]))
     print(len(y[1]))
@@ -55,7 +55,7 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
     # plot sample distribution
     # ml_helpers.plot_label_distribution(y)
 
-    vocab_size = 100000
+    #vocab_size = 100000
 
     # prepare text samples
     print('Processing text dataset...')
@@ -64,12 +64,13 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
 
     tokenizer = Tokenizer(num_words=vocab_size)
     tokenizer.fit_on_texts(X)
-    print(X[0])
+    #print(X[0])
     sequences = tokenizer.texts_to_sequences(X)
     print(sequences[0])
     max_length = max([len(s) for s in sequences])
 
     word_index = tokenizer.word_index
+    print(word_index)
     print('Found %s unique tokens.' % len(word_index))
     num_words = min(vocab_size, len(word_index) + 1)
 
