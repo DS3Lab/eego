@@ -56,31 +56,26 @@ def lstm_classifier(labels, gaze, embedding_type, param_dict, random_seed_value)
 
     start = time.time()
 
-
-    # prepare EEG data
+    # prepare eye-tracking data
     gaze_X = []
     max_len = 0
-    #gaze_feats_file = open('gaze_feats_file.json', 'w')
-    #json.dump(gaze, gaze_feats_file)
+
+    # save gaze feats
+    gaze_feats_file = open('gaze_feats_file.json', 'w')
+    json.dump(gaze, gaze_feats_file)
+
     for s in gaze.values():
         # average over all subjects
         sent_feats = []
         max_len = len(s) if len(s) > max_len else max_len
         for w, fts in s.items():
-            #print(len(fts))
-            print(fts)
             subj_mean_word_feats = np.nanmean(fts, axis=0)
             subj_mean_word_feats[np.isnan(subj_mean_word_feats)] = 0.0
-            print(w, subj_mean_word_feats)
             sent_feats.append(subj_mean_word_feats)
-        print(len(sent_feats))
         gaze_X.append(sent_feats)
 
-    print(len(gaze_X))
-    print(max_len)
 
-
-    # todo scale features
+    # todo scale features?
 
     # pad gaze sequences
     for s in gaze_X:
@@ -132,17 +127,7 @@ def lstm_classifier(labels, gaze, embedding_type, param_dict, random_seed_value)
 
         # define model
         print("Preparing model...")
-        #model = tf.keras.Sequential()
-
-        input_text = Input(shape=(X_train.shape[1], X_train.shape[2]), dtype=tf.float64)
-
-        # directly into lstm layer?
-        # input, flatten, lstm
-
-        # the first branch operates on the first input (word embeddings)
-        #text_model = Embedding(num_words, 32, input_length=X_train.shape[1],
-         #                          name='none_input_embeddings')(input_text)
-
+        input_text = Input(shape=(X_train.shape[1], X_train.shape[2]), dtype=tf.float64, name='gaze_input_tensor')
         text_model = Bidirectional(LSTM(lstm_dim, return_sequences=True))(input_text)
         text_model = Flatten()(text_model)
         text_model = Dense(dense_dim, activation="relu")(text_model)
