@@ -47,7 +47,9 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
             if token not in word_index:
                 word_index[token] = number
             else:
-                print(token, word_index[token], number)
+                if number != word_index[token]:
+                    print("WARNING: s")
+                    print(token, word_index[token], number)
         sequences.append(seq)
 
     print(len(sequences[0]))
