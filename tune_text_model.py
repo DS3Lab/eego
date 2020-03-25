@@ -26,6 +26,8 @@ def main():
         zuco_reader.extract_labels(feature_dict, label_dict, config.class_task, subject)
 
     print(len(feature_dict), len(label_dict))
+    print(feature_dict[0])
+    print(label_dict[0])
     if len(feature_dict) != len(label_dict):
         print("WARNING: Not an equal number of sentences in features and labels!")
 
@@ -55,7 +57,6 @@ def main():
                                             fold_results = sentiment_text_model.lstm_classifier(feature_dict, label_dict, emb, parameter_dict, rand)
                                             save_results(fold_results, config.class_task)
                                         elif config.class_task == 'sentiment-bin':
-                                            print(len(feature_dict), len(label_dict))
                                             for s, label in list(label_dict.items()):
                                                 # drop neutral sentences for binary sentiment classification
                                                 if label == 2:
