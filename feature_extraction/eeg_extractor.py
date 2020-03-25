@@ -44,7 +44,11 @@ def extract_word_raw_eeg(sentence_data, eeg_dict):
                     # average over multiple fixations
                     print(word_eeg)
                     print(len(word_eeg[0]))
-                    word_eeg = np.nanmean(word_eeg, axis=0)
+                    # cover this stupid special case:
+                    if len(word_eeg[0]) == 1:
+                        word_eeg = np.nanmean(word_eeg[1:], axis=0)
+                    else:
+                        word_eeg = np.nanmean(word_eeg, axis=0)
                     print(len(word_eeg))
                     sent_features[widx] = word_eeg
                 else:
