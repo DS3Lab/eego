@@ -45,10 +45,10 @@ def extract_word_raw_eeg(sentence_data, eeg_dict):
                     print(word_eeg)
                     #print(len(word_eeg[0]))
                     # cover this stupid special case:
-                    if isinstance(word_eeg[0], np.float64):
-                        word_eeg = np.nanmean(word_eeg[1:], axis=0)
-                    else:
+                    try:
                         word_eeg = np.nanmean(word_eeg, axis=0)
+                    except ValueError:
+                        word_eeg = np.nanmean(word_eeg[1:], axis=0)
                     print(len(word_eeg))
                     sent_features[widx] = word_eeg
                 else:
