@@ -1,7 +1,7 @@
 import os
 import numpy as np
 from tensorflow.python.keras.preprocessing.sequence import pad_sequences
-from tensorflow.python.keras.preprocessing.text import Tokenizer
+from tensorflow.python.keras.preprocessing.text import Tokenizer, hashing_trick
 from tensorflow.python.keras.utils import np_utils
 from tensorflow.python.keras.initializers import Constant
 import tensorflow.python.keras.backend as K
@@ -35,6 +35,12 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
     X_tokenized = list(features.values())
     print(X[0])
     print(X_tokenized[0])
+
+    n = 100000
+    seqs = hashing_trick([' '.join(s) for s in X_tokenized], n, hash_function=None, filters='',
+                                           lower=True, split=' ')
+
+    print(seqs[0])
 
     label_names = {0: 'O', 1: 'B-PER', 2: 'I-PER', 3: 'B-ORG', 4: 'I-ORG', 5: 'B-LOC', 6: 'I-LOC'}
 
