@@ -26,8 +26,7 @@ os.environ['KERAS_BACKEND'] = 'tensorflow'
 def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_value):
     # set random seed
     np.random.seed(random_seed_value)
-    #tf.random.set_seed(random_seed_value)
-    tf.random.set_random_seed(random_seed_value)
+    tf.random.set_seed(random_seed_value)
     os.environ['PYTHONHASHSEED'] = str(random_seed_value)
 
     start = time.time()
