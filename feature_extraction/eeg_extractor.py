@@ -40,12 +40,14 @@ def extract_word_raw_eeg(sentence_data, eeg_dict):
                             if not np.isnan(fix).any():
                                 word_eeg.append(fix)
                         word_eeg = np.nanmean(word_eeg, axis=0)
-                        print("word_eeg:", word_eeg.shape)
+                        if word_eeg.shape[0] != 105:
+                            print("word_eeg:", word_eeg.shape)
+                            print(word_eeg)
                         sent_features[widx] = word_eeg
                     else:
                         nan_array = np.empty((105,))
                         nan_array[:] = np.NaN
-                        print("nan:", nan_array.shape)
+                        #print("nan:", nan_array.shape)
                         sent_features[widx] = nan_array
                     #else:
                         #print("NO word data available!")
