@@ -56,7 +56,7 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
     label_names = {0: 'O', 1: 'B-PER', 2: 'I-PER', 3: 'B-ORG', 4: 'I-ORG', 5: 'B-LOC', 6: 'I-LOC'}
 
     # convert class labels to one hot vectors
-    one_hot_labels = np_utils.to_categorical(label_names)
+    one_hot_labels = np_utils.to_categorical(list(label_names.values()))
     print(one_hot_labels)
 
     #label_matrix =
