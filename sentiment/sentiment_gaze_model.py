@@ -65,11 +65,13 @@ def lstm_classifier(labels, gaze, embedding_type, param_dict, random_seed_value)
     for s in gaze_X:
         for t in s:
             feat.append(t[0])
+    print(feat)
+    feat = feat.reshape(-1, 1)
+    print(feat)
     scaler = scaler.fit(feat)
     print('Min: %f, Max: %f' % (scaler.data_min_, scaler.data_max_))
     # normalize the dataset and print
     normalized = scaler.transform(feat)
-    print(feat)
     print(normalized)
 
     # pad gaze sequences
