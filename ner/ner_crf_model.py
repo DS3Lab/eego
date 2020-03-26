@@ -13,12 +13,8 @@ import ml_helpers
 import config
 import time
 from datetime import timedelta
-#import tensorflow as tf
-
-import tensorflow.compat.v1 as tf
-from keras_contrib.layers import CRF
-#tf.disable_v2_behavior()
-#import tensorflow_addons as tfa
+import tensorflow as tf
+import tensorflow_addons as tfa
 
 os.environ['KERAS_BACKEND'] = 'tensorflow'
 
@@ -179,7 +175,7 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
         text_model = TimeDistributed(Dense(50, activation='softmax'))(text_model)
 
         # model.add(tf.keras.layers.TimeDistributed(tf.keras.layers.Dense(len(label_names), activation='softmax')))
-        crf = CRF(len(label_names))  # CRF layer
+        crf = tfa.text.crf.CrfDecodeForwardRnnCell(len(label_names))  # CRF layer
         out = crf(text_model)
 
         model = Model(inputs=input_list, outputs=out)
