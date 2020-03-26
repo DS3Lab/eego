@@ -32,7 +32,7 @@ def lstm_classifier(labels, gaze, embedding_type, param_dict, random_seed_value)
     sents_y = list(labels.keys())
     sents_gaze = list(gaze.keys())
     if sents_y[0] != sents_gaze[0]:
-        sys.exit("STOP! order of sentences in labels and features dicts not the same!")
+        sys.exit("STOP! Order of sentences in labels and features dicts not the same!")
 
     # convert class labels to one hot vectors
     y = np_utils.to_categorical(y)
@@ -101,7 +101,7 @@ def lstm_classifier(labels, gaze, embedding_type, param_dict, random_seed_value)
 
         # define model
         print("Preparing model...")
-        input_text = Input(shape=(X_train.shape[1], X_train.shape[2]), dtype=tf.float64, name='gaze_input_tensor')
+        input_text = Input(shape=(X_train.shape[1], X_train.shape[2]), name='gaze_input_tensor') # dtype=tf.float64,
         # todo: change type of all layers to tf.float64?
         text_model = Bidirectional(LSTM(lstm_dim, return_sequences=True))(input_text)
         for _ in list(range(lstm_layers-1)):
