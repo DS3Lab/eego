@@ -60,19 +60,30 @@ def lstm_classifier(labels, gaze, embedding_type, param_dict, random_seed_value)
 
     # todo: better results with scaled features?
     # train the normalization
-    scaler = MinMaxScaler(feature_range=(0, 1))
-    feat = []
-    for s in gaze_X:
-        for t in s:
-            feat.append(t[0])
-    #print(feat)
-    feat = np.array(feat).reshape(-1, 1)
-    print(feat.shape)
-    scaler = scaler.fit(feat)
-    print('Min: %f, Max: %f' % (scaler.data_min_, scaler.data_max_))
-    # normalize the dataset and print
-    normalized = scaler.transform(feat)
-    print(normalized)
+    print(gaze_X[0])
+    for feat in range(len(gaze_X[0][0])):
+        print("Feat:",feat)
+        scaler = MinMaxScaler(feature_range=(0, 1))
+        feat_values = []
+        for s in gaze_X:
+            for t in s:
+                feat_values.append(t[feat])
+        #print(feat)
+        feat_values = np.array(feat_values).reshape(-1, 1)
+        print(feat_values.shape)
+        scaler = scaler.fit(feat_values)
+        print('Min: %f, Max: %f' % (scaler.data_min_, scaler.data_max_))
+        # normalize the dataset and print
+        normalized = scaler.transform(feat_values)
+        print(normalized)
+        i = 0
+        for s in gaze_X:
+            for t in s:
+                t[feat] = normalized[i]
+                i += 1
+    print(gaze_X[0])
+
+
 
     # pad gaze sequences
     for s in gaze_X:
