@@ -35,9 +35,8 @@ def main():
     #print("eeg_dict = ", eeg_dict, file=eeg_feats_file)
     #eeg_feats_file.close()
 
-    eeg_feats = open('eeg_raw_word_feats_senti_bin.py', 'r').read()
-    eeg_dict = ast.literal_eval(eeg_feats)
-
+    #eeg_feats = open('eeg_raw_word_feats_senti_bin.py', 'r').read()
+    #eeg_dict = ast.literal_eval(eeg_feats)
 
     if len(feature_dict) != len(label_dict) != len(eeg_dict):
         print("WARNING: Not an equal number of sentences in features and labels!")
