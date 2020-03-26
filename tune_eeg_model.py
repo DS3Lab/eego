@@ -4,6 +4,7 @@ from reldetect import reldetect_text_model
 from ner import ner_model
 from sentiment import sentiment_eeg_model, sentiment_combi_model, sentiment_eeg_word_model
 from data_helpers import save_results, load_matlab_files
+import json
 
 
 # Usage on spaceml:
@@ -27,6 +28,11 @@ def main():
         zuco_reader.extract_labels(feature_dict, label_dict, config.class_task, subject)
 
     print(len(feature_dict), len(label_dict), len(eeg_dict))
+
+    # save eeg feats
+    eeg_feats_file = open('eeg_raw_word_feats_senti_bin.json', 'w')
+    json.dump(eeg_dict, eeg_feats_file)
+
     if len(feature_dict) != len(label_dict) != len(eeg_dict):
         print("WARNING: Not an equal number of sentences in features and labels!")
 
@@ -63,8 +69,7 @@ def main():
                                                                                                    emb, parameter_dict,
                                                                                                    rand)
                                             elif 'eeg_word_raw' in config.feature_set:
-                                                fold_results = sentiment_eeg_word_model.lstm_classifier(feature_dict,
-                                                                                                     label_dict,
+                                                fold_results = sentiment_eeg_word_model.lstm_classifier(label_dict,
                                                                                                      eeg_dict,
                                                                                                      emb,
                                                                                                      parameter_dict,
@@ -90,8 +95,7 @@ def main():
                                                                                                    emb, parameter_dict,
                                                                                                    rand)
                                             elif 'eeg_word_raw' in config.feature_set:
-                                                fold_results = sentiment_eeg_word_model.lstm_classifier(feature_dict,
-                                                                                                        label_dict,
+                                                fold_results = sentiment_eeg_word_model.lstm_classifier(label_dict,
                                                                                                         eeg_dict,
                                                                                                         emb,
                                                                                                         parameter_dict,
