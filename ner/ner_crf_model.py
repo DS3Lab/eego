@@ -181,10 +181,10 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
         text_model = TimeDistributed(Dense(len(label_names), activation='softmax'))(text_model)
         print(text_model.shape)
 
-        crf = tfa.text.crf.CrfDecodeForwardRnnCell()(text_model)  # CRF layer
-        out = crf(text_model)
+        crf = tfa.text.crf()(text_model)  # CRF layer
+        #out = crf(text_model)
 
-        model = Model(inputs=input_list, outputs=out)
+        model = Model(inputs=input_list, outputs=crf)
 
         model.compile(loss='sparse_categorical_crossentropy',
                       optimizer=tf.keras.optimizers.Adam(lr=lr),
