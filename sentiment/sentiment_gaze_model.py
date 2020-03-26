@@ -12,7 +12,8 @@ from tensorflow.python.keras.layers import Input, Dense, LSTM, Bidirectional, Fl
 from tensorflow.python.keras.models import Model
 import json
 import sys
-from sklearn.preprocessing import MinMaxScaler
+import ml_helpers
+
 
 os.environ['KERAS_BACKEND'] = 'tensorflow'
 
@@ -48,8 +49,8 @@ def lstm_classifier(labels, gaze, embedding_type, param_dict, random_seed_value)
     #gaze_feats_file = open('gaze_feats_file.json', 'w')
     #json.dump(gaze, gaze_feats_file)
 
+    # average EEG features over all subjects
     for s in gaze.values():
-        # average over all subjects
         sent_feats = []
         max_len = len(s) if len(s) > max_len else max_len
         for w, fts in s.items():
@@ -58,40 +59,17 @@ def lstm_classifier(labels, gaze, embedding_type, param_dict, random_seed_value)
             sent_feats.append(subj_mean_word_feats)
         gaze_X.append(sent_feats)
 
-    # todo: better results with scaled features?
-    # train the normalization
-    print(gaze_X[0])
-    for feat in range(len(gaze_X[0][0])):
-        print("Feat:",feat)
-        scaler = MinMaxScaler(feature_range=(0, 1))
-        feat_values = []
-        for s in gaze_X:
-            for t in s:
-                feat_values.append(t[feat])
-        #print(feat)
-        feat_values = np.array(feat_values).reshape(-1, 1)
-        print(feat_values.shape)
-        scaler = scaler.fit(feat_values)
-        print('Min: %f, Max: %f' % (scaler.data_min_, scaler.data_max_))
-        # normalize the dataset and print
-        normalized = scaler.transform(feat_values)
-        print(len(normalized))
-        i = 0
-        for s in gaze_X:
-            for t in s:
-                t[feat] = normalized[i]
-                i += 1
-        print(i)
-    print(gaze_X[0])
 
+    # scale feature values
+    gaze_X_scaled = ml_helpers.scale_feature_values(gaze_X)
 
 
     # pad gaze sequences
-    for s in gaze_X:
+    for s in gaze_X_scaled:
         while len(s) < max_len:
             s.append(np.zeros(5))
 
-    X_data = np.array(gaze_X)
+    X_data = np.array(gaze_X_scaled)
     print(X_data.shape)
 
     # split data into train/test

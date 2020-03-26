@@ -2,9 +2,9 @@ import matplotlib. pyplot as plt
 import os
 import numpy as np
 import config
-import bert
 from transformers import BertTokenizer
 from transformers import TFBertModel
+from sklearn.preprocessing import MinMaxScaler
 
 
 def plot_label_distribution(y):
@@ -63,6 +63,7 @@ def load_glove_embeddings(vocab_size, word_index, EMBEDDING_DIM):
             # words not found in embedding index will be all-zeros.
             embedding_matrix[i] = embedding_vector
 
+    print("glove matrix:", embedding_matrix.shape)
     return embedding_matrix
 
 
@@ -85,7 +86,7 @@ def get_bert_max_len(X):
 def prepare_sequences_for_bert_with_mask(X, max_length):
     
     tokenizer = BertTokenizer.from_pretrained("bert-base-uncased", do_lower_case=True)
-    # Tokenize all of the sentences and map the tokens to thier word IDs.
+    # Tokenize all of the sentences and map the tokens to their word IDs.
     input_ids = []
     attention_masks = []
 
@@ -123,3 +124,35 @@ def prepare_sequences_for_bert_with_mask(X, max_length):
 def create_new_bert_layer():
     bert = TFBertModel.from_pretrained("bert-base-uncased")
     return bert
+
+
+def scale_feature_values(X):
+    """Scale eye-tracking and EEG feature values"""
+
+    # todo: better results with scaled features?
+    # train the normalization
+    print(X[0])
+    for feat in range(len(X[0][0])):
+        print("Feat:", feat)
+        scaler = MinMaxScaler(feature_range=(0, 1))
+        feat_values = []
+        for sentence in X:
+            for token in sentence:
+                feat_values.append(token[feat])
+        # print(feat)
+        feat_values = np.array(feat_values).reshape(-1, 1)
+        print(feat_values.shape)
+        scaler = scaler.fit(feat_values)
+        print('Min: %f, Max: %f' % (scaler.data_min_, scaler.data_max_))
+        # normalize the dataset and print
+        normalized = scaler.transform(feat_values)
+        print(len(normalized))
+        i = 0
+        for sentence in X:
+            for token in sentence:
+                token[feat] = normalized[i]
+                i += 1
+        print(i)
+    print(X[0])
+
+    return X
