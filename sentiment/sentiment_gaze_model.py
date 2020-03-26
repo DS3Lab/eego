@@ -11,6 +11,7 @@ import tensorflow as tf
 from tensorflow.python.keras.layers import Input, Dense, LSTM, Bidirectional, Flatten, Dropout
 from tensorflow.python.keras.models import Model
 import json
+import sys
 
 os.environ['KERAS_BACKEND'] = 'tensorflow'
 
@@ -26,17 +27,12 @@ def lstm_classifier(labels, gaze, embedding_type, param_dict, random_seed_value)
     os.environ['PYTHONHASHSEED'] = str(random_seed_value)
 
     y = list(labels.values())
+
+    # check order of sentences in labels and features dicts
     sents_y = list(labels.keys())
-
     sents_gaze = list(gaze.keys())
-    # todo: check X, y order of sentences!!
-    print(y[0])
-    print(sents_y[0])
-    print(sents_gaze[0])
-
-    print(y[1])
-    print(sents_y[1])
-    print(sents_gaze[1])
+    if sents_y[0] != sents_gaze[0]:
+        sys.exit("STOP! order of sentences in labels and features dicts not the same!")
 
     # convert class labels to one hot vectors
     y = np_utils.to_categorical(y)
