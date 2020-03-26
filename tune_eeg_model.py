@@ -89,11 +89,13 @@ def main():
                                                                                                    label_dict, eeg_dict,
                                                                                                    emb, parameter_dict,
                                                                                                    rand)
-                                            else:
-                                                fold_results = sentiment_eeg_model.lstm_classifier(feature_dict,
-                                                                                                   label_dict, eeg_dict,
-                                                                                                   emb, parameter_dict,
-                                                                                                   rand)
+                                            elif 'eeg_word_raw' in config.feature_set:
+                                                fold_results = sentiment_eeg_word_model.lstm_classifier(feature_dict,
+                                                                                                        label_dict,
+                                                                                                        eeg_dict,
+                                                                                                        emb,
+                                                                                                        parameter_dict,
+                                                                                                        rand)
                                             save_results(fold_results, config.class_task)
 
 
