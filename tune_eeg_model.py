@@ -4,7 +4,8 @@ from reldetect import reldetect_text_model
 from ner import ner_model
 from sentiment import sentiment_eeg_model, sentiment_combi_model, sentiment_eeg_word_model
 from data_helpers import save_results, load_matlab_files
-import eeg_raw_word_feats_senti_bin
+import ast
+
 
 
 # Usage on spaceml:
@@ -34,7 +35,8 @@ def main():
     #print("eeg_dict = ", eeg_dict, file=eeg_feats_file)
     #eeg_feats_file.close()
 
-    eeg_dict = eeg_raw_word_feats_senti_bin.eeg_dict
+    eeg_feats = open('eeg_raw_word_feats_senti_bin.py', 'r').read()
+    eeg_dict = ast.literal_eval(eeg_feats)
 
 
     if len(feature_dict) != len(label_dict) != len(eeg_dict):
