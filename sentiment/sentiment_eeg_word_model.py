@@ -51,12 +51,12 @@ def lstm_classifier(labels, eeg, embedding_type, param_dict, random_seed_value):
 
     # average EEG features over all subjects
     for s, f in eeg.items():
-        print(s)
-        print(f)
+        #print(s)
+        #print(f)
         sent_feats = []
         max_len = len(f) if len(f) > max_len else max_len
         print(max_len)
-        for w, fts in s.items():
+        for w, fts in f.items():
             print(fts)
             subj_mean_word_feats = np.nanmean(fts, axis=0)
             #subj_mean_word_feats[np.isnan(subj_mean_word_feats)] = 0.0
