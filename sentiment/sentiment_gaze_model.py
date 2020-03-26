@@ -28,15 +28,15 @@ def lstm_classifier(labels, gaze, embedding_type, param_dict, random_seed_value)
     y = list(labels.values())
     sents_y = list(labels.keys())
 
-    sents_eeg = list(eeg.keys())
+    sents_gaze = list(gaze.keys())
     # todo: check X, y order of sentences!!
     print(y[0])
     print(sents_y[0])
-    print(sents_eeg[0])
+    print(sents_gaze[0])
 
     print(y[1])
     print(sents_y[1])
-    print(sents_eeg[1])
+    print(sents_gaze[1])
 
     # convert class labels to one hot vectors
     y = np_utils.to_categorical(y)
