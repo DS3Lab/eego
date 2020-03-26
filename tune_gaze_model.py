@@ -64,7 +64,7 @@ def main():
                                                                                                    emb, parameter_dict,
                                                                                                    rand)
                                             elif 'combi_eye_tracking' in config.feature_set:
-                                                fold_results = sentiment_cognitive_combi_model.lstm_classifier(label_dict,
+                                                fold_results = sentiment_cognitive_combi_model.lstm_classifier(feature_dict, label_dict,
                                                                                                     gaze_dict,
                                                                                                     emb, parameter_dict,
                                                                                                     rand)
