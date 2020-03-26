@@ -173,12 +173,11 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
 
         text_model = Flatten()(text_model)
         text_model = Dense(dense_dim, activation="relu")(text_model)
-        text_model = Dropout(dropout)(text_model)
 
-        text_model = TimeDistributed(Dense(50, activation='softmax'))(text_model)
+        text_model = TimeDistributed(Dense(len(label_names), activation='softmax'))(text_model)
 
         # model.add(tf.keras.layers.TimeDistributed(tf.keras.layers.Dense(len(label_names), activation='softmax')))
-        #crf = tfa.text.crf.CrfDecodeForwardRnnCell(len(label_names))  # CRF layer
+        crf = tfa.text.crf.CrfDecodeForwardRnnCell(input=len(label_names))  # CRF layer
         #out = crf(text_model)
 
         model = Model(inputs=input_list, outputs=text_model)
