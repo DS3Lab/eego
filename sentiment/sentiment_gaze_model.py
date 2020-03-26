@@ -12,6 +12,7 @@ from tensorflow.python.keras.layers import Input, Dense, LSTM, Bidirectional, Fl
 from tensorflow.python.keras.models import Model
 import json
 import sys
+from sklearn.preprocessing import MinMaxScaler
 
 os.environ['KERAS_BACKEND'] = 'tensorflow'
 
@@ -58,6 +59,14 @@ def lstm_classifier(labels, gaze, embedding_type, param_dict, random_seed_value)
         gaze_X.append(sent_feats)
 
     # todo: better results with scaled features?
+    # train the normalization
+    scaler = MinMaxScaler(feature_range=(0, 1))
+    scaler = scaler.fit(gaze_X)
+    print('Min: %f, Max: %f' % (scaler.data_min_, scaler.data_max_))
+    # normalize the dataset and print
+    normalized = scaler.transform(gaze_X)
+    print(gaze_X[0])
+    print(normalized[0])
 
     # pad gaze sequences
     for s in gaze_X:
@@ -101,7 +110,7 @@ def lstm_classifier(labels, gaze, embedding_type, param_dict, random_seed_value)
 
         # define model
         print("Preparing model...")
-        input_text = Input(shape=(X_train.shape[1], X_train.shape[2]), name='gaze_input_tensor') # dtype=tf.float64,
+        input_text = Input(shape=(X_train.shape[1], X_train.shape[2]), name='gaze_input_tensor')
         # todo: change type of all layers to tf.float64?
         text_model = Bidirectional(LSTM(lstm_dim, return_sequences=True))(input_text)
         for _ in list(range(lstm_layers-1)):
