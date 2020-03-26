@@ -46,9 +46,6 @@ def lstm_classifier(labels, eeg, embedding_type, param_dict, random_seed_value):
     gaze_X = []
     max_len = 0
 
-    # save eeg feats
-    eeg_feats_file = open('eeg_raw_word_feats_senti_bin.json', 'w')
-    json.dump(eeg, eeg_feats_file)
 
     for s in eeg.values():
         # average over all subjects
