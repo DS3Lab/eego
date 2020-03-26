@@ -75,12 +75,13 @@ def lstm_classifier(labels, gaze, embedding_type, param_dict, random_seed_value)
         print('Min: %f, Max: %f' % (scaler.data_min_, scaler.data_max_))
         # normalize the dataset and print
         normalized = scaler.transform(feat_values)
-        print(normalized)
+        print(len(normalized))
         i = 0
         for s in gaze_X:
             for t in s:
                 t[feat] = normalized[i]
                 i += 1
+        print(i)
     print(gaze_X[0])
 
 
