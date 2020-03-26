@@ -36,35 +36,37 @@ def lstm_classifier(labels, eeg, embedding_type, param_dict, random_seed_value):
     if sents_y[0] != sents_eeg[0]:
         sys.exit("STOP! Order of sentences in labels and features dicts not the same!")
 
-
     # convert class labels to one hot vectors
     y = np_utils.to_categorical(y)
 
     start = time.time()
 
-    # prepare eye-tracking data
-    gaze_X = []
+    # prepare EEG data
+    eeg_X = []
     max_len = 0
 
+    # save gaze feats
+    # gaze_feats_file = open('gaze_feats_file.json', 'w')
+    # json.dump(gaze, gaze_feats_file)
 
+    # average EEG features over all subjects
     for s in eeg.values():
-        # average over all subjects
         sent_feats = []
         max_len = len(s) if len(s) > max_len else max_len
         for w, fts in s.items():
+            print(fts)
             subj_mean_word_feats = np.nanmean(fts, axis=0)
             subj_mean_word_feats[np.isnan(subj_mean_word_feats)] = 0.0
+            print(subj_mean_word_feats)
             sent_feats.append(subj_mean_word_feats)
-        gaze_X.append(sent_feats)
-
-    # todo scale features?
+        eeg_X.append(sent_feats)
 
     # pad gaze sequences
-    for s in gaze_X:
+    for s in eeg_X:
         while len(s) < max_len:
             s.append(np.zeros(5))
 
-    X_data_gaze = np.array(gaze_X)
+    X_data_gaze = np.array(eeg_X)
     print(X_data_gaze.shape)
 
     max_length_gaze = max_len
