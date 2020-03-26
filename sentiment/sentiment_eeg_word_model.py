@@ -50,10 +50,12 @@ def lstm_classifier(labels, eeg, embedding_type, param_dict, random_seed_value):
     # json.dump(gaze, gaze_feats_file)
 
     # average EEG features over all subjects
-    print(eeg[0])
-    for s in eeg.values():
+    for s, f in eeg.items():
+        print(s)
+        print(f)
         sent_feats = []
-        max_len = len(s) if len(s) > max_len else max_len
+        max_len = len(f) if len(f) > max_len else max_len
+        print(max_len)
         for w, fts in s.items():
             print(fts)
             subj_mean_word_feats = np.nanmean(fts, axis=0)
