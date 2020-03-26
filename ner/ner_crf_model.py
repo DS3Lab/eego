@@ -14,15 +14,13 @@ import config
 import time
 from datetime import timedelta
 import tensorflow as tf
-import sklearn_crfsuite
-from sklearn_crfsuite import scorers
-from sklearn_crfsuite import metrics
+from keras_contrib.layers import CRF
 
 os.environ['KERAS_BACKEND'] = 'tensorflow'
 
 
 # Machine learning model for sentiment classification (binary and ternary)
-# Only learning from text 
+# Only learning from text
 
 
 def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_value):
@@ -48,7 +46,7 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
     word_index = {}
     for sent in X_tokenized:
         seq = hashing_trick(' '.join(sent), vocab_size, hash_function=None, filters='',
-                                           lower=True, split=' ')
+                            lower=True, split=' ')
         for token, number in zip(sent, seq):
             if token not in word_index:
                 word_index[token] = number
@@ -108,7 +106,7 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
         print("splitting train and test data...")
         y_train, y_test = y_padded[train_index], y_padded[test_index]
         X_train_text, X_test_text = X_data_text[train_index], X_data_text[test_index]
-    
+
         if embedding_type is 'bert':
             X_train_masks, X_test_masks = X_data_masks[train_index], X_data_masks[test_index]
 
@@ -116,7 +114,6 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
         print(y_test.shape)
         print(X_train_text.shape)
         print(X_test_text.shape)
-        print(y_train[0])
 
         # reset model
         K.clear_session()
@@ -135,24 +132,73 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
         # define model
         print("Preparing model...")
 
-        crf = sklearn_crfsuite.CRF(
-            algorithm='lbfgs',
-            c1=0.1,
-            c2=0.1,
-            max_iterations=100,
-            all_possible_transitions=True
-        )
-        crf.fit(X_train_text, y_train)
+        # define two sets of inputs
+        input_text = Input(shape=(X_train_text.shape[1],)) if embedding_type is not 'bert' else Input(
+            shape=(X_train_text.shape[1],), dtype=tf.int32)
+        input_list = [input_text]
 
-        y_pred = crf.predict(X_test_text)
-        metrics.flat_f1_score(y_test, y_pred,
-                              average='weighted', labels=labels)
+        # the first branch operates on the first input (word embeddings)
+        if embedding_type is 'none':
+            text_model = Embedding(num_words, 32, input_length=X_train_text.shape[1],
+                                   name='none_input_embeddings')(input_text)
+        elif embedding_type is 'glove':
+            text_model = Embedding(num_words,
+                                   embedding_dim,
+                                   embeddings_initializer=Constant(embedding_matrix),
+                                   input_length=X_train_text.shape[1],
+                                   trainable=False,
+                                   name='glove_input_embeddings')(input_text)
+        elif embedding_type is 'bert':
+            input_mask = tf.keras.layers.Input((X_train_masks.shape[1],), dtype=tf.int32)
+            input_list.append(input_mask)
+            text_model = ml_helpers.create_new_bert_layer()(input_text, attention_mask=input_mask)[0]
+
+        # for l in list(range(lstm_layers)):
+        #    if l < lstm_layers - 1:
+        #       text_model = Bidirectional(LSTM(lstm_dim, return_sequences=True))(text_model)
+        #  else:
+        #     text_model = Bidirectional(LSTM(lstm_dim, return_sequences=True))(text_model)
+
+        # text_model = Bidirectional(LSTM(lstm_dim, return_sequences=True))(text_model)
+        # text_model = Flatten()(text_model)
+        # text_model = Dense(dense_dim, activation="relu")(text_model)
+        # text_model = Dropout(dropout)(text_model)
+        # text_model = Dense(len(label_names), activation="softmax")(text_model)
+
+        text_model = Dropout(0.2)(text_model)
+
+        for _ in list(range(lstm_layers)):
+            text_model = Bidirectional(LSTM(lstm_dim, recurrent_dropout=0.2, dropout=0.2, return_sequences=True))(
+                text_model)
+
+        text_model = TimeDistributed(Dense(50, activation='softmax'))(text_model)
+
+        # model.add(tf.keras.layers.TimeDistributed(tf.keras.layers.Dense(len(label_names), activation='softmax')))
+        crf = CRF(len(label_names))  # CRF layer
+        out = crf(text_model)
+
+        model = Model(inputs=input_list, outputs=out)
+
+        model.compile(loss='sparse_categorical_crossentropy',
+                      optimizer=tf.keras.optimizers.Adam(lr=lr),
+                      metrics=['accuracy'])
+
+        model.summary()
+
+        # train model
+        history = model.fit([X_train_text] if embedding_type is not 'bert' else [X_train_text, X_train_masks], y_train,
+                            validation_split=0.1, epochs=epochs, batch_size=batch_size)
+
+        # evaluate model
+        scores = model.evaluate([X_test_text] if embedding_type is not 'bert' else [X_test_text, X_test_masks], y_test,
+                                verbose=0)
+        predictions = model.predict([X_test_text] if embedding_type is not 'bert' else [X_test_text, X_test_masks])
 
         # get predictions
         # remove padded tokens at end of sentence
         out_pred = []
         out_test = []
-        for pred_i, test_i, sent_i in zip(y_pred, y_test, X_test_text):
+        for pred_i, test_i, sent_i in zip(predictions, y_test, X_test_text):
             x_cut = [x for x in sent_i if x != 0]
             original_sent_length = len(x_cut)
             out_i_pred = []
