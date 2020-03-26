@@ -13,8 +13,12 @@ import ml_helpers
 import config
 import time
 from datetime import timedelta
-import tensorflow as tf
+#import tensorflow as tf
+
+import tensorflow.compat.v1 as tf
 from keras_contrib.layers import CRF
+#tf.disable_v2_behavior()
+#import tensorflow_addons as tfa
 
 os.environ['KERAS_BACKEND'] = 'tensorflow'
 
