@@ -129,9 +129,6 @@ def create_new_bert_layer():
 def scale_feature_values(X):
     """Scale eye-tracking and EEG feature values"""
 
-    # todo: better results with scaled features?
-    # train the normalization
-    print(X[0])
     for feat in range(len(X[0][0])):
         print("Feat:", feat)
         scaler = MinMaxScaler(feature_range=(0, 1))
@@ -139,20 +136,18 @@ def scale_feature_values(X):
         for sentence in X:
             for token in sentence:
                 feat_values.append(token[feat])
-        # print(feat)
+        # train the normalization
         feat_values = np.array(feat_values).reshape(-1, 1)
-        print(feat_values.shape)
         scaler = scaler.fit(feat_values)
         print('Min: %f, Max: %f' % (scaler.data_min_, scaler.data_max_))
         # normalize the dataset and print
         normalized = scaler.transform(feat_values)
-        print(len(normalized))
+
+        # add normalized values back to feature list
         i = 0
         for sentence in X:
             for token in sentence:
                 token[feat] = normalized[i]
                 i += 1
-        print(i)
-    print(X[0])
 
     return X
