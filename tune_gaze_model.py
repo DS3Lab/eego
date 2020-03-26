@@ -1,6 +1,6 @@
 import config
 from feature_extraction import zuco_reader
-from sentiment import sentiment_gaze_model
+from sentiment import sentiment_gaze_model, sentiment_cognitive_combi_model
 from data_helpers import save_results, load_matlab_files
 import json
 
@@ -59,9 +59,16 @@ def main():
                                             save_results(fold_results, config.class_task)
 
                                         elif config.class_task == 'sentiment-tri':
-                                            fold_results = sentiment_gaze_model.lstm_classifier(label_dict, gaze_dict,
+                                            if 'eye_tracking' in config.feature_set:
+                                                fold_results = sentiment_gaze_model.lstm_classifier(label_dict, gaze_dict,
                                                                                                    emb, parameter_dict,
                                                                                                    rand)
+                                            elif 'combi_eye_tracking' in config.feature_set:
+                                                fold_results = sentiment_cognitive_combi_model.lstm_classifier(label_dict,
+                                                                                                    gaze_dict,
+                                                                                                    emb, parameter_dict,
+                                                                                                    rand)
+
                                             save_results(fold_results, config.class_task)
                                         elif config.class_task == 'sentiment-bin':
                                             for s, label in list(label_dict.items()):
@@ -70,9 +77,16 @@ def main():
                                                     del label_dict[s]
                                                     del feature_dict[s]
                                                     #del gaze_dict[s]
-                                            fold_results = sentiment_gaze_model.lstm_classifier(label_dict, gaze_dict,
+
+                                            if 'eye_tracking' in config.feature_set:
+                                                fold_results = sentiment_gaze_model.lstm_classifier(label_dict, gaze_dict,
                                                                                                    emb, parameter_dict,
                                                                                                    rand)
+                                            elif 'combi_eye_tracking' in config.feature_set:
+                                                fold_results = sentiment_cognitive_combi_model.lstm_classifier(label_dict,
+                                                                                                    gaze_dict,
+                                                                                                    emb, parameter_dict,
+                                                                                                    rand)
                                             save_results(fold_results, config.class_task)
 
 
