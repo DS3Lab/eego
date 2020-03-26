@@ -4,7 +4,7 @@ from reldetect import reldetect_text_model
 from ner import ner_model
 from sentiment import sentiment_eeg_model, sentiment_combi_model, sentiment_eeg_word_model
 from data_helpers import save_results, load_matlab_files
-import json
+import eeg_raw_word_feats_senti_bin
 
 
 # Usage on spaceml:
@@ -30,10 +30,11 @@ def main():
     print(len(feature_dict), len(label_dict), len(eeg_dict))
 
     # save eeg feats
-    eeg_feats_file = open('eeg_raw_word_feats_senti_bin.py', 'w')
-    print("eeg_dict = ", eeg_dict, file=eeg_feats_file)
-    #json.dump(eeg_dict, eeg_feats_file)
-    eeg_feats_file.close()
+    #eeg_feats_file = open('eeg_raw_word_feats_senti_bin.py', 'w')
+    #print("eeg_dict = ", eeg_dict, file=eeg_feats_file)
+    #eeg_feats_file.close()
+
+    eeg_dict = eeg_raw_word_feats_senti_bin.eeg_dict
 
 
     if len(feature_dict) != len(label_dict) != len(eeg_dict):

@@ -1,22 +1,18 @@
 import os
+import sys
 import numpy as np
-from tensorflow.python.keras.preprocessing.sequence import pad_sequences
-from tensorflow.python.keras.preprocessing.text import Tokenizer
-from tensorflow.python.keras.utils import np_utils
-from tensorflow.python.keras.initializers import Constant
-import tensorflow.python.keras.backend as K
-import sklearn.metrics
-from sklearn.model_selection import KFold
-import ml_helpers
-import config
 import time
 from datetime import timedelta
 import tensorflow as tf
-from tensorflow.python.keras.layers import Input, Dense, concatenate, Embedding, LSTM, Bidirectional, Flatten, Dropout
+from tensorflow.python.keras.layers import Input, Dense, LSTM, Bidirectional, Flatten, Dropout
 from tensorflow.python.keras.models import Model
+from tensorflow.python.keras.utils import np_utils
+import tensorflow.python.keras.backend as K
+import sklearn.metrics
+from sklearn.model_selection import KFold
+import config
 import json
-
-
+import eeg_raw_word_feats_senti_bin
 
 os.environ['KERAS_BACKEND'] = 'tensorflow'
 
@@ -26,6 +22,8 @@ os.environ['KERAS_BACKEND'] = 'tensorflow'
 
 def lstm_classifier(labels, eeg, embedding_type, param_dict, random_seed_value):
 
+
+
     # set random seed
     np.random.seed(random_seed_value)
     tf.random.set_seed(random_seed_value)
@@ -33,8 +31,12 @@ def lstm_classifier(labels, eeg, embedding_type, param_dict, random_seed_value):
 
     y = list(labels.values())
 
-    # plot sample distribution
-    # ml_helpers.plot_label_distribution(y)
+    # check order of sentences in labels and features dicts
+    sents_y = list(labels.keys())
+    sents_eeg = list(eeg.keys())
+    if sents_y[0] != sents_eeg[0]:
+        sys.exit("STOP! Order of sentences in labels and features dicts not the same!")
+
 
     # convert class labels to one hot vectors
     y = np_utils.to_categorical(y)
@@ -111,7 +113,7 @@ def lstm_classifier(labels, eeg, embedding_type, param_dict, random_seed_value):
 
         # define model
         print("Preparing model...")
-        input_text = Input(shape=(X_train.shape[1], X_train.shape[2]), dtype=tf.float64, name='gaze_input_tensor')
+        input_text = Input(shape=(X_train.shape[1], X_train.shape[2]), name='gaze_input_tensor')
         # todo: change type of all layers to tf.float64?
         text_model = Bidirectional(LSTM(lstm_dim, return_sequences=True))(input_text)
         for _ in list(range(lstm_layers-1)):
