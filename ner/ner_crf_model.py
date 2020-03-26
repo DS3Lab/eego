@@ -173,7 +173,7 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
 
         text_model = TimeDistributed(Dense(len(label_names), activation='softmax'))(text_model)
 
-        crf = tfa.text.crf.CrfDecodeForwardRnnCell(input=len(label_names))  # CRF layer
+        crf = tfa.text.crf.CrfDecodeForwardRnnCell([len(label_names),len(label_names)])  # CRF layer
         out = crf(text_model)
 
         model = Model(inputs=input_list, outputs=out)
