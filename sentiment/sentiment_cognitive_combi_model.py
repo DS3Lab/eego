@@ -152,8 +152,8 @@ def lstm_classifier(features, labels, gaze, embedding_type, param_dict, random_s
         print("Preparing model...")
 
         # define two sets of inputs
-        input_text = Input(shape=(X_train_text.shape[1],))
-        input_eeg = Input(shape=(X_train_eeg.shape[1],))
+        input_text = Input(shape=(X_train_text.shape[1],), name='text_input_tensor')
+        input_eeg = Input(shape=((X_train_eeg.shape[1], X_train_eeg.shape[2]),), name='gaze_input_tensor')
 
         # the first branch operates on the first input (word embeddings)
         if embedding_type is 'none':
@@ -176,16 +176,20 @@ def lstm_classifier(features, labels, gaze, embedding_type, param_dict, random_s
         text_model = Model(inputs=input_text, outputs=text_model)
 
         # the second branch operates on the second input (EEG data)
-        eeg_model = Dense(dense_dim, activation="relu")(input_eeg)
-        eeg_model = Dropout(dropout)(eeg_model)
+        eeg_model = Bidirectional(LSTM(lstm_dim, return_sequences=True))(input_eeg)
+        for _ in list(range(lstm_layers - 1)):
+            text_model = Bidirectional(LSTM(lstm_dim, recurrent_dropout=0.2, dropout=0.2, return_sequences=True))(
+                eeg_model)
+        eeg_model = Flatten()(eeg_model)
         eeg_model = Dense(dense_dim, activation="relu")(eeg_model)
         eeg_model = Dropout(dropout)(eeg_model)
-        eeg_model = Dense(4, activation="relu")(eeg_model)
+        eeg_model = Dense(y_train.shape[1], activation="softmax")(eeg_model)
         eeg_model = Model(inputs=input_eeg, outputs=eeg_model)
+
         # combine the output of the two branches
         combined = concatenate([text_model.output, eeg_model.output])
         # apply another dense layer and then a softmax prediction on the combined outputs
-        # todo: also train this dense latent dim?
+        # todo: also train this dense latent dim? why 2?
         combi_model = Dense(2, activation="relu")(combined)
         combi_model = Dense(y_train.shape[1], activation="softmax")(combi_model)
         # our model will accept the inputs of the two branches and
