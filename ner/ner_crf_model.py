@@ -54,6 +54,10 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
 
     label_names = {0: 'O', 1: 'B-PER', 2: 'I-PER', 3: 'B-ORG', 4: 'I-ORG', 5: 'B-LOC', 6: 'I-LOC'}
 
+    for sent in y:
+       print(sent)
+    #label_matrix =
+
     # plot sample distribution
     # ml_helpers.plot_label_distribution(y)
 
