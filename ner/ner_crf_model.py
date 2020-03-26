@@ -5,7 +5,7 @@ from tensorflow.python.keras.preprocessing.sequence import pad_sequences
 from tensorflow.python.keras.preprocessing.text import hashing_trick
 from tensorflow.python.keras.initializers import Constant
 import tensorflow.python.keras.backend as K
-from tensorflow.python.keras.layers import Input, Dense, Embedding, LSTM, Bidirectional, Dropout, TimeDistributed
+from tensorflow.python.keras.layers import Input, Dense, Embedding, LSTM, Bidirectional, Dropout, TimeDistributed, Flatten
 from tensorflow.python.keras.models import Model
 import sklearn.metrics
 from sklearn.model_selection import KFold
@@ -171,13 +171,17 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
             text_model = Bidirectional(LSTM(lstm_dim, recurrent_dropout=0.2, dropout=0.2, return_sequences=True))(
                 text_model)
 
+        text_model = Flatten()(text_model)
+        text_model = Dense(dense_dim, activation="relu")(text_model)
+        text_model = Dropout(dropout)(text_model)
+
         text_model = TimeDistributed(Dense(50, activation='softmax'))(text_model)
 
         # model.add(tf.keras.layers.TimeDistributed(tf.keras.layers.Dense(len(label_names), activation='softmax')))
-        crf = tfa.text.crf.CrfDecodeForwardRnnCell(len(label_names))  # CRF layer
-        out = crf(text_model)
+        #crf = tfa.text.crf.CrfDecodeForwardRnnCell(len(label_names))  # CRF layer
+        #out = crf(text_model)
 
-        model = Model(inputs=input_list, outputs=out)
+        model = Model(inputs=input_list, outputs=text_model)
 
         model.compile(loss='sparse_categorical_crossentropy',
                       optimizer=tf.keras.optimizers.Adam(lr=lr),
