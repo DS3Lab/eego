@@ -9,6 +9,7 @@ from tensorflow.python.keras.layers import Input, Dense, Embedding, LSTM, Bidire
 from tensorflow.python.keras.models import Model
 import sklearn.metrics
 from sklearn.model_selection import KFold
+from tensorflow.python.keras.utils import np_utils
 import ml_helpers
 import config
 import time
@@ -54,8 +55,10 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
 
     label_names = {0: 'O', 1: 'B-PER', 2: 'I-PER', 3: 'B-ORG', 4: 'I-ORG', 5: 'B-LOC', 6: 'I-LOC'}
 
-    for sent in y:
-       print(sent)
+    # convert class labels to one hot vectors
+    one_hot_labels = np_utils.to_categorical(label_names)
+    print(one_hot_labels)
+
     #label_matrix =
 
     # plot sample distribution
