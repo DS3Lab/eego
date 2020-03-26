@@ -1,28 +1,22 @@
 import os
 import numpy as np
-from tensorflow.python.keras.preprocessing.sequence import pad_sequences
-from tensorflow.python.keras.preprocessing.text import Tokenizer
 from tensorflow.python.keras.utils import np_utils
-from tensorflow.python.keras.initializers import Constant
 import tensorflow.python.keras.backend as K
 import sklearn.metrics
 from sklearn.model_selection import KFold
-import ml_helpers
 import config
 import time
 from datetime import timedelta
 import tensorflow as tf
-from tensorflow.python.keras.layers import Input, Dense, concatenate, Embedding, LSTM, Bidirectional, Flatten, Dropout
+from tensorflow.python.keras.layers import Input, Dense, LSTM, Bidirectional, Flatten, Dropout
 from tensorflow.python.keras.models import Model
 import json
 
-
-
 os.environ['KERAS_BACKEND'] = 'tensorflow'
 
-
 # Machine learning model for sentiment classification (binary and ternary)
-# Learning on EEG data only!
+# Learning on eye-tracking data only!
+
 
 def lstm_classifier(labels, gaze, embedding_type, param_dict, random_seed_value):
 
@@ -32,9 +26,17 @@ def lstm_classifier(labels, gaze, embedding_type, param_dict, random_seed_value)
     os.environ['PYTHONHASHSEED'] = str(random_seed_value)
 
     y = list(labels.values())
+    sents_y = list(labels.keys())
 
-    # plot sample distribution
-    # ml_helpers.plot_label_distribution(y)
+    sents_eeg = list(eeg.keys())
+    # todo: check X, y order of sentences!!
+    print(y[0])
+    print(sents_y[0])
+    print(sents_eeg[0])
+
+    print(y[1])
+    print(sents_y[1])
+    print(sents_eeg[1])
 
     # convert class labels to one hot vectors
     y = np_utils.to_categorical(y)
@@ -59,23 +61,15 @@ def lstm_classifier(labels, gaze, embedding_type, param_dict, random_seed_value)
             sent_feats.append(subj_mean_word_feats)
         gaze_X.append(sent_feats)
 
-
-    # todo scale features?
+    # todo: better results with scaled features?
 
     # pad gaze sequences
     for s in gaze_X:
         while len(s) < max_len:
             s.append(np.zeros(5))
 
-    X_data_gaze = np.array(gaze_X)
-    print(X_data_gaze.shape)
-
-    max_length_gaze = max_len
-
-
-
-    X_data = X_data_gaze
-    max_length = max_length_gaze
+    X_data = np.array(gaze_X)
+    print(X_data.shape)
 
     # split data into train/test
     kf = KFold(n_splits=config.folds, random_state=random_seed_value, shuffle=True)
@@ -86,7 +80,6 @@ def lstm_classifier(labels, gaze, embedding_type, param_dict, random_seed_value)
     for train_index, test_index in kf.split(X_data):
 
         print("FOLD: ", fold)
-        # print("TRAIN:", train_index, "TEST:", test_index)
         print("splitting train and test data...")
         y_train, y_test = y[train_index], y[test_index]
         X_train, X_test = X_data[train_index], X_data[test_index]
@@ -113,6 +106,7 @@ def lstm_classifier(labels, gaze, embedding_type, param_dict, random_seed_value)
         # define model
         print("Preparing model...")
         input_text = Input(shape=(X_train.shape[1], X_train.shape[2]), dtype=tf.float64, name='gaze_input_tensor')
+        # todo: change type of all layers to tf.float64?
         text_model = Bidirectional(LSTM(lstm_dim, return_sequences=True))(input_text)
         for _ in list(range(lstm_layers-1)):
             text_model = Bidirectional(LSTM(lstm_dim, recurrent_dropout=0.2, dropout=0.2, return_sequences=True))(text_model)
@@ -141,6 +135,7 @@ def lstm_classifier(labels, gaze, embedding_type, param_dict, random_seed_value)
         p, r, f, support = sklearn.metrics.precision_recall_fscore_support(rounded_labels, rounded_predictions,
                                                                            average='macro')
         print(p, r, f)
+        # todo: check confusion matrix
         # conf_matrix = sklearn.metrics.confusion_matrix(rounded_labels, rounded_predictions)
         # print(conf_matrix)
 
