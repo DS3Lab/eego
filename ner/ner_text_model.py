@@ -1,11 +1,11 @@
 import os
+import sys
 import numpy as np
 from tensorflow.python.keras.preprocessing.sequence import pad_sequences
-from tensorflow.python.keras.preprocessing.text import Tokenizer, hashing_trick
-from tensorflow.python.keras.utils import np_utils
+from tensorflow.python.keras.preprocessing.text import hashing_trick
 from tensorflow.python.keras.initializers import Constant
 import tensorflow.python.keras.backend as K
-from tensorflow.python.keras.layers import Input, Dense, concatenate, Embedding, LSTM, Bidirectional, Flatten, Dropout, TimeDistributed
+from tensorflow.python.keras.layers import Input, Dense, Embedding, LSTM, Bidirectional, Dropout, TimeDistributed
 from tensorflow.python.keras.models import Model
 import sklearn.metrics
 from sklearn.model_selection import KFold
@@ -33,6 +33,12 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
     X = list(features.keys())
     y = list(labels.values())
     X_tokenized = list(features.values())
+
+    # check order of sentences in labels and features dicts
+    sents_y = list(labels.keys())
+    sents_feats = list(features.keys())
+    if sents_y[0] != sents_feats[0]:
+        sys.exit("STOP! Order of sentences in labels and features dicts not the same!")
 
     vocab_size = 4633
     sequences = []
@@ -68,14 +74,13 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
         X_data_text = pad_sequences(sequences, maxlen=max_length, padding='post', truncating='post')
         print('Shape of data tensor:', X_data_text.shape)
 
-        print("Loading Glove embeddings...")
+        print("Loading Glove matrix...")
         embedding_dim = 300
         embedding_matrix = ml_helpers.load_glove_embeddings(vocab_size, word_index, embedding_dim)
 
     if embedding_type is 'bert':
         print("Prepare sequences for Bert ...")
 
-        # todo: is tokenizing twice really necessary?
         max_length = ml_helpers.get_bert_max_len(X)
         X_data_text, X_data_masks = ml_helpers.prepare_sequences_for_bert_with_mask(X, max_length)
 
