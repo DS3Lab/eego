@@ -12,7 +12,6 @@ import sklearn.metrics
 from sklearn.model_selection import KFold
 import config
 import json
-import eeg_raw_word_feats_senti_bin
 
 os.environ['KERAS_BACKEND'] = 'tensorflow'
 

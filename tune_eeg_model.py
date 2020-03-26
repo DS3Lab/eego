@@ -4,7 +4,6 @@ from reldetect import reldetect_text_model
 from ner import ner_model
 from sentiment import sentiment_eeg_model, sentiment_combi_model, sentiment_eeg_word_model
 from data_helpers import save_results, load_matlab_files
-import ast
 
 
 
