@@ -30,8 +30,9 @@ def main():
     print(len(feature_dict), len(label_dict), len(eeg_dict))
 
     # save eeg feats
-    eeg_feats_file = open('eeg_raw_word_feats_senti_bin.json', 'w')
-    json.dump(eeg_dict, eeg_feats_file)
+    eeg_feats_file = open('eeg_raw_word_feats_senti_bin.py', 'w')
+    print("eeg_dict = ", eeg_dict, file=eeg_feats_file)
+    #json.dump(eeg_dict, eeg_feats_file)
 
     if len(feature_dict) != len(label_dict) != len(eeg_dict):
         print("WARNING: Not an equal number of sentences in features and labels!")
