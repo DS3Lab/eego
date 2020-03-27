@@ -30,9 +30,9 @@ def main():
     print(len(feature_dict), len(label_dict), len(eeg_dict))
 
     # save eeg feats
-    #eeg_feats_file = open('eeg_raw_word_feats_senti_bin.py', 'w')
-    #print("eeg_dict = ", eeg_dict, file=eeg_feats_file)
-    #eeg_feats_file.close()
+    import json
+    with open('ee_gfeats.json', 'w') as fp:
+        json.dump(eeg_dict, fp)
 
     #eeg_feats = open('eeg_raw_word_feats_senti_bin.py', 'r').read()
     #eeg_dict = ast.literal_eval(eeg_feats)
