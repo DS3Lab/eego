@@ -45,7 +45,8 @@ def extract_word_raw_eeg(sentence_data, eeg_dict):
                             word_eeg.append(fix)
                     word_eeg = np.nanmean(word_eeg, axis=0)
                     print("word_eeg:", word_eeg.shape)
-                    if word_eeg:
+                    print("****")
+                    if word_eeg.shape == (105,):
                         sent_features[widx] = word_eeg
                 else:
                     nan_array = np.empty((105,))
