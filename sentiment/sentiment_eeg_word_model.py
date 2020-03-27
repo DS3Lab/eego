@@ -64,16 +64,17 @@ def lstm_classifier(labels, eeg, embedding_type, param_dict, random_seed_value):
             #print("***")
             subj_mean_word_feats = np.nanmean(fts, axis=0)
             #subj_mean_word_feats[np.isnan(subj_mean_word_feats)] = 0.0
-            print(subj_mean_word_feats.shape)
+            #print(subj_mean_word_feats.shape)
             sent_feats.append(subj_mean_word_feats)
         eeg_X.append(sent_feats)
 
     # pad gaze sequences
     for s in eeg_X:
-        print(len(s))
+        #print(len(s))
         while len(s) < max_len:
             s.append(np.zeros(5))
 
+    print(eeg_X[0])
     X_data_eeg = np.array(eeg_X)
     print(X_data_eeg.shape)
 
