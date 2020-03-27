@@ -7,6 +7,7 @@ from transformers import TFBertModel
 from sklearn.preprocessing import MinMaxScaler
 
 
+
 def plot_label_distribution(y):
     """Analyze label distribution of dataset"""
 
@@ -129,25 +130,26 @@ def create_new_bert_layer():
 def scale_feature_values(X):
     """Scale eye-tracking and EEG feature values"""
 
+    scaler = MinMaxScaler(feature_range=(0, 1))
+    feat_values = []
+
     for feat in range(len(X[0][0])):
-        print("Feat:", feat)
-        scaler = MinMaxScaler(feature_range=(0, 1))
-        feat_values = []
         for sentence in X:
             for token in sentence:
                 feat_values.append(token[feat])
-        # train the normalization
-        feat_values = np.array(feat_values).reshape(-1, 1)
-        scaler = scaler.fit(feat_values)
-        print('Min: %f, Max: %f' % (scaler.data_min_, scaler.data_max_))
-        # normalize the dataset and print
-        normalized = scaler.transform(feat_values)
 
-        # add normalized values back to feature list
-        i = 0
-        for sentence in X:
-            for token in sentence:
-                token[feat] = normalized[i]
-                i += 1
+    # train the normalization
+    feat_values = np.array(feat_values).reshape(-1, 1)
+    scaler = scaler.fit(feat_values)
+    print('Min: %f, Max: %f' % (scaler.data_min_, scaler.data_max_))
+    # normalize the dataset and print
+    normalized = scaler.transform(feat_values)
+
+    # add normalized values back to feature list
+    i = 0
+    for sentence in X:
+        for token in sentence:
+            token[feat] = normalized[i]
+            i += 1
 
     return X
