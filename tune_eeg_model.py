@@ -4,6 +4,7 @@ from reldetect import reldetect_text_model
 from ner import ner_model
 from sentiment import sentiment_eeg_model, sentiment_combi_model, sentiment_eeg_word_model
 from data_helpers import save_results, load_matlab_files
+import numpy as np
 
 
 
@@ -29,9 +30,22 @@ def main():
 
     print(len(feature_dict), len(label_dict), len(eeg_dict))
 
+
+    # average EEG features over all subjects
+    eeg_X = []
+    for s, f in eeg_dict.items():
+        sent_feats = []
+        for w, fts in f.items():
+            subj_mean_word_feats = np.nanmean(fts, axis=0)
+            # subj_mean_word_feats[np.isnan(subj_mean_word_feats)] = 0.0
+            sent_feats.append(subj_mean_word_feats)
+        eeg_X.append(sent_feats)
+
+    print(eeg_X)
+
     # save eeg feats
     f = open('eeg_feats.txt', 'w')
-    print(eeg_dict, file=f)
+    print(eeg_X, file=f)
 
     #eeg_feats = open('eeg_raw_word_feats_senti_bin.py', 'r').read()
     #eeg_dict = ast.literal_eval(eeg_feats)
