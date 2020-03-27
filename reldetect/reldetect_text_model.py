@@ -34,7 +34,7 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
     y = list(labels.values())
 
     # plot sample distribution
-    # ml_helpers.plot_label_distribution(y)
+    ml_helpers.plot_label_distribution(y)
 
     # these are already one hot categorical encodings
     y = np.asarray(y)
@@ -162,6 +162,7 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
         model.summary()
 
         # train model
+        # todo: try balanced class weights
         history = model.fit([X_train_text] if embedding_type is not 'bert' else [X_train_text, X_train_masks], y_train,
                             validation_split=0.1, epochs=epochs, batch_size=batch_size)
 
