@@ -103,7 +103,7 @@ def lstm_classifier(features, labels, gaze, embedding_type, param_dict, random_s
 
     # scale feature values
     # todo: compare results
-    #gaze_X = ml_helpers.scale_feature_values(gaze_X)
+    gaze_X = ml_helpers.scale_feature_values(gaze_X)
 
     # pad gaze sequences
     for s in gaze_X:
@@ -172,7 +172,7 @@ def lstm_classifier(features, labels, gaze, embedding_type, param_dict, random_s
         text_model = Dense(dense_dim, activation="relu")(text_model)
         text_model = Dropout(dropout)(text_model)
         # todo: 4?
-        text_model = Dense(4, activation="relu")(text_model)
+        text_model = Dense(16, activation="relu")(text_model)
         text_model_model = Model(inputs=input_text, outputs=text_model)
 
         text_model_model.summary()
@@ -186,7 +186,7 @@ def lstm_classifier(features, labels, gaze, embedding_type, param_dict, random_s
         cognitive_model = Dense(dense_dim, activation="relu")(cognitive_model)
         cognitive_model = Dropout(dropout)(cognitive_model)
         # todo: why 4?
-        cognitive_model = Dense(4, activation="relu")(cognitive_model)
+        cognitive_model = Dense(16, activation="relu")(cognitive_model)
         cognitive_model_model = Model(inputs=input_gaze, outputs=cognitive_model)
 
         cognitive_model_model.summary()
@@ -195,7 +195,7 @@ def lstm_classifier(features, labels, gaze, embedding_type, param_dict, random_s
         combined = concatenate([text_model_model.output, cognitive_model_model.output])
         # apply another dense layer and then a softmax prediction on the combined outputs
         # todo: also train this dense latent dim? why 2?
-        combi_model = Dense(2, activation="relu")(combined)
+        #combi_model = Dense(2, activation="relu")(combined)
         combi_model = Dense(y_train.shape[1], activation="softmax")(combi_model)
         # our model will accept the inputs of the two branches and
         # then output a single value
