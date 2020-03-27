@@ -15,7 +15,11 @@ def plot_label_distribution(y):
 
         label_names = ["Visited", "Founder", "Nationality", "Wife", "PoliticalAffiliation", "JobTitle", "Education",
                        "Employer", "Awarded", "BirthPlace", "DeathPlace"]
+
+
         all_relations = np.sum(y, 0)
+        print(all_relations)
+        print(label_names)
         plt.clf()
         plt.bar(range(len(all_relations)), all_relations, alpha=0.5)
         plt.xticks(ticks=np.arange(len(all_relations)), labels=label_names, fontsize=10)
