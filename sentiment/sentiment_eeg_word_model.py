@@ -60,7 +60,7 @@ def lstm_classifier(labels, eeg, embedding_type, param_dict, random_seed_value):
             print(len(fts))
             #print(fts.shape)
             print("----")
-            print(len(fts[0]))
+            print(fts[0])
             print("***")
             subj_mean_word_feats = np.nanmean(fts, axis=0)
             #subj_mean_word_feats[np.isnan(subj_mean_word_feats)] = 0.0
