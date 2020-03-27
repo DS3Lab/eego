@@ -41,6 +41,7 @@ def lstm_classifier(labels, gaze, embedding_type, param_dict, random_seed_value)
 
     start = time.time()
 
+    print('Processing gaze data...')
     # prepare eye-tracking data
     gaze_X = []
     max_len = 0
@@ -49,7 +50,7 @@ def lstm_classifier(labels, gaze, embedding_type, param_dict, random_seed_value)
     #gaze_feats_file = open('gaze_feats_file.json', 'w')
     #json.dump(gaze, gaze_feats_file)
 
-    # average EEG features over all subjects
+    # average gaze features over all subjects
     for s in gaze.values():
         sent_feats = []
         max_len = len(s) if len(s) > max_len else max_len
@@ -59,11 +60,9 @@ def lstm_classifier(labels, gaze, embedding_type, param_dict, random_seed_value)
             sent_feats.append(subj_mean_word_feats)
         gaze_X.append(sent_feats)
 
-
     # scale feature values
     # todo: compare results
     gaze_X = ml_helpers.scale_feature_values(gaze_X)
-
 
     # pad gaze sequences
     for s in gaze_X:
@@ -107,16 +106,16 @@ def lstm_classifier(labels, gaze, embedding_type, param_dict, random_seed_value)
 
         # define model
         print("Preparing model...")
-        input_text = Input(shape=(X_train.shape[1], X_train.shape[2]), name='gaze_input_tensor')
-        text_model = Bidirectional(LSTM(lstm_dim, return_sequences=True))(input_text)
+        input_gaze = Input(shape=(X_train.shape[1], X_train.shape[2]), name='gaze_input_tensor')
+        gaze_model = Bidirectional(LSTM(lstm_dim, return_sequences=True))(input_gaze)
         for _ in list(range(lstm_layers-1)):
-            text_model = Bidirectional(LSTM(lstm_dim, recurrent_dropout=0.2, dropout=0.2, return_sequences=True))(text_model)
-        text_model = Flatten()(text_model)
-        text_model = Dense(dense_dim, activation="relu")(text_model)
-        text_model = Dropout(dropout)(text_model)
-        text_model = Dense(y_train.shape[1], activation="softmax")(text_model)
+            gaze_model = Bidirectional(LSTM(lstm_dim, return_sequences=True))(gaze_model)
+        gaze_model = Flatten()(gaze_model)
+        gaze_model = Dense(dense_dim, activation="relu")(gaze_model)
+        gaze_model = Dropout(dropout)(gaze_model)
+        gaze_model = Dense(y_train.shape[1], activation="softmax")(gaze_model)
 
-        model = Model(inputs=input_text, outputs=text_model)
+        model = Model(inputs=input_gaze, outputs=gaze_model)
 
         model.compile(loss='categorical_crossentropy',
                       optimizer=tf.keras.optimizers.Adam(lr=lr),
