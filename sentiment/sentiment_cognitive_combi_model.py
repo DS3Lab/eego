@@ -175,6 +175,8 @@ def lstm_classifier(features, labels, gaze, embedding_type, param_dict, random_s
         text_model = Dense(4, activation="relu")(text_model)
         text_model = Model(inputs=input_text, outputs=text_model)
 
+        text_model.summary()
+
         # the second branch operates on the second input (EEG data)
         cognitive_model = Bidirectional(LSTM(lstm_dim, return_sequences=True))(input_gaze)
         for _ in list(range(lstm_layers - 1)):
@@ -185,6 +187,8 @@ def lstm_classifier(features, labels, gaze, embedding_type, param_dict, random_s
         cognitive_model = Dropout(dropout)(cognitive_model)
         cognitive_model = Dense(y_train.shape[1], activation="softmax")(cognitive_model)
         cognitive_model = Model(inputs=input_gaze, outputs=cognitive_model)
+
+        cognitive_model.summary()
 
         # combine the output of the two branches
         combined = concatenate([text_model.output, cognitive_model.output])
