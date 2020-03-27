@@ -61,15 +61,16 @@ def lstm_classifier(labels, gaze, embedding_type, param_dict, random_seed_value)
 
 
     # scale feature values
-    gaze_X_scaled = ml_helpers.scale_feature_values(gaze_X)
+    # todo: compare results
+    gaze_X = ml_helpers.scale_feature_values(gaze_X)
 
 
     # pad gaze sequences
-    for s in gaze_X_scaled:
+    for s in gaze_X:
         while len(s) < max_len:
             s.append(np.zeros(5))
 
-    X_data = np.array(gaze_X_scaled)
+    X_data = np.array(gaze_X)
     print(X_data.shape)
 
     # split data into train/test
@@ -107,7 +108,6 @@ def lstm_classifier(labels, gaze, embedding_type, param_dict, random_seed_value)
         # define model
         print("Preparing model...")
         input_text = Input(shape=(X_train.shape[1], X_train.shape[2]), name='gaze_input_tensor')
-        # todo: change type of all layers to tf.float64?
         text_model = Bidirectional(LSTM(lstm_dim, return_sequences=True))(input_text)
         for _ in list(range(lstm_layers-1)):
             text_model = Bidirectional(LSTM(lstm_dim, recurrent_dropout=0.2, dropout=0.2, return_sequences=True))(text_model)
