@@ -58,7 +58,7 @@ def lstm_classifier(labels, eeg, embedding_type, param_dict, random_seed_value):
         for w, fts in f.items():
             #print(w)
             #print(len(fts))
-            print(fts.shape)
+            #print(fts.shape)
             #print("----")
             #print(fts[0])
             #print("***")
