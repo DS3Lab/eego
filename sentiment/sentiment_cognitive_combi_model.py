@@ -192,8 +192,10 @@ def lstm_classifier(features, labels, gaze, embedding_type, param_dict, random_s
 
         cognitive_model_model.summary()
 
+        #merge = Concatenate([wide, deep])
+
         # combine the output of the two branches
-        combined = concatenate([text_model.output, cognitive_model.output])
+        combined = concatenate([text_model_model.output, cognitive_model_model.output])
         # apply another dense layer and then a softmax prediction on the combined outputs
         # todo: also train this dense latent dim? why 2?
         combi_model = Dense(2, activation="relu")(combined)
