@@ -169,7 +169,6 @@ def lstm_classifier(features, labels, gaze, embedding_type, param_dict, random_s
                       name='glove_input_embeddings')(input_text)
         text_model = Bidirectional(LSTM(lstm_dim, return_sequences=True))(text_model)
         text_model = Flatten()(text_model)
-
         text_model = Dense(dense_dim, activation="relu")(text_model)
         text_model = Dropout(dropout)(text_model)
         # todo: 4?
@@ -180,19 +179,17 @@ def lstm_classifier(features, labels, gaze, embedding_type, param_dict, random_s
 
         # the second branch operates on the second input (EEG data)
         cognitive_model = Bidirectional(LSTM(lstm_dim, return_sequences=True))(input_gaze)
-        for _ in list(range(lstm_layers - 1)):
-            text_model = Bidirectional(LSTM(lstm_dim, recurrent_dropout=0.2, dropout=0.2, return_sequences=True))(
-                cognitive_model)
+        #for _ in list(range(lstm_layers - 1)):
+         #   text_model = Bidirectional(LSTM(lstm_dim, recurrent_dropout=0.2, dropout=0.2, return_sequences=True))(
+             #   cognitive_model)
         cognitive_model = Flatten()(cognitive_model)
         cognitive_model = Dense(dense_dim, activation="relu")(cognitive_model)
         cognitive_model = Dropout(dropout)(cognitive_model)
+        # todo: why 4?
         cognitive_model = Dense(4, activation="relu")(cognitive_model)
-
         cognitive_model_model = Model(inputs=input_gaze, outputs=cognitive_model)
 
         cognitive_model_model.summary()
-
-        #merge = Concatenate([wide, deep])
 
         # combine the output of the two branches
         combined = concatenate([text_model_model.output, cognitive_model_model.output])
