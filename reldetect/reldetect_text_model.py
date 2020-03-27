@@ -14,6 +14,7 @@ import config
 import time
 from datetime import timedelta
 import tensorflow as tf
+import sys
 
 os.environ['KERAS_BACKEND'] = 'tensorflow'
 
@@ -30,8 +31,23 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
 
     start = time.time()
 
+    # check order of sentences in labels and features dicts
+    sents_y = list(labels.keys())
+    sents_feats = list(features.keys())
+    if sents_y[0] != sents_feats[0]:
+        sys.exit("STOP! Order of sentences in labels and features dicts not the same!")
+
     X = list(features.keys())
     y = list(labels.values())
+
+    label_names = ["Visited", "Founder", "Nationality", "Wife", "PoliticalAffiliation", "JobTitle", "Education",
+                   "Employer", "Awarded", "BirthPlace", "DeathPlace"]
+
+    print(label_names)
+
+    print(X[0])
+    print(y[0])
+    print(sents_y[0])
 
     # plot sample distribution
     ml_helpers.plot_label_distribution(y)
