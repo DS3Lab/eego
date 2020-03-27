@@ -102,14 +102,14 @@ def lstm_classifier(features, labels, gaze, embedding_type, param_dict, random_s
 
     # scale feature values
     # todo: compare results
-    gaze_X_scaled = ml_helpers.scale_feature_values(gaze_X)
+    #gaze_X = ml_helpers.scale_feature_values(gaze_X)
 
     # pad gaze sequences
-    for s in gaze_X_scaled:
+    for s in gaze_X:
         while len(s) < max_len:
             s.append(np.zeros(5))
 
-    X_data_gaze = np.array(gaze_X_scaled)
+    X_data_gaze = np.array(gaze_X)
     print(X_data_gaze.shape)
 
     # split data into train/test
