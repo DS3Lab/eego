@@ -15,7 +15,6 @@ import config
 import time
 from datetime import timedelta
 import tensorflow as tf
-import tensorflow_addons as tfa
 
 os.environ['KERAS_BACKEND'] = 'tensorflow'
 
