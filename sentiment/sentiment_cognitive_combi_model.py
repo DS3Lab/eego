@@ -185,7 +185,8 @@ def lstm_classifier(features, labels, gaze, embedding_type, param_dict, random_s
         cognitive_model = Flatten()(cognitive_model)
         cognitive_model = Dense(dense_dim, activation="relu")(cognitive_model)
         cognitive_model = Dropout(dropout)(cognitive_model)
-        cognitive_model = Dense(y_train.shape[1], activation="softmax")(cognitive_model)
+        cognitive_model = Dense(4, activation="relu")(cognitive_model)
+
         cognitive_model = Model(inputs=input_gaze, outputs=cognitive_model)
 
         cognitive_model.summary()
