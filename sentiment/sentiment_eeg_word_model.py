@@ -56,32 +56,29 @@ def lstm_classifier(labels, eeg, embedding_type, param_dict, random_seed_value):
         sent_feats = []
         max_len = len(f) if len(f) > max_len else max_len
         for w, fts in f.items():
-            print(w)
-            print(len(fts))
+            #print(w)
+            #print(len(fts))
             #print(fts.shape)
-            print("----")
-            print(fts[0])
-            print("***")
+            #print("----")
+            #print(fts[0])
+            #print("***")
             subj_mean_word_feats = np.nanmean(fts, axis=0)
             #subj_mean_word_feats[np.isnan(subj_mean_word_feats)] = 0.0
-            print(subj_mean_word_feats)
+            print(subj_mean_word_feats.shape)
             sent_feats.append(subj_mean_word_feats)
         eeg_X.append(sent_feats)
 
     # pad gaze sequences
     for s in eeg_X:
+        print(s)
         while len(s) < max_len:
             s.append(np.zeros(5))
 
-    X_data_gaze = np.array(eeg_X)
-    print(X_data_gaze.shape)
+    X_data_eeg = np.array(eeg_X)
+    print(X_data_eeg.shape)
 
-    max_length_gaze = max_len
-
-
-
-    X_data = X_data_gaze
-    max_length = max_length_gaze
+    X_data = X_data_eeg
+    max_length = max_len
 
     # split data into train/test
     kf = KFold(n_splits=config.folds, random_state=random_seed_value, shuffle=True)
