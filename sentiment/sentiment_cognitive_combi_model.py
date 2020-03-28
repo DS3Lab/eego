@@ -172,7 +172,7 @@ def lstm_classifier(features, labels, gaze, embedding_type, param_dict, random_s
                       trainable=False,
                       name='glove_input_embeddings')(input_text)
         elif embedding_type is 'bert':
-            input_mask = tf.keras.layers.Input((X_train_masks.shape[1],), dtype=tf.int32)
+            input_mask = tf.keras.layers.Input((X_train_masks.shape[1],), dtype=tf.int32, name='input_mask')
             input_text_list.append(input_mask)
             text_model = ml_helpers.create_new_bert_layer()(input_text, attention_mask=input_mask)[0]
         text_model = Bidirectional(LSTM(lstm_dim, return_sequences=True))(text_model)
