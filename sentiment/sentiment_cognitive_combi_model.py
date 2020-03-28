@@ -78,12 +78,11 @@ def lstm_classifier(features, labels, gaze, embedding_type, param_dict, random_s
 
     if embedding_type is 'bert':
         print("Prepare sequences for Bert ...")
-        X_data_bert = ml_helpers.prepare_sequences_for_bert(X_text)
-        embedding_dim = 768
-
-        X_data_text = pad_sequences(X_data_bert, maxlen=max_length_text, padding='post', truncating='post')
+        max_length = ml_helpers.get_bert_max_len(X_text)
+        X_data_text, X_data_masks = ml_helpers.prepare_sequences_for_bert_with_mask(X_text, max_length)
 
         print('Shape of data tensor:', X_data_text.shape)
+        print('Shape of data (masks) tensor:', X_data_masks.shape)
         print('Shape of label tensor:', y.shape)
 
     # prepare gaze data
@@ -126,6 +125,8 @@ def lstm_classifier(features, labels, gaze, embedding_type, param_dict, random_s
         print("splitting train and test data...")
         y_train, y_test = y[train_index], y[test_index]
         X_train_text, X_test_text = X_data_text[train_index], X_data_text[test_index]
+        if embedding_type is 'bert':
+            X_train_masks, X_test_masks = X_data_masks[train_index], X_data_masks[test_index]
         X_train_gaze, X_test_gaze = X_data_gaze[train_index], X_data_gaze[test_index]
 
         print(y_train.shape)
@@ -153,7 +154,10 @@ def lstm_classifier(features, labels, gaze, embedding_type, param_dict, random_s
         print("Preparing model...")
 
         # define two sets of inputs
-        input_text = Input(shape=(X_train_text.shape[1],), name='text_input_tensor')
+        # define two sets of inputs
+        input_text = Input(shape=(X_train_text.shape[1],)) if embedding_type is not 'bert' else Input(
+            shape=(X_train_text.shape[1],), dtype=tf.int32, name='text_input_tensor')
+        input_text_list = [input_text]
         input_gaze = Input(shape=(X_train_gaze.shape[1], X_train_gaze.shape[2]), name='gaze_input_tensor')
 
         # the first branch operates on the first input (word embeddings)
@@ -173,15 +177,12 @@ def lstm_classifier(features, labels, gaze, embedding_type, param_dict, random_s
         text_model = Dropout(dropout)(text_model)
         # todo: 4?
         text_model = Dense(16, activation="relu")(text_model)
-        text_model_model = Model(inputs=input_text, outputs=text_model)
+        text_model_model = Model(inputs=input_text_list, outputs=text_model)
 
         text_model_model.summary()
 
         # the second branch operates on the second input (EEG data)
         cognitive_model = Bidirectional(LSTM(lstm_dim, return_sequences=True))(input_gaze)
-        #for _ in list(range(lstm_layers - 1)):
-         #   text_model = Bidirectional(LSTM(lstm_dim, recurrent_dropout=0.2, dropout=0.2, return_sequences=True))(
-             #   cognitive_model)
         cognitive_model = Flatten()(cognitive_model)
         cognitive_model = Dense(dense_dim, activation="relu")(cognitive_model)
         cognitive_model = Dropout(dropout)(cognitive_model)
