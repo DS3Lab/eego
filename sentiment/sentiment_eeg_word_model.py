@@ -13,6 +13,7 @@ from sklearn.model_selection import KFold
 import config
 import ml_helpers
 import eeg_feats
+from array import array
 
 os.environ['KERAS_BACKEND'] = 'tensorflow'
 
