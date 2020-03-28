@@ -202,13 +202,8 @@ def lstm_classifier(features, labels, gaze, embedding_type, param_dict, random_s
         # todo: also train this dense latent dim? why 2?
         #combi_model = Dense(2, activation="relu")(combined)
         combi_model = Dense(y_train.shape[1], activation="softmax")(combined)
-        # our model will accept the inputs of the two branches and
-        # then output a single value
-        if embedding_type is 'bert':
-            model = Model(inputs=[input_text, input_mask, cognitive_model_model.input], outputs=combi_model)
-        else:
-            model = Model(inputs=[text_model_model.input, cognitive_model_model.input], outputs=combi_model)
 
+        model = Model(inputs=[text_model_model.input, cognitive_model_model.input], outputs=combi_model)
 
         model.compile(loss='categorical_crossentropy',
                       optimizer=tf.keras.optimizers.Adam(lr=lr),
@@ -217,11 +212,13 @@ def lstm_classifier(features, labels, gaze, embedding_type, param_dict, random_s
         model.summary()
 
         # train model
-        history = model.fit([X_train_text, X_train_gaze], y_train, validation_split=0.1, epochs=epochs, batch_size=batch_size)
+        history = model.fit([X_train_text, X_train_gaze] if embedding_type is not 'bert' else [X_train_text, X_train_masks, X_train_gaze], y_train,
+                            validation_split=0.1, epochs=epochs, batch_size=batch_size)
 
         # evaluate model
-        scores = model.evaluate([X_test_text, X_test_gaze], y_test, verbose=0)
-        predictions = model.predict([X_test_text, X_test_gaze])
+        scores = model.evaluate([X_test_text, X_test_gaze] if embedding_type is not 'bert' else [X_test_text, X_test_masks, X_test_gaze], y_test,
+                                verbose=0)
+        predictions = model.predict([X_test_text, X_test_gaze] if embedding_type is not 'bert' else [X_test_text, X_test_masks, X_test_gaze])
 
         rounded_predictions = [np.argmax(p) for p in predictions]
         rounded_labels = np.argmax(y_test, axis=1)
