@@ -205,7 +205,7 @@ def lstm_classifier(features, labels, gaze, embedding_type, param_dict, random_s
         # our model will accept the inputs of the two branches and
         # then output a single value
         if embedding_type is 'bert':
-            model = Model(inputs=[input_text_list, cognitive_model_model.input], outputs=combi_model)
+            model = Model(inputs=[input_text, input_mask, cognitive_model_model.input], outputs=combi_model)
         else:
             model = Model(inputs=[text_model_model.input, cognitive_model_model.input], outputs=combi_model)
 
