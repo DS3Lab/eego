@@ -106,7 +106,7 @@ def main():
                                                 if label == 2:
                                                     del label_dict[s]
                                                     del feature_dict[s]
-                                                    del eeg_dict[s]
+                                                    #del eeg_dict[s]
                                             if 'combi_concat' in config.feature_set:
                                                 print("Starting EEG + text combi model")
                                                 fold_results = sentiment_combi_model.lstm_classifier(feature_dict,
