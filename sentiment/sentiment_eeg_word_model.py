@@ -75,7 +75,8 @@ def lstm_classifier(labels, eeg, embedding_type, param_dict, random_seed_value):
 
     # load saved features
     max_len = 0
-    eeg_X = np.load(eeg_feats.eeg_X)
+    eeg_X = eeg_feats.eeg_X
+    print(len(eeg_X))
     for f in eeg_X:
         max_len = len(f) if len(f) > max_len else max_len
     print(max_len)
