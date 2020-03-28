@@ -11,7 +11,8 @@ import tensorflow.python.keras.backend as K
 import sklearn.metrics
 from sklearn.model_selection import KFold
 import config
-import json
+import ml_helpers
+import eeg_feats
 
 os.environ['KERAS_BACKEND'] = 'tensorflow'
 
@@ -21,8 +22,6 @@ os.environ['KERAS_BACKEND'] = 'tensorflow'
 
 def lstm_classifier(labels, eeg, embedding_type, param_dict, random_seed_value):
 
-
-
     # set random seed
     np.random.seed(random_seed_value)
     tf.random.set_seed(random_seed_value)
@@ -31,10 +30,13 @@ def lstm_classifier(labels, eeg, embedding_type, param_dict, random_seed_value):
     y = list(labels.values())
 
     # check order of sentences in labels and features dicts
+    """
     sents_y = list(labels.keys())
     sents_eeg = list(eeg.keys())
     if sents_y[0] != sents_eeg[0]:
         sys.exit("STOP! Order of sentences in labels and features dicts not the same!")
+    """
+
 
     # convert class labels to one hot vectors
     y = np_utils.to_categorical(y)
@@ -42,14 +44,15 @@ def lstm_classifier(labels, eeg, embedding_type, param_dict, random_seed_value):
     start = time.time()
 
     # prepare EEG data
-    eeg_X = []
-    max_len = 0
+    #eeg_X = []
+    #max_len = 0
 
     # save gaze feats
     # gaze_feats_file = open('gaze_feats_file.json', 'w')
     # json.dump(gaze, gaze_feats_file)
 
     # average EEG features over all subjects
+    """
     for s, f in eeg.items():
         #print(s)
         #print(f)
@@ -67,6 +70,17 @@ def lstm_classifier(labels, eeg, embedding_type, param_dict, random_seed_value):
             #print(subj_mean_word_feats.shape)
             sent_feats.append(subj_mean_word_feats)
         eeg_X.append(sent_feats)
+    """
+
+    # load saved features
+    max_len = 0
+    eeg_X = eeg_feats.eeg_X
+    for f in eeg_X:
+        max_len = len(f) if len(f) > max_len else max_len
+    print(max_len)
+
+    # scale features
+    eeg_X = ml_helpers.scale_feature_values(eeg_X)
 
     # pad gaze sequences
     for s in eeg_X:
@@ -79,7 +93,6 @@ def lstm_classifier(labels, eeg, embedding_type, param_dict, random_seed_value):
     print(X_data_eeg.shape)
 
     X_data = X_data_eeg
-    max_length = max_len
 
     # split data into train/test
     kf = KFold(n_splits=config.folds, random_state=random_seed_value, shuffle=True)
