@@ -90,7 +90,7 @@ def lstm_classifier(labels, eeg, embedding_type, param_dict, random_seed_value):
         while len(s) < max_len:
             s.append(np.zeros(105))
 
-    print(eeg_X[0])
+    #print(eeg_X[0])
     X_data_eeg = np.array(eeg_X)
     print(X_data_eeg.shape)
 
