@@ -155,7 +155,7 @@ def lstm_classifier(features, labels, gaze, embedding_type, param_dict, random_s
 
         # define two sets of inputs
         # define two sets of inputs
-        input_text = Input(shape=(X_train_text.shape[1],)) if embedding_type is not 'bert' else Input(
+        input_text = Input(shape=(X_train_text.shape[1],), name='text_input_tensor') if embedding_type is not 'bert' else Input(
             shape=(X_train_text.shape[1],), dtype=tf.int32, name='text_input_tensor')
         input_text_list = [input_text]
         input_gaze = Input(shape=(X_train_gaze.shape[1], X_train_gaze.shape[2]), name='gaze_input_tensor')
