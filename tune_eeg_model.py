@@ -2,7 +2,7 @@ import config
 from feature_extraction import zuco_reader
 from reldetect import reldetect_text_model
 from ner import ner_model
-from sentiment import sentiment_eeg_model, sentiment_combi_model, sentiment_eeg_word_model
+from sentiment import sentiment_eeg_model, sentiment_text_eeg_model
 from data_helpers import save_results, load_matlab_files
 import numpy as np
 
@@ -88,17 +88,17 @@ def main():
                                                                                                    emb, parameter_dict,
                                                                                                    rand)
                                             elif 'eeg_word_raw' in config.feature_set:
-                                                fold_results = sentiment_eeg_word_model.lstm_classifier(label_dict,
+                                                fold_results = sentiment_eeg_model.lstm_classifier(label_dict,
                                                                                                      eeg_dict,
                                                                                                      emb,
                                                                                                      parameter_dict,
                                                                                                      rand)
-                                            # raw sent eeg
-                                            else:
-                                                fold_results = sentiment_eeg_model.lstm_classifier(feature_dict,
-                                                                                                   label_dict, eeg_dict,
-                                                                                                   emb, parameter_dict,
-                                                                                                   rand)
+                                            elif 'combi_eeg_word_raw' in config.feature_set:
+                                                fold_results = sentiment_text_eeg_model.lstm_classifier(label_dict,
+                                                                                                        eeg_dict,
+                                                                                                        emb,
+                                                                                                        parameter_dict,
+                                                                                                        rand)
                                             save_results(fold_results, config.class_task)
                                         elif config.class_task == 'sentiment-bin':
                                             for s, label in list(label_dict.items()):
@@ -114,11 +114,19 @@ def main():
                                                                                                    emb, parameter_dict,
                                                                                                    rand)
                                             elif 'eeg_word_raw' in config.feature_set:
-                                                fold_results = sentiment_eeg_word_model.lstm_classifier(label_dict,
+                                                fold_results = sentiment_eeg_model.lstm_classifier(label_dict,
                                                                                                         eeg_dict,
                                                                                                         emb,
                                                                                                         parameter_dict,
                                                                                                         rand)
+
+                                            elif 'combi_eeg_word_raw' in config.feature_set:
+                                                fold_results = sentiment_text_eeg_model.lstm_classifier(label_dict,
+                                                                                                        eeg_dict,
+                                                                                                        emb,
+                                                                                                        parameter_dict,
+                                                                                                        rand)
+
                                             save_results(fold_results, config.class_task)
 
 

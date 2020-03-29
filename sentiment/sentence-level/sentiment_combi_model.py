@@ -14,7 +14,6 @@ import config
 import time
 from datetime import timedelta
 import tensorflow as tf
-import bert
 
 os.environ['KERAS_BACKEND'] = 'tensorflow'
 
@@ -161,8 +160,9 @@ def lstm_classifier(features, labels, eeg, embedding_type, param_dict, random_se
         eeg_model = Dropout(dropout)(eeg_model)
         eeg_model = Dense(4, activation="relu")(eeg_model)
         eeg_model = Model(inputs=input_eeg, outputs=eeg_model)
+
         # combine the output of the two branches
-        combined = concatenate([text_model.output, eeg_model.output])
+        #combined = concatenate([text_model.output, eeg_model.output])
         # apply another dense layer and then a softmax prediction on the combined outputs
         # todo: also train this dense latent dim?
         combi_model = Dense(2, activation="relu")(combined)

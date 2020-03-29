@@ -16,6 +16,7 @@ import time
 from datetime import timedelta
 import tensorflow as tf
 import sys
+import eeg_feats
 
 os.environ['KERAS_BACKEND'] = 'tensorflow'
 
@@ -24,7 +25,7 @@ os.environ['KERAS_BACKEND'] = 'tensorflow'
 # Jointly learning from text and cognitive word-level features (EEG pr eye-tracking)
 
 
-def lstm_classifier(features, labels, gaze, embedding_type, param_dict, random_seed_value):
+def lstm_classifier(features, labels, eeg, embedding_type, param_dict, random_seed_value):
     # set random seed
     np.random.seed(random_seed_value)
     tf.random.set_seed(random_seed_value)
@@ -34,11 +35,13 @@ def lstm_classifier(features, labels, gaze, embedding_type, param_dict, random_s
     y = list(labels.values())
 
     # check order of sentences in labels and features dicts
+    """
     sents_y = list(labels.keys())
     sents_text = list(features.keys())
     sents_gaze = list(gaze.keys())
     if sents_y[0] != sents_gaze[0] != sents_text[0]:
         sys.exit("STOP! Order of sentences in labels and features dicts not the same!")
+    """
 
     # convert class labels to one hot vectors
     y = np_utils.to_categorical(y)
@@ -85,32 +88,27 @@ def lstm_classifier(features, labels, gaze, embedding_type, param_dict, random_s
         print('Shape of data (masks) tensor:', X_data_masks.shape)
         print('Shape of label tensor:', y.shape)
 
-    # prepare gaze data
-    print('Processing gaze data...')
-    # prepare eye-tracking data
-    gaze_X = []
-    max_length_cogni = 0
-    # average cognitive features over all subjects
-    for s in gaze.values():
-        sent_feats = []
-        max_length_cogni = len(s) if len(s) > max_length_cogni else max_length_cogni
-        for w, fts in s.items():
-            subj_mean_word_feats = np.nanmean(fts, axis=0)
-            subj_mean_word_feats[np.isnan(subj_mean_word_feats)] = 0.0
-            sent_feats.append(subj_mean_word_feats)
-        gaze_X.append(sent_feats)
+    # prepare EEG data
+    print('Processing EEG data...')
+    # load saved features
+    max_len = 0
+    eeg_X = eeg_feats.eeg_X
+    print(len(eeg_X))
+    for f in eeg_X:
+        max_len = len(f) if len(f) > max_len else max_len
+    print(max_len)
 
-    # scale feature values
-    # todo: compare results
-    gaze_X = ml_helpers.scale_feature_values(gaze_X)
+    # scale features
+    eeg_X = ml_helpers.scale_feature_values(eeg_X)
 
-    # pad gaze sequences
-    for s in gaze_X:
-        while len(s) < max_length_cogni:
-            s.append(np.zeros(5))
+    # pad EEG sequences
+    for s in eeg_X:
+        # print(len(s))
+        while len(s) < max_len:
+            s.append(np.zeros(105))
 
-    X_data_gaze = np.array(gaze_X)
-    print(X_data_gaze.shape)
+    X_data_eeg = np.array(eeg_X)
+    print(X_data_eeg.shape)
 
     # split data into train/test
     kf = KFold(n_splits=config.folds, random_state=random_seed_value, shuffle=True)
@@ -127,14 +125,14 @@ def lstm_classifier(features, labels, gaze, embedding_type, param_dict, random_s
         X_train_text, X_test_text = X_data_text[train_index], X_data_text[test_index]
         if embedding_type is 'bert':
             X_train_masks, X_test_masks = X_data_masks[train_index], X_data_masks[test_index]
-        X_train_gaze, X_test_gaze = X_data_gaze[train_index], X_data_gaze[test_index]
+        X_train_eeg, X_test_eeg = X_data_eeg[train_index], X_data_eeg[test_index]
 
         print(y_train.shape)
         print(y_test.shape)
         print(X_train_text.shape)
         print(X_test_text.shape)
-        print(X_train_gaze.shape)
-        print(X_test_gaze.shape)
+        print(X_train_eeg.shape)
+        print(X_test_eeg.shape)
 
         # reset model
         K.clear_session()
@@ -158,7 +156,7 @@ def lstm_classifier(features, labels, gaze, embedding_type, param_dict, random_s
         input_text = Input(shape=(X_train_text.shape[1],), name='text_input_tensor') if embedding_type is not 'bert' else Input(
             shape=(X_train_text.shape[1],), dtype=tf.int32, name='text_input_tensor')
         input_text_list = [input_text]
-        input_gaze = Input(shape=(X_train_gaze.shape[1], X_train_gaze.shape[2]), name='gaze_input_tensor')
+        input_eeg = Input(shape=(X_train_eeg.shape[1], X_train_eeg.shape[2]), name='eeg_input_tensor')
 
         # the first branch operates on the first input (word embeddings)
         if embedding_type is 'none':
@@ -179,27 +177,28 @@ def lstm_classifier(features, labels, gaze, embedding_type, param_dict, random_s
         text_model = Flatten()(text_model)
         text_model = Dense(dense_dim, activation="relu")(text_model)
         text_model = Dropout(dropout)(text_model)
-        # todo: 4?
+        # # todo: also train this dense latent dim?
         text_model = Dense(16, activation="relu")(text_model)
         text_model_model = Model(inputs=input_text_list, outputs=text_model)
 
         text_model_model.summary()
 
         # the second branch operates on the second input (EEG data)
-        cognitive_model = Bidirectional(LSTM(lstm_dim, return_sequences=True))(input_gaze)
+        cognitive_model = Bidirectional(LSTM(lstm_dim, return_sequences=True))(input_eeg)
         cognitive_model = Flatten()(cognitive_model)
         cognitive_model = Dense(dense_dim, activation="relu")(cognitive_model)
         cognitive_model = Dropout(dropout)(cognitive_model)
-        # todo: why 4?
+        # # todo: also train this dense latent dim?
         cognitive_model = Dense(16, activation="relu")(cognitive_model)
-        cognitive_model_model = Model(inputs=input_gaze, outputs=cognitive_model)
+        cognitive_model_model = Model(inputs=input_eeg, outputs=cognitive_model)
 
         cognitive_model_model.summary()
 
         # combine the output of the two branches
+        # todo: try add, substract, average and dot product in addition to concat
         combined = concatenate([text_model_model.output, cognitive_model_model.output])
         # apply another dense layer and then a softmax prediction on the combined outputs
-        # todo: also train this dense latent dim? why 2?
+        # todo: does this layer help?
         #combi_model = Dense(2, activation="relu")(combined)
         combi_model = Dense(y_train.shape[1], activation="softmax")(combined)
 
@@ -212,13 +211,13 @@ def lstm_classifier(features, labels, gaze, embedding_type, param_dict, random_s
         model.summary()
 
         # train model
-        history = model.fit([X_train_text, X_train_gaze] if embedding_type is not 'bert' else [X_train_text, X_train_masks, X_train_gaze], y_train,
+        history = model.fit([X_train_text, X_train_eeg] if embedding_type is not 'bert' else [X_train_text, X_train_masks, X_train_eeg], y_train,
                             validation_split=0.1, epochs=epochs, batch_size=batch_size)
 
         # evaluate model
-        scores = model.evaluate([X_test_text, X_test_gaze] if embedding_type is not 'bert' else [X_test_text, X_test_masks, X_test_gaze], y_test,
+        scores = model.evaluate([X_test_text, X_test_eeg] if embedding_type is not 'bert' else [X_test_text, X_test_masks, X_test_eeg], y_test,
                                 verbose=0)
-        predictions = model.predict([X_test_text, X_test_gaze] if embedding_type is not 'bert' else [X_test_text, X_test_masks, X_test_gaze])
+        predictions = model.predict([X_test_text, X_test_eeg] if embedding_type is not 'bert' else [X_test_text, X_test_masks, X_test_eeg])
 
         rounded_predictions = [np.argmax(p) for p in predictions]
         rounded_labels = np.argmax(y_test, axis=1)

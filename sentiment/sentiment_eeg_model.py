@@ -1,18 +1,19 @@
 import os
+import sys
 import numpy as np
-from tensorflow.python.keras.preprocessing.sequence import pad_sequences
-from tensorflow.python.keras.preprocessing.text import Tokenizer
-from tensorflow.python.keras.utils import np_utils
-from tensorflow.python.keras.initializers import Constant
-import tensorflow.python.keras.backend as K
-import sklearn.metrics
-from sklearn.model_selection import KFold
-import ml_helpers
-import config
 import time
 from datetime import timedelta
 import tensorflow as tf
-import bert
+from tensorflow.python.keras.layers import Input, Dense, LSTM, Bidirectional, Flatten, Dropout
+from tensorflow.python.keras.models import Model
+from tensorflow.python.keras.utils import np_utils
+import tensorflow.python.keras.backend as K
+import sklearn.metrics
+from sklearn.model_selection import KFold
+import config
+import ml_helpers
+import eeg_feats
+from array import array
 
 os.environ['KERAS_BACKEND'] = 'tensorflow'
 
@@ -20,34 +21,75 @@ os.environ['KERAS_BACKEND'] = 'tensorflow'
 # Machine learning model for sentiment classification (binary and ternary)
 # Learning on EEG data only!
 
-def lstm_classifier(features, labels, eeg, embedding_type, param_dict, random_seed_value):
+def lstm_classifier(labels, eeg, embedding_type, param_dict, random_seed_value):
 
     # set random seed
     np.random.seed(random_seed_value)
     tf.random.set_seed(random_seed_value)
     os.environ['PYTHONHASHSEED'] = str(random_seed_value)
 
-    start = time.time()
-
     y = list(labels.values())
 
-    # plot sample distribution
-    # ml_helpers.plot_label_distribution(y)
+    # check order of sentences in labels and features dicts
+    """
+    sents_y = list(labels.keys())
+    sents_eeg = list(eeg.keys())
+    if sents_y[0] != sents_eeg[0]:
+        sys.exit("STOP! Order of sentences in labels and features dicts not the same!")
+    """
 
     # convert class labels to one hot vectors
     y = np_utils.to_categorical(y)
 
+    start = time.time()
+
     # prepare EEG data
+    print("Processing EEG data...")
+
+    # average EEG features over all subjects
+    """
     eeg_X = []
-    for s in eeg.values():
-        # average over all subjects
-        n = np.mean(s['mean_raw_sent_eeg'], axis=0)
-        eeg_X.append(n)
+    max_len = 0
+    for s, f in eeg.items():
+        #print(s)
+        #print(f)
+        sent_feats = []
+        max_len = len(f) if len(f) > max_len else max_len
+        for w, fts in f.items():
+            #print(w)
+            #print(len(fts))
+            #print(fts.shape)
+            #print("----")
+            #print(fts[0])
+            #print("***")
+            subj_mean_word_feats = np.nanmean(fts, axis=0)
+            #subj_mean_word_feats[np.isnan(subj_mean_word_feats)] = 0.0
+            #print(subj_mean_word_feats.shape)
+            sent_feats.append(subj_mean_word_feats)
+        eeg_X.append(sent_feats)
+    """
+
+    # load saved features
+    max_len = 0
+    eeg_X = eeg_feats.eeg_X
+    print(len(eeg_X))
+    for f in eeg_X:
+        max_len = len(f) if len(f) > max_len else max_len
+    print(max_len)
+
+    # scale features
+    eeg_X = ml_helpers.scale_feature_values(eeg_X)
+
+    # pad EEG sequences
+    for s in eeg_X:
+        #print(len(s))
+        while len(s) < max_len:
+            s.append(np.zeros(105))
+
     X_data_eeg = np.array(eeg_X)
-    max_length_eeg = X_data_eeg.shape[1]
+    print(X_data_eeg.shape)
 
     X_data = X_data_eeg
-    max_length = max_length_eeg
 
     # split data into train/test
     kf = KFold(n_splits=config.folds, random_state=random_seed_value, shuffle=True)
@@ -58,7 +100,6 @@ def lstm_classifier(features, labels, eeg, embedding_type, param_dict, random_se
     for train_index, test_index in kf.split(X_data):
 
         print("FOLD: ", fold)
-        # print("TRAIN:", train_index, "TEST:", test_index)
         print("splitting train and test data...")
         y_train, y_test = y[train_index], y[test_index]
         X_train, X_test = X_data[train_index], X_data[test_index]
@@ -84,14 +125,18 @@ def lstm_classifier(features, labels, eeg, embedding_type, param_dict, random_se
 
         # define model
         print("Preparing model...")
-        model = tf.keras.Sequential()
+        input_text = Input(shape=(X_train.shape[1], X_train.shape[2]), name='eeg_input_tensor')
 
-        model.add(tf.keras.layers.Input(shape=(max_length,), dtype='int32', name='input_eeg'))
-        model.add(tf.keras.layers.Dense(dense_dim, activation=tf.nn.relu))
-        model.add(tf.keras.layers.Dropout(dropout))
-        model.add(tf.keras.layers.Dense(dense_dim, activation=tf.nn.relu))
-        model.add(tf.keras.layers.Dropout(dropout))
-        model.add(tf.keras.layers.Dense(y_train.shape[1], activation=tf.nn.softmax))
+        # todo: dropout and recurrent dropout needed in LSTM layers?
+        text_model = Bidirectional(LSTM(lstm_dim, return_sequences=True))(input_text)
+        for _ in list(range(lstm_layers-1)):
+            text_model = Bidirectional(LSTM(lstm_dim, return_sequences=True))(text_model)
+        text_model = Flatten()(text_model)
+        text_model = Dense(dense_dim, activation="relu")(text_model)
+        text_model = Dropout(dropout)(text_model)
+        text_model = Dense(y_train.shape[1], activation="softmax")(text_model)
+
+        model = Model(inputs=input_text, outputs=text_model)
 
         model.compile(loss='categorical_crossentropy',
                       optimizer=tf.keras.optimizers.Adam(lr=lr),
