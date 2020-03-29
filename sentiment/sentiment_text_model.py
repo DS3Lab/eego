@@ -165,8 +165,7 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
         p, r, f, support = sklearn.metrics.precision_recall_fscore_support(rounded_labels, rounded_predictions,
                                                                            average='macro')
         print(p, r, f)
-        # conf_matrix = sklearn.metrics.confusion_matrix(rounded_labels, rounded_predictions)
-        # print(conf_matrix)
+        print(sklearn.metrics.classification_report(rounded_labels, rounded_predictions))
 
         if fold == 0:
             fold_results['train-loss'] = [history.history['loss']]
