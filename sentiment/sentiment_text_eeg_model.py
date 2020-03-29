@@ -6,7 +6,7 @@ from tensorflow.python.keras.utils import np_utils
 from tensorflow.python.keras.initializers import Constant
 import tensorflow.python.keras.backend as K
 from tensorflow.python.keras.layers import Input, Dense, Embedding, LSTM, Bidirectional, Flatten, Dropout
-from tensorflow.python.keras.layers.merge import concatenate, add, subtract, dot
+from tensorflow.python.keras.layers.merge import concatenate, add, subtract, dot, maximum
 from tensorflow.python.keras.models import Model
 import sklearn.metrics
 from sklearn.model_selection import KFold
@@ -196,10 +196,10 @@ def lstm_classifier(features, labels, eeg, embedding_type, param_dict, random_se
 
         # combine the output of the two branches
         # todo: try add, subtract, average and dot product in addition to concat
-        combined = dot([text_model_model.output, cognitive_model_model.output], axes=1, normalize=True)
+        combined = maximum([text_model_model.output, cognitive_model_model.output])
         # apply another dense layer and then a softmax prediction on the combined outputs
         # todo: does this layer help?
-        combined = Dense(8, activation="relu", name="final_dense")(combined)
+        #combined = Dense(8, activation="relu", name="final_dense")(combined)
         combi_model = Dense(y_train.shape[1], activation="softmax")(combined)
 
         model = Model(inputs=[text_model_model.input, cognitive_model_model.input], outputs=combi_model)
