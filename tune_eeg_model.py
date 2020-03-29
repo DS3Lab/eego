@@ -99,7 +99,7 @@ def main():
                                                                                                         emb,
                                                                                                         parameter_dict,
                                                                                                         rand)
-                                            save_results(fold_results, config.class_task)
+                                                save_results(fold_results, config.class_task)
                                         elif config.class_task == 'sentiment-bin':
                                             for s, label in list(label_dict.items()):
                                                 # drop neutral sentences for binary sentiment classification
