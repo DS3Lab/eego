@@ -46,7 +46,7 @@ def main():
 
 
     # save eeg feats
-    f = open('eeg_beta_feats.txt', 'w')
+    f = open('eeg_gamma_feats.txt', 'w')
     print(eeg_X, file=f)
 
     #eeg_feats = open('eeg_raw_word_feats_senti_bin.py', 'r').read()
