@@ -32,7 +32,6 @@ def main():
 
 
     # average EEG features over all subjects
-    """
     eeg_X = []
     for s, f in eeg_dict.items():
         sent_feats = []
@@ -43,11 +42,11 @@ def main():
         eeg_X.append(sent_feats)
 
     print(eeg_X)
-    """
+
 
     # save eeg feats
-   # f = open('eeg_feats.txt', 'w')
-    #print(eeg_X, file=f)
+    f = open('eeg_theta_feats.txt', 'w')
+    print(eeg_X, file=f)
 
     #eeg_feats = open('eeg_raw_word_feats_senti_bin.py', 'r').read()
     #eeg_dict = ast.literal_eval(eeg_feats)
