@@ -99,7 +99,7 @@ def extract_word_band_eeg(sentence_data, eeg_dict):
                         word_t2 = word_data[widx]["TRT_t2"]
                         word_t = (word_t1 + word_t2) / 2
                         print(word_t.shape)
-                        word_t = word_t.transpose()
+                        word_t = word_t.reshape(word_t.shape[0],)
                         print(word_t.shape)
                         sent_features[widx] = word_t
 
