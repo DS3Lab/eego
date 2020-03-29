@@ -98,7 +98,9 @@ def extract_word_band_eeg(sentence_data, eeg_dict):
                         word_t1 = word_data[widx]["TRT_t1"]
                         word_t2 = word_data[widx]["TRT_t2"]
                         print(word_t2.shape)
-                        word_t = np.nanmean(np.hstack((word_t1, word_t2)))
+                        word_t = np.hstack((word_t1, word_t2))
+                        print(word_t.shape)
+                        np.mean(word_t, axis=0)
                         print(word_t.shape)
                         sent_features[widx] = word_t
 
