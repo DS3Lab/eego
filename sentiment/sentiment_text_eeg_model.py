@@ -6,7 +6,7 @@ from tensorflow.python.keras.utils import np_utils
 from tensorflow.python.keras.initializers import Constant
 import tensorflow.python.keras.backend as K
 from tensorflow.python.keras.layers import Input, Dense, Embedding, LSTM, Bidirectional, Flatten, Dropout
-from tensorflow.python.keras.layers.merge import concatenate
+from tensorflow.python.keras.layers.merge import concatenate, add, subtract, dot
 from tensorflow.python.keras.models import Model
 import sklearn.metrics
 from sklearn.model_selection import KFold
@@ -195,8 +195,8 @@ def lstm_classifier(features, labels, eeg, embedding_type, param_dict, random_se
         cognitive_model_model.summary()
 
         # combine the output of the two branches
-        # todo: try add, substract, average and dot product in addition to concat
-        combined = concatenate([text_model_model.output, cognitive_model_model.output])
+        # todo: try add, subtract, average and dot product in addition to concat
+        combined = add([text_model_model.output, cognitive_model_model.output])
         # apply another dense layer and then a softmax prediction on the combined outputs
         # todo: does this layer help?
         #combi_model = Dense(2, activation="relu")(combined)
@@ -224,8 +224,8 @@ def lstm_classifier(features, labels, eeg, embedding_type, param_dict, random_se
         p, r, f, support = sklearn.metrics.precision_recall_fscore_support(rounded_labels, rounded_predictions,
                                                                            average='macro')
         print(p, r, f)
-        # conf_matrix = sklearn.metrics.confusion_matrix(rounded_labels, rounded_predictions)
-        # print(conf_matrix)
+        print(sklearn.metrics.classification_report(rounded_labels, rounded_predictions))
+        print(sklearn.metrics.classification_report(rounded_labels, rounded_predictions, output_dict=True))
 
         if fold == 0:
             fold_results['train-loss'] = [history.history['loss']]
