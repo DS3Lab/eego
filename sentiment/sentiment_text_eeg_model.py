@@ -199,7 +199,7 @@ def lstm_classifier(features, labels, eeg, embedding_type, param_dict, random_se
         combined = add([text_model_model.output, cognitive_model_model.output])
         # apply another dense layer and then a softmax prediction on the combined outputs
         # todo: does this layer help?
-        #combi_model = Dense(2, activation="relu")(combined)
+        combined = Dense(8, activation="relu", name="final_dense")(combined)
         combi_model = Dense(y_train.shape[1], activation="softmax")(combined)
 
         model = Model(inputs=[text_model_model.input, cognitive_model_model.input], outputs=combi_model)
