@@ -1,6 +1,6 @@
 import config
 from feature_extraction import zuco_reader
-from sentiment import sentiment_gaze_model, sentiment_cognitive_combi_model
+from sentiment import sentiment_gaze_model, sentiment_text_gaze_model
 from data_helpers import save_results, load_matlab_files
 import json
 
@@ -64,7 +64,7 @@ def main():
                                                                                                    emb, parameter_dict,
                                                                                                    rand)
                                             elif 'combi_eye_tracking' in config.feature_set:
-                                                fold_results = sentiment_cognitive_combi_model.lstm_classifier(feature_dict, label_dict,
+                                                fold_results = sentiment_text_gaze_model.lstm_classifier(feature_dict, label_dict,
                                                                                                     gaze_dict,
                                                                                                     emb, parameter_dict,
                                                                                                     rand)
@@ -83,7 +83,7 @@ def main():
                                                                                                    emb, parameter_dict,
                                                                                                    rand)
                                             elif 'combi_eye_tracking' in config.feature_set:
-                                                fold_results = sentiment_cognitive_combi_model.lstm_classifier(feature_dict, label_dict,
+                                                fold_results = sentiment_text_gaze_model.lstm_classifier(feature_dict, label_dict,
                                                                                                     gaze_dict,
                                                                                                     emb, parameter_dict,
                                                                                                     rand)
