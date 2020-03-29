@@ -94,7 +94,7 @@ def main():
                                                                                                      parameter_dict,
                                                                                                      rand)
                                             elif 'combi_eeg_word_raw' in config.feature_set:
-                                                fold_results = sentiment_text_eeg_model.lstm_classifier(label_dict,
+                                                fold_results = sentiment_text_eeg_model.lstm_classifier(feature_dict, label_dict,
                                                                                                         eeg_dict,
                                                                                                         emb,
                                                                                                         parameter_dict,
@@ -121,7 +121,7 @@ def main():
                                                                                                         rand)
 
                                             elif 'combi_eeg_word_raw' in config.feature_set:
-                                                fold_results = sentiment_text_eeg_model.lstm_classifier(label_dict,
+                                                fold_results = sentiment_text_eeg_model.lstm_classifier(feature_dict, label_dict,
                                                                                                         eeg_dict,
                                                                                                         emb,
                                                                                                         parameter_dict,
