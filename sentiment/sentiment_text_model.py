@@ -166,6 +166,7 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
                                                                            average='macro')
         print(p, r, f)
         print(sklearn.metrics.classification_report(rounded_labels, rounded_predictions))
+        print(sklearn.metrics.classification_report(rounded_labels, rounded_predictions, output_dict=True))
 
         if fold == 0:
             fold_results['train-loss'] = [history.history['loss']]
