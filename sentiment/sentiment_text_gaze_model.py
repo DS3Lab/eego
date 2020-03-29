@@ -34,11 +34,13 @@ def lstm_classifier(features, labels, gaze, embedding_type, param_dict, random_s
     y = list(labels.values())
 
     # check order of sentences in labels and features dicts
+    """
     sents_y = list(labels.keys())
     sents_text = list(features.keys())
     sents_gaze = list(gaze.keys())
     if sents_y[0] != sents_gaze[0] != sents_text[0]:
         sys.exit("STOP! Order of sentences in labels and features dicts not the same!")
+    """
 
     # convert class labels to one hot vectors
     y = np_utils.to_categorical(y)
@@ -226,8 +228,8 @@ def lstm_classifier(features, labels, gaze, embedding_type, param_dict, random_s
         p, r, f, support = sklearn.metrics.precision_recall_fscore_support(rounded_labels, rounded_predictions,
                                                                            average='macro')
         print(p, r, f)
-        # conf_matrix = sklearn.metrics.confusion_matrix(rounded_labels, rounded_predictions)
-        # print(conf_matrix)
+        print(sklearn.metrics.classification_report(rounded_labels, rounded_predictions))
+        print(sklearn.metrics.classification_report(rounded_labels, rounded_predictions, output_dict=True))
 
         if fold == 0:
             fold_results['train-loss'] = [history.history['loss']]
@@ -249,6 +251,7 @@ def lstm_classifier(features, labels, gaze, embedding_type, param_dict, random_s
             fold_results['precision'].append(p)
             fold_results['recall'].append(r)
             fold_results['fscore'].append(f)
+
 
         fold += 1
 

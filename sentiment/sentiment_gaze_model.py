@@ -31,10 +31,12 @@ def lstm_classifier(labels, gaze, embedding_type, param_dict, random_seed_value)
     y = list(labels.values())
 
     # check order of sentences in labels and features dicts
+    """
     sents_y = list(labels.keys())
     sents_gaze = list(gaze.keys())
     if sents_y[0] != sents_gaze[0]:
         sys.exit("STOP! Order of sentences in labels and features dicts not the same!")
+    """
 
     # convert class labels to one hot vectors
     y = np_utils.to_categorical(y)
