@@ -36,6 +36,7 @@ def main():
     for s, f in eeg_dict.items():
         sent_feats = []
         for w, fts in f.items():
+            print(len(fts))
             subj_mean_word_feats = np.nanmean(fts, axis=0)
             # subj_mean_word_feats[np.isnan(subj_mean_word_feats)] = 0.0
             sent_feats.append(subj_mean_word_feats)
