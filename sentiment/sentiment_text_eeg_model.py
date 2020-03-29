@@ -196,7 +196,7 @@ def lstm_classifier(features, labels, eeg, embedding_type, param_dict, random_se
 
         # combine the output of the two branches
         # todo: try add, subtract, average and dot product in addition to concat
-        combined = add([text_model_model.output, cognitive_model_model.output])
+        combined = concatenate([text_model_model.output, cognitive_model_model.output])
         # apply another dense layer and then a softmax prediction on the combined outputs
         # todo: does this layer help?
         combined = Dense(8, activation="relu", name="final_dense")(combined)

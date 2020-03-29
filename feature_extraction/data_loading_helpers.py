@@ -26,7 +26,7 @@ Alpha_trt_names = ['TRT_a1', 'TRT_a1_diff', 'TRT_a2', 'TRT_a2_diff']
 Beta_trt_names = ['TRT_b1', 'TRT_b1_diff', 'TRT_b2', 'TRT_b2_diff']
 Gamma_trt_names = ['TRT_g1', 'TRT_g1_diff', 'TRT_g2', 'TRT_g2_diff']
 Theta_trt_names = ['TRT_t1', 'TRT_t1_diff', 'TRT_t2', 'TRT_t2_diff']
-# IF YOU CHANGE THOSE YOUMUST ALSO CHANGE CONSTANTS
+# IF YOU CHANGE THOSE YOU MUST ALSO CHANGE CONSTANTS
 Alpha_features = Alpha_ffd_names + Alpha_gd_names + Alpha_gpt_names + Alpha_trt_names# + Alpha_sfd_names
 Beta_features = Beta_ffd_names + Beta_gd_names + Beta_gpt_names + Beta_trt_names# + Beta_sfd_names
 Gamma_features = Gamma_ffd_names + Gamma_gd_names + Gamma_gpt_names + Gamma_trt_names# + Gamma_sfd_names
@@ -156,13 +156,6 @@ def extract_word_level_data(data_container, word_objects, eeg_float_resolution =
         trt_g1Data = word_objects['TRT_g1']
         trt_g2Data = word_objects['TRT_g2']
 
-        """
-        Alpha_features_data = [word_objects[feature] for feature in Alpha_features]
-        Beta_features_data = [word_objects[feature] for feature in Beta_features]
-        Gamma_features_data = [word_objects[feature] for feature in Gamma_features]
-        Theta_features_data = [word_objects[feature] for feature in Theta_features]
-        """
-
         assert len(contentData) == len(etData) == len(rawData), "different amounts of different data!!"
 
         zipped_data = zip(rawData, etData, contentData, ffdData, gdData, gptData, trtData, nFixData, fixPositions,
@@ -174,6 +167,7 @@ def extract_word_level_data(data_container, word_objects, eeg_float_resolution =
             word_string = load_matlab_string(data_container[word_obj[0]])
             if is_real_word(word_string):
                 data_dict = {}
+                # todo check H5pyDeprecationWarning for .value
                 data_dict["RAW_EEG"] = extract_all_fixations(data_container, raw_eegs_obj[0], eeg_float_resolution)
                 #data_dict["ICA_EEG"] = extract_all_fixations(data_container, ica_eegs_obj[0], eeg_float_resolution)
                 data_dict["RAW_ET"] = extract_all_fixations(data_container, ets_obj[0], np.float32)
@@ -200,29 +194,6 @@ def extract_word_level_data(data_container, word_objects, eeg_float_resolution =
                     data_container[trt_g2[0]].value.shape) == 2 else None
 
                 fixations_order_per_word.append(np.array(data_container[fixPos[0]]))
-
-                #print([data_container[obj[word_idx][0]].value for obj in Alpha_features_data])
-
-                """
-                data_dict["ALPHA_EEG"] = np.concatenate([data_container[obj[word_idx][0]].value
-                                                         if len(data_container[obj[word_idx][0]].value.shape) == 2 else []
-                                                         for obj in Alpha_features_data], 0)
-
-                data_dict["BETA_EEG"] = np.concatenate([data_container[obj[word_idx][0]].value
-                                                        if len(data_container[obj[word_idx][0]].value.shape) == 2 else []
-                                                        for obj in Beta_features_data], 0)
-
-                data_dict["GAMMA_EEG"] = np.concatenate([data_container[obj[word_idx][0]].value
-                                                         if len(data_container[obj[word_idx][0]].value.shape) == 2 else []
-                                                         for obj in Gamma_features_data], 0)
-
-                data_dict["THETA_EEG"] = np.concatenate([data_container[obj[word_idx][0]].value
-                                                         if len(data_container[obj[word_idx][0]].value.shape) == 2 else []
-                                                         for obj in Theta_features_data], 0)
-
-                #print(data_dict["ALPHA_EEG"].shape)
-                #print(data_dict["ALPHA_EEG"])
-                """
 
                 data_dict["word_idx"] = word_idx
                 # TODO: data_dict["word2vec_idx"] = Looked up after through the actual word.
