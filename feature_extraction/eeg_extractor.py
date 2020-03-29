@@ -95,13 +95,10 @@ def extract_word_band_eeg(sentence_data, eeg_dict):
                     #word = word_data[widx]['content']
                     if word_data[widx]["RAW_EEG"]:
 
-                        t1 = word_data[widx]["TRT_t1"]
-                        print(t1.shape)
-
-                        word_t1 = np.mean(word_data[widx]["TRT_t1"])
-                        word_t2 = np.mean(word_data[widx]["TRT_t2"])
+                        word_t1 = word_data[widx]["TRT_t1"]
+                        word_t2 = word_data[widx]["TRT_t2"]
                         print(word_t2.shape)
-                        word_t = np.nanmean(np.hstack((word_t1,word_t2)))
+                        word_t = np.nanmean(np.hstack((word_t1, word_t2)))
                         print(word_t.shape)
                         sent_features[widx] = word_t
 
