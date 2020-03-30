@@ -12,7 +12,7 @@ import sklearn.metrics
 from sklearn.model_selection import KFold
 import config
 import ml_helpers
-from feature_extraction.features import eeg_feats as EEGfeatures
+from feature_extraction.features import eeg_feats_tri as EEGfeatures
 
 os.environ['KERAS_BACKEND'] = 'tensorflow'
 
