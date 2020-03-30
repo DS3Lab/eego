@@ -17,8 +17,8 @@ def extract_features(sent_data, feature_set, feature_dict, eeg_dict, gaze_dict):
     if 'eeg_raw' in feature_set or 'combi_concat' in feature_set:
         eeg_extractor.extract_sent_raw_eeg(sent_data, eeg_dict)
 
-    #if 'eeg_word_raw' in feature_set:
-     #   eeg_extractor.extract_word_raw_eeg(sent_data, eeg_dict)
+    if 'eeg_word_raw' in feature_set:
+        eeg_extractor.extract_word_raw_eeg(sent_data, eeg_dict)
 
     if 'word_eeg_theta' in feature_set:
         eeg_extractor.extract_word_band_eeg(sent_data, eeg_dict)

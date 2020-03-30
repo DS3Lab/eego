@@ -46,7 +46,7 @@ def main():
     print(len(eeg_X))
 
     # save eeg feats
-    f = open('eeg_theta_feats_tri.py', 'w')
+    f = open('eeg_feats_tri.py', 'w')
     print(eeg_X, file=f)
 
     #eeg_feats = open('eeg_raw_word_feats_senti_bin.py', 'r').read()
