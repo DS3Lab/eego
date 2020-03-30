@@ -16,7 +16,6 @@ import time
 from datetime import timedelta
 import tensorflow as tf
 import sys
-import eeg_feats
 
 os.environ['KERAS_BACKEND'] = 'tensorflow'
 
