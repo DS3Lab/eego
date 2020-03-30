@@ -179,13 +179,14 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
 
         p, r, f, support = sklearn.metrics.precision_recall_fscore_support(y_test, pred,
                                                                            average='micro')
-        print(sklearn.metrics.classification_report(y_test, pred))
         print(p, r, f)
+        print(sklearn.metrics.classification_report(y_test, pred))
+
 
         label_names = ["Visited", "Founder", "Nationality", "Wife", "PoliticalAffiliation", "JobTitle", "Education",
                        "Employer", "Awarded", "BirthPlace", "DeathPlace"]
-        print(sklearn.metrics.classification_report(y_test, pred, label_names))
-        print(sklearn.metrics.classification_report(y_test, pred, label_names, output_dict=True))
+        print(sklearn.metrics.classification_report(y_test, pred, target_names=label_names))
+        print(sklearn.metrics.classification_report(y_test, pred, target_names=label_names, output_dict=True))
 
         if fold == 0:
             fold_results['train-loss'] = [history.history['loss']]
