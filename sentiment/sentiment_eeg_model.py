@@ -12,7 +12,7 @@ import sklearn.metrics
 from sklearn.model_selection import KFold
 import config
 import ml_helpers
-from feature_extraction.features import eeg_feats, eeg_feats_tri
+from feature_extraction.features import eeg_feats_tri as EEGfeatures
 
 os.environ['KERAS_BACKEND'] = 'tensorflow'
 
@@ -70,7 +70,7 @@ def lstm_classifier(labels, eeg, embedding_type, param_dict, random_seed_value):
 
     # load saved features
     max_len = 0
-    eeg_X = eeg_feats_tri.eeg_X
+    eeg_X = EEGfeatures.eeg_X
     print(len(eeg_X))
     for f in eeg_X:
         max_len = len(f) if len(f) > max_len else max_len
