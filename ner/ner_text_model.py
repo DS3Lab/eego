@@ -44,8 +44,9 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
     sequences = []
     word_index = {}
     for sent in X_tokenized:
+        # todo: try lower = False
         seq = hashing_trick(' '.join(sent), vocab_size, hash_function=None, filters='',
-                                           lower=True, split=' ')
+                                           lower=False, split=' ')
         for token, number in zip(sent, seq):
             if token not in word_index:
                 word_index[token] = number
@@ -169,8 +170,6 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
             text_model = Bidirectional(LSTM(lstm_dim, recurrent_dropout=0.2, dropout=0.2, return_sequences=True))(text_model)
 
         text_model = TimeDistributed(Dense(len(label_names), activation='softmax'))(text_model)
-
-        #model.add(tf.keras.layers.TimeDistributed(tf.keras.layers.Dense(len(label_names), activation='softmax')))
 
         model = Model(inputs=input_list, outputs=text_model)
 
