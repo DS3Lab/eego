@@ -28,8 +28,9 @@ def main():
     #print("Reading gaze features from file!!")
     #gaze_dict = json.load(open("gaze_feats_file_tri.json"))
 
+    print(len(gaze_dict))
     with open('gaze_feats_file_tri.json', 'w') as fp:
-        json.dump(eeg_dict, fp)
+        json.dump(gaze_dict, fp)
 
     #print(gaze_dict)
     print(len(feature_dict), len(label_dict), len(gaze_dict))
