@@ -16,6 +16,7 @@ import time
 from datetime import timedelta
 import tensorflow as tf
 import sys
+from feature_extraction.features import eeg_feats_tri as EEGfeatures
 
 os.environ['KERAS_BACKEND'] = 'tensorflow'
 
@@ -91,7 +92,7 @@ def lstm_classifier(features, labels, eeg, embedding_type, param_dict, random_se
     print('Processing EEG data...')
     # load saved features
     max_len = 0
-    eeg_X = eeg_feats.eeg_X
+    eeg_X = EEGfeatures.eeg_X
     print(len(eeg_X))
     for f in eeg_X:
         max_len = len(f) if len(f) > max_len else max_len
@@ -197,7 +198,6 @@ def lstm_classifier(features, labels, eeg, embedding_type, param_dict, random_se
         # todo: try add, subtract, average and dot product in addition to concat
         combined = concatenate([text_model_model.output, cognitive_model_model.output])
         # apply another dense layer and then a softmax prediction on the combined outputs
-        # todo: does this layer help?
         #combined = Dense(8, activation="relu", name="final_dense")(combined)
         combi_model = Dense(y_train.shape[1], activation="softmax")(combined)
 
