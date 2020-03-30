@@ -32,7 +32,7 @@ def main():
 
 
     # average EEG features over all subjects
-
+    """
     eeg_X = []
     for s, f in eeg_dict.items():
         sent_feats = []
@@ -42,15 +42,13 @@ def main():
             # subj_mean_word_feats[np.isnan(subj_mean_word_feats)] = 0.0
             sent_feats.append(subj_mean_word_feats)
         eeg_X.append(sent_feats)
+    """
 
-    print(len(eeg_X))
+    #print(len(eeg_X))
 
     # save eeg feats
-    f = open('eeg_feats_tri.py', 'w')
-    print(eeg_X, file=f)
-
-    #eeg_feats = open('eeg_raw_word_feats_senti_bin.py', 'r').read()
-    #eeg_dict = ast.literal_eval(eeg_feats)
+    #f = open('eeg_feats_tri.py', 'w')
+    #print(eeg_X, file=f)
 
     if len(feature_dict) != len(label_dict) != len(eeg_dict):
         print("WARNING: Not an equal number of sentences in features and labels!")
