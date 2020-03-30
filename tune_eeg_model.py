@@ -57,7 +57,7 @@ def main():
     print(len(eeg_X))
 
     # save eeg feats
-    f = open('eeg_beta_feats.py', 'w')
+    f = open('eeg_gamma_feats.py', 'w')
     print(eeg_X, file=f)
 
     if len(feature_dict) != len(label_dict) != len(eeg_dict):
