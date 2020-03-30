@@ -40,15 +40,6 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
     X = list(features.keys())
     y = list(labels.values())
 
-    label_names = ["Visited", "Founder", "Nationality", "Wife", "PoliticalAffiliation", "JobTitle", "Education",
-                   "Employer", "Awarded", "BirthPlace", "DeathPlace"]
-
-    print(label_names)
-
-    print(X[0])
-    print(y[0])
-    print(sents_y[0])
-
     # plot sample distribution
     ml_helpers.plot_label_distribution(y)
 
@@ -196,8 +187,11 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
                                                                            average='micro')
         print(sklearn.metrics.classification_report(y_test, pred))
         print(p, r, f)
-        # conf_matrix = sklearn.metrics.confusion_matrix(rounded_labels, rounded_predictions)
-        # print(conf_matrix)
+
+        label_names = ["Visited", "Founder", "Nationality", "Wife", "PoliticalAffiliation", "JobTitle", "Education",
+                       "Employer", "Awarded", "BirthPlace", "DeathPlace"]
+        print(sklearn.metrics.classification_report(y_test, pred, label_names))
+        print(sklearn.metrics.classification_report(y_test, pred, label_names, output_dict=True))
 
         if fold == 0:
             fold_results['train-loss'] = [history.history['loss']]
