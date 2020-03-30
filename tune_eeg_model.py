@@ -19,7 +19,7 @@ def main():
     eeg_dict = {}
     gaze_dict = {}
     print("TASK: ", config.class_task)
-    print("extracting", config.feature_set, "features....")
+    print("Extracting", config.feature_set, "features....")
     for subject in config.subjects:
         print(subject)
 
@@ -31,8 +31,19 @@ def main():
     print(len(feature_dict), len(label_dict), len(eeg_dict))
 
 
+
+    for s, label in list(label_dict.items()):
+        # drop neutral sentences for binary sentiment classification
+        if label == 2:
+            del label_dict[s]
+            del feature_dict[s]
+            del eeg_dict[s]
+
+    print(len(eeg_dict))
+
+
     # average EEG features over all subjects
-    """
+
     eeg_X = []
     for s, f in eeg_dict.items():
         sent_feats = []
@@ -42,13 +53,12 @@ def main():
             # subj_mean_word_feats[np.isnan(subj_mean_word_feats)] = 0.0
             sent_feats.append(subj_mean_word_feats)
         eeg_X.append(sent_feats)
-    """
 
-    #print(len(eeg_X))
+    print(len(eeg_X))
 
     # save eeg feats
-    #f = open('eeg_feats_tri.py', 'w')
-    #print(eeg_X, file=f)
+    f = open('eeg_theta_feats.py', 'w')
+    print(eeg_X, file=f)
 
     if len(feature_dict) != len(label_dict) != len(eeg_dict):
         print("WARNING: Not an equal number of sentences in features and labels!")
