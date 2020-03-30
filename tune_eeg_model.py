@@ -31,7 +31,7 @@ def main():
     print(len(feature_dict), len(label_dict), len(eeg_dict))
 
 
-
+    """
     for s, label in list(label_dict.items()):
         # drop neutral sentences for binary sentiment classification
         if label == 2:
@@ -40,10 +40,11 @@ def main():
             del eeg_dict[s]
 
     print(len(eeg_dict))
+    """
 
 
     # average EEG features over all subjects
-
+    """
     eeg_X = []
     for s, f in eeg_dict.items():
         sent_feats = []
@@ -55,10 +56,11 @@ def main():
         eeg_X.append(sent_feats)
 
     print(len(eeg_X))
+    """
 
     # save eeg feats
-    f = open('eeg_feats.py', 'w')
-    print(eeg_X, file=f)
+    #f = open('eeg_feats_tri.py', 'w')
+    #print(eeg_X, file=f)
 
     if len(feature_dict) != len(label_dict) != len(eeg_dict):
         print("WARNING: Not an equal number of sentences in features and labels!")
