@@ -26,7 +26,7 @@ def main():
         zuco_reader.extract_labels(feature_dict, label_dict, config.class_task, subject)
 
     print("Reading gaze features from file!!")
-    gaze_dict = json.load(open("gaze_feats_file_tri.json"))
+    gaze_dict = json.load(open("feature_extraction/features/gaze_feats_file.json"))
 
     print(len(gaze_dict))
     #with open('gaze_feats_file_tri.json', 'w') as fp:
