@@ -1,11 +1,12 @@
+from tensorflow.python.keras.preprocessing.text import hashing_trick
+import sklearn.metrics
 import os
-import sys
 import numpy as np
 from tensorflow.python.keras.preprocessing.sequence import pad_sequences
-from tensorflow.python.keras.preprocessing.text import hashing_trick
 from tensorflow.python.keras.initializers import Constant
 import tensorflow.python.keras.backend as K
-from tensorflow.python.keras.layers import Input, Dense, Embedding, LSTM, Bidirectional, Dropout, TimeDistributed
+from tensorflow.python.keras.layers import Input, Dense, Embedding, LSTM, Bidirectional, Flatten, Dropout, TimeDistributed
+from tensorflow.python.keras.layers.merge import concatenate
 from tensorflow.python.keras.models import Model
 import sklearn.metrics
 from sklearn.model_selection import KFold
@@ -22,7 +23,7 @@ os.environ['KERAS_BACKEND'] = 'tensorflow'
 # Only learning from text 
 
 
-def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_value):
+def lstm_classifier(features, labels, gaze, embedding_type, param_dict, random_seed_value):
     # set random seed
     np.random.seed(random_seed_value)
     tf.random.set_seed(random_seed_value)
@@ -30,23 +31,21 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
 
     start = time.time()
 
-    X = list(features.keys())
     y = list(labels.values())
     X_tokenized = list(features.values())
 
     # check order of sentences in labels and features dicts
+    """
     sents_y = list(labels.keys())
-    sents_feats = list(features.keys())
-    if sents_y[0] != sents_feats[0]:
+    sents_gaze = list(gaze.keys())
+    if sents_y[0] != sents_gaze[0]:
         sys.exit("STOP! Order of sentences in labels and features dicts not the same!")
-
+    """
     vocab_size = 4633
     sequences = []
     word_index = {}
     for sent in X_tokenized:
-        # todo: try lower = False
-        seq = hashing_trick(' '.join(sent), vocab_size, hash_function=None, filters='',
-                                           lower=False, split=' ')
+        seq = hashing_trick(' '.join(sent), vocab_size, hash_function=None, filters='', lower=False, split=' ')
         for token, number in zip(sent, seq):
             if token not in word_index:
                 word_index[token] = number
@@ -80,6 +79,7 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
         embedding_matrix = ml_helpers.load_glove_embeddings(vocab_size, word_index, embedding_dim)
 
     if embedding_type is 'bert':
+        # todo: try cased model
         print("Prepare sequences for Bert ...")
 
         max_length = ml_helpers.get_bert_max_len(X)
@@ -93,6 +93,35 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
     y_padded = pad_sequences(y, maxlen=max_length, value=0, padding='post', truncating='post')
     print('Shape of label tensor:', y_padded.shape)
 
+    # prepare gaze data
+    print('Processing gaze data...')
+    # prepare eye-tracking data
+    gaze_X = []
+    max_length_cogni = 0
+    # average cognitive features over all subjects
+    for s in gaze.values():
+        sent_feats = []
+        max_length_cogni = len(s) if len(s) > max_length_cogni else max_length_cogni
+        for w, fts in s.items():
+            subj_mean_word_feats = np.nanmean(fts, axis=0)
+            subj_mean_word_feats[np.isnan(subj_mean_word_feats)] = 0.0
+            sent_feats.append(subj_mean_word_feats)
+        gaze_X.append(sent_feats)
+
+    # scale feature values
+    gaze_X = ml_helpers.scale_feature_values(gaze_X)
+
+    # pad gaze sequences
+    for s in gaze_X:
+        while len(s) < max_length_cogni:
+            # 5 = number of gaze features
+            s.append(np.zeros(5))
+
+    X_data_gaze = np.array(gaze_X)
+    print(X_data_gaze.shape)
+
+
+
     # split data into train/test
     kf = KFold(n_splits=config.folds, random_state=random_seed_value, shuffle=True)
 
@@ -102,18 +131,20 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
     for train_index, test_index in kf.split(X_data_text):
 
         print("FOLD: ", fold)
-        # print("TRAIN:", train_index, "TEST:", test_index)
         print("splitting train and test data...")
         y_train, y_test = y_padded[train_index], y_padded[test_index]
         X_train_text, X_test_text = X_data_text[train_index], X_data_text[test_index]
-    
         if embedding_type is 'bert':
             X_train_masks, X_test_masks = X_data_masks[train_index], X_data_masks[test_index]
+        X_train_gaze, X_test_gaze = X_data_gaze[train_index], X_data_gaze[test_index]
+
 
         print(y_train.shape)
         print(y_test.shape)
         print(X_train_text.shape)
         print(X_test_text.shape)
+        print(X_train_gaze.shape)
+        print(X_test_gaze.shape)
 
         # reset model
         K.clear_session()
@@ -134,7 +165,8 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
 
         # define two sets of inputs
         input_text = Input(shape=(X_train_text.shape[1],)) if embedding_type is not 'bert' else Input(shape=(X_train_text.shape[1],), dtype=tf.int32)
-        input_list = [input_text]
+        input_text_list = [input_text]
+        input_gaze = Input(shape=(X_train_gaze.shape[1], X_train_gaze.shape[2]), name='gaze_input_tensor')
 
         # the first branch operates on the first input (word embeddings)
         if embedding_type is 'none':
@@ -149,42 +181,56 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
                       name='glove_input_embeddings')(input_text)
         elif embedding_type is 'bert':
             input_mask = tf.keras.layers.Input((X_train_masks.shape[1],), dtype=tf.int32)
-            input_list.append(input_mask)
+            input_text_list.append(input_mask)
             text_model = ml_helpers.create_new_bert_layer()(input_text, attention_mask=input_mask)[0]
 
-       # for l in list(range(lstm_layers)):
-        #    if l < lstm_layers - 1:
-         #       text_model = Bidirectional(LSTM(lstm_dim, return_sequences=True))(text_model)
-          #  else:
-           #     text_model = Bidirectional(LSTM(lstm_dim, return_sequences=True))(text_model)
-
-        #text_model = Bidirectional(LSTM(lstm_dim, return_sequences=True))(text_model)
-        #text_model = Flatten()(text_model)
-        #text_model = Dense(dense_dim, activation="relu")(text_model)
-        #text_model = Dropout(dropout)(text_model)
-        #text_model = Dense(len(label_names), activation="softmax")(text_model)
-
         text_model = Dropout(0.2)(text_model)
-
         for _ in list(range(lstm_layers)):
             text_model = Bidirectional(LSTM(lstm_dim, recurrent_dropout=0.2, dropout=0.2, return_sequences=True))(text_model)
-
         text_model = TimeDistributed(Dense(len(label_names), activation='softmax'))(text_model)
 
-        model = Model(inputs=input_list, outputs=text_model)
+        text_model_model = Model(inputs=input_text_list, outputs=text_model)
+
+        text_model_model.summary()
+
+        # the second branch operates on the second input (EEG data)
+        cognitive_model = Bidirectional(LSTM(lstm_dim, return_sequences=True))(input_gaze)
+        cognitive_model = Flatten()(cognitive_model)
+        cognitive_model = Dense(dense_dim, activation="relu")(cognitive_model)
+        cognitive_model = Dropout(dropout)(cognitive_model)
+        # # todo: also train this dense latent dim?
+        cognitive_model = Dense(16, activation="relu")(cognitive_model)
+        cognitive_model_model = Model(inputs=input_gaze, outputs=cognitive_model)
+
+        cognitive_model_model.summary()
+
+        # combine the output of the two branches
+        # todo: try add, substract, average and dot product in addition to concat
+        combined = concatenate([text_model_model.output, cognitive_model_model.output])
+        # apply another dense layer and then a softmax prediction on the combined outputs
+        # todo: does this layer help?
+        # combi_model = Dense(2, activation="relu")(combined)
+        combi_model = Dense(y_train.shape[1], activation="softmax")(combined)
+
+        model = Model(inputs=[text_model_model.input, cognitive_model_model.input], outputs=combi_model)
 
         model.compile(loss='sparse_categorical_crossentropy',
                       optimizer=tf.keras.optimizers.Adam(lr=lr),
                       metrics=['accuracy'])
 
-        model.summary()
-
         # train model
-        history = model.fit([X_train_text] if embedding_type is not 'bert' else [X_train_text, X_train_masks], y_train, validation_split=0.1, epochs=epochs, batch_size=batch_size)
+        history = model.fit(
+            [X_train_text, X_train_gaze] if embedding_type is not 'bert' else [X_train_text, X_train_masks,
+                                                                               X_train_gaze], y_train,
+            validation_split=0.1, epochs=epochs, batch_size=batch_size)
 
         # evaluate model
-        scores = model.evaluate([X_test_text] if embedding_type is not 'bert' else [X_test_text, X_test_masks], y_test, verbose=0)
-        predictions = model.predict([X_test_text] if embedding_type is not 'bert' else [X_test_text, X_test_masks])
+        scores = model.evaluate(
+            [X_test_text, X_test_gaze] if embedding_type is not 'bert' else [X_test_text, X_test_masks, X_test_gaze],
+            y_test,
+            verbose=0)
+        predictions = model.predict(
+            [X_test_text, X_test_gaze] if embedding_type is not 'bert' else [X_test_text, X_test_masks, X_test_gaze])
 
         # get predictions
         # remove padded tokens at end of sentence
