@@ -2,6 +2,7 @@ import config
 from feature_extraction import zuco_reader
 from sentiment import sentiment_gaze_model, sentiment_text_gaze_model
 from data_helpers import save_results, load_matlab_files
+from ner import ner_text_gaze_model
 import json
 
 
@@ -25,12 +26,12 @@ def main():
         zuco_reader.extract_features(loaded_data, config.feature_set, feature_dict, eeg_dict, gaze_dict)
         zuco_reader.extract_labels(feature_dict, label_dict, config.class_task, subject)
 
-    #print("Reading gaze features from file!!")
-    #gaze_dict = json.load(open("feature_extraction/features/gaze_feats_file.json"))
+    print("Reading gaze features from file!!")
+    gaze_dict = json.load(open("feature_extraction/features/gaze_feats_file_ner.json"))
 
-    print(len(gaze_dict))
-    with open('gaze_feats_file_ner.json', 'w') as fp:
-        json.dump(gaze_dict, fp)
+    #print(len(gaze_dict))
+    #with open('gaze_feats_file_ner.json', 'w') as fp:
+     #   json.dump(gaze_dict, fp)
 
     #print(gaze_dict)
     print(len(feature_dict), len(label_dict), len(gaze_dict))
@@ -58,8 +59,11 @@ def main():
                                                 save_results(fold_results, config.class_task)
 
                                         elif config.class_task == 'ner':
-                                            fold_results = ner_model.lstm_classifier(feature_dict, label_dict, emb,
-                                                                                     parameter_dict, rand)
+                                            if 'combi_eye_tracking' in config.feature_set:
+                                                fold_results = sentiment_text_gaze_model.lstm_classifier(feature_dict, label_dict,
+                                                                                                    gaze_dict,
+                                                                                                    emb, parameter_dict,
+                                                                                                    rand)
                                             save_results(fold_results, config.class_task)
 
                                         elif config.class_task == 'sentiment-tri':
