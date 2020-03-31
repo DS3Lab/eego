@@ -25,12 +25,12 @@ def main():
         zuco_reader.extract_features(loaded_data, config.feature_set, feature_dict, eeg_dict, gaze_dict)
         zuco_reader.extract_labels(feature_dict, label_dict, config.class_task, subject)
 
-    print("Reading gaze features from file!!")
-    gaze_dict = json.load(open("feature_extraction/features/gaze_feats_file.json"))
+    #print("Reading gaze features from file!!")
+    #gaze_dict = json.load(open("feature_extraction/features/gaze_feats_file.json"))
 
     print(len(gaze_dict))
-    #with open('gaze_feats_file_tri.json', 'w') as fp:
-     #   json.dump(gaze_dict, fp)
+    with open('gaze_feats_file_ner.json', 'w') as fp:
+        json.dump(gaze_dict, fp)
 
     #print(gaze_dict)
     print(len(feature_dict), len(label_dict), len(gaze_dict))
