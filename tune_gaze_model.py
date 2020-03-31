@@ -60,7 +60,7 @@ def main():
 
                                         elif config.class_task == 'ner':
                                             if 'combi_eye_tracking' in config.feature_set:
-                                                fold_results = sentiment_text_gaze_model.lstm_classifier(feature_dict, label_dict,
+                                                fold_results = ner_text_gaze_model.lstm_classifier(feature_dict, label_dict,
                                                                                                     gaze_dict,
                                                                                                     emb, parameter_dict,
                                                                                                     rand)
