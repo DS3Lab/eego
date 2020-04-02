@@ -24,6 +24,7 @@ def main():
         loaded_data = load_matlab_files(config.class_task, subject)
 
         zuco_reader.extract_features(loaded_data, config.feature_set, feature_dict, eeg_dict, gaze_dict)
+        print(len(gaze_dict))
         zuco_reader.extract_labels(feature_dict, label_dict, config.class_task, subject)
 
     #print("Reading gaze features from file!!")
