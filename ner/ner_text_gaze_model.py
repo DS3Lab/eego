@@ -194,10 +194,11 @@ def lstm_classifier(features, labels, gaze, embedding_type, param_dict, random_s
         text_model_model.summary()
 
         # the second branch operates on the second input (EEG data)
-        cognitive_model = Bidirectional(LSTM(lstm_dim, return_sequences=True))(input_gaze)
-        cognitive_model = Flatten()(cognitive_model)
-        cognitive_model = Dense(dense_dim, activation="relu")(cognitive_model)
-        cognitive_model = Dropout(dropout)(cognitive_model)
+        cognitive_model = Bidirectional(LSTM(lstm_dim, recurrent_dropout=0.2, dropout=0.2, return_sequences=True))(input_gaze)
+        text_model = TimeDistributed(Dense(len(label_names), activation='softmax'))(text_model)
+        #cognitive_model = Flatten()(cognitive_model)
+        #cognitive_model = Dense(dense_dim, activation="relu")(cognitive_model)
+        #cognitive_model = Dropout(dropout)(cognitive_model)
         # # todo: also train this dense latent dim?
         cognitive_model = Dense(16, activation="relu")(cognitive_model)
         cognitive_model_model = Model(inputs=input_gaze, outputs=cognitive_model)
