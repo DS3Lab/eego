@@ -3,6 +3,7 @@ from feature_extraction import zuco_reader
 from sentiment import sentiment_gaze_model, sentiment_text_gaze_model
 from data_helpers import save_results, load_matlab_files
 from ner import ner_text_gaze_model
+from reldetect import reldetect_text_gaze_model
 import json
 
 
@@ -53,7 +54,8 @@ def main():
 
                                         if config.class_task == 'reldetect':
                                             for threshold in config.rel_thresholds:
-                                                fold_results = reldetect_model.lstm_classifier(feature_dict, label_dict,
+                                                if 'combi_reldetect' in config.feature_set:
+                                                    fold_results = reldetect_text_gaze_model.lstm_classifier(feature_dict, label_dict,
                                                                                                emb, parameter_dict,
                                                                                                rand, threshold)
                                                 save_results(fold_results, config.class_task)
