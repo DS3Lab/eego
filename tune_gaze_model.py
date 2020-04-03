@@ -55,7 +55,7 @@ def main():
                                         if config.class_task == 'reldetect':
                                             for threshold in config.rel_thresholds:
                                                 if 'combi_reldetect' in config.feature_set:
-                                                    fold_results = reldetect_text_gaze_model.lstm_classifier(feature_dict, label_dict,
+                                                    fold_results = reldetect_text_gaze_model.lstm_classifier(feature_dict, label_dict, gaze_dict,
                                                                                                emb, parameter_dict,
                                                                                                rand, threshold)
                                                 save_results(fold_results, config.class_task)
