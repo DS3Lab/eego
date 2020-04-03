@@ -120,8 +120,6 @@ def lstm_classifier(features, labels, gaze, embedding_type, param_dict, random_s
     X_data_gaze = np.array(gaze_X)
     print(X_data_gaze.shape)
 
-
-
     # split data into train/test
     kf = KFold(n_splits=config.folds, random_state=random_seed_value, shuffle=True)
 
@@ -137,7 +135,6 @@ def lstm_classifier(features, labels, gaze, embedding_type, param_dict, random_s
         if embedding_type is 'bert':
             X_train_masks, X_test_masks = X_data_masks[train_index], X_data_masks[test_index]
         X_train_gaze, X_test_gaze = X_data_gaze[train_index], X_data_gaze[test_index]
-
 
         print(y_train.shape)
         print(y_test.shape)
@@ -187,7 +184,13 @@ def lstm_classifier(features, labels, gaze, embedding_type, param_dict, random_s
         text_model = Dropout(0.2)(text_model)
         for _ in list(range(lstm_layers)):
             text_model = Bidirectional(LSTM(lstm_dim, recurrent_dropout=0.2, dropout=0.2, return_sequences=True))(text_model)
-        text_model = TimeDistributed(Dense(len(label_names), activation='softmax'))(text_model)
+
+        #text_model = TimeDistributed(Dense(len(label_names), activation='softmax'))(text_model)
+        text_model = Flatten()(text_model)
+        text_model = Dense(dense_dim, activation="relu")(text_model)
+        text_model = Dropout(dropout)(text_model)
+        # # todo: also train this dense latent dim?
+        text_model = Dense(len(label_names), activation="relu")(text_model)
 
         text_model_model = Model(inputs=input_text_list, outputs=text_model)
 
@@ -195,12 +198,12 @@ def lstm_classifier(features, labels, gaze, embedding_type, param_dict, random_s
 
         # the second branch operates on the second input (EEG data)
         cognitive_model = Bidirectional(LSTM(lstm_dim, recurrent_dropout=0.2, dropout=0.2, return_sequences=True))(input_gaze)
-        text_model = TimeDistributed(Dense(len(label_names), activation='softmax'))(text_model)
-        #cognitive_model = Flatten()(cognitive_model)
-        #cognitive_model = Dense(dense_dim, activation="relu")(cognitive_model)
-        #cognitive_model = Dropout(dropout)(cognitive_model)
+        #text_model = TimeDistributed(Dense(len(label_names), activation='softmax'))(text_model)
+        cognitive_model = Flatten()(cognitive_model)
+        cognitive_model = Dense(dense_dim, activation="relu")(cognitive_model)
+        cognitive_model = Dropout(dropout)(cognitive_model)
         # # todo: also train this dense latent dim?
-        cognitive_model = Dense(16, activation="relu")(cognitive_model)
+        cognitive_model = Dense(len(label_names), activation="relu")(cognitive_model)
         cognitive_model_model = Model(inputs=input_gaze, outputs=cognitive_model)
 
         cognitive_model_model.summary()
@@ -211,7 +214,7 @@ def lstm_classifier(features, labels, gaze, embedding_type, param_dict, random_s
         # apply another dense layer and then a softmax prediction on the combined outputs
         # todo: does this layer help?
         # combi_model = Dense(2, activation="relu")(combined)
-        combi_model = Dense(y_train.shape[1], activation="softmax")(combined)
+        combi_model = Dense(len(label_names), activation="softmax")(combined)
 
         model = Model(inputs=[text_model_model.input, cognitive_model_model.input], outputs=combi_model)
 
