@@ -37,6 +37,7 @@ def main():
 
     feature_dict = collections.OrderedDict(sorted(feature_dict.items()))
     label_dict = collections.OrderedDict(sorted(label_dict.items()))
+    gaze_dict = collections.OrderedDict(sorted(gaze_dict.items()))
     print(len(feature_dict.keys()), len(label_dict))
 
     #print(gaze_dict)
