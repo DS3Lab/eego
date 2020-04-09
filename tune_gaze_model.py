@@ -5,6 +5,7 @@ from data_helpers import save_results, load_matlab_files
 from ner import ner_text_gaze_model
 from reldetect import reldetect_text_gaze_model
 import json
+import collections
 
 
 # Usage on spaceml:
@@ -33,6 +34,10 @@ def main():
     #print(len(gaze_dict))
     #with open('gaze_feats_file_ner.json', 'w') as fp:
      #   json.dump(gaze_dict, fp)
+
+    feature_dict = collections.OrderedDict(sorted(feature_dict.items()))
+    label_dict = collections.OrderedDict(sorted(label_dict.items()))
+    print(len(feature_dict.keys()), len(label_dict))
 
     #print(gaze_dict)
     print(len(feature_dict), len(label_dict), len(gaze_dict))

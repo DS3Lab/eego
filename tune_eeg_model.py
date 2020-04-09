@@ -5,6 +5,7 @@ from ner import ner_text_model
 from sentiment import sentiment_eeg_model, sentiment_text_eeg_model
 from data_helpers import save_results, load_matlab_files
 import numpy as np
+import collections
 
 
 
@@ -61,6 +62,10 @@ def main():
     # save eeg feats
     #f = open('eeg_feats_tri.py', 'w')
     #print(eeg_X, file=f)
+
+    feature_dict = collections.OrderedDict(sorted(feature_dict.items()))
+    label_dict = collections.OrderedDict(sorted(label_dict.items()))
+    print(len(feature_dict.keys()), len(label_dict))
 
     if len(feature_dict) != len(label_dict) != len(eeg_dict):
         print("WARNING: Not an equal number of sentences in features and labels!")

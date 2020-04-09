@@ -2,7 +2,6 @@ import os
 import numpy as np
 from tensorflow.python.keras.preprocessing.sequence import pad_sequences
 from tensorflow.python.keras.preprocessing.text import Tokenizer
-from tensorflow.python.keras.utils import np_utils
 from tensorflow.python.keras.initializers import Constant
 import tensorflow.python.keras.backend as K
 from tensorflow.python.keras.layers import Input, Dense, Embedding, LSTM, Bidirectional, Flatten, Dropout
@@ -94,7 +93,7 @@ def lstm_classifier(features, labels, gaze, embedding_type, param_dict, random_s
     # average cognitive features over all subjects
     for s in gaze.values():
         sent_feats = []
-        max_length_cogni = len(s) if len(s) > max_length_cogni else max_length_cogni
+        max_length_cogni = max(len(s),max_length_cogni)
         for w, fts in s.items():
             subj_mean_word_feats = np.nanmean(fts, axis=0)
             subj_mean_word_feats[np.isnan(subj_mean_word_feats)] = 0.0
@@ -107,6 +106,7 @@ def lstm_classifier(features, labels, gaze, embedding_type, param_dict, random_s
     # pad gaze sequences
     for s in gaze_X:
         while len(s) < max_length_cogni:
+            # 5 = number of gaze features
             s.append(np.zeros(5))
 
     X_data_gaze = np.array(gaze_X)
@@ -149,11 +149,9 @@ def lstm_classifier(features, labels, gaze, embedding_type, param_dict, random_s
         fold_results['params'] = [lstm_dim, lstm_layers, dense_dim, dropout, batch_size, epochs, lr, embedding_type,
                                   random_seed_value]
 
-        # define model
         print("Preparing model...")
 
-        # define two sets of inputs
-        # define two sets of inputs
+        # define both sets of inputs
         input_text = Input(shape=(X_train_text.shape[1],), name='text_input_tensor') if embedding_type is not 'bert' else Input(
             shape=(X_train_text.shape[1],), dtype=tf.int32, name='text_input_tensor')
         input_text_list = [input_text]
@@ -184,7 +182,7 @@ def lstm_classifier(features, labels, gaze, embedding_type, param_dict, random_s
 
         text_model_model.summary()
 
-        # the second branch operates on the second input (EEG data)
+        # the second branch operates on the second input (gaze data)
         cognitive_model = Bidirectional(LSTM(lstm_dim, return_sequences=True))(input_gaze)
         cognitive_model = Flatten()(cognitive_model)
         cognitive_model = Dense(dense_dim, activation="relu")(cognitive_model)
@@ -196,7 +194,7 @@ def lstm_classifier(features, labels, gaze, embedding_type, param_dict, random_s
         cognitive_model_model.summary()
 
         # combine the output of the two branches
-        # todo: try add, substract, average and dot product in addition to concat
+        # todo: try add, subtract, average and dot product in addition to concat
         combined = concatenate([text_model_model.output, cognitive_model_model.output])
         # apply another dense layer and then a softmax prediction on the combined outputs
         # todo: does this layer help?
