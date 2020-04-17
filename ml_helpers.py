@@ -18,8 +18,8 @@ def plot_label_distribution(y):
                        "Employer", "Awarded", "BirthPlace", "DeathPlace"]
 
         all_relations = np.sum(y, 0)
-        print(all_relations)
-        print(label_names)
+        #print(all_relations)
+        #print(label_names)
         plt.clf()
         # todo: make plots a bit nicer :)
         plt.bar(range(len(all_relations)), all_relations, alpha=0.5)
@@ -34,7 +34,6 @@ def plot_label_distribution(y):
                 rels_per_sentence[sum(s)] = 1
             else:
                 rels_per_sentence[sum(s)] += 1
-        print(range(len(rels_per_sentence)))
         plt.bar(range(len(rels_per_sentence)), rels_per_sentence.values(), alpha=0.5)
         plt.xticks(fontsize=10, ticks=np.arange(len(rels_per_sentence)), labels=list(range(len(rels_per_sentence))))
         plt.xlabel('no. of relations')
