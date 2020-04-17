@@ -1,4 +1,5 @@
-import matplotlib. pyplot as plt
+import matplotlib.pyplot as plt
+import matplotlib.colors as colors
 import os
 import numpy as np
 import config
@@ -21,6 +22,20 @@ def plot_label_distribution(y):
         print(all_relations)
         print(label_names)
         plt.clf()
+        # todo: make plots a bit nicer :)
+        # cm = plt.get_cmap('viridis')
+        #from numpy import linspace
+
+        #start = 0.0
+        #stop = 1.0
+        #number_of_lines = 1000
+        #cm_subsection = linspace(start, stop, number_of_lines)
+
+        #colors = [cm.jet(x) for x in cm_subsection]
+
+        #for i, color in enumerate(colors):
+        #    plt.axhline(i, color=color)
+
         plt.bar(range(len(all_relations)), all_relations, alpha=0.5)
         plt.xticks(rotation=90, ticks=np.arange(len(all_relations)), labels=label_names, fontsize=8)
         plt.savefig('label-distribution-' + config.class_task + '.png')
@@ -28,8 +43,9 @@ def plot_label_distribution(y):
 
         # plot number of relation types per sentence
         rels_per_sentence = [sum(s) for s in y]
+        print(min(rels_per_sentence), max(rels_per_sentence))
         plt.hist(rels_per_sentence, bins=max(rels_per_sentence), alpha=0.5)
-        plt.xticks(fontsize=10)
+        plt.xticks(fontsize=10, ticks=np.arange(max(rels_per_sentence)))
         plt.xlabel('no. of relations')
         plt.ylabel('no. of sentences')
         plt.savefig('relation-distribution-' + config.class_task + '.png')
