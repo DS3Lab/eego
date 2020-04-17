@@ -17,22 +17,12 @@ def plot_label_distribution(y):
         label_names = ["Visited", "Founder", "Nationality", "Wife", "PoliticalAffiliation", "JobTitle", "Education",
                        "Employer", "Awarded", "BirthPlace", "DeathPlace"]
 
-
         all_relations = np.sum(y, 0)
         print(all_relations)
         print(label_names)
         plt.clf()
         # todo: make plots a bit nicer :)
-        import matplotlib.colors
-
-        #cmap = plt.cm.viridis
-        #cmaplist = [cmap(i) for i in range(cmap.N)]
-        #cmaplist[0] = (1.0, 1.0, 1.0, 1.0)
-        #cmap = matplotlib.colors.LinearSegmentedColormap.from_list('mcm', cmaplist, cmap.N)
-
-        cmap = plt.cm.viridis(np.linspace(0, 1, len(all_relations)))
-
-        plt.bar(range(len(all_relations)), all_relations, alpha=0.5, colors=cmap)
+        plt.bar(range(len(all_relations)), all_relations, alpha=0.5)
         plt.xticks(rotation=90, ticks=np.arange(len(all_relations)), labels=label_names, fontsize=8)
         plt.savefig('label-distribution-' + config.class_task + '.png')
         plt.clf()
