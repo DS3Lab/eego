@@ -23,21 +23,20 @@ def plot_label_distribution(y):
         print(label_names)
         plt.clf()
         # todo: make plots a bit nicer :)
-        # cm = plt.get_cmap('viridis')
-        #from numpy import linspace
+        cm = plt.get_cmap('viridis')
+        from numpy import linspace
 
-        #start = 0.0
-        #stop = 1.0
-        #number_of_lines = 1000
-        #cm_subsection = linspace(start, stop, number_of_lines)
+        start = 0.0
+        stop = 1.0
+        cm_subsection = linspace(0.0, 1.0, len(all_relations))
 
-        #colors = [cm.jet(x) for x in cm_subsection]
+        colors = [cm.jet(x) for x in cm_subsection]
 
         #for i, color in enumerate(colors):
         #    plt.axhline(i, color=color)
 
         plt.bar(range(len(all_relations)), all_relations, alpha=0.5)
-        plt.xticks(rotation=90, ticks=np.arange(len(all_relations)), labels=label_names, fontsize=8)
+        plt.xticks(rotation=90, ticks=np.arange(len(all_relations)), labels=label_names, fontsize=8, colors=colors)
         plt.savefig('label-distribution-' + config.class_task + '.png')
         plt.clf()
 
@@ -53,6 +52,7 @@ def plot_label_distribution(y):
         plt.xticks(fontsize=10, ticks=np.arange(len(rels_per_sentence)), labels=list(range(len(rels_per_sentence))))
         plt.xlabel('no. of relations')
         plt.ylabel('no. of sentences')
+        plt.tight_layout()
         plt.savefig('relation-distribution-' + config.class_task + '.png')
         plt.clf()
 
@@ -60,6 +60,7 @@ def plot_label_distribution(y):
         plt.hist(y, bins=len(set(y)), alpha=0.5)
         plt.xticks(rotation=90, fontsize=7)
         plt.savefig('label-distribution-' + config.class_task + '.png')
+        plt.tight_layout()
         plt.clf()
 
 
