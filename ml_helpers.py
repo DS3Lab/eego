@@ -22,14 +22,14 @@ def plot_label_distribution(y):
         print(label_names)
         plt.clf()
         plt.bar(range(len(all_relations)), all_relations, alpha=0.5)
-        plt.xticks(ticks=np.arange(len(all_relations)), labels=label_names, fontsize=10)
+        plt.xticks(rotation=90, ticks=np.arange(len(all_relations)), labels=label_names, fontsize=8)
         plt.savefig('label-distribution-' + config.class_task + '.png')
         plt.clf()
 
         # plot number of relation types per sentence
         rels_per_sentence = [sum(s) for s in y]
         plt.hist(rels_per_sentence, bins=max(rels_per_sentence), alpha=0.5)
-        plt.xticks(rotation=90, fontsize=10)
+        plt.xticks(fontsize=10)
         plt.xlabel('no. of relations')
         plt.ylabel('no. of sentences')
         plt.savefig('relation-distribution-' + config.class_task + '.png')
