@@ -23,7 +23,7 @@ def plot_label_distribution(y):
         plt.clf()
         # todo: make plots a bit nicer :)
         plt.bar(range(len(all_relations)), all_relations, alpha=0.5)
-        plt.xticks(rotation=90, ticks=np.arange(len(all_relations)), labels=label_names, fontsize=8)
+        plt.xticks(rotation=45, ticks=np.arange(len(all_relations)), labels=label_names, fontsize=7)
         plt.savefig('label-distribution-' + config.class_task + '.png')
         plt.clf()
 
