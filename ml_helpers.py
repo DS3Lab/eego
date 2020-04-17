@@ -42,10 +42,15 @@ def plot_label_distribution(y):
         plt.clf()
 
         # plot number of relation types per sentence
-        rels_per_sentence = [sum(s) for s in y]
-        print(min(rels_per_sentence), max(rels_per_sentence))
-        plt.hist(rels_per_sentence, bins=max(rels_per_sentence), alpha=0.5)
-        plt.xticks(fontsize=10, ticks=np.arange(max(rels_per_sentence)))
+        rels_per_sentence = {}
+        for s in y:
+            if sum(s) not in rels_per_sentence:
+                rels_per_sentence[sum(s)] = 1
+            else:
+                rels_per_sentence[sum(s)] += 1
+        print(range(len(rels_per_sentence)))
+        plt.bar(range(len(rels_per_sentence)), rels_per_sentence.values(), alpha=0.5)
+        plt.xticks(fontsize=10, ticks=np.arange(len(rels_per_sentence)), labels=range(len(rels_per_sentence)))
         plt.xlabel('no. of relations')
         plt.ylabel('no. of sentences')
         plt.savefig('relation-distribution-' + config.class_task + '.png')
