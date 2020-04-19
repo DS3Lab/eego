@@ -8,7 +8,6 @@ import numpy as np
 import collections
 
 
-
 # Usage on spaceml:
 # $ conda activate env-eego
 # $ CUDA_VISIBLE_DEVICES=7 python tune_model.py
@@ -31,6 +30,9 @@ def main():
 
     print(len(feature_dict), len(label_dict), len(eeg_dict))
 
+    # todo: sort eeg dict?!
+    eeg_dict = collections.OrderedDict(sorted(eeg_dict.items()))
+
 
     """
     for s, label in list(label_dict.items()):
@@ -45,7 +47,7 @@ def main():
 
 
     # average EEG features over all subjects
-    """
+
     eeg_X = []
     for s, f in eeg_dict.items():
         sent_feats = []
@@ -57,11 +59,11 @@ def main():
         eeg_X.append(sent_feats)
 
     print(len(eeg_X))
-    """
+
 
     # save eeg feats
-    #f = open('eeg_feats_tri.py', 'w')
-    #print(eeg_X, file=f)
+    f = open('eeg_gamma_feats_tri-test-order.py', 'w')
+    print(eeg_X, file=f)
 
     feature_dict = collections.OrderedDict(sorted(feature_dict.items()))
     label_dict = collections.OrderedDict(sorted(label_dict.items()))
@@ -98,7 +100,7 @@ def main():
                                         elif config.class_task == 'sentiment-tri':
                                             if 'combi_concat' in config.feature_set:
                                                 print("Starting EEG + text combi model")
-                                                fold_results = sentiment_combi_model.lstm_classifier(feature_dict,
+                                                fold_results = sentiment_text_eeg_model.lstm_classifier(feature_dict,
                                                                                                    label_dict, eeg_dict,
                                                                                                    emb, parameter_dict,
                                                                                                    rand)
@@ -124,7 +126,7 @@ def main():
                                                     #del eeg_dict[s]
                                             if 'combi_concat' in config.feature_set:
                                                 print("Starting EEG + text combi model")
-                                                fold_results = sentiment_combi_model.lstm_classifier(feature_dict,
+                                                fold_results = sentiment_text_eeg_model.lstm_classifier(feature_dict,
                                                                                                    label_dict, eeg_dict,
                                                                                                    emb, parameter_dict,
                                                                                                    rand)
