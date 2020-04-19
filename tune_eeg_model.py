@@ -30,8 +30,12 @@ def main():
 
     print(len(feature_dict), len(label_dict), len(eeg_dict))
 
+    print(list(eeg_dict.keys())[0])
+    print(list(feature_dict.keys())[0])
+    print(list(label_dict.keys())[0])
+
     # todo: sort eeg dict?!
-    eeg_dict = collections.OrderedDict(sorted(eeg_dict.items()))
+    #eeg_dict = collections.OrderedDict(sorted(eeg_dict.items()))
 
 
     """
