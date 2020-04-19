@@ -6,6 +6,7 @@ from sentiment import sentiment_eeg_model, sentiment_text_eeg_model
 from data_helpers import save_results, load_matlab_files
 import numpy as np
 import collections
+import json
 
 
 # Usage on spaceml:
@@ -34,9 +35,6 @@ def main():
     print(list(feature_dict.keys())[0])
     print(list(label_dict.keys())[0])
 
-    # todo: sort eeg dict?!
-    #eeg_dict = collections.OrderedDict(sorted(eeg_dict.items()))
-
 
     """
     for s, label in list(label_dict.items()):
@@ -49,9 +47,12 @@ def main():
     print(len(eeg_dict))
     """
 
+    #print("Reading EEG features from file!!")
+    #eeg_dict = json.load(open("feature_extraction/features/eeg_feats_file_" + config.class_task + ".json"))
+
 
     # average EEG features over all subjects
-
+    """
     eeg_X = []
     for s, f in eeg_dict.items():
         sent_feats = []
@@ -63,14 +64,34 @@ def main():
         eeg_X.append(sent_feats)
 
     print(len(eeg_X))
+    """
 
+    # todo: save eeg feats as json
+    # average EEG features over all subjects
+    eeg_dict_avg = {}
+    for s, f in eeg_dict.items():
+        sent_feats = []
+        for w, fts in f.items():
+            subj_mean_word_feats = np.nanmean(fts, axis=0)
+            sent_feats.append(subj_mean_word_feats)
+        eeg_dict_avg[s] = sent_feats
+    print(len(eeg_dict_avg))
+    with open('eeg_feats_file_'+config.class_task+'.json', 'w') as fp:
+       json.dump(eeg_dict_avg, fp)
+    print("saved.")
+    print(list(eeg_dict.keys())[0])
+
+    print(len(eeg_dict_avg))
 
     # save eeg feats
-    f = open('eeg_gamma_feats_tri-test-order.py', 'w')
-    print(eeg_X, file=f)
+    #f = open('eeg_gamma_feats_tri-test-order.py', 'w')
+    #print(eeg_X, file=f)
 
     feature_dict = collections.OrderedDict(sorted(feature_dict.items()))
     label_dict = collections.OrderedDict(sorted(label_dict.items()))
+    # todo: sort eeg dict?!
+    eeg_dict = collections.OrderedDict(sorted(eeg_dict.items()))
+
     print(len(feature_dict.keys()), len(label_dict))
 
     if len(feature_dict) != len(label_dict) != len(eeg_dict):
