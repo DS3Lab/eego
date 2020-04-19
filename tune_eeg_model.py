@@ -73,6 +73,8 @@ def main():
         sent_feats = []
         for w, fts in f.items():
             subj_mean_word_feats = np.nanmean(fts, axis=0)
+            print(type(subj_mean_word_feats))
+            subj_mean_word_feats = list(subj_mean_word_feats)
             sent_feats.append(subj_mean_word_feats)
         eeg_dict_avg[s] = sent_feats
     print(len(eeg_dict_avg))
