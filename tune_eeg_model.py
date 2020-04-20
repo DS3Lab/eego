@@ -36,17 +36,6 @@ def main():
     print(list(label_dict.keys())[0])
 
 
-    # drop neutral labels for binary sentiment
-    for s, label in list(label_dict.items()):
-        # drop neutral sentences for binary sentiment classification
-        if label == 2:
-            del label_dict[s]
-            del feature_dict[s]
-            del eeg_dict[s]
-
-    print(len(eeg_dict))
-
-
     #print("Reading EEG features from file!!")
     #eeg_dict = json.load(open("feature_extraction/features/eeg_feats_file_" + config.class_task + ".json"))
 
