@@ -36,7 +36,7 @@ def main():
     print(list(label_dict.keys())[0])
 
 
-    """
+    # drop neutral labels for binary sentiment
     for s, label in list(label_dict.items()):
         # drop neutral sentences for binary sentiment classification
         if label == 2:
@@ -45,7 +45,7 @@ def main():
             del eeg_dict[s]
 
     print(len(eeg_dict))
-    """
+
 
     #print("Reading EEG features from file!!")
     #eeg_dict = json.load(open("feature_extraction/features/eeg_feats_file_" + config.class_task + ".json"))
@@ -73,7 +73,6 @@ def main():
         sent_feats = []
         for w, fts in f.items():
             subj_mean_word_feats = np.nanmean(fts, axis=0)
-            print(type(subj_mean_word_feats))
             subj_mean_word_feats = list(subj_mean_word_feats)
             sent_feats.append(subj_mean_word_feats)
         eeg_dict_avg[s] = sent_feats
