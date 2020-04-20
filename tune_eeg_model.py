@@ -79,8 +79,11 @@ def main():
 
     feature_dict = collections.OrderedDict(sorted(feature_dict.items()))
     label_dict = collections.OrderedDict(sorted(label_dict.items()))
-    # todo: sort eeg dict?!
-    eeg_dict = collections.OrderedDict(sorted(eeg_dict.items()))
+    eeg_dict = collections.OrderedDict(sorted(eeg_dict_avg.items()))
+
+    print(list(eeg_dict.keys())[0])
+    print(list(feature_dict.keys())[0])
+    print(list(label_dict.keys())[0])
 
     print(len(feature_dict.keys()), len(label_dict))
 
