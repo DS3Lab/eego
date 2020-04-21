@@ -40,12 +40,12 @@ def extract_word_raw_eeg(sentence_data, eeg_dict):
                                 word_eeg.append(fix)
                         word_eeg = np.nanmean(word_eeg, axis=0)
                         if word_eeg.shape == (105,):
-                            sent_features[widx] = word_eeg
+                            sent_features[widx] = list(word_eeg)
 
                     if widx not in sent_features:
                         nan_array = np.empty((105,))
                         nan_array[:] = np.NaN
-                        sent_features[widx] = nan_array
+                        sent_features[widx] = list(nan_array)
 
             except ValueError:
                 print("NO sentence data available!")
