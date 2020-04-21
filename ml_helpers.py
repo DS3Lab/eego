@@ -168,7 +168,7 @@ def scale_feature_values(X):
     for sentence in X:
         for token in sentence:
             token[feat] = normalized[i]
-            print("token feature: ", len(token(feat)))
+            print("token feature: ", len(token[feat]))
             i += 1
     print(i)
     print(".......")
