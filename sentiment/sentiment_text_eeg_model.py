@@ -94,21 +94,6 @@ def lstm_classifier(features, labels, eeg, embedding_type, param_dict, random_se
     max_len = 0
     eeg_X = []
 
-    """
-    # average EEG features over all subjects
-    eeg_dict_avg = {}
-    for s, f in eeg_dict.items():
-        sent_feats = []
-        for w, fts in f.items():
-            subj_mean_word_feats = np.nanmean(fts, axis=0)
-            subj_mean_word_feats = list(subj_mean_word_feats)
-            subj_mean_word_feats = [float(s) for s in subj_mean_word_feats]
-            # print(subj_mean_word_feats)
-            sent_feats.append(subj_mean_word_feats)
-        eeg_dict_avg[s] = sent_feats
-    print(len(eeg_dict_avg))
-    """
-
     # average gaze features over all subjects
     for s in eeg.values():
         sent_feats = []
@@ -120,30 +105,16 @@ def lstm_classifier(features, labels, eeg, embedding_type, param_dict, random_se
         eeg_X.append(sent_feats)
     print(len(eeg_X))
 
-    #for s, f in eeg.items():
-     #   max_len = len(f) if len(f) > max_len else max_len
-    #print(max_len)
-
     # scale features
     eeg_X = ml_helpers.scale_feature_values(eeg_X)
-    print(len(eeg_X[0][0]))
-    print(eeg_X[0][0])
-    print("-------------")
 
     # pad EEG sequences
     for idx, s in enumerate(eeg_X):
-        #print(len(s))
-        #print(s[0])
         while len(s) < max_len:
             s.append(np.zeros(105))
 
-    print(len(eeg_X[0][0]))
-    print(eeg_X[0][0])
-    print("-------------")
-
     X_data_eeg = np.array(eeg_X)
     print(X_data_eeg.shape)
-    #print(X_data_eeg[0])
 
     # split data into train/test
     kf = KFold(n_splits=config.folds, random_state=random_seed_value, shuffle=True)

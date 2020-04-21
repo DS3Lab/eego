@@ -103,11 +103,13 @@ def extract_word_band_eeg(sentence_data, eeg_dict):
                         word_t2 = word_data[widx]["TRT_"+band2]
                         word_t = (word_t1 + word_t2) / 2
                         word_t = word_t.reshape(word_t.shape[0],)
+                        word_t = [float(n) for n in word_t]
                         sent_features[widx] = word_t
 
                     else:
                         nan_array = np.empty((105,))
                         nan_array[:] = np.NaN
+                        nan_array = [float(n) for n in nan_array]
                         sent_features[widx] = nan_array
 
             except ValueError:

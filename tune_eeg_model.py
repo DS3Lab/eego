@@ -31,19 +31,19 @@ def main():
 
     print(len(feature_dict), len(label_dict), len(eeg_dict))
 
-    print("Reading EEG features from file!!")
-    eeg_dict = json.load(open("feature_extraction/features/"+config.feature_set[0] + "_feats_file_" + config.class_task + ".json"))
-    print("done")
+    #print("Reading EEG features from file!!")
+    #eeg_dict = json.load(open("feature_extraction/features/"+config.feature_set[0] + "_feats_file_" + config.class_task + ".json"))
+    #print("done")
     print(len(eeg_dict))
 
 
 
     # save EEG features
-    """
+
     with open(config.feature_set[0] + '_feats_file_'+config.class_task+'.json', 'w') as fp:
        json.dump(eeg_dict, fp)
     print("saved.")
-    """
+
 
 
 
