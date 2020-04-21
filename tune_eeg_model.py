@@ -34,7 +34,6 @@ def main():
     #print("Reading EEG features from file!!")
     #eeg_dict = json.load(open("feature_extraction/features/'+config.feature_set[0] +'_feats_file_" + config.class_task + ".json"))
 
-
     # todo: save eeg feats as json
     # average EEG features over all subjects
     eeg_dict_avg = {}
@@ -97,7 +96,7 @@ def main():
                                                                                                    label_dict, eeg_dict,
                                                                                                    emb, parameter_dict,
                                                                                                    rand)
-                                            elif 'eeg_word_raw' in config.feature_set:
+                                            elif 'eeg_raw' in config.feature_set:
                                                 fold_results = sentiment_eeg_model.lstm_classifier(label_dict,
                                                                                                      eeg_dict,
                                                                                                      emb,
@@ -123,14 +122,14 @@ def main():
                                                                                                    label_dict, eeg_dict,
                                                                                                    emb, parameter_dict,
                                                                                                    rand)
-                                            elif 'eeg_word_raw' in config.feature_set:
+                                            elif 'eeg_raw' in config.feature_set:
                                                 fold_results = sentiment_eeg_model.lstm_classifier(label_dict,
                                                                                                         eeg_dict,
                                                                                                         emb,
                                                                                                         parameter_dict,
                                                                                                         rand)
 
-                                            elif 'combi_eeg_word_raw' in config.feature_set:
+                                            elif 'combi_eeg_raw' in config.feature_set:
                                                 fold_results = sentiment_text_eeg_model.lstm_classifier(feature_dict, label_dict,
                                                                                                         eeg_dict,
                                                                                                         emb,
