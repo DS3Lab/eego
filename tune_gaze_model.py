@@ -3,7 +3,7 @@ from feature_extraction import zuco_reader
 from sentiment import sentiment_gaze_model, sentiment_text_gaze_model
 from data_helpers import save_results, load_matlab_files
 from ner import ner_text_gaze_model
-from reldetect import reldetect_text_gaze_model
+from reldetect import reldetect_text_gaze_model, reldetect_gaze_model
 import json
 import collections
 
@@ -64,7 +64,16 @@ def main():
                                                     fold_results = reldetect_text_gaze_model.lstm_classifier(feature_dict, label_dict, gaze_dict,
                                                                                                emb, parameter_dict,
                                                                                                rand, threshold)
+
+                                                elif 'eye_tracking' in config.feature_set:
+                                                    fold_results = reldetect_gaze_model.lstm_classifier(label_dict,
+                                                                                                        gaze_dict,
+                                                                                                        emb,
+                                                                                                        parameter_dict,
+                                                                                                        rand, threshold)
+
                                                 save_results(fold_results, config.class_task)
+
 
                                         elif config.class_task == 'ner':
                                             if 'combi_eye_tracking' in config.feature_set:
