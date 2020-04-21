@@ -14,6 +14,7 @@ import config
 import time
 from datetime import timedelta
 import tensorflow as tf
+import sys
 
 os.environ['KERAS_BACKEND'] = 'tensorflow'
 
@@ -29,6 +30,12 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
     os.environ['PYTHONHASHSEED'] = str(random_seed_value)
 
     start = time.time()
+
+    # check order of sentences in labels and features dicts
+    sents_y = list(labels.keys())
+    sents_feats = list(features.keys())
+    if sents_y[0] != sents_feats[0]:
+        sys.exit("STOP! Order of sentences in labels and features dicts not the same!")
 
     X = list(features.keys())
     y = list(labels.values())
@@ -167,6 +174,11 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
         print(p, r, f)
         print(sklearn.metrics.classification_report(rounded_labels, rounded_predictions))
         print(sklearn.metrics.classification_report(rounded_labels, rounded_predictions, output_dict=True))
+
+        # todo: add conf matrix
+        conf_matrix = sklearn.metrics.confusion_matrix(rounded_labels, rounded_predictions) # todo: add labels
+        print(conf_matrix)
+        ml_helpers.plot_confusion_matrix(conf_matrix)
 
         if fold == 0:
             fold_results['train-loss'] = [history.history['loss']]

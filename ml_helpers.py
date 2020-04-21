@@ -165,3 +165,17 @@ def scale_feature_values(X):
             i += 1
 
     return X
+
+
+def plot_confusion_matrix(cm):
+    import matplotlib.pyplot as plt
+    from mlxtend.plotting import plot_confusion_matrix
+
+    fig, ax = plot_confusion_matrix(conf_mat=cm, colorbar=True,
+                                    show_absolute=True,
+                                    show_normed=True)
+    #ax.set_xticklabels([''] + target_names)
+    #ax.set_yticklabels([''] + target_names)
+    plt.title("Confusion matrix: " + config.class_task + ", " + config.feature_set)
+    plt.savefig("CM_test.pdf")
+    # plt.show()
