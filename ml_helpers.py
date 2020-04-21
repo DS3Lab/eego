@@ -150,8 +150,12 @@ def scale_feature_values(X):
             for token in sentence:
                 feat_values.append(token[feat])
 
+    print(len(feat_values))
+    print(np.array(feat_values).shape)
+
     # train the normalization
     feat_values = np.array(feat_values).reshape(-1, 1)
+    print(feat_values.shape)
     scaler = scaler.fit(feat_values)
     print('Min: %f, Max: %f' % (scaler.data_min_, scaler.data_max_))
     # normalize the dataset and print
