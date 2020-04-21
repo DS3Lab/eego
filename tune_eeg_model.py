@@ -35,7 +35,7 @@ def main():
     #eeg_dict = json.load(open("feature_extraction/features/"+config.feature_set[0] + "_feats_file_" + config.class_task + ".json"))
     #print("done")
     #print(len(eeg_dict))
-
+    # ...
 
     # average EEG features over all subjects
     eeg_dict_avg = {}
