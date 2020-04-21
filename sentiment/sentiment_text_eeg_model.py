@@ -92,11 +92,7 @@ def lstm_classifier(features, labels, eeg, embedding_type, param_dict, random_se
     print('Processing EEG data...')
     # load saved features
     max_len = 0
-    eeg_X = list(eeg.values())
-    print(len(eeg_X[0][0]))
-    print(eeg_X[0][0])
-    print("-------------")
-    print(len(eeg_X))
+    eeg_X = []
 
     """
     # average EEG features over all subjects
@@ -112,9 +108,21 @@ def lstm_classifier(features, labels, eeg, embedding_type, param_dict, random_se
         eeg_dict_avg[s] = sent_feats
     print(len(eeg_dict_avg))
     """
-    for s, f in eeg.items():
-        max_len = len(f) if len(f) > max_len else max_len
-    print(max_len)
+
+    # average gaze features over all subjects
+    for s in eeg.values():
+        sent_feats = []
+        max_len = len(s) if len(s) > max_len else max_len
+        for w, fts in s.items():
+            subj_mean_word_feats = np.nanmean(fts, axis=0)
+            subj_mean_word_feats[np.isnan(subj_mean_word_feats)] = 0.0
+            sent_feats.append(subj_mean_word_feats)
+        eeg_X.append(sent_feats)
+    print(len(eeg_X))
+
+    #for s, f in eeg.items():
+     #   max_len = len(f) if len(f) > max_len else max_len
+    #print(max_len)
 
     # scale features
     eeg_X = ml_helpers.scale_feature_values(eeg_X)
