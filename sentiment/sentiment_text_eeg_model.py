@@ -104,6 +104,7 @@ def lstm_classifier(features, labels, eeg, embedding_type, param_dict, random_se
     # pad EEG sequences
     for idx, s in enumerate(eeg_X):
         print(len(s))
+        print(s)
         eeg_X[idx] = [np.float(elec) for elec in s]
         while len(eeg_X[idx]) < max_len:
             eeg_X[idx].append(np.zeros(105))
