@@ -92,6 +92,8 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
 
     fold = 0
     fold_results = {}
+    all_labels = []
+    all_predictions = []
 
     for train_index, test_index in kf.split(X_data_text):
 
@@ -175,10 +177,8 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
         print(sklearn.metrics.classification_report(rounded_labels, rounded_predictions))
         print(sklearn.metrics.classification_report(rounded_labels, rounded_predictions, output_dict=True))
 
-        # todo: add conf matrix
-        conf_matrix = sklearn.metrics.confusion_matrix(rounded_labels, rounded_predictions) # todo: add labels
-        print(conf_matrix)
-        ml_helpers.plot_confusion_matrix(conf_matrix)
+        all_labels.append(rounded_labels)
+        all_predictions.append(rounded_predictions)
 
         if fold == 0:
             fold_results['train-loss'] = [history.history['loss']]
@@ -206,5 +206,9 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
     elapsed = (time.time() - start)
     print("Training time (all folds):", str(timedelta(seconds=elapsed)))
     fold_results['training_time'] = elapsed
+
+    conf_matrix = sklearn.metrics.confusion_matrix(rounded_labels, rounded_predictions)  # todo: add labels
+    print(conf_matrix)
+    ml_helpers.plot_confusion_matrix(conf_matrix)
 
     return fold_results
