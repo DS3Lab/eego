@@ -15,8 +15,8 @@ import config
 import time
 from datetime import timedelta
 import tensorflow as tf
-import sys
-from feature_extraction.features import eeg_feats_tri as EEGfeatures
+#import sys
+#from feature_extraction.features import eeg_feats_tri as EEGfeatures
 
 os.environ['KERAS_BACKEND'] = 'tensorflow'
 
@@ -92,14 +92,14 @@ def lstm_classifier(features, labels, eeg, embedding_type, param_dict, random_se
     print('Processing EEG data...')
     # load saved features
     max_len = 0
-    eeg_X = EEGfeatures.eeg_X
-    print(len(eeg_X))
-    for f in eeg_X:
+    #eeg_X = eeg
+    print(len(eeg))
+    for s, f in eeg.items():
         max_len = len(f) if len(f) > max_len else max_len
     print(max_len)
 
     # scale features
-    eeg_X = ml_helpers.scale_feature_values(eeg_X)
+    eeg_X = ml_helpers.scale_feature_values(list(eeg.values()))
 
     # pad EEG sequences
     for s in eeg_X:
