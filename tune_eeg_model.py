@@ -1,6 +1,6 @@
 import config
 from feature_extraction import zuco_reader
-from reldetect import reldetect_text_model
+from reldetect import reldetect_eeg_model, reldetect_text_eeg_model
 from ner import ner_text_model
 from sentiment import sentiment_eeg_model, sentiment_text_eeg_model
 from data_helpers import save_results, load_matlab_files
@@ -82,9 +82,16 @@ def main():
 
                                         if config.class_task == 'reldetect':
                                             for threshold in config.rel_thresholds:
-                                                fold_results = reldetect_text_model.lstm_classifier(feature_dict, label_dict,
+                                                if 'eeg_raw' in config.feature_set:
+                                                    fold_results = reldetect_eeg_model.lstm_classifier(label_dict, eeg_dict,
                                                                                                emb, parameter_dict,
                                                                                                rand, threshold)
+                                                elif 'combi_eeg_raw' in config.feature_set:
+                                                    fold_results = sentiment_text_eeg_model.lstm_classifier(feature_dict, label_dict,
+                                                                                                        eeg_dict,
+                                                                                                        emb,
+                                                                                                        parameter_dict,
+                                                                                                        rand)
                                                 save_results(fold_results, config.class_task)
 
                                         elif config.class_task == 'ner':
@@ -105,7 +112,7 @@ def main():
                                                                                                      emb,
                                                                                                      parameter_dict,
                                                                                                      rand)
-                                            elif 'combi_eeg_word_raw' in config.feature_set:
+                                            elif 'combi_eeg_raw' in config.feature_set:
                                                 fold_results = sentiment_text_eeg_model.lstm_classifier(feature_dict, label_dict,
                                                                                                         eeg_dict,
                                                                                                         emb,
