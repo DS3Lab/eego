@@ -103,8 +103,8 @@ def lstm_classifier(features, labels, eeg, embedding_type, param_dict, random_se
 
     # scale features
     eeg_X = ml_helpers.scale_feature_values(eeg_X)
+    print(len(eeg_X[0][0]))
     print(eeg_X[0][0])
-    print(eeg_X[0][1])
     print("-------------")
 
     # pad EEG sequences

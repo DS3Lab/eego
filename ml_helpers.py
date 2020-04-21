@@ -157,6 +157,7 @@ def scale_feature_values(X):
     # normalize the dataset and print
     normalized = scaler.transform(feat_values)
     print(normalized)
+    print(len(normalized))
 
     # add normalized values back to feature list
     i = 0
@@ -164,6 +165,8 @@ def scale_feature_values(X):
         for token in sentence:
             token[feat] = normalized[i]
             i += 1
+    print(i)
+    print(".......")
 
     return X
 
