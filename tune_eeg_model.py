@@ -31,11 +31,12 @@ def main():
 
     print(len(feature_dict), len(label_dict), len(eeg_dict))
 
-    #print("Reading EEG features from file!!")
-    #eeg_dict = json.load(open("feature_extraction/features/"+config.feature_set[0] + "_feats_file_" + config.class_task + ".json"))
-    #print("done")
+    print("Reading EEG features from file!!")
+    eeg_dict = json.load(open("feature_extraction/features/"+config.feature_set[0] + "_feats_file_" + config.class_task + ".json"))
+    print("done")
+    print(len(eeg_dict))
 
-    # todo: save eeg feats as json
+    """
     # average EEG features over all subjects
     eeg_dict_avg = {}
     for s, f in eeg_dict.items():
@@ -53,10 +54,11 @@ def main():
     with open(config.feature_set[0] + '_feats_file_'+config.class_task+'.json', 'w') as fp:
        json.dump(eeg_dict_avg, fp)
     print("saved.")
+    """
 
     feature_dict = collections.OrderedDict(sorted(feature_dict.items()))
     label_dict = collections.OrderedDict(sorted(label_dict.items()))
-    eeg_dict = collections.OrderedDict(sorted(eeg_dict_avg.items()))
+    eeg_dict = collections.OrderedDict(sorted(eeg_dict.items()))
 
     print(list(eeg_dict.keys())[0])
     print(list(feature_dict.keys())[0])
