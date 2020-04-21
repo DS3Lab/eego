@@ -78,6 +78,7 @@ def extract_word_band_eeg(sentence_data, eeg_dict):
         rawData = s_data['rawData']
         contentData = s_data['content']
         wordData = s_data['word']
+        band1, band2 = get_freq_band_data()
 
         for idx in range(len(rawData)):
 
@@ -96,8 +97,8 @@ def extract_word_band_eeg(sentence_data, eeg_dict):
                     if word_data[widx]["RAW_EEG"]:
 
                         # t, a, b, or g
-                        word_t1 = word_data[widx]["TRT_g1"]
-                        word_t2 = word_data[widx]["TRT_g2"]
+                        word_t1 = word_data[widx]["TRT_"+band1]
+                        word_t2 = word_data[widx]["TRT_"+band2]
                         word_t = (word_t1 + word_t2) / 2
                         word_t = word_t.reshape(word_t.shape[0],)
                         sent_features[widx] = word_t
@@ -160,21 +161,21 @@ def extract_sent_raw_eeg(sentence_data, eeg_dict):
 
 def get_freq_band_data():
 
-    if 'eeg_theta' in config.feature_set:
-        band1 = 'mean_t1'
-        band2 = 'mean_t2'
+    if 'eeg_theta' in config.feature_set or 'sent_eeg_theta' in config.feature_set:
+        band1 = 't1'
+        band2 = 't2'
 
-    if 'eeg_alpha' in config.feature_set:
-        band1 = 'mean_a1'
-        band2 = 'mean_a2'
+    if 'eeg_alpha' in config.feature_set or 'sent_eeg_alpha' in config.feature_set:
+        band1 = 'a1'
+        band2 = 'a2'
 
-    if 'eeg_beta' in config.feature_set:
-        band1 = 'mean_b1'
-        band2 = 'mean_b2'
+    if 'eeg_beta' in config.feature_set or 'sent_eeg_beta' in config.feature_set:
+        band1 = 'b1'
+        band2 = 'b2'
 
-    if 'eeg_gamma' in config.feature_set:
-        band1 = 'mean_g1'
-        band2 = 'mean_g2'
+    if 'eeg_gamma' in config.feature_set or 'sent_eeg_gamma' in config.feature_set:
+        band1 = 'g1'
+        band2 = 'g2'
 
     return band1, band2
 
@@ -190,8 +191,8 @@ def extract_sent_freq_eeg(sentence_data, eeg_dict):
 
         band1, band2 = get_freq_band_data()
 
-        meanB1data = s_data[band1]
-        meanB2data = s_data[band2]
+        meanB1data = s_data['mean_'+band1]
+        meanB2data = s_data['mean_'+band2]
         contentData = s_data['content']
 
         for idx in range(len(meanB1data)):
