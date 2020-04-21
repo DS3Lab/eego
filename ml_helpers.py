@@ -156,6 +156,7 @@ def scale_feature_values(X):
     print('Min: %f, Max: %f' % (scaler.data_min_, scaler.data_max_))
     # normalize the dataset and print
     normalized = scaler.transform(feat_values)
+    print(normalized)
 
     # add normalized values back to feature list
     i = 0

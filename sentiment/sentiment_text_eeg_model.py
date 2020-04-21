@@ -94,6 +94,7 @@ def lstm_classifier(features, labels, eeg, embedding_type, param_dict, random_se
     max_len = 0
     eeg_X = list(eeg.values())
     print(eeg_X[0][0])
+    print(eeg_X[0][1])
     print("-------------")
     print(len(eeg_X))
     for s, f in eeg.items():
@@ -103,6 +104,7 @@ def lstm_classifier(features, labels, eeg, embedding_type, param_dict, random_se
     # scale features
     eeg_X = ml_helpers.scale_feature_values(eeg_X)
     print(eeg_X[0][0])
+    print(eeg_X[0][1])
     print("-------------")
 
     # pad EEG sequences
@@ -113,6 +115,7 @@ def lstm_classifier(features, labels, eeg, embedding_type, param_dict, random_se
             s.append(np.zeros(105))
 
     print(eeg_X[0][0])
+    print(eeg_X[0][1])
     print("-------------")
 
     X_data_eeg = np.array(eeg_X)
