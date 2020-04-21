@@ -176,6 +176,6 @@ def plot_confusion_matrix(cm):
                                     show_normed=True)
     #ax.set_xticklabels([''] + target_names)
     #ax.set_yticklabels([''] + target_names)
-    plt.title("Confusion matrix: " + config.class_task + ", " + config.feature_set)
+    plt.title("Confusion matrix: " + config.class_task + ", " + config.feature_set[0])
     plt.savefig("CM_test.pdf")
     # plt.show()

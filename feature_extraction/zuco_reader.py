@@ -37,6 +37,7 @@ def extract_labels(feature_dict, label_dict, task, subject):
 
         count = 0
         label_names = {'0': 2, '1': 1, '-1': 0}
+        # (-1, negative) = 0,  (0, neutral) = 2, (1, positive) = 1
         i = 0
 
         if subject.startswith('Z'):  # subjects from ZuCo 1
