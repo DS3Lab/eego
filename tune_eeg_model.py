@@ -31,9 +31,9 @@ def main():
 
     print(len(feature_dict), len(label_dict), len(eeg_dict))
 
-    print(list(eeg_dict.keys())[0])
-    print(list(feature_dict.keys())[0])
-    print(list(label_dict.keys())[0])
+    #print(list(eeg_dict.keys())[0])
+    #print(list(feature_dict.keys())[0])
+    #print(list(label_dict.keys())[0])
 
 
     print("Reading EEG features from file!!")
@@ -66,7 +66,7 @@ def main():
             sent_feats.append(subj_mean_word_feats)
         eeg_dict_avg[s] = sent_feats
     print(len(eeg_dict_avg))
-    with open('eeg_feats_file_'+config.class_task+'.json', 'w') as fp:
+    with open(config.feature_set + '_feats_file_'+config.class_task+'.json', 'w') as fp:
        json.dump(eeg_dict_avg, fp)
     print("saved.")
     print(list(eeg_dict.keys())[0])
@@ -141,7 +141,7 @@ def main():
                                                 if label == 2:
                                                     del label_dict[s]
                                                     del feature_dict[s]
-                                                    #del eeg_dict[s]
+                                                    del eeg_dict[s]
                                             if 'combi_concat' in config.feature_set:
                                                 print("Starting EEG + text combi model")
                                                 fold_results = sentiment_text_eeg_model.lstm_classifier(feature_dict,
