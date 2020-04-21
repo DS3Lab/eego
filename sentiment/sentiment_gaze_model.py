@@ -48,7 +48,9 @@ def lstm_classifier(labels, gaze, embedding_type, param_dict, random_seed_value)
     gaze_X = []
     max_len = 0
 
-
+    # save gaze feats
+    #gaze_feats_file = open('gaze_feats_file.json', 'w')
+    #json.dump(gaze, gaze_feats_file)
 
     # average gaze features over all subjects
     for s in gaze.values():
@@ -61,25 +63,13 @@ def lstm_classifier(labels, gaze, embedding_type, param_dict, random_seed_value)
         gaze_X.append(sent_feats)
     print(len(gaze_X))
 
-    print(len(gaze_X[0][0]))
-    print(gaze_X[0][0])
-    print("-------------")
-
     # scale feature values
     gaze_X = ml_helpers.scale_feature_values(gaze_X)
-
-    print(len(gaze_X[0][0]))
-    print(gaze_X[0][0])
-    print("-------------")
 
     # pad gaze sequences
     for s in gaze_X:
         while len(s) < max_len:
             s.append(np.zeros(5))
-
-    print(len(gaze_X[0][0]))
-    print(gaze_X[0][0])
-    print("-------------")
 
     X_data = np.array(gaze_X)
     print(X_data.shape)

@@ -93,10 +93,25 @@ def lstm_classifier(features, labels, eeg, embedding_type, param_dict, random_se
     # load saved features
     max_len = 0
     eeg_X = list(eeg.values())
+    print(len(eeg_X[0][0]))
     print(eeg_X[0][0])
-    print(eeg_X[0][1])
     print("-------------")
     print(len(eeg_X))
+
+    """
+    # average EEG features over all subjects
+    eeg_dict_avg = {}
+    for s, f in eeg_dict.items():
+        sent_feats = []
+        for w, fts in f.items():
+            subj_mean_word_feats = np.nanmean(fts, axis=0)
+            subj_mean_word_feats = list(subj_mean_word_feats)
+            subj_mean_word_feats = [float(s) for s in subj_mean_word_feats]
+            # print(subj_mean_word_feats)
+            sent_feats.append(subj_mean_word_feats)
+        eeg_dict_avg[s] = sent_feats
+    print(len(eeg_dict_avg))
+    """
     for s, f in eeg.items():
         max_len = len(f) if len(f) > max_len else max_len
     print(max_len)
@@ -114,8 +129,8 @@ def lstm_classifier(features, labels, eeg, embedding_type, param_dict, random_se
         while len(s) < max_len:
             s.append(np.zeros(105))
 
+    print(len(eeg_X[0][0]))
     print(eeg_X[0][0])
-    print(eeg_X[0][1])
     print("-------------")
 
     X_data_eeg = np.array(eeg_X)
