@@ -92,14 +92,14 @@ def lstm_classifier(features, labels, eeg, embedding_type, param_dict, random_se
     print('Processing EEG data...')
     # load saved features
     max_len = 0
-    #eeg_X = eeg
-    print(len(eeg))
+    eeg_X = list(eeg.values())
+    print(len(eeg_X))
     for s, f in eeg.items():
         max_len = len(f) if len(f) > max_len else max_len
     print(max_len)
 
     # scale features
-    eeg_X = ml_helpers.scale_feature_values(list(eeg.values()))
+    eeg_X = ml_helpers.scale_feature_values(eeg_X)
 
     # pad EEG sequences
     for s in eeg_X:
@@ -109,6 +109,7 @@ def lstm_classifier(features, labels, eeg, embedding_type, param_dict, random_se
 
     X_data_eeg = np.array(eeg_X)
     print(X_data_eeg.shape)
+    print(X_data_eeg[0])
 
     # split data into train/test
     kf = KFold(n_splits=config.folds, random_state=random_seed_value, shuffle=True)
