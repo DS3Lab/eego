@@ -94,9 +94,6 @@ def lstm_classifier(features, labels, eeg, embedding_type, param_dict, random_se
     max_len = 0
     eeg_X = []
 
-    print(eeg_X[0][0])
-    print(len(eeg_X[0][0]))
-    print("--------")
 
     # average gaze features over all subjects
     for s in eeg.values():
