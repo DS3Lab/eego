@@ -94,6 +94,10 @@ def lstm_classifier(features, labels, eeg, embedding_type, param_dict, random_se
     max_len = 0
     eeg_X = []
 
+    print(eeg_X[0][0])
+    print(len(eeg_X[0][0]))
+    print("--------")
+
     # average gaze features over all subjects
     for s in eeg.values():
         sent_feats = []
@@ -105,8 +109,16 @@ def lstm_classifier(features, labels, eeg, embedding_type, param_dict, random_se
         eeg_X.append(sent_feats)
     print(len(eeg_X))
 
+    print(eeg_X[0][0])
+    print(len(eeg_X[0][0]))
+    print("--------")
+
     # scale features
     eeg_X = ml_helpers.scale_feature_values(eeg_X)
+
+    print(eeg_X[0][0])
+    print(len(eeg_X[0][0]))
+    print("--------")
 
     # pad EEG sequences
     for idx, s in enumerate(eeg_X):
