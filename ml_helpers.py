@@ -44,7 +44,7 @@ def plot_prediction_distribution(true, pred):
     else:
         plt.hist(true, bins=len(set(true)), color='green', alpha=0.5)
         plt.hist(pred, bins=len(set(pred)), color='blue', alpha=0.5)
-        plt.xticks(rotation=90, fontsize=7)
+        #plt.xticks(rotation=90, fontsize=7)
         plt.savefig('pred-label-distribution-' + config.class_task + '.png')
         plt.tight_layout()
         plt.clf()
