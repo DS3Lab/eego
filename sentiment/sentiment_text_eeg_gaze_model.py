@@ -243,7 +243,7 @@ def lstm_classifier(features, labels, eeg, gaze, embedding_type, param_dict, ran
         gaze_model = Dropout(dropout)(gaze_model)
         # # todo: also train this dense latent dim?
         gaze_model = Dense(16, activation="relu")(gaze_model)
-        gaze_model_model = Model(inputs=input_eeg, outputs=gaze_model)
+        gaze_model_model = Model(inputs=input_gaze, outputs=gaze_model)
 
         gaze_model_model.summary()
 
