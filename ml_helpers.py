@@ -227,4 +227,5 @@ def plot_confusion_matrix(cm):
     #ax.set_yticklabels([''] + target_names)
     plt.title("Confusion matrix: " + config.class_task + ", " + config.feature_set[0])
     plt.savefig("CM_" + config.class_task + "_" + config.feature_set[0] + ".pdf")
+    plt.clf()
     # plt.show()
