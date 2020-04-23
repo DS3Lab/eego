@@ -34,6 +34,9 @@ def lstm_classifier(features, labels, eeg, embedding_type, param_dict, random_se
     X_text = list(features.keys())
     y = list(labels.values())
 
+    # plot sample distribution
+    # ml_helpers.plot_label_distribution(y)
+
     # check order of sentences in labels and features dicts
     """
     sents_y = list(labels.keys())
@@ -94,7 +97,6 @@ def lstm_classifier(features, labels, eeg, embedding_type, param_dict, random_se
     max_len = 0
     eeg_X = []
 
-
     # average gaze features over all subjects
     for s in eeg.values():
         sent_feats = []
@@ -106,16 +108,8 @@ def lstm_classifier(features, labels, eeg, embedding_type, param_dict, random_se
         eeg_X.append(sent_feats)
     print(len(eeg_X))
 
-    print(eeg_X[0][0])
-    print(len(eeg_X[0][0]))
-    print("--------")
-
     # scale features
     eeg_X = ml_helpers.scale_feature_values(eeg_X)
-
-    print(eeg_X[0][0])
-    print(len(eeg_X[0][0]))
-    print("--------")
 
     # pad EEG sequences
     for idx, s in enumerate(eeg_X):
@@ -277,5 +271,6 @@ def lstm_classifier(features, labels, eeg, embedding_type, param_dict, random_se
     conf_matrix = sklearn.metrics.confusion_matrix(all_labels, all_predictions)  # todo: add labels
     print(conf_matrix)
     ml_helpers.plot_confusion_matrix(conf_matrix)
+    ml_helpers.plot_prediction_distribution(all_labels, all_predictions)
 
     return fold_results
