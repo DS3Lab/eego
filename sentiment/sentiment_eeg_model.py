@@ -12,7 +12,7 @@ import sklearn.metrics
 from sklearn.model_selection import KFold
 import config
 import ml_helpers
-from feature_extraction.features import eeg_feats_tri as EEGfeatures
+#from feature_extraction.features import eeg_feats_tri as EEGfeatures
 
 os.environ['KERAS_BACKEND'] = 'tensorflow'
 
@@ -68,27 +68,33 @@ def lstm_classifier(labels, eeg, embedding_type, param_dict, random_seed_value):
         eeg_X.append(sent_feats)
     """
 
+    # prepare EEG data
+    print('Processing EEG data...')
     # load saved features
     max_len = 0
-    eeg_X = EEGfeatures.eeg_X
+    eeg_X = []
+
+    # average gaze features over all subjects
+    for s in eeg.values():
+        sent_feats = []
+        max_len = len(s) if len(s) > max_len else max_len
+        for w, fts in s.items():
+            subj_mean_word_feats = np.nanmean(fts, axis=0)
+            subj_mean_word_feats[np.isnan(subj_mean_word_feats)] = 0.0
+            sent_feats.append(subj_mean_word_feats)
+        eeg_X.append(sent_feats)
     print(len(eeg_X))
-    for f in eeg_X:
-        max_len = len(f) if len(f) > max_len else max_len
-    print(max_len)
 
     # scale features
     eeg_X = ml_helpers.scale_feature_values(eeg_X)
 
     # pad EEG sequences
-    for s in eeg_X:
-        #print(len(s))
+    for idx, s in enumerate(eeg_X):
         while len(s) < max_len:
             s.append(np.zeros(105))
 
     X_data_eeg = np.array(eeg_X)
     print(X_data_eeg.shape)
-
-    X_data = X_data_eeg
 
     # split data into train/test
     kf = KFold(n_splits=config.folds, random_state=random_seed_value, shuffle=True)
