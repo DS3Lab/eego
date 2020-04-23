@@ -8,7 +8,7 @@ from transformers import TFBertModel
 from sklearn.preprocessing import MinMaxScaler
 
 
-def plot_prediction_distribution(y):
+def plot_prediction_distribution(true, pred):
     """Analyze label distribution of dataset"""
 
     if config.class_task == "reldetect":
@@ -42,7 +42,8 @@ def plot_prediction_distribution(y):
         plt.clf()
 
     else:
-        plt.hist(y, bins=len(set(y)), alpha=0.5)
+        plt.hist(true, bins=len(set(true)), color='green', alpha=0.5)
+        plt.hist(pred, bins=len(set(pred)), color='blue', alpha=0.5)
         plt.xticks(rotation=90, fontsize=7)
         plt.savefig('pred-label-distribution-' + config.class_task + '.png')
         plt.tight_layout()
@@ -190,18 +191,12 @@ def scale_feature_values(X):
             for token in sentence:
                 feat_values.append(token[feat])
 
-    print(len(feat_values))
-    print(np.array(feat_values).shape)
-
     # train the normalization
     feat_values = np.array(feat_values).reshape(-1, 1)
-    print(feat_values.shape)
     scaler = scaler.fit(feat_values)
     print('Min: %f, Max: %f' % (scaler.data_min_, scaler.data_max_))
     # normalize the dataset and print
     normalized = scaler.transform(feat_values)
-    print(normalized)
-    print(len(normalized))
 
     # add normalized values back to feature list
     i = 0
@@ -210,8 +205,6 @@ def scale_feature_values(X):
             token[feat] = normalized[i]
             #print("token feature: ", token[feat])
             i += 1
-    print(i)
-    print(".......")
 
     return X
 
