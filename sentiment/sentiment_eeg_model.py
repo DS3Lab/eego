@@ -101,13 +101,15 @@ def lstm_classifier(labels, eeg, embedding_type, param_dict, random_seed_value):
 
     fold = 0
     fold_results = {}
+    all_labels = []
+    all_predictions = []
 
-    for train_index, test_index in kf.split(X_data):
+    for train_index, test_index in kf.split(X_data_eeg):
 
         print("FOLD: ", fold)
         print("splitting train and test data...")
         y_train, y_test = y[train_index], y[test_index]
-        X_train, X_test = X_data[train_index], X_data[test_index]
+        X_train, X_test = X_data_eeg[train_index], X_data_eeg[test_index]
 
         print(y_train.shape)
         print(y_test.shape)
@@ -163,6 +165,8 @@ def lstm_classifier(labels, eeg, embedding_type, param_dict, random_seed_value):
         print(p, r, f)
         # conf_matrix = sklearn.metrics.confusion_matrix(rounded_labels, rounded_predictions)
         # print(conf_matrix)
+        all_labels += list(rounded_labels)
+        all_predictions += list(rounded_predictions)
 
         if fold == 0:
             fold_results['train-loss'] = [history.history['loss']]
@@ -190,5 +194,11 @@ def lstm_classifier(labels, eeg, embedding_type, param_dict, random_seed_value):
     elapsed = (time.time() - start)
     print("Training time (all folds):", str(timedelta(seconds=elapsed)))
     fold_results['training_time'] = elapsed
+
+    print(sklearn.metrics.classification_report(all_labels, all_predictions))
+    conf_matrix = sklearn.metrics.confusion_matrix(all_labels, all_predictions)  # todo: add labels
+    print(conf_matrix)
+    ml_helpers.plot_confusion_matrix(conf_matrix)
+    ml_helpers.plot_prediction_distribution(all_labels, all_predictions)
 
     return fold_results

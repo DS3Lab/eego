@@ -179,7 +179,7 @@ def lstm_classifier(features, labels, gaze, embedding_type, param_dict, random_s
         text_model = Flatten()(text_model)
         text_model = Dense(dense_dim, activation="relu")(text_model)
         text_model = Dropout(dropout)(text_model)
-        # # todo: also train this dense latent dim?
+        # todo: also train this dense latent dim?
         text_model = Dense(16, activation="relu")(text_model)
         text_model_model = Model(inputs=input_text_list, outputs=text_model)
 
@@ -190,18 +190,15 @@ def lstm_classifier(features, labels, gaze, embedding_type, param_dict, random_s
         cognitive_model = Flatten()(cognitive_model)
         cognitive_model = Dense(dense_dim, activation="relu")(cognitive_model)
         cognitive_model = Dropout(dropout)(cognitive_model)
-        # # todo: also train this dense latent dim?
+        # todo: also train this dense latent dim?
         cognitive_model = Dense(16, activation="relu")(cognitive_model)
         cognitive_model_model = Model(inputs=input_gaze, outputs=cognitive_model)
 
         cognitive_model_model.summary()
 
         # combine the output of the two branches
-        # todo: try add, subtract, average and dot product in addition to concat
         combined = concatenate([text_model_model.output, cognitive_model_model.output])
-        # apply another dense layer and then a softmax prediction on the combined outputs
-        # todo: does this layer help?
-        #combi_model = Dense(2, activation="relu")(combined)
+        # softmax prediction on the combined outputs
         combi_model = Dense(y_train.shape[1], activation="softmax")(combined)
 
         model = Model(inputs=[text_model_model.input, cognitive_model_model.input], outputs=combi_model)
@@ -253,7 +250,6 @@ def lstm_classifier(features, labels, gaze, embedding_type, param_dict, random_s
             fold_results['recall'].append(r)
             fold_results['fscore'].append(f)
 
-
         fold += 1
 
     elapsed = (time.time() - start)
@@ -264,6 +260,6 @@ def lstm_classifier(features, labels, gaze, embedding_type, param_dict, random_s
     conf_matrix = sklearn.metrics.confusion_matrix(all_labels, all_predictions)  # todo: add labels
     print(conf_matrix)
     ml_helpers.plot_confusion_matrix(conf_matrix)
-    ml_helpers.plot_prediction_distribution(all_predictions)
+    ml_helpers.plot_prediction_distribution(all_labels, all_predictions)
 
     return fold_results
