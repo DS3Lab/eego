@@ -2,7 +2,7 @@ import config
 from feature_extraction import zuco_reader
 from reldetect import reldetect_eeg_model, reldetect_text_eeg_model
 from ner import ner_text_model
-from sentiment import sentiment_eeg_model, sentiment_text_eeg_model, sentiment_text_eeg_gaze_model
+from sentiment import sentiment_eeg_model, sentiment_eeg_gaze_model, sentiment_text_eeg_gaze_model
 from data_helpers import save_results, load_matlab_files
 import numpy as np
 import collections
@@ -94,24 +94,12 @@ def main():
                                             save_results(fold_results, config.class_task)
 
                                         elif config.class_task == 'sentiment-tri':
-                                            if 'combi_concat' in config.feature_set:
-                                                print("Starting EEG + text combi model")
-                                                fold_results = sentiment_text_eeg_model.lstm_classifier(feature_dict,
-                                                                                                   label_dict, eeg_dict,
-                                                                                                   emb, parameter_dict,
-                                                                                                   rand)
-                                            elif 'eeg_raw' in config.feature_set:
+                                            if 'eeg_raw' in config.feature_set:
                                                 fold_results = sentiment_eeg_model.lstm_classifier(label_dict,
                                                                                                      eeg_dict,
                                                                                                      emb,
                                                                                                      parameter_dict,
                                                                                                      rand)
-                                            elif 'combi_eeg_raw' in config.feature_set or 'eeg_theta' in config.feature_set or 'eeg_alpha' in config.feature_set or 'eeg_beta' in config.feature_set or 'eeg_gamma' in config.feature_set:
-                                                fold_results = sentiment_text_eeg_model.lstm_classifier(feature_dict, label_dict,
-                                                                                                        eeg_dict,
-                                                                                                        emb,
-                                                                                                        parameter_dict,
-                                                                                                        rand)
                                             save_results(fold_results, config.class_task)
                                         elif config.class_task == 'sentiment-bin':
                                             for s, label in list(label_dict.items()):
@@ -120,21 +108,8 @@ def main():
                                                     del label_dict[s]
                                                     del feature_dict[s]
                                                     del eeg_dict[s]
-                                            if 'combi_concat' in config.feature_set:
-                                                print("Starting EEG + text combi model")
-                                                fold_results = sentiment_text_eeg_model.lstm_classifier(feature_dict,
-                                                                                                   label_dict, eeg_dict,
-                                                                                                   emb, parameter_dict,
-                                                                                                   rand)
-                                            elif 'eeg_raw' in config.feature_set:
+                                            if 'eeg_raw' in config.feature_set:
                                                 fold_results = sentiment_eeg_model.lstm_classifier(label_dict,
-                                                                                                        eeg_dict,
-                                                                                                        emb,
-                                                                                                        parameter_dict,
-                                                                                                        rand)
-
-                                            elif 'combi_eeg_raw' in config.feature_set or 'eeg_theta' in config.feature_set or 'eeg_alpha' in config.feature_set or 'eeg_beta' in config.feature_set or 'eeg_gamma' in config.feature_set:
-                                                fold_results = sentiment_text_eeg_model.lstm_classifier(feature_dict, label_dict,
                                                                                                         eeg_dict,
                                                                                                         emb,
                                                                                                         parameter_dict,
@@ -142,6 +117,12 @@ def main():
                                             elif 'combi_all' in config.feature_set:
                                                 fold_results = sentiment_text_eeg_gaze_model.lstm_classifier(feature_dict,
                                                                                                         label_dict,
+                                                                                                        eeg_dict, gaze_dict,
+                                                                                                        emb,
+                                                                                                        parameter_dict,
+                                                                                                        rand)
+                                            elif 'eeg_gaze' in config.feature_set:
+                                                fold_results = sentiment_eeg_gaze_model.lstm_classifier(label_dict,
                                                                                                         eeg_dict, gaze_dict,
                                                                                                         emb,
                                                                                                         parameter_dict,
