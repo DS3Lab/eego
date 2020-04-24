@@ -175,8 +175,7 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
         mc = ModelCheckpoint(model_name, monitor='val_accuracy', mode='max', save_best_only=True, verbose=1)
 
         # train model
-        history = model.fit([X_train_text] if embedding_type is not 'bert' else [X_train_text, X_train_masks], y_train, validation_split=0.1, epochs=epochs, batch_size=batch_size,
-                            callbacks=[es,mc])
+        history = model.fit([X_train_text] if embedding_type is not 'bert' else [X_train_text, X_train_masks], y_train, validation_split=config.validation_split, epochs=epochs, batch_size=batch_size, callbacks=[es,mc])
         print("Best epoch:", len(history.history['loss'])- config.patience)
 
         # evaluate model
