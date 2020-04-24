@@ -17,7 +17,6 @@ from datetime import timedelta
 import tensorflow as tf
 import sys
 import datetime
-from transformers import TFBertModel
 
 d = datetime.datetime.today()
 
@@ -152,8 +151,7 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
         elif embedding_type is 'bert':
             input_mask = tf.keras.layers.Input((X_train_masks.shape[1],), dtype=tf.int32)
             input_list.append(input_mask)
-            text_model = TFBertModel.from_pretrained("bert-base-uncased")(input_text, attention_mask=input_mask)[0]
-            #text_model = ml_helpers.create_new_bert_layer()(input_text, attention_mask=input_mask)[0]
+            text_model = ml_helpers.create_new_bert_layer()(input_text, attention_mask=input_mask)[0]
 
         for l in list(range(lstm_layers)):
             text_model = Bidirectional(LSTM(lstm_dim, return_sequences=True))(text_model)
