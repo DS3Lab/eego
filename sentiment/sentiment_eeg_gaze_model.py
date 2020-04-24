@@ -196,7 +196,7 @@ def lstm_classifier(labels, eeg, gaze, embedding_type, param_dict, random_seed_v
 
         # train model
         history = model.fit([X_train_eeg, X_train_gaze], y_train, validation_split=0.1, epochs=epochs, batch_size=batch_size, callbacks=[es,mc])
-        print(history)
+        print("Best epoch:",es.early_stopping_monitor.stopped_epoch)
 
         # evaluate model
         # load the best saved model
@@ -237,7 +237,7 @@ def lstm_classifier(labels, eeg, gaze, embedding_type, param_dict, random_seed_v
             fold_results['precision'].append(p)
             fold_results['recall'].append(r)
             fold_results['fscore'].append(f)
-            fold_results['model_name'].append(model_name)
+            fold_results['model'].append(model_name)
 
         fold += 1
 
