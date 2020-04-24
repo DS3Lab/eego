@@ -189,8 +189,8 @@ def lstm_classifier(labels, eeg, gaze, embedding_type, param_dict, random_seed_v
         model.summary()
 
         # callbacks for early stopping and saving the best model
-        es = EarlyStopping(monitor='val_accuracy', mode='max', min_delta=0.5)
-        model_name = '../models/' + config.class_task + '_' + config.feature_set[0] + '_' + d.strftime(
+        es = EarlyStopping(monitor='val_accuracy', mode='max', min_delta=0.05)
+        model_name = '../models/fold' + str(fold) + '_' + config.class_task + '_' + config.feature_set[0] + '_' + d.strftime(
             '%d-%m-%Y') + '.h5'
         mc = ModelCheckpoint(model_name, monitor='val_accuracy', mode='max', save_best_only=True, verbose=1)
 
@@ -225,6 +225,7 @@ def lstm_classifier(labels, eeg, gaze, embedding_type, param_dict, random_seed_v
             fold_results['precision'] = [p]
             fold_results['recall'] = [r]
             fold_results['fscore'] = [f]
+            fold_results['model'] = [model_name]
         else:
             fold_results['train-loss'].append(history.history['loss'])
             fold_results['train-accuracy'].append(history.history['accuracy'])
@@ -235,6 +236,7 @@ def lstm_classifier(labels, eeg, gaze, embedding_type, param_dict, random_seed_v
             fold_results['precision'].append(p)
             fold_results['recall'].append(r)
             fold_results['fscore'].append(f)
+            fold_results['model_name'].append(model_name)
 
         fold += 1
 

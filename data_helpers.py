@@ -70,7 +70,7 @@ def save_results(fold_results_dict, task):
     # print header
     print("lstm_dim", "lstm_layers", "dense_dim", "dropout", "batch_size", "epochs", "lr", "embedding_type",
           "random_seed", "train_acc", "val_acc", "test_acc", "test_std", "avg_precision", "std_precision",
-          "avg_recall", "std_recall", "avg_fscore", "std_fscore", "threshold", "folds", "training_time", file=result_file)
+          "avg_recall", "std_recall", "avg_fscore", "std_fscore", "threshold", "folds", "training_time", "model_name", file=result_file)
 
     # training scores
     train_acc = np.mean([ep[-1] for ep in fold_results_dict['train-accuracy']])
@@ -91,7 +91,7 @@ def save_results(fold_results_dict, task):
     folds = config.folds
 
     print(" ".join(map(str, fold_results_dict['params'])),train_acc, val_acc, avg_accuracy, std_accuracy, avg_precision,
-          std_precision, avg_recall, std_recall, avg_fscore, std_fscore, threshold, folds, fold_results_dict['training_time'], file=result_file)
+          std_precision, avg_recall, std_recall, avg_fscore, std_fscore, threshold, folds, fold_results_dict['training_time'], fold_results_dict['model_name'][-1], file=result_file)
 
 
 
