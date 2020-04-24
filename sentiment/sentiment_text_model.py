@@ -21,7 +21,6 @@ import datetime
 d = datetime.datetime.today()
 
 
-
 os.environ['KERAS_BACKEND'] = 'tensorflow'
 
 
