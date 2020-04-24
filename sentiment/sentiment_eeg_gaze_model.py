@@ -196,7 +196,7 @@ def lstm_classifier(labels, eeg, gaze, embedding_type, param_dict, random_seed_v
 
         # train model
         history = model.fit([X_train_eeg, X_train_gaze], y_train, validation_split=0.1, epochs=epochs, batch_size=batch_size, callbacks=[es,mc])
-        print("Best epoch:",es.early_stopping_monitor.stopped_epoch)
+        print("Best epoch:",len(history.history['loss']))
 
         # evaluate model
         # load the best saved model
