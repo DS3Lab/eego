@@ -100,6 +100,13 @@ def main():
                                                                                                      emb,
                                                                                                      parameter_dict,
                                                                                                      rand)
+                                            elif 'combi_all' in config.feature_set:
+                                                fold_results = sentiment_text_eeg_gaze_model.lstm_classifier(feature_dict,
+                                                                                                        label_dict,
+                                                                                                        eeg_dict, gaze_dict,
+                                                                                                        emb,
+                                                                                                        parameter_dict,
+                                                                                                        rand)
                                             save_results(fold_results, config.class_task)
                                         elif config.class_task == 'sentiment-bin':
                                             for s, label in list(label_dict.items()):
