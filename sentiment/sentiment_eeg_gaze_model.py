@@ -189,7 +189,7 @@ def lstm_classifier(labels, eeg, gaze, embedding_type, param_dict, random_seed_v
         model.summary()
 
         # callbacks for early stopping and saving the best model
-        patience=3
+        patience=5
         es = EarlyStopping(monitor='val_accuracy', mode='max', min_delta=0.05, patience=patience)
         model_name = '../models/fold' + str(fold) + '_' + config.class_task + '_' + config.feature_set[0] + '_' + d.strftime(
             '%d-%m-%Y') + '.h5'
