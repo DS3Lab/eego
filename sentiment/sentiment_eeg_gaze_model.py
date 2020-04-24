@@ -1,13 +1,11 @@
 import os
 import numpy as np
-from tensorflow.python.keras.preprocessing.sequence import pad_sequences
-from tensorflow.python.keras.preprocessing.text import Tokenizer
 from tensorflow.python.keras.utils import np_utils
-from tensorflow.python.keras.initializers import Constant
 import tensorflow.python.keras.backend as K
 from tensorflow.python.keras.layers import Input, Dense, Embedding, LSTM, Bidirectional, Flatten, Dropout
 from tensorflow.python.keras.layers.merge import concatenate, add, subtract, dot, maximum
-from tensorflow.python.keras.models import Model
+from tensorflow.python.keras.models import Model, load_model
+from tensorflow.python.keras.callbacks import EarlyStopping, ModelCheckpoint
 import sklearn.metrics
 from sklearn.model_selection import KFold
 import ml_helpers
@@ -15,8 +13,9 @@ import config
 import time
 from datetime import timedelta
 import tensorflow as tf
-#import sys
-#from feature_extraction.features import eeg_feats_tri as EEGfeatures
+import datetime
+
+d = datetime.datetime.today()
 
 os.environ['KERAS_BACKEND'] = 'tensorflow'
 
@@ -189,12 +188,21 @@ def lstm_classifier(labels, eeg, gaze, embedding_type, param_dict, random_seed_v
 
         model.summary()
 
+        # callbacks for early stopping and saving the best model
+        es = EarlyStopping(monitor='val_acc', mode='max', min_delta=0.5)
+        model_name = '../models/' + config.class_task + '_' + config.feature_set[0] + '_' + d.strftime(
+            '%d-%m-%Y') + '.h5'
+        mc = ModelCheckpoint(model_name, monitor='val_acc', mode='max', save_best_only=True, verbose=1)
+
         # train model
-        history = model.fit([X_train_eeg, X_train_gaze], y_train, validation_split=0.1, epochs=epochs, batch_size=batch_size)
+        history = model.fit([X_train_eeg, X_train_gaze], y_train, validation_split=0.1, epochs=epochs, batch_size=batch_size, callbacks=[es,mc])
 
         # evaluate model
-        scores = model.evaluate([X_test_eeg, X_test_gaze], y_test,verbose=0)
-        predictions = model.predict([X_test_eeg, X_test_gaze])
+        # load the best saved model
+        saved_model = load_model(model_name)
+
+        scores = saved_model.evaluate([X_test_eeg, X_test_gaze], y_test, verbose=0)
+        predictions = saved_model.predict([X_test_eeg, X_test_gaze])
 
         rounded_predictions = [np.argmax(p) for p in predictions]
         rounded_labels = np.argmax(y_test, axis=1)
