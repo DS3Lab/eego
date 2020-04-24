@@ -189,10 +189,10 @@ def lstm_classifier(labels, eeg, gaze, embedding_type, param_dict, random_seed_v
         model.summary()
 
         # callbacks for early stopping and saving the best model
-        es = EarlyStopping(monitor='val_acc', mode='max', min_delta=0.5)
+        es = EarlyStopping(monitor='val_accuracy', mode='max', min_delta=0.5)
         model_name = '../models/' + config.class_task + '_' + config.feature_set[0] + '_' + d.strftime(
             '%d-%m-%Y') + '.h5'
-        mc = ModelCheckpoint(model_name, monitor='val_acc', mode='max', save_best_only=True, verbose=1)
+        mc = ModelCheckpoint(model_name, monitor='val_accuracy', mode='max', save_best_only=True, verbose=1)
 
         # train model
         history = model.fit([X_train_eeg, X_train_gaze], y_train, validation_split=0.1, epochs=epochs, batch_size=batch_size, callbacks=[es,mc])
