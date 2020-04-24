@@ -88,7 +88,7 @@ def save_results(fold_results_dict, task):
     std_recall = np.std(fold_results_dict['recall'])
     std_fscore = np.std(fold_results_dict['fscore'])
     threshold = fold_results_dict['threshold'] if 'threshold' in fold_results_dict else "-"
-    best_eps = ",".join(map, str(fold_results_dict['best-e']))
+    best_eps = ",".join(map(str, fold_results_dict['best-e']))
     folds = config.folds
 
     print(" ".join(map(str, fold_results_dict['params'])),train_acc, val_acc, avg_accuracy, std_accuracy, avg_precision,
