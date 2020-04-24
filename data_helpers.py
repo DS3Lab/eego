@@ -92,7 +92,7 @@ def save_results(fold_results_dict, task):
     folds = config.folds
 
     print(" ".join(map(str, fold_results_dict['params'])),train_acc, val_acc, avg_accuracy, std_accuracy, avg_precision,
-          std_precision, avg_recall, std_recall, avg_fscore, std_fscore, threshold, folds, fold_results_dict['training_time'], fold_results_dict['model'][-1], file=result_file)
+          std_precision, avg_recall, std_recall, avg_fscore, std_fscore, threshold, folds, fold_results_dict['training_time'], best_eps, fold_results_dict['model'][-1], file=result_file)
 
 
 
