@@ -219,7 +219,7 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
             fold_results['precision'].append(p)
             fold_results['recall'].append(r)
             fold_results['fscore'].append(f)
-            fold_results['model_name'].append(model_name)
+            fold_results['model'].append(model_name)
             fold_results['best-e'].append(len(history.history['loss'])-config.patience)
 
         fold += 1
