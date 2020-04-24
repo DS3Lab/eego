@@ -7,7 +7,8 @@ from tensorflow.python.keras.initializers import Constant
 import tensorflow.python.keras.backend as K
 from tensorflow.python.keras.layers import Input, Dense, Embedding, LSTM, Bidirectional, Flatten, Dropout
 from tensorflow.python.keras.layers.merge import concatenate, add, subtract, dot, maximum
-from tensorflow.python.keras.models import Model
+from tensorflow.python.keras.models import Model, load_model
+from tensorflow.python.keras.callbacks import EarlyStopping, ModelCheckpoint
 import sklearn.metrics
 from sklearn.model_selection import KFold
 import ml_helpers
@@ -15,8 +16,9 @@ import config
 import time
 from datetime import timedelta
 import tensorflow as tf
-#import sys
-#from feature_extraction.features import eeg_feats_tri as EEGfeatures
+import datetime
+
+d = datetime.datetime.today()
 
 os.environ['KERAS_BACKEND'] = 'tensorflow'
 
@@ -26,7 +28,8 @@ os.environ['KERAS_BACKEND'] = 'tensorflow'
 
 
 def lstm_classifier(features, labels, eeg, embedding_type, param_dict, random_seed_value):
-    # set random seed
+
+    # set random seeds
     np.random.seed(random_seed_value)
     tf.random.set_seed(random_seed_value)
     os.environ['PYTHONHASHSEED'] = str(random_seed_value)
@@ -220,14 +223,25 @@ def lstm_classifier(features, labels, eeg, embedding_type, param_dict, random_se
 
         model.summary()
 
+        # callbacks for early stopping and saving the best model
+        es = EarlyStopping(monitor='val_accuracy', mode='max', min_delta=config.min_delta, patience=config.patience)
+        model_name = '../models/' + str(random_seed_value) + '_fold' + str(fold) + '_' + config.class_task + '_' + \
+                     config.feature_set[0] + '_' + d.strftime(
+            '%d-%m-%Y') + '.h5'
+        mc = ModelCheckpoint(model_name, monitor='val_accuracy', mode='max', save_best_only=True, verbose=1)
+
         # train model
         history = model.fit([X_train_text, X_train_eeg] if embedding_type is not 'bert' else [X_train_text, X_train_masks, X_train_eeg], y_train,
-                            validation_split=0.1, epochs=epochs, batch_size=batch_size)
+                            validation_split=0.1, epochs=epochs, batch_size=batch_size,callbacks=[es, mc])
+        print("Best epoch:", len(history.history['loss']) - config.patience)
 
         # evaluate model
-        scores = model.evaluate([X_test_text, X_test_eeg] if embedding_type is not 'bert' else [X_test_text, X_test_masks, X_test_eeg], y_test,
+        # load the best saved model
+        saved_model = load_model(model_name)
+
+        scores = saved_model.evaluate([X_test_text, X_test_eeg] if embedding_type is not 'bert' else [X_test_text, X_test_masks, X_test_eeg], y_test,
                                 verbose=0)
-        predictions = model.predict([X_test_text, X_test_eeg] if embedding_type is not 'bert' else [X_test_text, X_test_masks, X_test_eeg])
+        predictions = saved_model.predict([X_test_text, X_test_eeg] if embedding_type is not 'bert' else [X_test_text, X_test_masks, X_test_eeg])
 
         rounded_predictions = [np.argmax(p) for p in predictions]
         rounded_labels = np.argmax(y_test, axis=1)
@@ -250,6 +264,7 @@ def lstm_classifier(features, labels, eeg, embedding_type, param_dict, random_se
             fold_results['precision'] = [p]
             fold_results['recall'] = [r]
             fold_results['fscore'] = [f]
+            fold_results['best-e'] = [len(history.history['loss']) - config.patience]
         else:
             fold_results['train-loss'].append(history.history['loss'])
             fold_results['train-accuracy'].append(history.history['accuracy'])
@@ -260,6 +275,8 @@ def lstm_classifier(features, labels, eeg, embedding_type, param_dict, random_se
             fold_results['precision'].append(p)
             fold_results['recall'].append(r)
             fold_results['fscore'].append(f)
+            fold_results['model'].append(model_name)
+            fold_results['best-e'] = [len(history.history['loss']) - config.patience]
 
         fold += 1
 

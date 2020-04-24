@@ -9,10 +9,12 @@ import time
 from datetime import timedelta
 import tensorflow as tf
 from tensorflow.python.keras.layers import Input, Dense, LSTM, Bidirectional, Flatten, Dropout
-from tensorflow.python.keras.models import Model
-import json
-import sys
+from tensorflow.python.keras.models import Model, load_model
+from tensorflow.python.keras.callbacks import EarlyStopping, ModelCheckpoint
 import ml_helpers
+import datetime
+
+d = datetime.datetime.today()
 
 
 os.environ['KERAS_BACKEND'] = 'tensorflow'
@@ -23,7 +25,7 @@ os.environ['KERAS_BACKEND'] = 'tensorflow'
 
 def lstm_classifier(labels, gaze, embedding_type, param_dict, random_seed_value):
 
-    # set random seed
+    # set random seeds
     np.random.seed(random_seed_value)
     tf.random.set_seed(random_seed_value)
     os.environ['PYTHONHASHSEED'] = str(random_seed_value)
@@ -127,12 +129,23 @@ def lstm_classifier(labels, gaze, embedding_type, param_dict, random_seed_value)
 
         model.summary()
 
+        # callbacks for early stopping and saving the best model
+        es = EarlyStopping(monitor='val_accuracy', mode='max', min_delta=config.min_delta, patience=config.patience)
+        model_name = '../models/' + str(random_seed_value) + '_fold' + str(fold) + '_' + config.class_task + '_' + \
+                     config.feature_set[0] + '_' + d.strftime(
+            '%d-%m-%Y') + '.h5'
+        mc = ModelCheckpoint(model_name, monitor='val_accuracy', mode='max', save_best_only=True, verbose=1)
+
         # train model
-        history = model.fit(X_train, y_train, validation_split=0.1, epochs=epochs, batch_size=batch_size)
+        history = model.fit(X_train, y_train, validation_split=config.validation_split, epochs=epochs, batch_size=batch_size, callbacks=[es, mc])
+        print("Best epoch:", len(history.history['loss']) - config.patience)
 
         # evaluate model
-        scores = model.evaluate(X_test, y_test, verbose=0)
-        predictions = model.predict(X_test)
+        # load the best saved model
+        saved_model = load_model(model_name)
+
+        scores = saved_model.evaluate(X_test, y_test, verbose=0)
+        predictions = saved_model.predict(X_test)
 
         rounded_predictions = [np.argmax(p) for p in predictions]
         rounded_labels = np.argmax(y_test, axis=1)
@@ -155,6 +168,7 @@ def lstm_classifier(labels, gaze, embedding_type, param_dict, random_seed_value)
             fold_results['precision'] = [p]
             fold_results['recall'] = [r]
             fold_results['fscore'] = [f]
+            fold_results['best-e'] = [len(history.history['loss']) - config.patience]
         else:
             fold_results['train-loss'].append(history.history['loss'])
             fold_results['train-accuracy'].append(history.history['accuracy'])
@@ -165,6 +179,8 @@ def lstm_classifier(labels, gaze, embedding_type, param_dict, random_seed_value)
             fold_results['precision'].append(p)
             fold_results['recall'].append(r)
             fold_results['fscore'].append(f)
+            fold_results['model'].append(model_name)
+            fold_results['best-e'] = [len(history.history['loss']) - config.patience]
 
         fold += 1
 

@@ -13,6 +13,7 @@ import config
 import time
 from datetime import timedelta
 import tensorflow as tf
+import sys
 import datetime
 
 d = datetime.datetime.today()
@@ -21,7 +22,7 @@ os.environ['KERAS_BACKEND'] = 'tensorflow'
 
 
 # Machine learning model for sentiment classification (binary and ternary)
-# Jointly learning from text and cognitive word-level features (EEG pr eye-tracking)
+# Jointly learning from cognitive word-level features (EEG and eye-tracking)
 
 
 def lstm_classifier(labels, eeg, gaze, embedding_type, param_dict, random_seed_value):
@@ -36,75 +37,68 @@ def lstm_classifier(labels, eeg, gaze, embedding_type, param_dict, random_seed_v
     # ml_helpers.plot_label_distribution(y)
 
     # check order of sentences in labels and features dicts
-    """
     sents_y = list(labels.keys())
-    sents_text = list(features.keys())
+    sents_eeg = list(eeg.keys())
     sents_gaze = list(gaze.keys())
-    if sents_y[0] != sents_gaze[0] != sents_text[0]:
+    if sents_y[0] != sents_gaze[0] != sents_eeg[0]:
         sys.exit("STOP! Order of sentences in labels and features dicts not the same!")
-    """
 
     # convert class labels to one hot vectors
     y = np_utils.to_categorical(y)
 
     start = time.time()
 
-
     # prepare EEG data
     print('Processing EEG data...')
-    # load saved features
-    max_len = 0
+    max_len_eeg = 0
     eeg_X = []
 
     # average gaze features over all subjects
     for s in eeg.values():
         sent_feats = []
-        max_len = len(s) if len(s) > max_len else max_len
+        max_len_eeg = max(len(s), max_len_eeg)
         for w, fts in s.items():
             subj_mean_word_feats = np.nanmean(fts, axis=0)
             subj_mean_word_feats[np.isnan(subj_mean_word_feats)] = 0.0
             sent_feats.append(subj_mean_word_feats)
         eeg_X.append(sent_feats)
-    print(len(eeg_X))
 
     # scale features
     eeg_X = ml_helpers.scale_feature_values(eeg_X)
 
     # pad EEG sequences
     for idx, s in enumerate(eeg_X):
-        while len(s) < max_len:
+        while len(s) < max_len_eeg:
+            # 105 = number of EEG electrodes
             s.append(np.zeros(105))
 
     X_data_eeg = np.array(eeg_X)
-    print(X_data_eeg.shape)
-
 
     print('Processing gaze data...')
     # prepare eye-tracking data
     gaze_X = []
-    max_len = 0
+    max_len_gaze = 0
 
     # average gaze features over all subjects
     for s in gaze.values():
         sent_feats = []
-        max_len = len(s) if len(s) > max_len else max_len
+        max_len_gaze = max(len(s), max_len_gaze)
         for w, fts in s.items():
             subj_mean_word_feats = np.nanmean(fts, axis=0)
             subj_mean_word_feats[np.isnan(subj_mean_word_feats)] = 0.0
             sent_feats.append(subj_mean_word_feats)
         gaze_X.append(sent_feats)
-    print(len(gaze_X))
 
     # scale feature values
     gaze_X = ml_helpers.scale_feature_values(gaze_X)
 
     # pad gaze sequences
     for s in gaze_X:
-        while len(s) < max_len:
+        while len(s) < max_len_gaze:
+            # 5 = number of gaze features
             s.append(np.zeros(5))
 
     X_data_gaze = np.array(gaze_X)
-    print(X_data_gaze.shape)
 
     # split data into train/test
     kf = KFold(n_splits=config.folds, random_state=random_seed_value, shuffle=True)
@@ -117,7 +111,6 @@ def lstm_classifier(labels, eeg, gaze, embedding_type, param_dict, random_seed_v
     for train_index, test_index in kf.split(X_data_eeg):
 
         print("FOLD: ", fold)
-        # print("TRAIN:", train_index, "TEST:", test_index)
         print("splitting train and test data...")
         y_train, y_test = y[train_index], y[test_index]
         X_train_eeg, X_test_eeg = X_data_eeg[train_index], X_data_eeg[test_index]
@@ -147,28 +140,25 @@ def lstm_classifier(labels, eeg, gaze, embedding_type, param_dict, random_seed_v
         # define model
         print("Preparing model...")
 
-        # define three sets of inputs
+        # define two sets of inputs
         input_eeg = Input(shape=(X_train_eeg.shape[1], X_train_eeg.shape[2]), name='eeg_input_tensor')
         input_gaze = Input(shape=(X_train_gaze.shape[1], X_train_gaze.shape[2]), name='gaze_input_tensor')
 
-
-        # the second branch operates on the second input (EEG data)
+        # the first branch operates on the second input (EEG data)
         eeg_model = Bidirectional(LSTM(lstm_dim, return_sequences=True))(input_eeg)
         eeg_model = Flatten()(eeg_model)
         eeg_model = Dense(dense_dim, activation="relu")(eeg_model)
         eeg_model = Dropout(dropout)(eeg_model)
-        # # todo: also train this dense latent dim?
         eeg_model = Dense(16, activation="relu")(eeg_model)
         eeg_model_model = Model(inputs=input_eeg, outputs=eeg_model)
 
         eeg_model_model.summary()
 
-        # the third branch operates on the second input (gaze data)
+        # the second branch operates on the second input (gaze data)
         gaze_model = Bidirectional(LSTM(lstm_dim, return_sequences=True))(input_gaze)
         gaze_model = Flatten()(gaze_model)
         gaze_model = Dense(dense_dim, activation="relu")(gaze_model)
         gaze_model = Dropout(dropout)(gaze_model)
-        # # todo: also train this dense latent dim?
         gaze_model = Dense(16, activation="relu")(gaze_model)
         gaze_model_model = Model(inputs=input_gaze, outputs=gaze_model)
 
@@ -176,8 +166,7 @@ def lstm_classifier(labels, eeg, gaze, embedding_type, param_dict, random_seed_v
 
         # combine the output of the three branches
         combined = concatenate([eeg_model_model.output, gaze_model_model.output])
-        # apply another dense layer and then a softmax prediction on the combined outputs
-        #combined = Dense(8, activation="relu", name="final_dense")(combined)
+        # softmax prediction on the combined outputs
         combi_model = Dense(y_train.shape[1], activation="softmax")(combined)
 
         model = Model(inputs=[eeg_model_model.input, gaze_model_model.input], outputs=combi_model)
@@ -189,15 +178,14 @@ def lstm_classifier(labels, eeg, gaze, embedding_type, param_dict, random_seed_v
         model.summary()
 
         # callbacks for early stopping and saving the best model
-        patience = 5
-        es = EarlyStopping(monitor='val_accuracy', mode='max', min_delta=0.05, patience=patience)
+        es = EarlyStopping(monitor='val_accuracy', mode='max', min_delta=config.min_delta, patience=config.patience)
         model_name = '../models/' + str(random_seed_value) + '_fold' + str(fold) + '_' + config.class_task + '_' + config.feature_set[0] + '_' + d.strftime(
             '%d-%m-%Y') + '.h5'
         mc = ModelCheckpoint(model_name, monitor='val_accuracy', mode='max', save_best_only=True, verbose=1)
 
         # train model
-        history = model.fit([X_train_eeg, X_train_gaze], y_train, validation_split=0.1, epochs=epochs, batch_size=batch_size, callbacks=[es,mc])
-        print("Best epoch:",len(history.history['loss'])-patience)
+        history = model.fit([X_train_eeg, X_train_gaze], y_train, validation_split=config.validation_split, epochs=epochs, batch_size=batch_size, callbacks=[es, mc])
+        print("Best epoch:",len(history.history['loss'])-config.patience)
 
         # evaluate model
         # load the best saved model
@@ -212,7 +200,7 @@ def lstm_classifier(labels, eeg, gaze, embedding_type, param_dict, random_seed_v
                                                                            average='macro')
         print(p, r, f)
         print(sklearn.metrics.classification_report(rounded_labels, rounded_predictions))
-        print(sklearn.metrics.classification_report(rounded_labels, rounded_predictions, output_dict=True))
+        #print(sklearn.metrics.classification_report(rounded_labels, rounded_predictions, output_dict=True))
 
         all_labels += list(rounded_labels)
         all_predictions += list(rounded_predictions)
@@ -228,7 +216,7 @@ def lstm_classifier(labels, eeg, gaze, embedding_type, param_dict, random_seed_v
             fold_results['recall'] = [r]
             fold_results['fscore'] = [f]
             fold_results['model'] = [model_name]
-            fold_results['best-e'] = [len(history.history['loss']) - patience]
+            fold_results['best-e'] = [len(history.history['loss']) - config.patience]
         else:
             fold_results['train-loss'].append(history.history['loss'])
             fold_results['train-accuracy'].append(history.history['accuracy'])
@@ -240,7 +228,7 @@ def lstm_classifier(labels, eeg, gaze, embedding_type, param_dict, random_seed_v
             fold_results['recall'].append(r)
             fold_results['fscore'].append(f)
             fold_results['model'].append(model_name)
-            fold_results['best-e'] = [len(history.history['loss']) - patience]
+            fold_results['best-e'] = [len(history.history['loss']) - config.patience]
 
         fold += 1
 
@@ -249,7 +237,7 @@ def lstm_classifier(labels, eeg, gaze, embedding_type, param_dict, random_seed_v
     fold_results['training_time'] = elapsed
 
     print(sklearn.metrics.classification_report(all_labels, all_predictions))
-    conf_matrix = sklearn.metrics.confusion_matrix(all_labels, all_predictions)  # todo: add labels
+    conf_matrix = sklearn.metrics.confusion_matrix(all_labels, all_predictions)
     print(conf_matrix)
     ml_helpers.plot_confusion_matrix(conf_matrix)
     ml_helpers.plot_prediction_distribution(all_labels, all_predictions)
