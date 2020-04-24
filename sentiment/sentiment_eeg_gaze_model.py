@@ -228,6 +228,7 @@ def lstm_classifier(labels, eeg, gaze, embedding_type, param_dict, random_seed_v
             fold_results['recall'] = [r]
             fold_results['fscore'] = [f]
             fold_results['model'] = [model_name]
+            fold_results['best-e'] = [len(history.history['loss']) - patience]
         else:
             fold_results['train-loss'].append(history.history['loss'])
             fold_results['train-accuracy'].append(history.history['accuracy'])
@@ -239,6 +240,7 @@ def lstm_classifier(labels, eeg, gaze, embedding_type, param_dict, random_seed_v
             fold_results['recall'].append(r)
             fold_results['fscore'].append(f)
             fold_results['model'].append(model_name)
+            fold_results['best-e'] = [len(history.history['loss']) - patience]
 
         fold += 1
 
