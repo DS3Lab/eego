@@ -238,9 +238,9 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
     fold_results['training_time'] = elapsed
 
     print(sklearn.metrics.classification_report(all_labels, all_predictions))
-    conf_matrix = sklearn.metrics.confusion_matrix(all_labels, all_predictions)  # todo: add labels
-    print(conf_matrix)
-    ml_helpers.plot_confusion_matrix(conf_matrix)
+    #conf_matrix = sklearn.metrics.confusion_matrix(all_labels, all_predictions)  # todo: add labels
+    #print(conf_matrix)
+    #ml_helpers.plot_confusion_matrix(conf_matrix)
     ml_helpers.plot_prediction_distribution(all_labels, all_predictions)
 
     return fold_results
