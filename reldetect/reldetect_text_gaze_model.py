@@ -27,13 +27,16 @@ os.environ['KERAS_BACKEND'] = 'tensorflow'
 
 
 def lstm_classifier(features, labels, gaze, embedding_type, param_dict, random_seed_value, threshold):
-    # set random seed
+
+    # set random seeds
     np.random.seed(random_seed_value)
     tf.random.set_seed(random_seed_value)
     os.environ['PYTHONHASHSEED'] = str(random_seed_value)
 
     X_text = list(features.keys())
     y = list(labels.values())
+    print(len(y))
+    print(y[0])
 
     # check order of sentences in labels and features dicts
     """
@@ -46,6 +49,7 @@ def lstm_classifier(features, labels, gaze, embedding_type, param_dict, random_s
 
     # these are already one hot categorical encodings
     y = np.asarray(y)
+    print(y.shape)
 
     start = time.time()
 
@@ -182,7 +186,6 @@ def lstm_classifier(features, labels, gaze, embedding_type, param_dict, random_s
         text_model = Flatten()(text_model)
         text_model = Dense(dense_dim, activation="relu")(text_model)
         text_model = Dropout(dropout)(text_model)
-        # # todo: also train this dense latent dim?
         text_model = Dense(16, activation="relu")(text_model)
         text_model_model = Model(inputs=input_text_list, outputs=text_model)
 
@@ -193,18 +196,14 @@ def lstm_classifier(features, labels, gaze, embedding_type, param_dict, random_s
         cognitive_model = Flatten()(cognitive_model)
         cognitive_model = Dense(dense_dim, activation="relu")(cognitive_model)
         cognitive_model = Dropout(dropout)(cognitive_model)
-        # # todo: also train this dense latent dim?
         cognitive_model = Dense(16, activation="relu")(cognitive_model)
         cognitive_model_model = Model(inputs=input_gaze, outputs=cognitive_model)
 
         cognitive_model_model.summary()
 
         # combine the output of the two branches
-        # todo: try add, subtract, average and dot product in addition to concat
         combined = concatenate([text_model_model.output, cognitive_model_model.output])
         # apply another dense layer and then a softmax prediction on the combined outputs
-        # todo: does this layer help?
-        #combi_model = Dense(2, activation="relu")(combined)
         combi_model = Dense(y_train.shape[1], activation="softmax")(combined)
 
         model = Model(inputs=[text_model_model.input, cognitive_model_model.input], outputs=combi_model)
