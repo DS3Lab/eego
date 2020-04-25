@@ -11,43 +11,12 @@ from sklearn.preprocessing import MinMaxScaler
 def plot_prediction_distribution(true, pred):
     """Analyze label distribution of dataset"""
 
-    if config.class_task == "reldetect":
-
-        label_names = ["Visited", "Founder", "Nationality", "Wife", "PoliticalAffiliation", "JobTitle", "Education",
-                       "Employer", "Awarded", "BirthPlace", "DeathPlace"]
-
-        all_relations = np.sum(y, 0)
-        #print(all_relations)
-        #print(label_names)
-        plt.clf()
-        # todo: make plots a bit nicer :)
-        plt.bar(range(len(all_relations)), all_relations, alpha=0.5)
-        plt.xticks(rotation=45, ticks=np.arange(len(all_relations)), labels=label_names, fontsize=7)
-        plt.savefig('pred-label-distribution-' + config.class_task + '.png')
-        plt.clf()
-
-        # plot number of relation types per sentence
-        rels_per_sentence = {}
-        for s in y:
-            if sum(s) not in rels_per_sentence:
-                rels_per_sentence[sum(s)] = 1
-            else:
-                rels_per_sentence[sum(s)] += 1
-        plt.bar(range(len(rels_per_sentence)), rels_per_sentence.values(), alpha=0.5)
-        plt.xticks(fontsize=10, ticks=np.arange(len(rels_per_sentence)), labels=list(range(len(rels_per_sentence))))
-        plt.xlabel('no. of relations')
-        plt.ylabel('no. of sentences')
-        plt.tight_layout()
-        plt.savefig('pred-relation-distribution-' + config.class_task + '.png')
-        plt.clf()
-
-    else:
-        plt.hist(true, bins=len(set(true)), color='green', alpha=0.5)
-        plt.hist(pred, bins=len(set(pred)), color='blue', alpha=0.5)
-        #plt.xticks(rotation=90, fontsize=7)
-        plt.savefig('pred-label-distribution-' + config.class_task + '.png')
-        plt.tight_layout()
-        plt.clf()
+    plt.hist(true, bins=len(set(true)), color='green', alpha=0.5)
+    plt.hist(pred, bins=len(set(pred)), color='blue', alpha=0.5)
+    #plt.xticks(rotation=90, fontsize=7)
+    plt.savefig('pred-label-distribution-' + config.class_task + '.png')
+    plt.tight_layout()
+    plt.clf()
 
 
 def plot_label_distribution(y):
