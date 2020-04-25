@@ -81,7 +81,7 @@ def main():
                                                                                                         eeg_dict,
                                                                                                         emb,
                                                                                                         parameter_dict,
-                                                                                                        rand)
+                                                                                                        rand, threshold)
                                                 save_results(fold_results, config.class_task)
 
                                         elif config.class_task == 'ner':
