@@ -16,6 +16,7 @@ import time
 from datetime import timedelta
 import tensorflow as tf
 import datetime
+import sys
 
 d = datetime.datetime.today()
 
@@ -35,21 +36,16 @@ def lstm_classifier(features, labels, eeg, embedding_type, param_dict, random_se
 
     X_text = list(features.keys())
     y = list(labels.values())
-    print(len(y))
-    print(y[0])
 
     # check order of sentences in labels and features dicts
-    """
     sents_y = list(labels.keys())
     sents_text = list(features.keys())
-    sents_gaze = list(gaze.keys())
+    sents_gaze = list(eeg.keys())
     if sents_y[0] != sents_gaze[0] != sents_text[0]:
         sys.exit("STOP! Order of sentences in labels and features dicts not the same!")
-    """
 
     # these are already one hot categorical encodings
     y = np.asarray(y)
-    print(y.shape)
 
     start = time.time()
 
