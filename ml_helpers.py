@@ -217,7 +217,7 @@ def pad_cognitive_feature_seqs(eeg_X, max_length_cogni):
             if "eeg" in config.feature_set[0]:
                 # 105 = number of EEG electrodes
                 s.append(np.zeros(105))
-            if "eye_tracking" in config.feature_set[0]:
+            elif "eye_tracking" in config.feature_set[0]:
                 # 5 = number of gaze features
                 s.append(np.zeros(5))
             else:
