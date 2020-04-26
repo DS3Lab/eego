@@ -12,8 +12,9 @@ import time
 from datetime import timedelta
 import tensorflow as tf
 import datetime
+import sys
 
-d = datetime.datetime.today()
+d = datetime.datetime.now()
 
 os.environ['KERAS_BACKEND'] = 'tensorflow'
 
@@ -31,13 +32,11 @@ def lstm_classifier(labels, eeg, embedding_type, param_dict, random_seed_value, 
     y = list(labels.values())
 
     # check order of sentences in labels and features dicts
-    """
     sents_y = list(labels.keys())
     sents_text = list(features.keys())
-    sents_gaze = list(gaze.keys())
+    sents_gaze = list(eeg.keys())
     if sents_y[0] != sents_gaze[0] != sents_text[0]:
         sys.exit("STOP! Order of sentences in labels and features dicts not the same!")
-    """
 
     # these are already one hot categorical encodings
     y = np.asarray(y)
@@ -45,31 +44,13 @@ def lstm_classifier(labels, eeg, embedding_type, param_dict, random_seed_value, 
     start = time.time()
 
     # prepare EEG data
-    print('Processing EEG data...')
-    # prepare eye-tracking data
-    eeg_X = []
-    max_length_cogni = 0
-    # average cognitive features over all subjects
-    for s in eeg.values():
-        sent_feats = []
-        max_length_cogni = max(len(s),max_length_cogni)
-        for w, fts in s.items():
-            subj_mean_word_feats = np.nanmean(fts, axis=0)
-            subj_mean_word_feats[np.isnan(subj_mean_word_feats)] = 0.0
-            sent_feats.append(subj_mean_word_feats)
-        eeg_X.append(sent_feats)
+    eeg_X, max_length_cogni = ml_helpers.prepare_eeg(eeg)
 
     # scale feature values
     eeg_X = ml_helpers.scale_feature_values(eeg_X)
 
     # pad EEG sequences
-    for s in eeg_X:
-        while len(s) < max_length_cogni:
-            # 105 = number of EEG electrodes
-            s.append(np.zeros(105))
-
-    X_data = np.array(eeg_X)
-    print(X_data.shape)
+    X_data = ml_helpers.pad_cognitive_feature_seqs(eeg_X, max_length_cogni)
 
     # split data into train/test
     kf = KFold(n_splits=config.folds, random_state=random_seed_value, shuffle=True)
@@ -128,8 +109,7 @@ def lstm_classifier(labels, eeg, embedding_type, param_dict, random_seed_value, 
         # callbacks for early stopping and saving the best model
         es = EarlyStopping(monitor='val_accuracy', mode='max', min_delta=config.min_delta, patience=config.patience)
         model_name = '../models/' + str(random_seed_value) + '_fold' + str(fold) + '_' + config.class_task + '_' + \
-                     config.feature_set[0] + '_' + d.strftime(
-            '%d-%m-%Y') + '.h5'
+                     config.feature_set[0] + '_' + d.strftime("%d/%m/%Y %H:%M:%S") + '.h5'
         mc = ModelCheckpoint(model_name, monitor='val_accuracy', mode='max', save_best_only=True, verbose=1)
 
         # train model

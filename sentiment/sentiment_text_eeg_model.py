@@ -18,7 +18,7 @@ from datetime import timedelta
 import tensorflow as tf
 import datetime
 
-d = datetime.datetime.today()
+d = datetime.datetime.now()
 
 os.environ['KERAS_BACKEND'] = 'tensorflow'
 
@@ -95,32 +95,13 @@ def lstm_classifier(features, labels, eeg, embedding_type, param_dict, random_se
         print('Shape of label tensor:', y.shape)
 
     # prepare EEG data
-    print('Processing EEG data...')
-    # load saved features
-    max_len = 0
-    eeg_X = []
+    eeg_X, max_length_cogni = ml_helpers.prepare_eeg(eeg)
 
-    # average gaze features over all subjects
-    for s in eeg.values():
-        sent_feats = []
-        max_len = len(s) if len(s) > max_len else max_len
-        for w, fts in s.items():
-            subj_mean_word_feats = np.nanmean(fts, axis=0)
-            subj_mean_word_feats[np.isnan(subj_mean_word_feats)] = 0.0
-            sent_feats.append(subj_mean_word_feats)
-        eeg_X.append(sent_feats)
-    print(len(eeg_X))
-
-    # scale features
+    # scale feature values
     eeg_X = ml_helpers.scale_feature_values(eeg_X)
 
     # pad EEG sequences
-    for idx, s in enumerate(eeg_X):
-        while len(s) < max_len:
-            s.append(np.zeros(105))
-
-    X_data_eeg = np.array(eeg_X)
-    print(X_data_eeg.shape)
+    X_data_eeg = ml_helpers.pad_cognitive_feature_seqs(eeg_X, max_length_cogni)
 
     # split data into train/test
     kf = KFold(n_splits=config.folds, random_state=random_seed_value, shuffle=True)
@@ -225,8 +206,7 @@ def lstm_classifier(features, labels, eeg, embedding_type, param_dict, random_se
 
         # callbacks for early stopping and saving the best model
         es = EarlyStopping(monitor='val_accuracy', mode='max', min_delta=config.min_delta, patience=config.patience)
-        model_name = '../models/' + str(random_seed_value) + '_fold' + str(fold) + '_' + config.class_task + '_' + config.feature_set[0] + '_' + config.embeddings[0] + '_' + d.strftime(
-            '%d-%m-%Y') + '.h5'
+        model_name = '../models/' + str(random_seed_value) + '_fold' + str(fold) + '_' + config.class_task + '_' + config.feature_set[0] + '_' + config.embeddings[0] + '_' + d.strftime("%d/%m/%Y %H:%M:%S") + '.h5'
         mc = ModelCheckpoint(model_name, monitor='val_accuracy', mode='max', save_best_only=True, verbose=1)
 
         # train model

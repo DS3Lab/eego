@@ -191,3 +191,37 @@ def plot_confusion_matrix(cm):
     plt.savefig("CM_" + config.class_task + "_" + config.feature_set[0] + ".pdf")
     plt.clf()
     # plt.show()
+
+
+def prepare_eeg(eeg_dict):
+    print('Processing EEG data...')
+    # prepare EEG data
+    eeg_X = []
+    max_length_cogni = 0
+    # average cognitive features over all subjects
+    for s in eeg_dict.values():
+        sent_feats = []
+        max_length_cogni = max(len(s), max_length_cogni)
+        for w, fts in s.items():
+            subj_mean_word_feats = np.nanmean(fts, axis=0)
+            subj_mean_word_feats[np.isnan(subj_mean_word_feats)] = 0.0
+            sent_feats.append(subj_mean_word_feats)
+        eeg_X.append(sent_feats)
+
+    return eeg_X, max_length_cogni
+
+
+def pad_cognitive_feature_seqs(eeg_X, max_length_cogni):
+    for s in eeg_X:
+        while len(s) < max_length_cogni:
+            if "eeg" in config.feature_set[0]:
+                # 105 = number of EEG electrodes
+                s.append(np.zeros(105))
+            if "eye_tracking" in config.feature_set[0]:
+                # 5 = number of gaze features
+                s.append(np.zeros(5))
+            else:
+                print("No EEG or eye-tracking features specified in config file!")
+
+    X_data = np.array(eeg_X)
+    return X_data
