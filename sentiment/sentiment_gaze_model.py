@@ -13,6 +13,7 @@ from tensorflow.python.keras.models import Model, load_model
 from tensorflow.python.keras.callbacks import EarlyStopping, ModelCheckpoint
 import ml_helpers
 import datetime
+import sys
 
 d = datetime.datetime.now()
 
@@ -30,28 +31,21 @@ def lstm_classifier(labels, gaze, embedding_type, param_dict, random_seed_value)
     tf.random.set_seed(random_seed_value)
     os.environ['PYTHONHASHSEED'] = str(random_seed_value)
 
-    y = list(labels.values())
+    start = time.time()
 
     # check order of sentences in labels and features dicts
-    """
     sents_y = list(labels.keys())
     sents_gaze = list(gaze.keys())
     if sents_y[0] != sents_gaze[0]:
         sys.exit("STOP! Order of sentences in labels and features dicts not the same!")
-    """
 
+    y = list(labels.values())
     # convert class labels to one hot vectors
     y = np_utils.to_categorical(y)
 
-    start = time.time()
-
     # prepare gaze data
     gaze_X, max_length_cogni = ml_helpers.prepare_cogni_seqs(gaze)
-
-    # scale gaze feature values
     gaze_X = ml_helpers.scale_feature_values(gaze_X)
-
-    # pad gaze sequences
     X_data = ml_helpers.pad_cognitive_feature_seqs(gaze_X, max_length_cogni)
 
     # split data into train/test

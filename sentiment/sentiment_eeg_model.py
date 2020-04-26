@@ -13,6 +13,7 @@ from sklearn.model_selection import KFold
 import config
 import ml_helpers
 import datetime
+import sys
 
 d = datetime.datetime.now()
 
@@ -29,74 +30,22 @@ def lstm_classifier(labels, eeg, embedding_type, param_dict, random_seed_value):
     tf.random.set_seed(random_seed_value)
     os.environ['PYTHONHASHSEED'] = str(random_seed_value)
 
-    y = list(labels.values())
+    start = time.time()
 
     # check order of sentences in labels and features dicts
-    """
     sents_y = list(labels.keys())
     sents_eeg = list(eeg.keys())
     if sents_y[0] != sents_eeg[0]:
         sys.exit("STOP! Order of sentences in labels and features dicts not the same!")
-    """
 
+    y = list(labels.values())
     # convert class labels to one hot vectors
     y = np_utils.to_categorical(y)
 
-    start = time.time()
-
     # prepare EEG data
-    print("Processing EEG data...")
-
-    # average EEG features over all subjects
-    """
-    eeg_X = []
-    max_len = 0
-    for s, f in eeg.items():
-        #print(s)
-        #print(f)
-        sent_feats = []
-        max_len = len(f) if len(f) > max_len else max_len
-        for w, fts in f.items():
-            #print(w)
-            #print(len(fts))
-            #print(fts.shape)
-            #print("----")
-            #print(fts[0])
-            #print("***")
-            subj_mean_word_feats = np.nanmean(fts, axis=0)
-            #subj_mean_word_feats[np.isnan(subj_mean_word_feats)] = 0.0
-            #print(subj_mean_word_feats.shape)
-            sent_feats.append(subj_mean_word_feats)
-        eeg_X.append(sent_feats)
-    """
-
-    # prepare EEG data
-    print('Processing EEG data...')
-    # load saved features
-    max_len = 0
-    eeg_X = []
-
-    # average gaze features over all subjects
-    for s in eeg.values():
-        sent_feats = []
-        max_len = len(s) if len(s) > max_len else max_len
-        for w, fts in s.items():
-            subj_mean_word_feats = np.nanmean(fts, axis=0)
-            subj_mean_word_feats[np.isnan(subj_mean_word_feats)] = 0.0
-            sent_feats.append(subj_mean_word_feats)
-        eeg_X.append(sent_feats)
-    print(len(eeg_X))
-
-    # scale features
+    eeg_X, max_length_cogni = ml_helpers.prepare_eeg(eeg)
     eeg_X = ml_helpers.scale_feature_values(eeg_X)
-
-    # pad EEG sequences
-    for idx, s in enumerate(eeg_X):
-        while len(s) < max_len:
-            s.append(np.zeros(105))
-
-    X_data_eeg = np.array(eeg_X)
-    print(X_data_eeg.shape)
+    X_data_eeg = ml_helpers.pad_cognitive_feature_seqs(eeg_X, max_length_cogni)
 
     # split data into train/test
     kf = KFold(n_splits=config.folds, random_state=random_seed_value, shuffle=True)

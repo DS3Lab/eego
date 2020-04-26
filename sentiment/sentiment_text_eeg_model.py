@@ -58,11 +58,7 @@ def lstm_classifier(features, labels, eeg, embedding_type, param_dict, random_se
 
     # prepare EEG data
     eeg_X, max_length_cogni = ml_helpers.prepare_eeg(eeg)
-
-    # scale EEG feature values
     eeg_X = ml_helpers.scale_feature_values(eeg_X)
-
-    # pad EEG sequences
     X_data_eeg = ml_helpers.pad_cognitive_feature_seqs(eeg_X, max_length_cogni)
 
     # split data into train/test

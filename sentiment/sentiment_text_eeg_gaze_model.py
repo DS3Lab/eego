@@ -59,20 +59,12 @@ def lstm_classifier(features, labels, eeg, gaze, embedding_type, param_dict, ran
 
     # prepare EEG data
     eeg_X, max_length_cogni = ml_helpers.prepare_eeg(eeg)
-
-    # scale EEG feature values
     eeg_X = ml_helpers.scale_feature_values(eeg_X)
-
-    # pad EEG sequences
     X_data_eeg = ml_helpers.pad_cognitive_feature_seqs(eeg_X, max_length_cogni)
 
     # prepare eye-tracking data
     gaze_X, max_length_cogni = ml_helpers.prepare_cogni_seqs(gaze)
-
-    # scale gaze feature values
     gaze_X = ml_helpers.scale_feature_values(gaze_X)
-
-    # pad gaze sequences
     X_data_gaze = ml_helpers.pad_cognitive_feature_seqs(gaze_X, max_length_cogni)
 
     # split data into train/test

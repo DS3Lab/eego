@@ -31,10 +31,7 @@ def lstm_classifier(labels, eeg, gaze, embedding_type, param_dict, random_seed_v
     tf.random.set_seed(random_seed_value)
     os.environ['PYTHONHASHSEED'] = str(random_seed_value)
 
-    y = list(labels.values())
-
-    # plot sample distribution
-    # ml_helpers.plot_label_distribution(y)
+    start = time.time()
 
     # check order of sentences in labels and features dicts
     sents_y = list(labels.keys())
@@ -43,27 +40,22 @@ def lstm_classifier(labels, eeg, gaze, embedding_type, param_dict, random_seed_v
     if sents_y[0] != sents_gaze[0] != sents_eeg[0]:
         sys.exit("STOP! Order of sentences in labels and features dicts not the same!")
 
+    y = list(labels.values())
+
+    # plot sample distribution
+    # ml_helpers.plot_label_distribution(y)
+
     # convert class labels to one hot vectors
     y = np_utils.to_categorical(y)
 
-    start = time.time()
-
     # prepare EEG data
     eeg_X, max_length_cogni = ml_helpers.prepare_eeg(eeg)
-
-    # scale feature values
     eeg_X = ml_helpers.scale_feature_values(eeg_X)
-
-    # pad EEG sequences
     X_data_eeg = ml_helpers.pad_cognitive_feature_seqs(eeg_X, max_length_cogni)
 
     # prepare eye-tracking data
     gaze_X, max_length_cogni = ml_helpers.prepare_cogni_seqs(gaze)
-
-    # scale gaze feature values
     gaze_X = ml_helpers.scale_feature_values(gaze_X)
-
-    # pad gaze sequences
     X_data_gaze = ml_helpers.pad_cognitive_feature_seqs(gaze_X, max_length_cogni)
 
     # split data into train/test

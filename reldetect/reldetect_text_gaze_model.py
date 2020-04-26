@@ -36,9 +36,6 @@ def lstm_classifier(features, labels, gaze, embedding_type, param_dict, random_s
 
     start = time.time()
 
-    X_text = list(features.keys())
-    y = list(labels.values())
-
     # check order of sentences in labels and features dicts
     sents_y = list(labels.keys())
     sents_text = list(features.keys())
@@ -46,6 +43,8 @@ def lstm_classifier(features, labels, gaze, embedding_type, param_dict, random_s
     if sents_y[0] != sents_gaze[0] != sents_text[0]:
         sys.exit("STOP! Order of sentences in labels and features dicts not the same!")
 
+    X_text = list(features.keys())
+    y = list(labels.values())
     # these are already one hot categorical encodings
     y = np.asarray(y)
 
@@ -53,31 +52,9 @@ def lstm_classifier(features, labels, gaze, embedding_type, param_dict, random_s
     X_data_text, num_words, text_feats = ml_helpers.prepare_text(X_text, embedding_type)
 
     # prepare gaze data
-    print('Processing gaze data...')
-    # prepare eye-tracking data
-    gaze_X = []
-    max_length_cogni = 0
-    # average cognitive features over all subjects
-    for s in gaze.values():
-        sent_feats = []
-        max_length_cogni = max(len(s),max_length_cogni)
-        for w, fts in s.items():
-            subj_mean_word_feats = np.nanmean(fts, axis=0)
-            subj_mean_word_feats[np.isnan(subj_mean_word_feats)] = 0.0
-            sent_feats.append(subj_mean_word_feats)
-        gaze_X.append(sent_feats)
-
-    # scale feature values
+    gaze_X, max_length_cogni = ml_helpers.prepare_cogni_seqs(gaze)
     gaze_X = ml_helpers.scale_feature_values(gaze_X)
-
-    # pad gaze sequences
-    for s in gaze_X:
-        while len(s) < max_length_cogni:
-            # 5 = number of gaze features
-            s.append(np.zeros(5))
-
-    X_data_gaze = np.array(gaze_X)
-    print(X_data_gaze.shape)
+    X_data_gaze = ml_helpers.pad_cognitive_feature_seqs(gaze_X, max_length_cogni)
 
     # split data into train/test
     kf = KFold(n_splits=config.folds, random_state=random_seed_value, shuffle=True)

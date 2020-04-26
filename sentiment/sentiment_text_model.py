@@ -52,8 +52,6 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
     # convert class labels to one hot vectors
     y = np_utils.to_categorical(y)
 
-    vocab_size = 100000
-
     # prepare text samples
     X_data_text, num_words, text_feats = ml_helpers.prepare_text(X, embedding_type)
 

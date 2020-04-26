@@ -36,9 +36,6 @@ def lstm_classifier(features, labels, eeg, embedding_type, param_dict, random_se
 
     start = time.time()
 
-    X_text = list(features.keys())
-    y = list(labels.values())
-
     # check order of sentences in labels and features dicts
     sents_y = list(labels.keys())
     sents_text = list(features.keys())
@@ -46,6 +43,8 @@ def lstm_classifier(features, labels, eeg, embedding_type, param_dict, random_se
     if sents_y[0] != sents_gaze[0] != sents_text[0]:
         sys.exit("STOP! Order of sentences in labels and features dicts not the same!")
 
+    X_text = list(features.keys())
+    y = list(labels.values())
     # these are already one hot categorical encodings
     y = np.asarray(y)
 
@@ -54,11 +53,7 @@ def lstm_classifier(features, labels, eeg, embedding_type, param_dict, random_se
 
     # prepare EEG data
     eeg_X, max_length_cogni = ml_helpers.prepare_eeg(eeg)
-
-    # scale feature values
     eeg_X = ml_helpers.scale_feature_values(eeg_X)
-
-    # pad EEG sequences
     X_data_eeg = ml_helpers.pad_cognitive_feature_seqs(eeg_X, max_length_cogni)
 
     # split data into train/test

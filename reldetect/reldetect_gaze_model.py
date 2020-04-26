@@ -16,6 +16,7 @@ import time
 from datetime import timedelta
 import tensorflow as tf
 import datetime
+import sys
 
 d = datetime.datetime.now()
 
@@ -27,53 +28,28 @@ os.environ['KERAS_BACKEND'] = 'tensorflow'
 
 
 def lstm_classifier(labels, gaze, embedding_type, param_dict, random_seed_value, threshold):
-    # set random seed
+
+    # set random seeds
     np.random.seed(random_seed_value)
     tf.random.set_seed(random_seed_value)
     os.environ['PYTHONHASHSEED'] = str(random_seed_value)
 
-    y = list(labels.values())
+    start = time.time()
 
     # check order of sentences in labels and features dicts
-    """
     sents_y = list(labels.keys())
-    sents_text = list(features.keys())
     sents_gaze = list(gaze.keys())
-    if sents_y[0] != sents_gaze[0] != sents_text[0]:
+    if sents_y[0] != sents_gaze[0]:
         sys.exit("STOP! Order of sentences in labels and features dicts not the same!")
-    """
 
+    y = list(labels.values())
     # these are already one hot categorical encodings
     y = np.asarray(y)
 
-    start = time.time()
-
     # prepare gaze data
-    print('Processing gaze data...')
-    # prepare eye-tracking data
-    gaze_X = []
-    max_length_cogni = 0
-    # average cognitive features over all subjects
-    for s in gaze.values():
-        sent_feats = []
-        max_length_cogni = max(len(s),max_length_cogni)
-        for w, fts in s.items():
-            subj_mean_word_feats = np.nanmean(fts, axis=0)
-            subj_mean_word_feats[np.isnan(subj_mean_word_feats)] = 0.0
-            sent_feats.append(subj_mean_word_feats)
-        gaze_X.append(sent_feats)
-
-    # scale feature values
+    gaze_X, max_length_cogni = ml_helpers.prepare_cogni_seqs(gaze)
     gaze_X = ml_helpers.scale_feature_values(gaze_X)
-
-    # pad gaze sequences
-    for s in gaze_X:
-        while len(s) < max_length_cogni:
-            # 5 = number of gaze features
-            s.append(np.zeros(5))
-
-    X_data = np.array(gaze_X)
-    print(X_data.shape)
+    X_data = ml_helpers.pad_cognitive_feature_seqs(gaze_X, max_length_cogni)
 
     # split data into train/test
     kf = KFold(n_splits=config.folds, random_state=random_seed_value, shuffle=True)
