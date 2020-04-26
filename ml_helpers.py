@@ -240,22 +240,22 @@ def prepare_text(X_text, embedding_type):
 
 
 
-def prepare_eeg(eeg_dict):
-    print('Processing EEG data...')
-    # prepare EEG data
-    eeg_X = []
+def prepare_cogni_seqs(cogni_dict):
+    print('Processing cognitive data...')
+    # prepare cognitive data
+    cogni_X = []
     max_length_cogni = 0
     # average cognitive features over all subjects
-    for s in eeg_dict.values():
+    for s in cogni_dict.values():
         sent_feats = []
         max_length_cogni = max(len(s), max_length_cogni)
         for w, fts in s.items():
             subj_mean_word_feats = np.nanmean(fts, axis=0)
             subj_mean_word_feats[np.isnan(subj_mean_word_feats)] = 0.0
             sent_feats.append(subj_mean_word_feats)
-        eeg_X.append(sent_feats)
+        cogni_X.append(sent_feats)
 
-    return eeg_X, max_length_cogni
+    return cogni_X, max_length_cogni
 
 
 def pad_cognitive_feature_seqs(eeg_X, max_length_cogni):

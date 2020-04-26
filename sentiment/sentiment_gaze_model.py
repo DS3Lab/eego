@@ -45,36 +45,14 @@ def lstm_classifier(labels, gaze, embedding_type, param_dict, random_seed_value)
 
     start = time.time()
 
-    print('Processing gaze data...')
-    # prepare eye-tracking data
-    gaze_X = []
-    max_len = 0
+    # prepare gaze data
+    gaze_X, max_length_cogni = ml_helpers.prepare_cogni_seqs(gaze)
 
-    # save gaze feats
-    #gaze_feats_file = open('gaze_feats_file.json', 'w')
-    #json.dump(gaze, gaze_feats_file)
-
-    # average gaze features over all subjects
-    for s in gaze.values():
-        sent_feats = []
-        max_len = len(s) if len(s) > max_len else max_len
-        for w, fts in s.items():
-            subj_mean_word_feats = np.nanmean(fts, axis=0)
-            subj_mean_word_feats[np.isnan(subj_mean_word_feats)] = 0.0
-            sent_feats.append(subj_mean_word_feats)
-        gaze_X.append(sent_feats)
-    print(len(gaze_X))
-
-    # scale feature values
+    # scale EEG feature values
     gaze_X = ml_helpers.scale_feature_values(gaze_X)
 
-    # pad gaze sequences
-    for s in gaze_X:
-        while len(s) < max_len:
-            s.append(np.zeros(5))
-
-    X_data = np.array(gaze_X)
-    print(X_data.shape)
+    # pad EEG sequences
+    X_data = ml_helpers.pad_cognitive_feature_seqs(gaze_X, max_length_cogni)
 
     # split data into train/test
     kf = KFold(n_splits=config.folds, random_state=random_seed_value, shuffle=True)
