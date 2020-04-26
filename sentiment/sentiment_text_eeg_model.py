@@ -17,6 +17,7 @@ import time
 from datetime import timedelta
 import tensorflow as tf
 import datetime
+import sys
 
 d = datetime.datetime.now()
 
@@ -34,6 +35,8 @@ def lstm_classifier(features, labels, eeg, embedding_type, param_dict, random_se
     tf.random.set_seed(random_seed_value)
     os.environ['PYTHONHASHSEED'] = str(random_seed_value)
 
+    start = time.time()
+
     X_text = list(features.keys())
     y = list(labels.values())
 
@@ -41,28 +44,22 @@ def lstm_classifier(features, labels, eeg, embedding_type, param_dict, random_se
     # ml_helpers.plot_label_distribution(y)
 
     # check order of sentences in labels and features dicts
-    """
     sents_y = list(labels.keys())
     sents_text = list(features.keys())
-    sents_gaze = list(gaze.keys())
+    sents_gaze = list(eeg.keys())
     if sents_y[0] != sents_gaze[0] != sents_text[0]:
         sys.exit("STOP! Order of sentences in labels and features dicts not the same!")
-    """
 
     # convert class labels to one hot vectors
     y = np_utils.to_categorical(y)
 
-    start = time.time()
-
-    vocab_size = 100000
-
     # prepare text samples
-    X_data_text, text_feats = ml_helpers.prepare_text(X_text, embedding_type)
+    X_data_text, num_words, text_feats = ml_helpers.prepare_text(X_text, embedding_type)
 
     # prepare EEG data
     eeg_X, max_length_cogni = ml_helpers.prepare_eeg(eeg)
 
-    # scale feature values
+    # scale EEG feature values
     eeg_X = ml_helpers.scale_feature_values(eeg_X)
 
     # pad EEG sequences
@@ -79,7 +76,6 @@ def lstm_classifier(features, labels, eeg, embedding_type, param_dict, random_se
     for train_index, test_index in kf.split(X_data_text):
 
         print("FOLD: ", fold)
-        # print("TRAIN:", train_index, "TEST:", test_index)
         print("splitting train and test data...")
         y_train, y_test = y[train_index], y[test_index]
         X_train_text, X_test_text = X_data_text[train_index], X_data_text[test_index]

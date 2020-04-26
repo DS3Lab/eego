@@ -217,7 +217,7 @@ def prepare_text(X_text, embedding_type):
         X_data_text = pad_sequences(sequences, maxlen=max_length_text, padding='post', truncating='post')
         print('Shape of data tensor:', X_data_text.shape)
 
-        return [X_data_text, ""]
+        return X_data_text, num_words, ""
 
     if embedding_type is 'glove':
         X_data_text = pad_sequences(sequences, maxlen=max_length_text, padding='post', truncating='post')
@@ -227,7 +227,7 @@ def prepare_text(X_text, embedding_type):
         embedding_dim = 300
         embedding_matrix = load_glove_embeddings(vocab_size, word_index, embedding_dim)
 
-        return [X_data_text, embedding_matrix]
+        return X_data_text, num_words, embedding_matrix
 
     if embedding_type is 'bert':
         print("Prepare sequences for Bert ...")
@@ -236,7 +236,7 @@ def prepare_text(X_text, embedding_type):
         print('Shape of data tensor:', X_data_text.shape)
         print('Shape of data (masks) tensor:', X_data_masks.shape)
 
-        return [X_data_text, X_data_masks]
+        return X_data_text, num_words, X_data_masks
 
 
 
