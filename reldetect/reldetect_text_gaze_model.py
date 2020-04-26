@@ -18,7 +18,7 @@ import tensorflow as tf
 import datetime
 import sys
 
-d = datetime.datetime.today()
+d = datetime.datetime.now()
 
 os.environ['KERAS_BACKEND'] = 'tensorflow'
 
@@ -213,8 +213,7 @@ def lstm_classifier(features, labels, gaze, embedding_type, param_dict, random_s
         # callbacks for early stopping and saving the best model
         es = EarlyStopping(monitor='val_accuracy', mode='max', min_delta=config.min_delta, patience=config.patience)
         model_name = '../models/' + str(random_seed_value) + '_fold' + str(fold) + '_' + config.class_task + '_' + \
-                     config.feature_set[0] + '_' + config.embeddings[0] + '_' + d.strftime(
-            '%d-%m-%Y') + '.h5'
+                     config.feature_set[0] + '_' + config.embeddings[0] + '_' + d.strftime("%d/%m/%Y-%H:%M:%S") + '.h5'
         mc = ModelCheckpoint(model_name, monitor='val_accuracy', mode='max', save_best_only=True, verbose=1)
 
         # train model
