@@ -217,7 +217,7 @@ def prepare_text(X_text, embedding_type):
         X_data_text = pad_sequences(sequences, maxlen=max_length_text, padding='post', truncating='post')
         print('Shape of data tensor:', X_data_text.shape)
 
-        return [X_data_text, _]
+        return [X_data_text, ""]
 
     if embedding_type is 'glove':
         X_data_text = pad_sequences(sequences, maxlen=max_length_text, padding='post', truncating='post')
