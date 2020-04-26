@@ -6,6 +6,8 @@ import config
 from transformers import BertTokenizer
 from transformers import TFBertModel
 from sklearn.preprocessing import MinMaxScaler
+from tensorflow.python.keras.preprocessing.sequence import pad_sequences
+from tensorflow.python.keras.preprocessing.text import Tokenizer
 
 
 def plot_prediction_distribution(true, pred):
@@ -191,6 +193,51 @@ def plot_confusion_matrix(cm):
     plt.savefig("CM_" + config.class_task + "_" + config.feature_set[0] + ".pdf")
     plt.clf()
     # plt.show()
+
+
+def prepare_text(X_text, embedding_type):
+    vocab_size = 100000
+
+    # prepare text samples
+    print('Processing text dataset...')
+
+    print('Found %s sentences.' % len(X_text))
+
+    tokenizer = Tokenizer(num_words=vocab_size)
+    tokenizer.fit_on_texts(X_text)
+    sequences = tokenizer.texts_to_sequences(X_text)
+    max_length_text = max([len(s) for s in sequences])
+    print("Maximum sentence length: ", max_length_text)
+
+    word_index = tokenizer.word_index
+    print('Found %s unique tokens.' % len(word_index))
+    num_words = min(vocab_size, len(word_index) + 1)
+
+    if embedding_type is 'none':
+        X_data_text = pad_sequences(sequences, maxlen=max_length_text, padding='post', truncating='post')
+        print('Shape of data tensor:', X_data_text.shape)
+
+        return [X_data_text, _]
+
+    if embedding_type is 'glove':
+        X_data_text = pad_sequences(sequences, maxlen=max_length_text, padding='post', truncating='post')
+        print('Shape of data tensor:', X_data_text.shape)
+
+        print("Loading Glove embeddings...")
+        embedding_dim = 300
+        embedding_matrix = load_glove_embeddings(vocab_size, word_index, embedding_dim)
+
+        return [X_data_text, embedding_matrix]
+
+    if embedding_type is 'bert':
+        print("Prepare sequences for Bert ...")
+        max_length = get_bert_max_len(X_text)
+        X_data_text, X_data_masks = prepare_sequences_for_bert_with_mask(X_text, max_length)
+        print('Shape of data tensor:', X_data_text.shape)
+        print('Shape of data (masks) tensor:', X_data_masks.shape)
+
+        return [X_data_text, X_data_masks]
+
 
 
 def prepare_eeg(eeg_dict):

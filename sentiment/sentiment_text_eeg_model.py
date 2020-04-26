@@ -57,42 +57,7 @@ def lstm_classifier(features, labels, eeg, embedding_type, param_dict, random_se
     vocab_size = 100000
 
     # prepare text samples
-    print('Processing text dataset...')
-
-    print('Found %s sentences.' % len(X_text))
-
-    tokenizer = Tokenizer(num_words=vocab_size)
-    tokenizer.fit_on_texts(X_text)
-    sequences = tokenizer.texts_to_sequences(X_text)
-    max_length_text = max([len(s) for s in sequences])
-    print("Maximum sentence length: ", max_length_text)
-
-    word_index = tokenizer.word_index
-    print('Found %s unique tokens.' % len(word_index))
-    num_words = min(vocab_size, len(word_index) + 1)
-
-    if embedding_type is 'none':
-        X_data_text = pad_sequences(sequences, maxlen=max_length_text, padding='post', truncating='post')
-        print('Shape of data tensor:', X_data_text.shape)
-        print('Shape of label tensor:', y.shape)
-
-    if embedding_type is 'glove':
-        X_data_text = pad_sequences(sequences, maxlen=max_length_text, padding='post', truncating='post')
-        print('Shape of data tensor:', X_data_text.shape)
-        print('Shape of label tensor:', y.shape)
-
-        print("Loading Glove embeddings...")
-        embedding_dim = 300
-        embedding_matrix = ml_helpers.load_glove_embeddings(vocab_size, word_index, embedding_dim)
-
-    if embedding_type is 'bert':
-        print("Prepare sequences for Bert ...")
-        max_length = ml_helpers.get_bert_max_len(X_text)
-        X_data_text, X_data_masks = ml_helpers.prepare_sequences_for_bert_with_mask(X_text, max_length)
-
-        print('Shape of data tensor:', X_data_text.shape)
-        print('Shape of data (masks) tensor:', X_data_masks.shape)
-        print('Shape of label tensor:', y.shape)
+    X_data_text, text_feats = ml_helpers.prepare_text(X_text, embedding_type)
 
     # prepare EEG data
     eeg_X, max_length_cogni = ml_helpers.prepare_eeg(eeg)
@@ -119,7 +84,7 @@ def lstm_classifier(features, labels, eeg, embedding_type, param_dict, random_se
         y_train, y_test = y[train_index], y[test_index]
         X_train_text, X_test_text = X_data_text[train_index], X_data_text[test_index]
         if embedding_type is 'bert':
-            X_train_masks, X_test_masks = X_data_masks[train_index], X_data_masks[test_index]
+            X_train_masks, X_test_masks = text_feats[train_index], text_feats[test_index]
         X_train_eeg, X_test_eeg = X_data_eeg[train_index], X_data_eeg[test_index]
 
         print(y_train.shape)
@@ -159,8 +124,8 @@ def lstm_classifier(features, labels, eeg, embedding_type, param_dict, random_se
                   name='none_input_embeddings')(input_text)
         elif embedding_type is 'glove':
             text_model = Embedding(num_words,
-                      embedding_dim,
-                      embeddings_initializer=Constant(embedding_matrix),
+                      300, # glove embedding dim
+                      embeddings_initializer=Constant(text_feats),
                       input_length=X_train_text.shape[1],
                       trainable=False,
                       name='glove_input_embeddings')(input_text)
@@ -172,7 +137,6 @@ def lstm_classifier(features, labels, eeg, embedding_type, param_dict, random_se
         text_model = Flatten()(text_model)
         text_model = Dense(dense_dim, activation="relu")(text_model)
         text_model = Dropout(dropout)(text_model)
-        # # todo: also train this dense latent dim?
         text_model = Dense(16, activation="relu")(text_model)
         text_model_model = Model(inputs=input_text_list, outputs=text_model)
 
@@ -183,17 +147,14 @@ def lstm_classifier(features, labels, eeg, embedding_type, param_dict, random_se
         cognitive_model = Flatten()(cognitive_model)
         cognitive_model = Dense(dense_dim, activation="relu")(cognitive_model)
         cognitive_model = Dropout(dropout)(cognitive_model)
-        # # todo: also train this dense latent dim?
         cognitive_model = Dense(16, activation="relu")(cognitive_model)
         cognitive_model_model = Model(inputs=input_eeg, outputs=cognitive_model)
 
         cognitive_model_model.summary()
 
         # combine the output of the two branches
-        # todo: try add, subtract, average and dot product in addition to concat
         combined = concatenate([text_model_model.output, cognitive_model_model.output])
         # apply another dense layer and then a softmax prediction on the combined outputs
-        #combined = Dense(8, activation="relu", name="final_dense")(combined)
         combi_model = Dense(y_train.shape[1], activation="softmax")(combined)
 
         model = Model(inputs=[text_model_model.input, cognitive_model_model.input], outputs=combi_model)
