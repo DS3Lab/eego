@@ -34,6 +34,8 @@ def lstm_classifier(features, labels, gaze, embedding_type, param_dict, random_s
     tf.random.set_seed(random_seed_value)
     os.environ['PYTHONHASHSEED'] = str(random_seed_value)
 
+    start = time.time()
+
     X_text = list(features.keys())
     y = list(labels.values())
 
@@ -47,47 +49,8 @@ def lstm_classifier(features, labels, gaze, embedding_type, param_dict, random_s
     # these are already one hot categorical encodings
     y = np.asarray(y)
 
-    start = time.time()
-
-    vocab_size = 100000
-
     # prepare text samples
-    print('Processing text dataset...')
-
-    print('Found %s sentences.' % len(X_text))
-
-    tokenizer = Tokenizer(num_words=vocab_size)
-    tokenizer.fit_on_texts(X_text)
-    sequences = tokenizer.texts_to_sequences(X_text)
-    max_length_text = max([len(s) for s in sequences])
-    print("Maximum sentence length: ", max_length_text)
-
-    word_index = tokenizer.word_index
-    print('Found %s unique tokens.' % len(word_index))
-    num_words = min(vocab_size, len(word_index) + 1)
-
-    if embedding_type is 'none':
-        X_data_text = pad_sequences(sequences, maxlen=max_length_text, padding='post', truncating='post')
-        print('Shape of data tensor:', X_data_text.shape)
-        print('Shape of label tensor:', y.shape)
-
-    if embedding_type is 'glove':
-        X_data_text = pad_sequences(sequences, maxlen=max_length_text, padding='post', truncating='post')
-        print('Shape of data tensor:', X_data_text.shape)
-        print('Shape of label tensor:', y.shape)
-
-        print("Loading Glove embeddings...")
-        embedding_dim = 300
-        embedding_matrix = ml_helpers.load_glove_embeddings(vocab_size, word_index, embedding_dim)
-
-    if embedding_type is 'bert':
-        print("Prepare sequences for Bert ...")
-        max_length = ml_helpers.get_bert_max_len(X_text)
-        X_data_text, X_data_masks = ml_helpers.prepare_sequences_for_bert_with_mask(X_text, max_length)
-
-        print('Shape of data tensor:', X_data_text.shape)
-        print('Shape of data (masks) tensor:', X_data_masks.shape)
-        print('Shape of label tensor:', y.shape)
+    X_data_text, num_words, text_feats = ml_helpers.prepare_text(X_text, embedding_type)
 
     # prepare gaze data
     print('Processing gaze data...')
@@ -131,7 +94,7 @@ def lstm_classifier(features, labels, gaze, embedding_type, param_dict, random_s
         y_train, y_test = y[train_index], y[test_index]
         X_train_text, X_test_text = X_data_text[train_index], X_data_text[test_index]
         if embedding_type is 'bert':
-            X_train_masks, X_test_masks = X_data_masks[train_index], X_data_masks[test_index]
+            X_train_masks, X_test_masks = text_feats[train_index], text_feats[test_index]
         X_train_gaze, X_test_gaze = X_data_gaze[train_index], X_data_gaze[test_index]
 
         print(y_train.shape)
@@ -169,8 +132,8 @@ def lstm_classifier(features, labels, gaze, embedding_type, param_dict, random_s
                   name='none_input_embeddings')(input_text)
         elif embedding_type is 'glove':
             text_model = Embedding(num_words,
-                      embedding_dim,
-                      embeddings_initializer=Constant(embedding_matrix),
+                      300,  # glove embedding dim
+                      embeddings_initializer=Constant(text_feats),
                       input_length=X_train_text.shape[1],
                       trainable=False,
                       name='glove_input_embeddings')(input_text)

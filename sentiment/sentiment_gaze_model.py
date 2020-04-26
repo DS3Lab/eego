@@ -48,10 +48,10 @@ def lstm_classifier(labels, gaze, embedding_type, param_dict, random_seed_value)
     # prepare gaze data
     gaze_X, max_length_cogni = ml_helpers.prepare_cogni_seqs(gaze)
 
-    # scale EEG feature values
+    # scale gaze feature values
     gaze_X = ml_helpers.scale_feature_values(gaze_X)
 
-    # pad EEG sequences
+    # pad gaze sequences
     X_data = ml_helpers.pad_cognitive_feature_seqs(gaze_X, max_length_cogni)
 
     # split data into train/test

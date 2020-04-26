@@ -49,46 +49,8 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
     # these are already one hot categorical encodings
     y = np.asarray(y)
 
-    vocab_size = 100000
-
     # prepare text samples
-    print('Processing text dataset...')
-
-    print('Found %s sentences.' % len(X))
-
-    tokenizer = Tokenizer(num_words=vocab_size)
-    tokenizer.fit_on_texts(X)
-    sequences = tokenizer.texts_to_sequences(X)
-    max_length = max([len(s) for s in sequences])
-
-    word_index = tokenizer.word_index
-    print('Found %s unique tokens.' % len(word_index))
-    num_words = min(vocab_size, len(word_index) + 1)
-
-    if embedding_type is 'none':
-        X_data_text = pad_sequences(sequences, maxlen=max_length, padding='post', truncating='post')
-        print('Shape of data tensor:', X_data_text.shape)
-        print('Shape of label tensor:', y.shape)
-
-    if embedding_type is 'glove':
-        X_data_text = pad_sequences(sequences, maxlen=max_length, padding='post', truncating='post')
-        print('Shape of data tensor:', X_data_text.shape)
-        print('Shape of label tensor:', y.shape)
-
-        print("Loading Glove embeddings...")
-        embedding_dim = 300
-        embedding_matrix = ml_helpers.load_glove_embeddings(vocab_size, word_index, embedding_dim)
-
-    if embedding_type is 'bert':
-        print("Prepare sequences for Bert ...")
-        max_length = ml_helpers.get_bert_max_len(X)
-        X_data_text, X_data_masks = ml_helpers.prepare_sequences_for_bert_with_mask(X, max_length)
-
-        print('Shape of data tensor:', X_data_text.shape)
-        print('Shape of data (masks) tensor:', X_data_masks.shape)
-        print('Shape of label tensor:', y.shape)
-
-    print("Maximum sentence length: ", max_length)
+    X_data_text, num_words, text_feats = ml_helpers.prepare_text(X, embedding_type)
 
     # split data into train/test
     kf = KFold(n_splits=config.folds, random_state=random_seed_value, shuffle=True)
@@ -107,7 +69,7 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
         X_train_text, X_test_text = X_data_text[train_index], X_data_text[test_index]
 
         if embedding_type is 'bert':
-            X_train_masks, X_test_masks = X_data_masks[train_index], X_data_masks[test_index]
+            X_train_masks, X_test_masks = text_feats[train_index], text_feats[test_index]
 
         print(y_train.shape)
         print(y_test.shape)
@@ -142,8 +104,8 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
                                    name='none_input_embeddings')(input_text)
         elif embedding_type is 'glove':
             text_model = Embedding(num_words,
-                                   embedding_dim,
-                                   embeddings_initializer=Constant(embedding_matrix),
+                                   300,  # glove embedding dim
+                                   embeddings_initializer=Constant(text_feats),
                                    input_length=X_train_text.shape[1],
                                    trainable=False,
                                    name='glove_input_embeddings')(input_text)

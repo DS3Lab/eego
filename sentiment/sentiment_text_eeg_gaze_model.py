@@ -17,6 +17,7 @@ import time
 from datetime import timedelta
 import tensorflow as tf
 import datetime
+import sys
 
 d = datetime.datetime.now()
 
@@ -34,6 +35,8 @@ def lstm_classifier(features, labels, eeg, gaze, embedding_type, param_dict, ran
     tf.random.set_seed(random_seed_value)
     os.environ['PYTHONHASHSEED'] = str(random_seed_value)
 
+    start = time.time()
+
     X_text = list(features.keys())
     y = list(labels.values())
 
@@ -41,114 +44,36 @@ def lstm_classifier(features, labels, eeg, gaze, embedding_type, param_dict, ran
     # ml_helpers.plot_label_distribution(y)
 
     # check order of sentences in labels and features dicts
-    """
     sents_y = list(labels.keys())
     sents_text = list(features.keys())
     sents_gaze = list(gaze.keys())
-    if sents_y[0] != sents_gaze[0] != sents_text[0]:
+    sents_eeg = list(eeg.keys())
+    if sents_y[0] != sents_gaze[0] != sents_text[0] != sents_eeg[0]:
         sys.exit("STOP! Order of sentences in labels and features dicts not the same!")
-    """
 
     # convert class labels to one hot vectors
     y = np_utils.to_categorical(y)
 
-    start = time.time()
-
-    vocab_size = 100000
-
     # prepare text samples
-    print('Processing text dataset...')
-
-    print('Found %s sentences.' % len(X_text))
-
-    tokenizer = Tokenizer(num_words=vocab_size)
-    tokenizer.fit_on_texts(X_text)
-    sequences = tokenizer.texts_to_sequences(X_text)
-    max_length_text = max([len(s) for s in sequences])
-    print("Maximum sentence length: ", max_length_text)
-
-    word_index = tokenizer.word_index
-    print('Found %s unique tokens.' % len(word_index))
-    num_words = min(vocab_size, len(word_index) + 1)
-
-    if embedding_type is 'none':
-        X_data_text = pad_sequences(sequences, maxlen=max_length_text, padding='post', truncating='post')
-        print('Shape of data tensor:', X_data_text.shape)
-        print('Shape of label tensor:', y.shape)
-
-    if embedding_type is 'glove':
-        X_data_text = pad_sequences(sequences, maxlen=max_length_text, padding='post', truncating='post')
-        print('Shape of data tensor:', X_data_text.shape)
-        print('Shape of label tensor:', y.shape)
-
-        print("Loading Glove embeddings...")
-        embedding_dim = 300
-        embedding_matrix = ml_helpers.load_glove_embeddings(vocab_size, word_index, embedding_dim)
-
-    if embedding_type is 'bert':
-        print("Prepare sequences for Bert ...")
-        max_length = ml_helpers.get_bert_max_len(X_text)
-        X_data_text, X_data_masks = ml_helpers.prepare_sequences_for_bert_with_mask(X_text, max_length)
-
-        print('Shape of data tensor:', X_data_text.shape)
-        print('Shape of data (masks) tensor:', X_data_masks.shape)
-        print('Shape of label tensor:', y.shape)
+    X_data_text, num_words, text_feats = ml_helpers.prepare_text(X_text, embedding_type)
 
     # prepare EEG data
-    print('Processing EEG data...')
-    # load saved features
-    max_len = 0
-    eeg_X = []
+    eeg_X, max_length_cogni = ml_helpers.prepare_eeg(eeg)
 
-    # average gaze features over all subjects
-    for s in eeg.values():
-        sent_feats = []
-        max_len = len(s) if len(s) > max_len else max_len
-        for w, fts in s.items():
-            subj_mean_word_feats = np.nanmean(fts, axis=0)
-            subj_mean_word_feats[np.isnan(subj_mean_word_feats)] = 0.0
-            sent_feats.append(subj_mean_word_feats)
-        eeg_X.append(sent_feats)
-    print(len(eeg_X))
-
-    # scale features
+    # scale EEG feature values
     eeg_X = ml_helpers.scale_feature_values(eeg_X)
 
     # pad EEG sequences
-    for idx, s in enumerate(eeg_X):
-        while len(s) < max_len:
-            s.append(np.zeros(105))
+    X_data_eeg = ml_helpers.pad_cognitive_feature_seqs(eeg_X, max_length_cogni)
 
-    X_data_eeg = np.array(eeg_X)
-    print(X_data_eeg.shape)
-
-
-    print('Processing gaze data...')
     # prepare eye-tracking data
-    gaze_X = []
-    max_len = 0
+    gaze_X, max_length_cogni = ml_helpers.prepare_cogni_seqs(gaze)
 
-    # average gaze features over all subjects
-    for s in gaze.values():
-        sent_feats = []
-        max_len = len(s) if len(s) > max_len else max_len
-        for w, fts in s.items():
-            subj_mean_word_feats = np.nanmean(fts, axis=0)
-            subj_mean_word_feats[np.isnan(subj_mean_word_feats)] = 0.0
-            sent_feats.append(subj_mean_word_feats)
-        gaze_X.append(sent_feats)
-    print(len(gaze_X))
-
-    # scale feature values
+    # scale gaze feature values
     gaze_X = ml_helpers.scale_feature_values(gaze_X)
 
     # pad gaze sequences
-    for s in gaze_X:
-        while len(s) < max_len:
-            s.append(np.zeros(5))
-
-    X_data_gaze = np.array(gaze_X)
-    print(X_data_gaze.shape)
+    X_data_gaze = ml_helpers.pad_cognitive_feature_seqs(gaze_X, max_length_cogni)
 
     # split data into train/test
     kf = KFold(n_splits=config.folds, random_state=random_seed_value, shuffle=True)
@@ -166,7 +91,7 @@ def lstm_classifier(features, labels, eeg, gaze, embedding_type, param_dict, ran
         y_train, y_test = y[train_index], y[test_index]
         X_train_text, X_test_text = X_data_text[train_index], X_data_text[test_index]
         if embedding_type is 'bert':
-            X_train_masks, X_test_masks = X_data_masks[train_index], X_data_masks[test_index]
+            X_train_masks, X_test_masks = text_feats[train_index], text_feats[test_index]
         X_train_eeg, X_test_eeg = X_data_eeg[train_index], X_data_eeg[test_index]
         X_train_gaze, X_test_gaze = X_data_gaze[train_index], X_data_gaze[test_index]
 
@@ -210,7 +135,7 @@ def lstm_classifier(features, labels, eeg, gaze, embedding_type, param_dict, ran
         elif embedding_type is 'glove':
             text_model = Embedding(num_words,
                       embedding_dim,
-                      embeddings_initializer=Constant(embedding_matrix),
+                      embeddings_initializer=Constant(text_feats),
                       input_length=X_train_text.shape[1],
                       trainable=False,
                       name='glove_input_embeddings')(input_text)
