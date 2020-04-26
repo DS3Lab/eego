@@ -260,6 +260,8 @@ def lstm_classifier(features, labels, eeg, embedding_type, param_dict, random_se
             fold_results['threshold'] = threshold
             fold_results['model'] = [model_name]
             fold_results['best-e'] = [len(history.history['loss'])-config.patience]
+            fold_results['patience'] = config.patience
+            fold_results['min_delta'] = config.min_delta
         else:
             fold_results['train-loss'].append(history.history['loss'])
             fold_results['train-accuracy'].append(history.history['accuracy'])
