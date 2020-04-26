@@ -1,7 +1,5 @@
 import os
 import numpy as np
-from tensorflow.python.keras.preprocessing.sequence import pad_sequences
-from tensorflow.python.keras.preprocessing.text import Tokenizer
 from tensorflow.python.keras.utils import np_utils
 from tensorflow.python.keras.initializers import Constant
 import tensorflow.python.keras.backend as K
@@ -17,6 +15,7 @@ import time
 from datetime import timedelta
 import tensorflow as tf
 import datetime
+import sys
 
 d = datetime.datetime.now()
 
@@ -38,13 +37,11 @@ def lstm_classifier(features, labels, gaze, embedding_type, param_dict, random_s
     y = list(labels.values())
 
     # check order of sentences in labels and features dicts
-    """
     sents_y = list(labels.keys())
     sents_text = list(features.keys())
     sents_gaze = list(gaze.keys())
     if sents_y[0] != sents_gaze[0] != sents_text[0]:
         sys.exit("STOP! Order of sentences in labels and features dicts not the same!")
-    """
 
     # convert class labels to one hot vectors
     y = np_utils.to_categorical(y)
