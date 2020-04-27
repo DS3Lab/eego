@@ -149,14 +149,11 @@ def lstm_classifier(features, labels, gaze, embedding_type, param_dict, random_s
         model.summary()
 
         # callbacks for early stopping and saving the best model
-        es = EarlyStopping(monitor='val_accuracy', mode='max', min_delta=config.min_delta, patience=config.patience)
-        model_name = '../models/' + str(random_seed_value) + '_fold' + str(fold) + '_' + config.class_task + '_' + \
-                     config.feature_set[0] + '_' + config.embeddings[0] + '_' + d.strftime("%d%m%Y-%H:%M:%S") + '.h5'
-        mc = ModelCheckpoint(model_name, monitor='val_accuracy', mode='max', save_best_only=True, verbose=1)
+        early_stop, model_save, model_name = ml_helpers.callbacks(fold, random_seed_value)
 
         # train model
         history = model.fit([X_train_text, X_train_gaze] if embedding_type is not 'bert' else [X_train_text, X_train_masks, X_train_gaze], y_train,
-                            validation_split=0.1, epochs=epochs, batch_size=batch_size, callbacks=[es, mc])
+                            validation_split=0.1, epochs=epochs, batch_size=batch_size, callbacks=[early_stop, model_save])
         print("Best epoch:", len(history.history['loss']) - config.patience)
 
         # evaluate model

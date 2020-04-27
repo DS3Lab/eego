@@ -124,7 +124,7 @@ def lstm_classifier(features, labels, eeg, gaze, embedding_type, param_dict, ran
                   name='none_input_embeddings')(input_text)
         elif embedding_type is 'glove':
             text_model = Embedding(num_words,
-                      embedding_dim,
+                      300,
                       embeddings_initializer=Constant(text_feats),
                       input_length=X_train_text.shape[1],
                       trainable=False,
@@ -167,8 +167,7 @@ def lstm_classifier(features, labels, eeg, gaze, embedding_type, param_dict, ran
 
         # combine the output of the three branches
         combined = concatenate([text_model_model.output, eeg_model_model.output, gaze_model_model.output])
-        # apply another dense layer and then a softmax prediction on the combined outputs
-        #combined = Dense(8, activation="relu", name="final_dense")(combined)
+        #  softmax prediction on the combined outputs
         combi_model = Dense(y_train.shape[1], activation="softmax")(combined)
 
         model = Model(inputs=[text_model_model.input, eeg_model_model.input, gaze_model_model.input], outputs=combi_model)
@@ -180,13 +179,11 @@ def lstm_classifier(features, labels, eeg, gaze, embedding_type, param_dict, ran
         model.summary()
 
         # callbacks for early stopping and saving the best model
-        es = EarlyStopping(monitor='val_accuracy', mode='max', min_delta=config.min_delta, patience=config.patience)
-        model_name = '../models/' + str(random_seed_value) + '_fold' + str(fold) + '_' + config.class_task + '_' + config.feature_set[0] + '_' + config.embeddings[0] + '_' + d.strftime("%d%m%Y-%H:%M:%S") + '.h5'
-        mc = ModelCheckpoint(model_name, monitor='val_accuracy', mode='max', save_best_only=True, verbose=1)
+        early_stop, model_save, model_name = ml_helpers.callbacks(fold, random_seed_value)
 
         # train model
         history = model.fit([X_train_text, X_train_eeg, X_train_gaze] if embedding_type is not 'bert' else [X_train_text, X_train_masks, X_train_eeg. X_train_gaze], y_train,
-                            validation_split=0.1, epochs=epochs, batch_size=batch_size, callbacks=[es, mc])
+                            validation_split=0.1, epochs=epochs, batch_size=batch_size, callbacks=[early_stop, model_save])
         print("Best epoch:", len(history.history['loss']) - config.patience)
 
         # evaluate model
