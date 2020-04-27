@@ -131,7 +131,7 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
         # callbacks for early stopping and saving the best model
         es = EarlyStopping(monitor='val_accuracy', mode='max', min_delta=config.min_delta, patience=config.patience)
         model_name = '../models/' + str(random_seed_value) + '_fold' + str(fold) + '_' + config.class_task + '_' + config.feature_set[0] + '_' + config.embeddings[0] + '_' + d.strftime("%d%m%Y-%H:%M:%S") + '.h5'
-        mc = ModelCheckpoint(model_name, monitor='val_accuracy', mode='max', save_best_only=True, verbose=1)
+        mc = ModelCheckpoint(model_name, monitor='val_accuracy', mode='max', save_weights_only=True, save_best_only=True, verbose=1)
 
         # train model
         history = model.fit([X_train_text] if embedding_type is not 'bert' else [X_train_text, X_train_masks], y_train, validation_split=config.validation_split, epochs=epochs, batch_size=batch_size, callbacks=[es,mc])
@@ -139,10 +139,10 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
 
         # evaluate model
         # load the best saved model
-        saved_model = load_model(model_name)
+        model.load_weights(model_name)
 
-        scores = saved_model.evaluate([X_test_text] if embedding_type is not 'bert' else [X_test_text, X_test_masks], y_test, verbose=0)
-        predictions = saved_model.predict([X_test_text] if embedding_type is not 'bert' else [X_test_text, X_test_masks])
+        scores = model.evaluate([X_test_text] if embedding_type is not 'bert' else [X_test_text, X_test_masks], y_test, verbose=0)
+        predictions = model.predict([X_test_text] if embedding_type is not 'bert' else [X_test_text, X_test_masks])
 
         rounded_predictions = [np.argmax(p) for p in predictions]
         rounded_labels = np.argmax(y_test, axis=1)
