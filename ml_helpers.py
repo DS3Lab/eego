@@ -8,7 +8,8 @@ from transformers import TFBertModel
 from sklearn.preprocessing import MinMaxScaler
 from tensorflow.python.keras.preprocessing.sequence import pad_sequences
 from tensorflow.python.keras.preprocessing.text import Tokenizer
-
+from tensorflow.python.keras.callbacks import EarlyStopping, ModelCheckpoint
+import datetime
 
 def plot_prediction_distribution(true, pred):
     """Analyze label distribution of dataset"""
@@ -239,7 +240,6 @@ def prepare_text(X_text, embedding_type):
         return X_data_text, num_words, X_data_masks
 
 
-
 def prepare_cogni_seqs(cogni_dict):
     print('Processing cognitive data...')
     # prepare cognitive data
@@ -272,3 +272,15 @@ def pad_cognitive_feature_seqs(eeg_X, max_length_cogni):
 
     X_data = np.array(eeg_X)
     return X_data
+
+
+def callbacks(fold, random_seed_value):
+    """Define Keras callbacks for early stopping and saving model at best epoch"""
+
+    es = EarlyStopping(monitor='val_accuracy', mode='max', min_delta=config.min_delta, patience=config.patience)
+
+    d = datetime.datetime.now()
+    model_name = '../models/' + str(random_seed_value) + '_fold' + str(fold) + '_' + config.class_task + '_' + config.feature_set[0] + '_' + config.embeddings[0] + '_' + d.strftime("%d%m%Y-%H:%M:%S") + '.h5'
+    mc = ModelCheckpoint(model_name, monitor='val_accuracy', mode='max', save_weights_only=True, save_best_only=True, verbose=1)
+
+    return es, mc, model_name
