@@ -110,9 +110,10 @@ def lstm_classifier(labels, gaze, embedding_type, param_dict, random_seed_value,
 
         # evaluate model
         # load the best saved model
-        saved_model = load_model(model_name)
-        scores = saved_model.evaluate(X_test, y_test, verbose=0)
-        predictions = saved_model.predict(X_test)
+        model.load_weights(model_name)
+
+        scores = model.evaluate(X_test, y_test, verbose=0)
+        predictions = model.predict(X_test)
 
         print("For threshold:", threshold)
         pred = predictions.copy()

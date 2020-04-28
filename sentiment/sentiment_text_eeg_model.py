@@ -165,11 +165,11 @@ def lstm_classifier(features, labels, eeg, embedding_type, param_dict, random_se
 
         # evaluate model
         # load the best saved model
-        saved_model = load_model(model_name)
+        model.load_weights(model_name)
 
-        scores = saved_model.evaluate([X_test_text, X_test_eeg] if embedding_type is not 'bert' else [X_test_text, X_test_masks, X_test_eeg], y_test,
+        scores = model.evaluate([X_test_text, X_test_eeg] if embedding_type is not 'bert' else [X_test_text, X_test_masks, X_test_eeg], y_test,
                                 verbose=0)
-        predictions = saved_model.predict([X_test_text, X_test_eeg] if embedding_type is not 'bert' else [X_test_text, X_test_masks, X_test_eeg])
+        predictions = model.predict([X_test_text, X_test_eeg] if embedding_type is not 'bert' else [X_test_text, X_test_masks, X_test_eeg])
 
         rounded_predictions = [np.argmax(p) for p in predictions]
         rounded_labels = np.argmax(y_test, axis=1)

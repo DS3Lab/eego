@@ -160,11 +160,11 @@ def lstm_classifier(features, labels, gaze, embedding_type, param_dict, random_s
 
         # evaluate model
         # load the best saved model
-        saved_model = load_model(model_name)
+        model.load_weights(model_name)
 
-        scores = saved_model.evaluate([X_test_text, X_test_gaze] if embedding_type is not 'bert' else [X_test_text, X_test_masks, X_test_gaze], y_test,
+        scores = model.evaluate([X_test_text, X_test_gaze] if embedding_type is not 'bert' else [X_test_text, X_test_masks, X_test_gaze], y_test,
                                 verbose=0)
-        predictions = saved_model.predict([X_test_text, X_test_gaze] if embedding_type is not 'bert' else [X_test_text, X_test_masks, X_test_gaze])
+        predictions = model.predict([X_test_text, X_test_gaze] if embedding_type is not 'bert' else [X_test_text, X_test_masks, X_test_gaze])
 
         rounded_predictions = [np.argmax(p) for p in predictions]
         rounded_labels = np.argmax(y_test, axis=1)

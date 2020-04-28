@@ -139,10 +139,11 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
 
         # evaluate model
         # load the best saved model
-        saved_model = load_model(model_name)
-        scores = saved_model.evaluate([X_test_text] if embedding_type is not 'bert' else [X_test_text, X_test_masks], y_test,
+        model.load_weights(model_name)
+
+        scores = model.evaluate([X_test_text] if embedding_type is not 'bert' else [X_test_text, X_test_masks], y_test,
                                 verbose=0)
-        predictions = saved_model.predict([X_test_text] if embedding_type is not 'bert' else [X_test_text, X_test_masks])
+        predictions = model.predict([X_test_text] if embedding_type is not 'bert' else [X_test_text, X_test_masks])
 
         print("For threshold:", threshold)
         pred = predictions.copy()
