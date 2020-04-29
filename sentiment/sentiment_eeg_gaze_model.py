@@ -26,7 +26,8 @@ os.environ['KERAS_BACKEND'] = 'tensorflow'
 
 
 def lstm_classifier(labels, eeg, gaze, embedding_type, param_dict, random_seed_value):
-    # set random seed
+
+    # set random seeds
     np.random.seed(random_seed_value)
     tf.random.set_seed(random_seed_value)
     os.environ['PYTHONHASHSEED'] = str(random_seed_value)
@@ -49,7 +50,7 @@ def lstm_classifier(labels, eeg, gaze, embedding_type, param_dict, random_seed_v
     y = np_utils.to_categorical(y)
 
     # prepare EEG data
-    eeg_X, max_length_cogni = ml_helpers.prepare_eeg(eeg)
+    eeg_X, max_length_cogni = ml_helpers.prepare_cogni_seqs(eeg)
     eeg_X = ml_helpers.scale_feature_values(eeg_X)
     X_data_eeg = ml_helpers.pad_cognitive_feature_seqs(eeg_X, max_length_cogni)
 
