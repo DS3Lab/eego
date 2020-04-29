@@ -259,13 +259,13 @@ def prepare_cogni_seqs(cogni_dict):
     return cogni_X, max_length_cogni
 
 
-def pad_cognitive_feature_seqs(eeg_X, max_length_cogni):
+def pad_cognitive_feature_seqs(eeg_X, max_length_cogni, modality):
     for s in eeg_X:
         while len(s) < max_length_cogni:
-            if "eeg" in config.feature_set[0]:
+            if modality == "eeg":
                 # 105 = number of EEG electrodes
                 s.append(np.zeros(105))
-            elif "eye_tracking" in config.feature_set[0]:
+            elif modality == "eye_tracking":
                 # 5 = number of gaze features
                 s.append(np.zeros(5))
             else:

@@ -52,12 +52,12 @@ def lstm_classifier(labels, eeg, gaze, embedding_type, param_dict, random_seed_v
     # prepare EEG data
     eeg_X, max_length_cogni = ml_helpers.prepare_cogni_seqs(eeg)
     eeg_X = ml_helpers.scale_feature_values(eeg_X)
-    X_data_eeg = ml_helpers.pad_cognitive_feature_seqs(eeg_X, max_length_cogni)
+    X_data_eeg = ml_helpers.pad_cognitive_feature_seqs(eeg_X, max_length_cogni, "eeg")
 
     # prepare eye-tracking data
     gaze_X, max_length_cogni = ml_helpers.prepare_cogni_seqs(gaze)
     gaze_X = ml_helpers.scale_feature_values(gaze_X)
-    X_data_gaze = ml_helpers.pad_cognitive_feature_seqs(gaze_X, max_length_cogni)
+    X_data_gaze = ml_helpers.pad_cognitive_feature_seqs(gaze_X, max_length_cogni, "eye_tracking")
 
     # split data into train/test
     kf = KFold(n_splits=config.folds, random_state=random_seed_value, shuffle=True)
