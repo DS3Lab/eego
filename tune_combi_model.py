@@ -37,6 +37,7 @@ def main():
 
     print("Reading gaze features from file!!")
     gaze_dict = json.load(open("feature_extraction/features/gaze_feats_file_" + config.class_task + ".json"))
+    print(len(gaze_dict))
 
 
     # save EEG features
@@ -50,11 +51,6 @@ def main():
     label_dict = collections.OrderedDict(sorted(label_dict.items()))
     eeg_dict = collections.OrderedDict(sorted(eeg_dict.items()))
     gaze_dict = collections.OrderedDict(sorted(gaze_dict.items()))
-
-    print(list(eeg_dict.keys())[0])
-    print(list(gaze_dict.keys())[0])
-    print(list(feature_dict.keys())[0])
-    print(list(label_dict.keys())[0])
 
     print(len(feature_dict.keys()), len(label_dict))
 
@@ -128,7 +124,7 @@ def main():
                                                                                                         emb,
                                                                                                         parameter_dict,
                                                                                                         rand)
-                                            elif 'eeg_gaze' in config.feature_set:
+                                            elif 'eeg_eye_tracking' in config.feature_set:
                                                 fold_results = sentiment_eeg_gaze_model.lstm_classifier(label_dict,
                                                                                                         eeg_dict, gaze_dict,
                                                                                                         emb,
