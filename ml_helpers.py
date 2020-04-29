@@ -10,6 +10,7 @@ from tensorflow.python.keras.preprocessing.sequence import pad_sequences
 from tensorflow.python.keras.preprocessing.text import Tokenizer
 from tensorflow.python.keras.callbacks import EarlyStopping, ModelCheckpoint
 import datetime
+import sklearn
 
 def plot_prediction_distribution(true, pred):
     """Analyze label distribution of dataset"""
