@@ -61,7 +61,7 @@ def save_results(fold_results_dict, task):
     saves hyper-parameters and results to a result file"""
 
     if config.class_task.startswith("sentiment"):
-        result_file = open('sentiment/results/'+str(date.today()) + "_results_" + task + "_" + "-".join(config.feature_set) + ".txt", 'a')
+        result_file = open('sentiment/results/'+str(date.today()) + "_results_" + task + "_" + "-".join(config.feature_set) + "-" + config.embeddings[0] + ".txt", 'a')
     elif config.class_task == "ner":
         result_file = open('ner/results/' + str(date.today()) + "_results_" + task + "_"+ "-".join(config.feature_set) + ".txt", 'a')
     elif config.class_task == "reldetect":
