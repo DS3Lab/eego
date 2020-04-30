@@ -18,17 +18,22 @@ class_task = 'sentiment-bin'
 feature_set = ['eye_tracking']
 
 # word embeddings {none, glove (300d), bert}
-embeddings = ['glove']
+embeddings = 'glove'
 
 # hyper-parameters to test - general
-lstm_dim = [64, 128, 256, 512]
-lstm_layers = [1, 2, 3, 4]
-dense_dim = [32, 64, 128, 256]
-dropout = [0.1, 0.3, 0.5]
-batch_size = [20, 30, 40, 60]
-epochs = [10, 20, 50, 100]
-lr = [0.00001, 0.001, 0.01, 0.0001]
+lstm_dim = [64]
+lstm_layers = [1]
+dense_dim = [64]
+dropout = [0.]
+batch_size = [40]
+epochs = [200]
+lr = [0.001]
 
+
+# best params raw eeg:
+eeg_lstm_dim = [64]
+eeg_dense_dim = [64]
+eeg_dropout = [0.1]
 
 # other parameters
 folds = 5
