@@ -88,7 +88,7 @@ def lstm_classifier(features, labels, eeg, embedding_type, param_dict_text, para
         K.clear_session()
 
         lstm_dim = param_dict_text['lstm_dim']
-        lstm_layers = param_dict_text['lstm_layers']
+        lstm_layers = 1
         dense_dim = param_dict_text['dense_dim']
         dropout = param_dict_text['dropout']
         batch_size = param_dict_text['batch_size']
