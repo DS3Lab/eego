@@ -42,11 +42,11 @@ def main():
         print("WARNING: Not an equal number of sentences in features and labels!")
 
     for rand in config.random_seed_values:
-        parameter_dict_text = {"lr": config.lr, "lstm_dim": config.lstm_dim,
-                          "dense_dim": config.dense_dim, "dropout": config.dropout, "batch_size": config.batch_size,
+        parameter_dict_text = {"lr": config.lr[0], "lstm_dim": config.lstm_dim[0],
+                          "dense_dim": config.dense_dim[0], "dropout": config.dropout[0], "batch_size": config.batch_size[0],
                           "epochs": config.epochs[0], "random_seed": rand}
-        parameter_dict_eeg = {"lstm_dim": config.eeg_lstm_dim,
-                               "dense_dim": config.eeg_dense_dim, "dropout": config.eeg_dropout}
+        parameter_dict_eeg = {"lstm_dim": config.eeg_lstm_dim[0],
+                               "dense_dim": config.eeg_dense_dim[0], "dropout": config.eeg_dropout[0]}
 
         if config.class_task == 'reldetect':
             for threshold in config.rel_thresholds:
