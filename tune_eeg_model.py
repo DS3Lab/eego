@@ -4,10 +4,9 @@ from reldetect import reldetect_eeg_model, reldetect_text_eeg_model
 from ner import ner_text_model
 from sentiment import sentiment_eeg_model, sentiment_text_eeg_model
 from data_helpers import save_results, load_matlab_files
-import numpy as np
 import collections
 import json
-
+import numpy as np
 
 # Usage on spaceml:
 # $ conda activate env-eego
@@ -51,6 +50,7 @@ def main():
         print("WARNING: Not an equal number of sentences in features and labels!")
 
     for rand in config.random_seed_values:
+        np.random.seed(rand)
         for lstmDim in config.lstm_dim:
             for lstmLayers in config.lstm_layers:
                 for denseDim in config.dense_dim:

@@ -142,7 +142,6 @@ def prepare_sequences_for_bert_with_mask(X, max_length):
 
     # Convert the lists into tensors.
     input_ids = np.vstack(input_ids)
-
     attention_masks = np.vstack(attention_masks)
 
     return input_ids, attention_masks
@@ -176,7 +175,6 @@ def scale_feature_values(X):
     for sentence in X:
         for token in sentence:
             token[feat] = normalized[i]
-            #print("token feature: ", token[feat])
             i += 1
 
     return X
@@ -189,15 +187,16 @@ def plot_confusion_matrix(cm):
     fig, ax = plot_confusion_matrix(conf_mat=cm, colorbar=True,
                                     show_absolute=True,
                                     show_normed=True)
-    #ax.set_xticklabels([''] + target_names)
-    #ax.set_yticklabels([''] + target_names)
     plt.title("Confusion matrix: " + config.class_task + ", " + config.feature_set[0])
     plt.savefig("CM_" + config.class_task + "_" + config.feature_set[0] + ".pdf")
     plt.clf()
     # plt.show()
 
 
-def prepare_text(X_text, embedding_type):
+def prepare_text(X_text, embedding_type, random_seed):
+
+    np.random.seed(random_seed)
+
     vocab_size = 100000
 
     # prepare text samples
