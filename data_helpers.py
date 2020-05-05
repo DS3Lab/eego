@@ -80,10 +80,10 @@ def save_results(fold_results_dict, task):
 
     # test scores
     avg_accuracy = np.mean(fold_results_dict['test-accuracy'])
-    std_accuracy = np.std(fold_results_dict['test-accuracy'])
     avg_precision = np.mean(fold_results_dict['precision'])
     avg_recall = np.mean(fold_results_dict['recall'])
     avg_fscore = np.mean(fold_results_dict['fscore'])
+    std_accuracy = np.std(fold_results_dict['test-accuracy'])
     std_precision = np.std(fold_results_dict['precision'])
     std_recall = np.std(fold_results_dict['recall'])
     std_fscore = np.std(fold_results_dict['fscore'])

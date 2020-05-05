@@ -7,7 +7,7 @@ rootdir_zuco2 = base_dir+"zuco2/"
 
 # subjects (subejcts starting with "Z" are from ZuCo 1, subjects starting with "Y" are from ZuCo 2)
 #subjects = ['YAC', 'YAG', 'YAK', 'YDG', 'YDR', 'YFR', 'YFS', 'YHS', 'YIS', 'YLS', 'YMD', 'YMS', 'YRH', 'YRK', 'YRP', 'YSD', 'YSL', 'YTL']  # exclude YMH
-subjects = ["ZKW", "ZJS"]#, "ZDN"]#, "ZJN"]#, "ZPH", "ZAB", "ZJM", "ZKB", "ZKH", "ZMG", "ZGW", "ZKW", "ZDM"]
+subjects = ["ZKW"]#], "ZJS"]#, "ZDN"]#, "ZJN"]#, "ZPH", "ZAB", "ZJM", "ZKB", "ZKH", "ZMG", "ZGW", "ZKW", "ZDM"]
 
 
 # ML task {sentiment-bin, sentiment-tri, ner, reldetect}
@@ -39,8 +39,8 @@ eeg_dropout = [0.1]
 folds = 5
 random_seed_values = [13, 78, 22, 66, 42]
 validation_split = 0.1
-patience = 8
-min_delta = 0.002
+patience = 80
+min_delta = 0.0000001
 
 # only for Relation Detection:
 rel_thresholds = [0.3, 0.5, 0.7]
