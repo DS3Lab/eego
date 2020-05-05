@@ -26,7 +26,6 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
     # set random seeds
     np.random.seed(random_seed_value)
     tf.random.set_seed(random_seed_value)
-    # todo: why string?
     os.environ['PYTHONHASHSEED'] = str(random_seed_value)
 
     start = time.time()
