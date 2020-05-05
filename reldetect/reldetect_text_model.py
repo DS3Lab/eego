@@ -48,7 +48,7 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
     y = np.asarray(y)
 
     # prepare text samples
-    X_data_text, num_words, text_feats = ml_helpers.prepare_text(X, embedding_type)
+    X_data_text, num_words, text_feats = ml_helpers.prepare_text(X, embedding_type, random_seed_value)
 
     # split data into train/test
     kf = KFold(n_splits=config.folds, random_state=random_seed_value, shuffle=True)

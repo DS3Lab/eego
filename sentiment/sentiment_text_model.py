@@ -5,7 +5,6 @@ from tensorflow.python.keras.initializers import Constant
 import tensorflow.python.keras.backend as K
 from tensorflow.python.keras.layers import Input, Dense, Embedding, LSTM, Bidirectional, Flatten, Dropout
 from tensorflow.python.keras.models import Model, load_model
-from tensorflow.python.keras.callbacks import EarlyStopping, ModelCheckpoint
 import sklearn.metrics
 from sklearn.model_selection import KFold
 import ml_helpers
@@ -13,9 +12,8 @@ import config
 import time
 from datetime import timedelta
 import tensorflow as tf
+from tensorflow import set_random_seed
 import sys
-
-
 
 os.environ['KERAS_BACKEND'] = 'tensorflow'
 
@@ -27,8 +25,10 @@ os.environ['KERAS_BACKEND'] = 'tensorflow'
 def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_value):
 
     # set random seeds
+    set_random_seed(2)
     np.random.seed(random_seed_value)
     tf.random.set_seed(random_seed_value)
+    # todo: why string?
     os.environ['PYTHONHASHSEED'] = str(random_seed_value)
 
     start = time.time()
@@ -49,7 +49,7 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
     y = np_utils.to_categorical(y)
 
     # prepare text samples
-    X_data_text, num_words, text_feats = ml_helpers.prepare_text(X, embedding_type)
+    X_data_text, num_words, text_feats = ml_helpers.prepare_text(X, embedding_type, random_seed_value)
 
     # split data into train/test
     kf = KFold(n_splits=config.folds, random_state=random_seed_value, shuffle=True)

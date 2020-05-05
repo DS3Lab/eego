@@ -53,7 +53,7 @@ def lstm_classifier(features, labels, eeg, gaze, embedding_type, param_dict, ran
     y = np_utils.to_categorical(y)
 
     # prepare text samples
-    X_data_text, num_words, text_feats = ml_helpers.prepare_text(X_text, embedding_type)
+    X_data_text, num_words, text_feats = ml_helpers.prepare_text(X_text, embedding_type, random_seed_value)
 
     # prepare EEG data
     eeg_X, max_length_cogni = ml_helpers.prepare_eeg(eeg)

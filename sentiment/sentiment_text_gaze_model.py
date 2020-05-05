@@ -49,7 +49,7 @@ def lstm_classifier(features, labels, gaze, embedding_type, param_dict, random_s
     start = time.time()
 
     # prepare text samples
-    X_data_text, num_words, text_feats = ml_helpers.prepare_text(X_text, embedding_type)
+    X_data_text, num_words, text_feats = ml_helpers.prepare_text(X_text, embedding_type, random_seed_value)
 
     # prepare eye-tracking data
     gaze_X, max_length_cogni = ml_helpers.prepare_cogni_seqs(gaze)
