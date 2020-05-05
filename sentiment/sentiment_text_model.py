@@ -24,7 +24,6 @@ os.environ['KERAS_BACKEND'] = 'tensorflow'
 def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_value):
 
     # set random seeds
-    set_random_seed(2)
     np.random.seed(random_seed_value)
     tf.random.set_seed(random_seed_value)
     # todo: why string?
