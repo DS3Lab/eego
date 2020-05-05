@@ -5,6 +5,7 @@ from ner import ner_text_model
 from sentiment import sentiment_text_model
 from data_helpers import save_results, load_matlab_files
 import collections
+import numpy as np
 
 # Usage on spaceml:
 # $ conda activate env-eego
@@ -34,6 +35,7 @@ def main():
         print("WARNING: Not an equal number of sentences in features and labels!")
 
     for rand in config.random_seed_values:
+        np.random.seed(rand)
         for lstmDim in config.lstm_dim:
             for lstmLayers in config.lstm_layers:
                 for denseDim in config.dense_dim:

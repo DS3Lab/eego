@@ -6,6 +6,7 @@ from ner import ner_text_gaze_model
 from reldetect import reldetect_text_gaze_model, reldetect_gaze_model
 import json
 import collections
+import numpy as np
 
 
 # Usage on spaceml:
@@ -44,6 +45,7 @@ def main():
         print("WARNING: Not an equal number of sentences in features and labels!")
 
     for rand in config.random_seed_values:
+        np.random.seed(rand)
         for lstmDim in config.lstm_dim:
             for lstmLayers in config.lstm_layers:
                 for denseDim in config.dense_dim:
