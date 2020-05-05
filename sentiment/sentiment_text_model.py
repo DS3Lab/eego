@@ -12,7 +12,6 @@ import config
 import time
 from datetime import timedelta
 import tensorflow as tf
-from tensorflow import set_random_seed
 import sys
 
 os.environ['KERAS_BACKEND'] = 'tensorflow'
