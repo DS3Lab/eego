@@ -90,7 +90,7 @@ def main():
                                                                                                         gaze_dict,
                                                                                                         config.embeddings,
                                                                                                         parameter_dict,
-                                                                                                        rand)
+                                                                                                        rand, threshold)
                                             save_results(fold_results, config.class_task)
 
                                     elif config.class_task == 'ner':
