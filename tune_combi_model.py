@@ -1,6 +1,6 @@
 import config
 from feature_extraction import zuco_reader
-from reldetect import reldetect_eeg_model, reldetect_text_eeg_model
+from reldetect import reldetect_eeg_model, reldetect_text_eeg_model, reldetect_eeg_gaze_model
 from ner import ner_text_model
 from sentiment import sentiment_eeg_model, sentiment_eeg_gaze_model, sentiment_text_eeg_gaze_model
 from data_helpers import save_results, load_matlab_files
@@ -81,6 +81,13 @@ def main():
                                                 fold_results = sentiment_text_eeg_model.lstm_classifier(feature_dict,
                                                                                                         label_dict,
                                                                                                         eeg_dict,
+                                                                                                        config.embeddings,
+                                                                                                        parameter_dict,
+                                                                                                        rand)
+                                            elif 'eeg_eye_tracking' in config.feature_set:
+                                                fold_results = reldetect_eeg_gaze_model.lstm_classifier(label_dict,
+                                                                                                        eeg_dict,
+                                                                                                        gaze_dict,
                                                                                                         config.embeddings,
                                                                                                         parameter_dict,
                                                                                                         rand)
