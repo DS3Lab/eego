@@ -53,7 +53,7 @@ def lstm_classifier(features, labels, eeg, embedding_type, param_dict, random_se
     eeg_X = ml_helpers.scale_feature_values(eeg_X)
     X_data_eeg = ml_helpers.pad_cognitive_feature_seqs(eeg_X, max_length_cogni, "eeg")
 
-    print(X_data_text[0][0])
+    print(X_data_text[0])
     print(X_data_eeg[0][0])
 
     # split data into train/test
