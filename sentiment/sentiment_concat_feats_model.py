@@ -13,6 +13,8 @@ import time
 from datetime import timedelta
 import tensorflow as tf
 import sys
+from tensorflow.python.keras.layers.merge import concatenate
+
 
 os.environ['KERAS_BACKEND'] = 'tensorflow'
 
@@ -70,6 +72,7 @@ def lstm_classifier(features, labels, eeg, embedding_type, param_dict, random_se
         print("splitting train and test data...")
         y_train, y_test = y[train_index], y[test_index]
         X_train_text, X_test_text = X_data_text[train_index], X_data_text[test_index]
+        X_train_eeg, X_test_eeg = X_data_eeg[train_index], X_data_eeg[test_index]
     
         if embedding_type is 'bert':
             X_train_masks, X_test_masks = text_feats[train_index], text_feats[test_index]
@@ -97,8 +100,11 @@ def lstm_classifier(features, labels, eeg, embedding_type, param_dict, random_se
         print("Preparing model...")
 
         # define two sets of inputs
-        input_text = Input(shape=(X_train_text.shape[1],)) if embedding_type is not 'bert' else Input(shape=(X_train_text.shape[1],), dtype=tf.int32)
-        input_list = [input_text]
+        input_text = Input(shape=(X_train_text.shape[1],),
+                           name='text_input_tensor') if embedding_type is not 'bert' else Input(
+            shape=(X_train_text.shape[1],), dtype=tf.int32, name='text_input_tensor')
+        input_text_list = [input_text]
+        input_eeg = Input(shape=(X_train_eeg.shape[1], X_train_eeg.shape[2]), name='eeg_input_tensor')
 
         # the first branch operates on the first input (word embeddings)
         if embedding_type is 'none':
@@ -113,17 +119,18 @@ def lstm_classifier(features, labels, eeg, embedding_type, param_dict, random_se
                       name='glove_input_embeddings')(input_text)
         elif embedding_type is 'bert':
             input_mask = tf.keras.layers.Input((X_train_masks.shape[1],), dtype=tf.int32)
-            input_list.append(input_mask)
+            input_text_list.append(input_mask)
             text_model = ml_helpers.create_new_bert_layer()(input_text, attention_mask=input_mask)[0]
 
+        combined = concatenate([text_model, input_eeg])
         for l in list(range(lstm_layers)):
-            text_model = Bidirectional(LSTM(lstm_dim, return_sequences=True))(text_model)
+            text_model = Bidirectional(LSTM(lstm_dim, return_sequences=True))(combined)
         text_model = Flatten()(text_model)
         text_model = Dense(dense_dim, activation="relu")(text_model)
         text_model = Dropout(dropout)(text_model)
         text_model = Dense(y_train.shape[1], activation="softmax")(text_model)
 
-        model = Model(inputs=input_list, outputs=text_model)
+        model = Model(inputs=input_text_list, outputs=text_model)
 
         model.compile(loss='categorical_crossentropy',
                       optimizer=tf.keras.optimizers.Adam(lr=lr),
