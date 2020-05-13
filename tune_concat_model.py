@@ -115,23 +115,10 @@ def main():
                                                 del label_dict[s]
                                                 del feature_dict[s]
                                                 del eeg_dict[s]
-                                        if 'concat_text_eeg' in config.feature_set:
+
+                                        if 'combi_eeg_raw' in config.feature_set or 'eeg_theta' in config.feature_set or 'eeg_alpha' in config.feature_set or 'eeg_beta' in config.feature_set or 'eeg_gamma' in config.feature_set:
                                             print("Starting EEG + text early fusion model")
                                             fold_results = sentiment_concat_feats_model.lstm_classifier(feature_dict,
-                                                                                                    label_dict,
-                                                                                                    eeg_dict,
-                                                                                                    config.embeddings,
-                                                                                                    parameter_dict,
-                                                                                                    rand)
-                                        elif 'eeg_raw' in config.feature_set:
-                                            fold_results = sentiment_eeg_model.lstm_classifier(label_dict,
-                                                                                               eeg_dict,
-                                                                                               config.embeddings,
-                                                                                               parameter_dict,
-                                                                                               rand)
-
-                                        elif 'combi_eeg_raw' in config.feature_set or 'eeg_theta' in config.feature_set or 'eeg_alpha' in config.feature_set or 'eeg_beta' in config.feature_set or 'eeg_gamma' in config.feature_set:
-                                            fold_results = sentiment_text_eeg_model.lstm_classifier(feature_dict,
                                                                                                     label_dict,
                                                                                                     eeg_dict,
                                                                                                     config.embeddings,
