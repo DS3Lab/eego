@@ -132,6 +132,8 @@ def lstm_classifier(features, labels, eeg, embedding_type, param_dict, random_se
 
         model = Model(inputs=input_text_list, outputs=text_model)
 
+        model.summary()
+
         model.compile(loss='categorical_crossentropy',
                       optimizer=tf.keras.optimizers.Adam(lr=lr),
                       metrics=['accuracy'])
