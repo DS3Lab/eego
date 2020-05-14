@@ -1,6 +1,6 @@
 import os
 import numpy as np
-from tensorflow.python.keras.utils import np_utils, plot_model
+from tensorflow.python.keras.utils import np_utils
 from tensorflow.python.keras.initializers import Constant
 import tensorflow.python.keras.backend as K
 from tensorflow.python.keras.layers import Input, Dense, Embedding, LSTM, Bidirectional, Flatten, Dropout
@@ -131,7 +131,7 @@ def lstm_classifier(features, labels, eeg, embedding_type, param_dict, random_se
 
         model = Model(inputs=input_text_list, outputs=text_model)
 
-        plot_model(model, to_file='model.png')
+        #plot_model(model, to_file='model.png')
         model.summary()
 
         model.compile(loss='categorical_crossentropy',
