@@ -55,9 +55,6 @@ def lstm_classifier(features, labels, eeg, embedding_type, param_dict, random_se
     eeg_X = ml_helpers.scale_feature_values(eeg_X)
     X_data_eeg = ml_helpers.pad_cognitive_feature_seqs(eeg_X, max_length_cogni, "eeg")
 
-    print(X_data_text[0])
-    print(X_data_eeg[0][0])
-
     # split data into train/test
     kf = KFold(n_splits=config.folds, random_state=random_seed_value, shuffle=True)
 
@@ -105,6 +102,7 @@ def lstm_classifier(features, labels, eeg, embedding_type, param_dict, random_se
             shape=(X_train_text.shape[1],), dtype=tf.int32, name='text_input_tensor')
         input_text_list = [input_text]
         input_eeg = Input(shape=(X_train_eeg.shape[1], X_train_eeg.shape[2]), name='eeg_input_tensor')
+        print(input_eeg.shape)
 
         # the first branch operates on the first input (word embeddings)
         if embedding_type is 'none':
@@ -122,9 +120,11 @@ def lstm_classifier(features, labels, eeg, embedding_type, param_dict, random_se
             input_text_list.append(input_mask)
             text_model = ml_helpers.create_new_bert_layer()(input_text, attention_mask=input_mask)[0]
 
-        combined = concatenate([text_model, input_eeg])
+        text_model = concatenate([text_model, input_eeg], name='concat_layer')
+        print(text_model.shape)
+
         for l in list(range(lstm_layers)):
-            text_model = Bidirectional(LSTM(lstm_dim, return_sequences=True))(combined)
+            text_model = Bidirectional(LSTM(lstm_dim, return_sequences=True))(text_model)
         text_model = Flatten()(text_model)
         text_model = Dense(dense_dim, activation="relu")(text_model)
         text_model = Dropout(dropout)(text_model)
