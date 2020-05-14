@@ -48,6 +48,14 @@ def main():
                                                       "epochs": e_val, "random_seed": rand}
 
                                     if config.class_task == 'reldetect':
+                                        print(len(eeg_dict))
+                                        if "zuco1" in config.feature_set:
+                                            for s, feats in list(eeg_dict.items()):
+                                                # drop zuco2 sentences
+                                                if s not in label_dict:
+                                                    del eeg_dict[s]
+                                        print(len(eeg_dict))
+
                                         for threshold in config.rel_thresholds:
                                             fold_results = reldetect_text_model.lstm_classifier(feature_dict, label_dict, config.embeddings, parameter_dict, rand, threshold)
                                             save_results(fold_results, config.class_task)
