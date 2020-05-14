@@ -144,15 +144,15 @@ def lstm_classifier(features, labels, eeg, embedding_type, param_dict, random_se
         early_stop, model_save, model_name = ml_helpers.callbacks(fold, random_seed_value)
 
         # train model
-        history = model.fit([X_train_text] if embedding_type is not 'bert' else [X_train_text, X_train_masks], y_train, validation_split=config.validation_split, epochs=epochs, batch_size=batch_size, callbacks=[early_stop,model_save])
+        history = model.fit([X_train_text, X_train_eeg] if embedding_type is not 'bert' else [X_train_text, X_train_masks, X_train_eeg], y_train, validation_split=config.validation_split, epochs=epochs, batch_size=batch_size, callbacks=[early_stop,model_save])
         print("Best epoch:", len(history.history['loss'])- config.patience)
 
         # evaluate model
         # load the best saved model
         model.load_weights(model_name)
 
-        scores = model.evaluate([X_test_text] if embedding_type is not 'bert' else [X_test_text, X_test_masks], y_test, verbose=0)
-        predictions = model.predict([X_test_text] if embedding_type is not 'bert' else [X_test_text, X_test_masks])
+        scores = model.evaluate([X_test_text, X_test_eeg] if embedding_type is not 'bert' else [X_test_text, X_test_masks, X_test_eeg], y_test, verbose=0)
+        predictions = model.predict([X_test_text, X_test_eeg] if embedding_type is not 'bert' else [X_test_text, X_test_masks, X_test_eeg])
 
         rounded_predictions = [np.argmax(p) for p in predictions]
         rounded_labels = np.argmax(y_test, axis=1)
