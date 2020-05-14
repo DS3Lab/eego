@@ -63,6 +63,14 @@ def main():
                                                       "epochs": e_val, "random_seed": rand}
 
                                     if config.class_task == 'reldetect':
+                                        print(len(eeg_dict))
+                                        if "zuco1" in config.feature_set:
+                                            for s, feats in list(eeg_dict.items()):
+                                                # drop zuco2 sentences
+                                                if s not in label_dict:
+                                                    del eeg_dict[s]
+                                        print(len(eeg_dict))
+                                        
                                         for threshold in config.rel_thresholds:
                                             if 'eeg_raw' in config.feature_set:
                                                 fold_results = reldetect_eeg_model.lstm_classifier(label_dict, eeg_dict,
