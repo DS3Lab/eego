@@ -129,7 +129,7 @@ def lstm_classifier(features, labels, eeg, embedding_type, param_dict, random_se
         text_model = Dropout(dropout)(text_model)
         text_model = Dense(y_train.shape[1], activation="softmax")(text_model)
 
-        model = Model(inputs=input_text_list, outputs=text_model)
+        model = Model(inputs=[input_text_list, input_eeg], outputs=text_model)
 
         #plot_model(model, to_file='model.png')
         model.summary()
