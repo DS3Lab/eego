@@ -102,7 +102,6 @@ def lstm_classifier(features, labels, eeg, embedding_type, param_dict, random_se
             shape=(X_train_text.shape[1],), dtype=tf.int32, name='text_input_tensor')
         input_text_list = [input_text]
         input_eeg = Input(shape=(X_train_eeg.shape[1], X_train_eeg.shape[2]), name='eeg_input_tensor')
-        print(input_eeg.shape)
 
         # the first branch operates on the first input (word embeddings)
         if embedding_type is 'none':
@@ -121,8 +120,6 @@ def lstm_classifier(features, labels, eeg, embedding_type, param_dict, random_se
             text_model = ml_helpers.create_new_bert_layer()(input_text, attention_mask=input_mask)[0]
 
         text_model = concatenate([text_model, input_eeg], name='concat_layer')
-        print(text_model.shape)
-
         text_model = Bidirectional(LSTM(lstm_dim, return_sequences=True))(text_model)
         text_model = Flatten()(text_model)
         text_model = Dense(dense_dim, activation="relu")(text_model)
@@ -130,9 +127,6 @@ def lstm_classifier(features, labels, eeg, embedding_type, param_dict, random_se
         text_model = Dense(y_train.shape[1], activation="softmax")(text_model)
 
         model = Model(inputs=[input_text_list, input_eeg], outputs=text_model)
-
-        #plot_model(model, to_file='model.png')
-        model.summary()
 
         model.compile(loss='categorical_crossentropy',
                       optimizer=tf.keras.optimizers.Adam(lr=lr),
