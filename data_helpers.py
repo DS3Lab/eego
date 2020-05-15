@@ -96,30 +96,11 @@ def save_results(fold_results_dict, task):
 
 
 def drop_sentiment_sents(label_dict, feature_dict, cogni_dict):
-    i = 0
-    j = 0
-    k = 0
-    print(label_dict.values())
-    for s, label in list(label_dict.items()):
-        # drop 40 sentences of each label
 
-        #if label == 2:
-         #   while i < 40:
-          #      del label_dict[s]
-           #     del feature_dict[s]
-            #    del cogni_dict[s]
-             #   i += 1
+    entries = list(label_dict.keys())[:100]
 
-        if label == 1:
-            #while j < 40:
-                del label_dict[s]
-                del feature_dict[s]
-                del cogni_dict[s]
-                j += 1
-
-        #if label == 0:
-         #   while k < 40:
-          #      del label_dict[s]
-           #     del feature_dict[s]
-            #    del cogni_dict[s]
-             #   k += 1
+    for key in entries:
+        if key in feature_dict:
+            del feature_dict[key]
+            del cogni_dict[key]
+            del label_dict[key]
