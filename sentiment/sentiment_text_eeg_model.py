@@ -39,7 +39,7 @@ def lstm_classifier(features, labels, eeg, embedding_type, param_dict, random_se
     y = list(labels.values())
 
     # plot sample distribution
-    # ml_helpers.plot_label_distribution(y)
+    ml_helpers.plot_label_distribution(y)
 
     # check order of sentences in labels and features dicts
     sents_y = list(labels.keys())
@@ -101,7 +101,6 @@ def lstm_classifier(features, labels, eeg, embedding_type, param_dict, random_se
         # define model
         print("Preparing model...")
 
-        # define two sets of inputs
         # define two sets of inputs
         input_text = Input(shape=(X_train_text.shape[1],), name='text_input_tensor') if embedding_type is not 'bert' else Input(
             shape=(X_train_text.shape[1],), dtype=tf.int32, name='text_input_tensor')
