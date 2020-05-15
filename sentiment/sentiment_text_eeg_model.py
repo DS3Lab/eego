@@ -45,6 +45,9 @@ def lstm_classifier(features, labels, eeg, embedding_type, param_dict, random_se
     sents_y = list(labels.keys())
     sents_text = list(features.keys())
     sents_gaze = list(eeg.keys())
+    print(sents_y[0])
+    print(sents_gaze[0])
+    print(sents_text[0])
     if sents_y[0] != sents_gaze[0] != sents_text[0]:
         sys.exit("STOP! Order of sentences in labels and features dicts not the same!")
 
