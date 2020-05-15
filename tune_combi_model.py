@@ -32,9 +32,9 @@ def main():
     print(len(feature_dict), len(label_dict), len(eeg_dict))
 
     print("Reading EEG features from file!!")
-    eeg_dict = json.load(
-        open("../eeg_features/" + config.feature_set[0] + "_feats_file_" + config.class_task + ".json"))
-    print("done, ", len(eeg_dict), " sentences with EEG features.")
+    #eeg_dict = json.load(
+     #   open("../eeg_features/" + config.feature_set[0] + "_feats_file_" + config.class_task + ".json"))
+    #print("done, ", len(eeg_dict), " sentences with EEG features.")
 
     eeg_dict_theta = json.load(open("../eeg_features/eeg_theta_feats_file_" + config.class_task + ".json"))
     eeg_dict_alpha = json.load(open("../eeg_features/eeg_alpha_feats_file_" + config.class_task + ".json"))
