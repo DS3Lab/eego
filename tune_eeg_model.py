@@ -50,9 +50,9 @@ def main():
         print("WARNING: Not an equal number of sentences in features and labels!")
 
     # test with less data
-    print(len(eeg_dict), len(label_dict), len(feature_dict))
-    drop_sentiment_sents(label_dict, feature_dict, eeg_dict)
-    print(len(eeg_dict), len(label_dict), len(feature_dict))
+    #print(len(eeg_dict), len(label_dict), len(feature_dict))
+    #drop_sentiment_sents(label_dict, feature_dict, eeg_dict)
+    #print(len(eeg_dict), len(label_dict), len(feature_dict))
 
     for rand in config.random_seed_values:
         np.random.seed(rand)
