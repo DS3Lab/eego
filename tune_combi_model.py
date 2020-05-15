@@ -136,7 +136,7 @@ def main():
                                                 del eeg_dict_beta[s]
 
                                         if 'eeg4' in config.feature_set:
-                                            fold_results = sentiment_text_eeg4_model.lstm_classifier(label_dict,
+                                            fold_results = sentiment_text_eeg4_model.lstm_classifier(feature_dict, label_dict,
                                                                                                eeg_dict_alpha, eeg_dict_beta,
                                                                                                config.embeddings,
                                                                                                parameter_dict,
