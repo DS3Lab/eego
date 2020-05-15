@@ -54,8 +54,8 @@ def main():
 
     feature_dict = collections.OrderedDict(sorted(feature_dict.items()))
     label_dict = collections.OrderedDict(sorted(label_dict.items()))
-    eeg_dict = collections.OrderedDict(sorted(eeg_dict.items()))
-    gaze_dict = collections.OrderedDict(sorted(gaze_dict.items()))
+    #eeg_dict = collections.OrderedDict(sorted(eeg_dict.items()))
+    #gaze_dict = collections.OrderedDict(sorted(gaze_dict.items()))
 
     eeg_dict_theta = collections.OrderedDict(sorted(eeg_dict_theta.items()))
     eeg_dict_alpha = collections.OrderedDict(sorted(eeg_dict_alpha.items()))
