@@ -110,7 +110,7 @@ def lstm_classifier(features, labels, eeg_theta, eeg_alpha, eeg_beta, eeg_gamma,
         input_text = Input(shape=(X_train_text.shape[1],), name='text_input_tensor') if embedding_type is not 'bert' else Input(
             shape=(X_train_text.shape[1],), dtype=tf.int32, name='text_input_tensor')
         input_text_list = [input_text]
-        input_theta = Input(shape=(X_train_theta.shape[1], X_train_theta.shape[2]), name='a_input_tensor')
+        input_theta = Input(shape=(X_train_theta.shape[1], X_train_theta.shape[2]), name='t_input_tensor')
         input_alpha = Input(shape=(X_train_alpha.shape[1], X_train_alpha.shape[2]), name='a_input_tensor')
         input_beta = Input(shape=(X_train_beta.shape[1], X_train_beta.shape[2]), name='b_input_tensor')
         input_gamma = Input(shape=(X_train_gamma.shape[1], X_train_gamma.shape[2]), name='g_input_tensor')
