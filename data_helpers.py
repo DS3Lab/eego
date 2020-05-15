@@ -111,7 +111,7 @@ def drop_sentiment_sents(label_dict, feature_dict, cogni_dict):
              #   i += 1
 
         if label == 1:
-            while j < 40:
+            #while j < 40:
                 del label_dict[s]
                 del feature_dict[s]
                 del cogni_dict[s]
