@@ -49,6 +49,11 @@ def main():
     if len(feature_dict) != len(label_dict) != len(eeg_dict):
         print("WARNING: Not an equal number of sentences in features and labels!")
 
+    # test with less data
+    print(len(eeg_dict), len(label_dict), len(feature_dict))
+    drop_sentiment_sents(label_dict, feature_dict, eeg_dict)
+    print(len(eeg_dict), len(label_dict), len(feature_dict))
+
     for rand in config.random_seed_values:
         np.random.seed(rand)
         for lstmDim in config.lstm_dim:
@@ -94,10 +99,6 @@ def main():
                                         save_results(fold_results, config.class_task)
 
                                     elif config.class_task == 'sentiment-tri':
-                                        # test with less data
-                                        print(len(eeg_dict), len(label_dict), len(feature_dict))
-                                        drop_sentiment_sents(label_dict, feature_dict, eeg_dict)
-                                        print(len(eeg_dict), len(label_dict), len(feature_dict))
 
                                         if 'combi_concat' in config.feature_set:
                                             print("Starting EEG + text combi model")
