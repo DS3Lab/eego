@@ -23,10 +23,10 @@ os.environ['KERAS_BACKEND'] = 'tensorflow'
 
 
 # Machine learning model for sentiment classification (binary and ternary)
-# Jointly learning from text and cognitive word-level features (EEG pr eye-tracking)
+# Jointly learning from text and cognitive word-level features (EEG theta + alpha + beta + gamma)
 
 
-def lstm_classifier(features, labels, eeg, embedding_type, param_dict, random_seed_value):
+def lstm_classifier(features, labels, eeg_alpha, eeg_beta, embedding_type, param_dict, random_seed_value):
 
     # set random seeds
     np.random.seed(random_seed_value)
@@ -44,8 +44,9 @@ def lstm_classifier(features, labels, eeg, embedding_type, param_dict, random_se
     # check order of sentences in labels and features dicts
     sents_y = list(labels.keys())
     sents_text = list(features.keys())
-    sents_gaze = list(eeg.keys())
-    if sents_y[0] != sents_gaze[0] != sents_text[0]:
+    sents_alpha = list(eeg_alpha.keys())
+    sents_beta = list(eeg_beta.keys())
+    if sents_y[0] != sents_alpha[0] != sents_text[0] != sents_beta[0]:
         sys.exit("STOP! Order of sentences in labels and features dicts not the same!")
 
     # convert class labels to one hot vectors
@@ -55,9 +56,13 @@ def lstm_classifier(features, labels, eeg, embedding_type, param_dict, random_se
     X_data_text, num_words, text_feats = ml_helpers.prepare_text(X_text, embedding_type, random_seed_value)
 
     # prepare EEG data
-    eeg_X, max_length_cogni = ml_helpers.prepare_cogni_seqs(eeg)
-    eeg_X = ml_helpers.scale_feature_values(eeg_X)
-    X_data_eeg = ml_helpers.pad_cognitive_feature_seqs(eeg_X, max_length_cogni, "eeg")
+    alpha_X, max_length_cogni = ml_helpers.prepare_cogni_seqs(eeg_alpha)
+    alpha_X = ml_helpers.scale_feature_values(alpha_X)
+    X_data_alpha = ml_helpers.pad_cognitive_feature_seqs(alpha_X, max_length_cogni, "eeg")
+
+    beta_X, max_length_cogni = ml_helpers.prepare_cogni_seqs(eeg_beta)
+    beta_X = ml_helpers.scale_feature_values(beta_X)
+    X_data_beta = ml_helpers.pad_cognitive_feature_seqs(beta_X, max_length_cogni, "eeg")
 
     # split data into train/test
     kf = KFold(n_splits=config.folds, random_state=random_seed_value, shuffle=True)
@@ -75,14 +80,17 @@ def lstm_classifier(features, labels, eeg, embedding_type, param_dict, random_se
         X_train_text, X_test_text = X_data_text[train_index], X_data_text[test_index]
         if embedding_type is 'bert':
             X_train_masks, X_test_masks = text_feats[train_index], text_feats[test_index]
-        X_train_eeg, X_test_eeg = X_data_eeg[train_index], X_data_eeg[test_index]
+        X_train_alpha, X_test_alpha = X_data_alpha[train_index], X_data_alpha[test_index]
+        X_train_beta, X_test_beta = X_data_beta[train_index], X_data_beta[test_index]
 
         print(y_train.shape)
         print(y_test.shape)
         print(X_train_text.shape)
         print(X_test_text.shape)
-        print(X_train_eeg.shape)
-        print(X_test_eeg.shape)
+        print(X_train_alpha.shape)
+        print(X_test_alpha.shape)
+        print(X_train_beta.shape)
+        print(X_test_beta.shape)
 
         # reset model
         K.clear_session()
@@ -105,7 +113,8 @@ def lstm_classifier(features, labels, eeg, embedding_type, param_dict, random_se
         input_text = Input(shape=(X_train_text.shape[1],), name='text_input_tensor') if embedding_type is not 'bert' else Input(
             shape=(X_train_text.shape[1],), dtype=tf.int32, name='text_input_tensor')
         input_text_list = [input_text]
-        input_eeg = Input(shape=(X_train_eeg.shape[1], X_train_eeg.shape[2]), name='eeg_input_tensor')
+        input_alpha = Input(shape=(X_train_alpha.shape[1], X_train_alpha.shape[2]), name='a_input_tensor')
+        input_beta = Input(shape=(X_train_beta.shape[1], X_train_beta.shape[2]), name='b_input_tensor')
 
         # the first branch operates on the first input (word embeddings)
         if embedding_type is 'none':
@@ -132,21 +141,30 @@ def lstm_classifier(features, labels, eeg, embedding_type, param_dict, random_se
         text_model_model.summary()
 
         # the second branch operates on the second input (EEG data)
-        cognitive_model = Bidirectional(LSTM(lstm_dim, return_sequences=True))(input_eeg)
-        cognitive_model = Flatten()(cognitive_model)
-        cognitive_model = Dense(dense_dim, activation="relu")(cognitive_model)
-        cognitive_model = Dropout(dropout)(cognitive_model)
-        cognitive_model = Dense(16, activation="relu")(cognitive_model)
-        cognitive_model_model = Model(inputs=input_eeg, outputs=cognitive_model)
+        alpha_model = Bidirectional(LSTM(lstm_dim, return_sequences=True))(input_alpha)
+        alpha_model = Flatten()(alpha_model)
+        alpha_model = Dense(dense_dim, activation="relu")(alpha_model)
+        alpha_model = Dropout(dropout)(alpha_model)
+        alpha_model = Dense(16, activation="relu")(alpha_model)
+        alpha_model_model = Model(inputs=input_alpha, outputs=alpha_model)
 
-        cognitive_model_model.summary()
+        alpha_model_model.summary()
+
+        beta_model = Bidirectional(LSTM(lstm_dim, return_sequences=True))(input_beta)
+        beta_model = Flatten()(beta_model)
+        beta_model = Dense(dense_dim, activation="relu")(beta_model)
+        beta_model = Dropout(dropout)(beta_model)
+        beta_model = Dense(16, activation="relu")(beta_model)
+        beta_model_model = Model(inputs=input_beta, outputs=beta_model)
+
+        beta_model_model.summary()
 
         # combine the output of the two branches
-        combined = concatenate([text_model_model.output, cognitive_model_model.output])
+        combined = concatenate([text_model_model.output, alpha_model_model.output, beta_model_model.output])
         # apply another dense layer and then a softmax prediction on the combined outputs
         combi_model = Dense(y_train.shape[1], activation="softmax")(combined)
 
-        model = Model(inputs=[text_model_model.input, cognitive_model_model.input], outputs=combi_model)
+        model = Model(inputs=[text_model_model.input, alpha_model_model.input, beta_model_model.input], outputs=combi_model)
 
         model.compile(loss='categorical_crossentropy',
                       optimizer=tf.keras.optimizers.Adam(lr=lr),
@@ -158,7 +176,7 @@ def lstm_classifier(features, labels, eeg, embedding_type, param_dict, random_se
         early_stop, model_save, model_name = ml_helpers.callbacks(fold, random_seed_value)
 
         # train model
-        history = model.fit([X_train_text, X_train_eeg] if embedding_type is not 'bert' else [X_train_text, X_train_masks, X_train_eeg], y_train,
+        history = model.fit([X_train_text, X_train_alpha, X_train_beta] if embedding_type is not 'bert' else [X_train_text, X_train_masks, X_train_alpha, X_train_beta], y_train,
                             validation_split=0.1, epochs=epochs, batch_size=batch_size,callbacks=[early_stop, model_save])
         print("Best epoch:", len(history.history['loss']) - config.patience)
 
@@ -166,9 +184,9 @@ def lstm_classifier(features, labels, eeg, embedding_type, param_dict, random_se
         # load the best saved model
         model.load_weights(model_name)
 
-        scores = model.evaluate([X_test_text, X_test_eeg] if embedding_type is not 'bert' else [X_test_text, X_test_masks, X_test_eeg], y_test,
+        scores = model.evaluate([X_test_text, X_test_alpha, X_test_beta] if embedding_type is not 'bert' else [X_test_text, X_test_masks, X_test_alpha, X_test_beta], y_test,
                                 verbose=0)
-        predictions = model.predict([X_test_text, X_test_eeg] if embedding_type is not 'bert' else [X_test_text, X_test_masks, X_test_eeg])
+        predictions = model.predict([X_test_text, X_test_alpha, X_test_beta] if embedding_type is not 'bert' else [X_test_text, X_test_masks, X_test_alpha, X_test_beta])
 
         rounded_predictions = [np.argmax(p) for p in predictions]
         rounded_labels = np.argmax(y_test, axis=1)

@@ -2,7 +2,7 @@ import config
 from feature_extraction import zuco_reader
 from reldetect import reldetect_eeg_model, reldetect_text_eeg_model, reldetect_eeg_gaze_model
 from ner import ner_text_model
-from sentiment import sentiment_eeg_model, sentiment_eeg_gaze_model, sentiment_text_eeg_gaze_model
+from sentiment import sentiment_eeg_model, sentiment_eeg_gaze_model, sentiment_text_eeg_gaze_model, sentiment_text_eeg4_model
 from data_helpers import save_results, load_matlab_files
 import numpy as np
 import collections
@@ -35,6 +35,11 @@ def main():
     eeg_dict = json.load(
         open("../eeg_features/" + config.feature_set[0] + "_feats_file_" + config.class_task + ".json"))
     print("done, ", len(eeg_dict), " sentences with EEG features.")
+
+    eeg_dict_theta = json.load(open("../eeg_features/eeg_theta_feats_file_" + config.class_task + ".json"))
+    eeg_dict_alpha = json.load(open("../eeg_features/eeg_alpha_feats_file_" + config.class_task + ".json"))
+    eeg_dict_beta = json.load(open("../eeg_features/eeg_beta_feats_file_" + config.class_task + ".json"))
+    eeg_dict_gamma = json.load(open("../eeg_features/eeg_gamma_feats_file_" + config.class_task + ".json"))
 
     print("Reading gaze features from file!!")
     gaze_dict = json.load(open("feature_extraction/features/gaze_feats_file_" + config.class_task + ".json"))
@@ -122,6 +127,14 @@ def main():
                                                 del label_dict[s]
                                                 del feature_dict[s]
                                                 del eeg_dict[s]
+
+                                        if 'eeg4' in config.feature_set:
+                                            fold_results = sentiment_text_eeg4_model.lstm_classifier(label_dict,
+                                                                                               eeg_dict_alpha, eeg_dict_beta,
+                                                                                               config.embeddings,
+                                                                                               parameter_dict,
+                                                                                               rand)
+
                                         if 'eeg_raw' in config.feature_set:
                                             fold_results = sentiment_eeg_model.lstm_classifier(label_dict,
                                                                                                eeg_dict,
