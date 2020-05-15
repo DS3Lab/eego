@@ -3,7 +3,7 @@ from feature_extraction import zuco_reader
 from reldetect import reldetect_eeg_model, reldetect_text_eeg_model
 from ner import ner_text_model
 from sentiment import sentiment_eeg_model, sentiment_text_eeg_model
-from data_helpers import save_results, load_matlab_files
+from data_helpers import save_results, load_matlab_files, drop_sentiment_sents
 import collections
 import json
 import numpy as np
@@ -70,7 +70,7 @@ def main():
                                                 if s not in label_dict:
                                                     del eeg_dict[s]
                                         print(len(eeg_dict))
-                                        
+
                                         for threshold in config.rel_thresholds:
                                             if 'eeg_raw' in config.feature_set:
                                                 fold_results = reldetect_eeg_model.lstm_classifier(label_dict, eeg_dict,
@@ -94,6 +94,11 @@ def main():
                                         save_results(fold_results, config.class_task)
 
                                     elif config.class_task == 'sentiment-tri':
+                                        # test with less data
+                                        print(len(eeg_dict), len(label_dict), len(feature_dict))
+                                        drop_sentiment_sents(label_dict, feature_dict, eeg_dict)
+                                        print(len(eeg_dict), len(label_dict), len(feature_dict))
+
                                         if 'combi_concat' in config.feature_set:
                                             print("Starting EEG + text combi model")
                                             fold_results = sentiment_text_eeg_model.lstm_classifier(feature_dict,
