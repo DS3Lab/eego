@@ -103,12 +103,12 @@ def drop_sentiment_sents(label_dict, feature_dict, cogni_dict):
     for s, label in list(label_dict.items()):
         # drop 40 sentences of each label
 
-        if label == 2:
-            while i < 40:
-                del label_dict[s]
-                del feature_dict[s]
-                del cogni_dict[s]
-                i += 1
+        #if label == 2:
+         #   while i < 40:
+          #      del label_dict[s]
+           #     del feature_dict[s]
+            #    del cogni_dict[s]
+             #   i += 1
 
         if label == 1:
             while j < 40:
