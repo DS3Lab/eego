@@ -39,7 +39,7 @@ def lstm_classifier(features, labels, eeg, embedding_type, param_dict, random_se
     y = list(labels.values())
 
     # plot sample distribution
-    ml_helpers.plot_label_distribution(y)
+    #ml_helpers.plot_label_distribution(y)
 
     # check order of sentences in labels and features dicts
     sents_y = list(labels.keys())
@@ -221,6 +221,6 @@ def lstm_classifier(features, labels, eeg, embedding_type, param_dict, random_se
     conf_matrix = sklearn.metrics.confusion_matrix(all_labels, all_predictions)  # todo: add labels
     print(conf_matrix)
     ml_helpers.plot_confusion_matrix(conf_matrix)
-    ml_helpers.plot_prediction_distribution(all_labels, all_predictions)
+    #ml_helpers.plot_prediction_distribution(all_labels, all_predictions)
 
     return fold_results
