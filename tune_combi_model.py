@@ -41,8 +41,8 @@ def main():
     eeg_dict_beta = json.load(open("../eeg_features/eeg_beta_feats_file_" + config.class_task + ".json"))
     eeg_dict_gamma = json.load(open("../eeg_features/eeg_gamma_feats_file_" + config.class_task + ".json"))
 
-    print("Reading gaze features from file!!")
-    gaze_dict = json.load(open("feature_extraction/features/gaze_feats_file_" + config.class_task + ".json"))
+    #print("Reading gaze features from file!!")
+    #gaze_dict = json.load(open("feature_extraction/features/gaze_feats_file_" + config.class_task + ".json"))
     print(len(gaze_dict))
 
     # save EEG features
@@ -132,7 +132,8 @@ def main():
                                             if label == 2:
                                                 del label_dict[s]
                                                 del feature_dict[s]
-                                                del eeg_dict[s]
+                                                del eeg_dict_alpha[s]
+                                                del eeg_dict_beta[s]
 
                                         if 'eeg4' in config.feature_set:
                                             fold_results = sentiment_text_eeg4_model.lstm_classifier(label_dict,
