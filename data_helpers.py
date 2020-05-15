@@ -99,7 +99,7 @@ def drop_sentiment_sents(label_dict, feature_dict, cogni_dict):
     i = 0
     j = 0
     k = 0
-    print(label_dict.keys())
+    print(label_dict.values())
     for s, label in list(label_dict.items()):
         # drop 40 sentences of each label
 
