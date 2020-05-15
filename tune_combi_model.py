@@ -57,6 +57,12 @@ def main():
     eeg_dict = collections.OrderedDict(sorted(eeg_dict.items()))
     gaze_dict = collections.OrderedDict(sorted(gaze_dict.items()))
 
+    eeg_dict_theta = collections.OrderedDict(sorted(eeg_dict_theta.items()))
+    eeg_dict_alpha = collections.OrderedDict(sorted(eeg_dict_alpha.items()))
+    eeg_dict_beta = collections.OrderedDict(sorted(eeg_dict_beta.items()))
+    eeg_dict_gamma = collections.OrderedDict(sorted(eeg_dict_gamma.items()))
+
+
     print(len(feature_dict.keys()), len(label_dict))
 
     if len(feature_dict) != len(label_dict) != len(eeg_dict):
