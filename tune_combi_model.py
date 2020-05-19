@@ -111,7 +111,13 @@ def main():
                                         save_results(fold_results, config.class_task)
 
                                     elif config.class_task == 'sentiment-tri':
-                                        if 'eeg_raw' in config.feature_set:
+                                        if 'eeg4' in config.feature_set:
+                                            fold_results = sentiment_text_eeg4_model.lstm_classifier(feature_dict, label_dict, eeg_dict_theta,
+                                                                                               eeg_dict_alpha, eeg_dict_beta, eeg_dict_gamma,
+                                                                                               config.embeddings,
+                                                                                               parameter_dict,
+                                                                                               rand)
+                                        elif 'eeg_raw' in config.feature_set:
                                             fold_results = sentiment_eeg_model.lstm_classifier(label_dict,
                                                                                                eeg_dict,
                                                                                                config.embeddings,
