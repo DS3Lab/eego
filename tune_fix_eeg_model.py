@@ -37,10 +37,10 @@ def main():
 
     # save EEG features
 
-    with open(config.feature_set[0] + '_feats_file_'+config.class_task+'.json', 'w') as fp:
+    with open("../eeg_features/"+config.feature_set[0] + '_feats_file_'+config.class_task+'.json', 'w') as fp:
        json.dump(eeg_dict, fp)
     print("saved.")
-    
+
 
     feature_dict = collections.OrderedDict(sorted(feature_dict.items()))
     label_dict = collections.OrderedDict(sorted(label_dict.items()))
