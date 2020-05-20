@@ -30,17 +30,17 @@ def main():
 
     print(len(feature_dict), len(label_dict), len(eeg_dict))
 
-    print("Reading EEG features from file!!")
-    eeg_dict = json.load(
-        open("../eeg_features/" + config.feature_set[0] + "_feats_file_" + config.class_task + ".json"))
-    print("done, ", len(eeg_dict), " sentences with EEG features.")
+    #print("Reading EEG features from file!!")
+    #eeg_dict = json.load(
+     #   open("../eeg_features/" + config.feature_set[0] + "_feats_file_" + config.class_task + ".json"))
+    #print("done, ", len(eeg_dict), " sentences with EEG features.")
 
     # save EEG features
-    """
+
     with open("../eeg_features/"+config.feature_set[0] + '_feats_file_'+config.class_task+'.json', 'w') as fp:
        json.dump(eeg_dict, fp)
     print("saved.")
-    """
+
 
 
     feature_dict = collections.OrderedDict(sorted(feature_dict.items()))
@@ -145,7 +145,7 @@ def main():
                                                                                                parameter_dict,
                                                                                                rand)
 
-                                        elif 'combi_eeg_raw' in config.feature_set or 'eeg_theta' in config.feature_set or 'eeg_alpha' in config.feature_set or 'eeg_beta' in config.feature_set or 'eeg_gamma' in config.feature_set or 'fix_eeg_alpha' in config.feature_set:
+                                        elif 'combi_eeg_raw' in config.feature_set or 'eeg_theta' in config.feature_set or 'eeg_alpha' in config.feature_set or 'eeg_beta' in config.feature_set or 'eeg_gamma' in config.feature_set or 'fix_eeg_theta' in config.feature_set or 'fix_eeg_alpha' in config.feature_set:
                                             fold_results = sentiment_text_eeg_model.lstm_classifier(feature_dict,
                                                                                                     label_dict,
                                                                                                     eeg_dict,
