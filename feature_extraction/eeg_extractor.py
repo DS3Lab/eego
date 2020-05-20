@@ -130,6 +130,70 @@ def extract_word_band_eeg(sentence_data, eeg_dict):
                             eeg_dict[sent][widx].append(sent_features[widx])
 
 
+def extract_fix_band_eeg(sentence_data, eeg_dict):
+    """extract fixation-level raw EEG data of all sentences:
+    fixation-level EEG data = mean activity over the first fixation of a word"""
+
+    for tup in sentence_data:
+
+        # read Matlab v7.3 structures
+        f = tup[0]
+        s_data = tup[1]
+        rawData = s_data['rawData']
+        contentData = s_data['content']
+        wordData = s_data['word']
+        band1, band2 = get_freq_band_data()
+
+        for idx in range(len(rawData)):
+
+            obj_reference_content = contentData[idx][0]
+            sent = dh.load_matlab_string(f[obj_reference_content])
+
+            sent_features = {}
+            # get word level data
+
+            try:
+                word_data = dh.extract_word_level_data(f, f[wordData[idx][0]],
+                                               eeg_float_resolution=dh.eeg_float_resolution)
+
+                for widx in range(len(word_data)):
+                    #word = word_data[widx]['content']
+                    if word_data[widx]["RAW_EEG"]:
+
+                        # t, a, b, or g
+                        word_t1 = word_data[widx]["FFD_"+band1]
+                        word_t2 = word_data[widx]["FFD_"+band2]
+                        word_t = (word_t1 + word_t2) / 2
+                        word_t = word_t.reshape(word_t.shape[0],)
+                        word_t = [float(n) for n in word_t]
+                        sent_features[widx] = word_t
+
+                    else:
+                        nan_array = np.empty((105,))
+                        nan_array[:] = np.NaN
+                        nan_array = [float(n) for n in nan_array]
+                        sent_features[widx] = nan_array
+
+            except ValueError:
+                print("NO sentence data available!")
+
+            #if sent_features:
+            # for sentiment and relation detection
+            if config.class_task.startswith('sentiment') or config.class_task == "reldetect":
+                if sent not in eeg_dict:
+                    eeg_dict[sent] = {}
+                    for widx, fts in sent_features.items():
+                        eeg_dict[sent][widx] = [fts]
+                else:
+                    for widx, fts in sent_features.items():
+                        if not widx in eeg_dict[sent]:
+                            eeg_dict[sent][widx] = [fts]
+                        else:
+                            eeg_dict[sent][widx].append(sent_features[widx])
+
+
+
+
 def extract_sent_raw_eeg(sentence_data, eeg_dict):
     """extract sentence-level raw EEG data of all sentences."""
 

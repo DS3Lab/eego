@@ -29,6 +29,9 @@ def extract_features(sent_data, feature_set, feature_dict, eeg_dict, gaze_dict):
     #if "eye_tracking" in feature_set or 'combi_eye_tracking' in feature_set:
      #   gaze_extractor.word_level_et_features(sent_data, gaze_dict)
 
+    if 'fix_eeg_alpha' in feature_set:
+        eeg_extractor.extract_fix_band_eeg(sent_data, eeg_dict)
+
 
 def extract_labels(feature_dict, label_dict, task, subject):
     """Get ground truth labels for all tasks"""
