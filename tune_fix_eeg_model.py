@@ -145,7 +145,7 @@ def main():
                                                                                                parameter_dict,
                                                                                                rand)
 
-                                        elif 'combi_eeg_raw' in config.feature_set or 'eeg_theta' in config.feature_set or 'eeg_alpha' in config.feature_set or 'eeg_beta' in config.feature_set or 'eeg_gamma' in config.feature_set or 'fix_eeg_theta' in config.feature_set or 'fix_eeg_alpha' in config.feature_set:
+                                        elif 'combi_eeg_raw' in config.feature_set or 'eeg_theta' in config.feature_set or 'eeg_alpha' in config.feature_set or 'eeg_beta' in config.feature_set or 'eeg_gamma' in config.feature_set or 'fix_eeg_theta' in config.feature_set or 'fix_eeg_alpha' in config.feature_set or 'fix_eeg_beta' in config.feature_set:
                                             fold_results = sentiment_text_eeg_model.lstm_classifier(feature_dict,
                                                                                                     label_dict,
                                                                                                     eeg_dict,
