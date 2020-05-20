@@ -229,19 +229,19 @@ def extract_sent_raw_eeg(sentence_data, eeg_dict):
 
 def get_freq_band_data():
 
-    if 'eeg_theta' in config.feature_set or 'sent_eeg_theta' in config.feature_set:
+    if 'theta' in config.feature_set[0]:
         band1 = 't1'
         band2 = 't2'
 
-    if 'eeg_alpha' in config.feature_set or 'sent_eeg_alpha' in config.feature_set:
+    if 'alpha' in config.feature_set[0]:
         band1 = 'a1'
         band2 = 'a2'
 
-    if 'eeg_beta' in config.feature_set or 'sent_eeg_beta' in config.feature_set:
+    if 'beta' in config.feature_set[0]:
         band1 = 'b1'
         band2 = 'b2'
 
-    if 'eeg_gamma' in config.feature_set or 'sent_eeg_gamma' in config.feature_set:
+    if 'gamma' in config.feature_set[0]:
         band1 = 'g1'
         band2 = 'g2'
 
