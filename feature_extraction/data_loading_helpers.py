@@ -77,23 +77,6 @@ def load_matlab_string(matlab_extracted_object):
     extracted_string = u''.join(chr(c) for c in matlab_extracted_object)
     return extracted_string
 
-"""
-bad_channels_data = pd.read_csv("../eeg-sentiment/eeg-quality/badChannelsEEG.csv")
-
-def get_bad_channels(idx, subject, task = "sentiment"):
-    # TODO: Discuss and fix bad_channels loading
-    session = int(idx/50) + 1
-    if task == "sentiment":
-        session_file_name1 = "SR" + str(session)
-        session_file_name2 = "SNR" + str(session)
-    else:
-        raise Exception("only sentiment task available so far")
-    file_filter = (bad_channels_data['file'] == session_file_name1) | (bad_channels_data['file'] == session_file_name2)
-    subject_filter = bad_channels_data['sj'] == subject
-    bad_channels = bad_channels_data.loc[file_filter & subject_filter]["bad_channels"]
-    bad_channels = bad_channels.values[0].split(" ") if bad_channels.values else None
-    return bad_channels
-"""
 
 def extract_word_order_from_fixations(fixations_order_per_word):
     """
@@ -155,15 +138,24 @@ def extract_word_level_data(data_container, word_objects, eeg_float_resolution =
         trt_b2Data = word_objects['TRT_b2']
         trt_g1Data = word_objects['TRT_g1']
         trt_g2Data = word_objects['TRT_g2']
+        ffd_t1Data = word_objects['FFD_t1']
+        ffd_t2Data = word_objects['FFD_t2']
+        ffd_a1Data = word_objects['FFD_a1']
+        ffd_a2Data = word_objects['FFD_a2']
+        ffd_b1Data = word_objects['FFD_b1']
+        ffd_b2Data = word_objects['FFD_b2']
+        ffd_g1Data = word_objects['FFD_g1']
+        ffd_g2Data = word_objects['FFD_g2']
 
         assert len(contentData) == len(etData) == len(rawData), "different amounts of different data!!"
 
         zipped_data = zip(rawData, etData, contentData, ffdData, gdData, gptData, trtData, nFixData, fixPositions,
                           trt_t1Data, trt_t2Data, trt_a1Data, trt_a2Data, trt_b1Data, trt_b2Data, trt_g1Data,
-                          trt_g2Data)
+                          trt_g2Data, ffd_t1Data, ffd_t2Data, ffd_a1Data, ffd_a2Data, ffd_b1Data, ffd_b2Data, ffd_g1Data,
+                          ffd_g2Data)
         word_level_data = {}
         word_idx = 0
-        for raw_eegs_obj, ets_obj, word_obj, ffd, gd, gpt, trt, nFix, fixPos, trt_t1, trt_t2, trt_a1, trt_a2, trt_b1, trt_b2, trt_g1, trt_g2 in zipped_data:
+        for raw_eegs_obj, ets_obj, word_obj, ffd, gd, gpt, trt, nFix, fixPos, trt_t1, trt_t2, trt_a1, trt_a2, trt_b1, trt_b2, trt_g1, trt_g2, ffd_t1, ffd_t2, ffd_a1, ffd_a2, ffd_b1, ffd_b2, ffd_g1, ffd_g2 in zipped_data:
             word_string = load_matlab_string(data_container[word_obj[0]])
             if is_real_word(word_string):
                 data_dict = {}
@@ -192,6 +184,22 @@ def extract_word_level_data(data_container, word_objects, eeg_float_resolution =
                     data_container[trt_g1[0]].value.shape) == 2 else None
                 data_dict["TRT_g2"] = data_container[trt_g2[0]].value if len(
                     data_container[trt_g2[0]].value.shape) == 2 else None
+                data_dict["FFD_t1"] = data_container[ffd_t1[0]].value if len(
+                    data_container[ffd_t1[0]].value.shape) == 2 else None
+                data_dict["FFD_t2"] = data_container[ffd_t2[0]].value if len(
+                    data_container[ffd_t2[0]].value.shape) == 2 else None
+                data_dict["FFD_a1"] = data_container[ffd_a1[0]].value if len(
+                    data_container[ffd_a1[0]].value.shape) == 2 else None
+                data_dict["FFD_a2"] = data_container[ffd_a2[0]].value if len(
+                    data_container[ffd_t2[0]].value.shape) == 2 else None
+                data_dict["FFD_b1"] = data_container[ffd_b1[0]].value if len(
+                    data_container[ffd_b1[0]].value.shape) == 2 else None
+                data_dict["FFD_b2"] = data_container[ffd_b2[0]].value if len(
+                    data_container[ffd_b2[0]].value.shape) == 2 else None
+                data_dict["FFD_g1"] = data_container[ffd_g1[0]].value if len(
+                    data_container[ffd_g1[0]].value.shape) == 2 else None
+                data_dict["FFD_g2"] = data_container[ffd_g2[0]].value if len(
+                    data_container[ffd_g2[0]].value.shape) == 2 else None
 
                 fixations_order_per_word.append(np.array(data_container[fixPos[0]]))
 

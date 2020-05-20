@@ -161,7 +161,7 @@ def extract_fix_band_eeg(sentence_data, eeg_dict):
                     if word_data[widx]["RAW_EEG"]:
 
                         # t, a, b, or g
-                        word_t1 = word_data[widx]["TRT_"+band1]
+                        word_t1 = word_data[widx]["FFD_"+band1]
                         word_t2 = word_data[widx]["FFD_"+band2]
                         print(len(word_t1))
                         word_t = (word_t1 + word_t2) / 2
