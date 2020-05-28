@@ -30,17 +30,17 @@ def main():
 
     print(len(feature_dict), len(label_dict), len(eeg_dict))
 
-    print("Reading EEG features from file!!")
-    eeg_dict = json.load(
-        open("../eeg_features/" + config.feature_set[0] + "_feats_file_" + config.class_task + ".json"))
-    print("done, ", len(eeg_dict), " sentences with EEG features.")
+    #print("Reading EEG features from file!!")
+    #eeg_dict = json.load(
+     #   open("../eeg_features/" + config.feature_set[0] + "_feats_file_" + config.class_task + ".json"))
+    #print("done, ", len(eeg_dict), " sentences with EEG features.")
 
     # save EEG features
-    """
+
     with open("../eeg_features/"+config.feature_set[0] + '_feats_file_'+config.class_task+'.json', 'w') as fp:
        json.dump(eeg_dict, fp)
     print("saved.")
-    """
+
 
 
     feature_dict = collections.OrderedDict(sorted(feature_dict.items()))
@@ -124,8 +124,8 @@ def main():
                                                                                                     rand)
                                         save_results(fold_results, config.class_task)
                                     elif config.class_task == 'sentiment-bin':
+                                        print("Droping neutral sentences for binary sentiment classification")
                                         for s, label in list(label_dict.items()):
-                                            print("Droping neutral sentences for binary sentiment classification")
                                             if label == 2:
                                                 del label_dict[s]
                                                 del feature_dict[s]
