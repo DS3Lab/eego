@@ -115,7 +115,8 @@ def main():
                                                                                                config.embeddings,
                                                                                                parameter_dict,
                                                                                                rand)
-                                        elif 'combi_eeg_raw' in config.feature_set or 'eeg_theta' in config.feature_set or 'eeg_alpha' in config.feature_set or 'eeg_beta' in config.feature_set or 'eeg_gamma' in config.feature_set:
+                                        elif 'combi_eeg_raw' in config.feature_set or 'eeg_theta' in config.feature_set or 'eeg_alpha' in config.feature_set or 'eeg_beta' in config.feature_set or 'eeg_gamma' in config.feature_set or 'fix_eeg_theta' in config.feature_set or 'fix_eeg_alpha' in config.feature_set or 'fix_eeg_beta' in config.feature_set or 'fix_eeg_gamma' in config.feature_set:
+                                            print("got here")
                                             fold_results = sentiment_text_eeg_model.lstm_classifier(feature_dict,
                                                                                                     label_dict,
                                                                                                     eeg_dict,
@@ -125,7 +126,7 @@ def main():
                                         save_results(fold_results, config.class_task)
                                     elif config.class_task == 'sentiment-bin':
                                         for s, label in list(label_dict.items()):
-                                            # drop neutral sentences for binary sentiment classification
+                                            print("Droping neutral sentences for binary sentiment classification")
                                             if label == 2:
                                                 del label_dict[s]
                                                 del feature_dict[s]
