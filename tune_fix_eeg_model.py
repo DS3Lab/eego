@@ -138,7 +138,7 @@ def main():
                                                                                                     config.embeddings,
                                                                                                     parameter_dict,
                                                                                                     rand)
-                                        elif 'eeg_raw' in config.feature_set:
+                                        elif 'eeg_raw' in config.feature_set or 'fix_eeg_theta_only' in config.feature_set:
                                             fold_results = sentiment_eeg_model.lstm_classifier(label_dict,
                                                                                                eeg_dict,
                                                                                                config.embeddings,
