@@ -32,14 +32,16 @@ def main():
     print(len(feature_dict), len(label_dict), len(eeg_dict))
 
     print("Reading EEG features from file!!")
+    """
     eeg_dict = json.load(
         open("../eeg_features/" + config.feature_set[0] + "_feats_file_" + config.class_task + ".json"))
     print("done, ", len(eeg_dict), " sentences with EEG features.")
+    """
 
-    #eeg_dict_theta = json.load(open("../eeg_features/eeg_theta_feats_file_" + config.class_task + ".json"))
-    #eeg_dict_alpha = json.load(open("../eeg_features/eeg_alpha_feats_file_" + config.class_task + ".json"))
-    #eeg_dict_beta = json.load(open("../eeg_features/eeg_beta_feats_file_" + config.class_task + ".json"))
-    #eeg_dict_gamma = json.load(open("../eeg_features/eeg_gamma_feats_file_" + config.class_task + ".json"))
+    eeg_dict_theta = json.load(open("../eeg_features/eeg_theta_feats_file_" + config.class_task + ".json"))
+    eeg_dict_alpha = json.load(open("../eeg_features/eeg_alpha_feats_file_" + config.class_task + ".json"))
+    eeg_dict_beta = json.load(open("../eeg_features/eeg_beta_feats_file_" + config.class_task + ".json"))
+    eeg_dict_gamma = json.load(open("../eeg_features/eeg_gamma_feats_file_" + config.class_task + ".json"))
 
     print("Reading gaze features from file!!")
     gaze_dict = json.load(open("feature_extraction/features/gaze_feats_file_" + config.class_task + ".json"))
@@ -54,13 +56,13 @@ def main():
 
     feature_dict = collections.OrderedDict(sorted(feature_dict.items()))
     label_dict = collections.OrderedDict(sorted(label_dict.items()))
-    eeg_dict = collections.OrderedDict(sorted(eeg_dict.items()))
-    gaze_dict = collections.OrderedDict(sorted(gaze_dict.items()))
+    #eeg_dict = collections.OrderedDict(sorted(eeg_dict.items()))
+    #gaze_dict = collections.OrderedDict(sorted(gaze_dict.items()))
 
-    #eeg_dict_theta = collections.OrderedDict(sorted(eeg_dict_theta.items()))
-    #eeg_dict_alpha = collections.OrderedDict(sorted(eeg_dict_alpha.items()))
-    #eeg_dict_beta = collections.OrderedDict(sorted(eeg_dict_beta.items()))
-    #eeg_dict_gamma = collections.OrderedDict(sorted(eeg_dict_gamma.items()))
+    eeg_dict_theta = collections.OrderedDict(sorted(eeg_dict_theta.items()))
+    eeg_dict_alpha = collections.OrderedDict(sorted(eeg_dict_alpha.items()))
+    eeg_dict_beta = collections.OrderedDict(sorted(eeg_dict_beta.items()))
+    eeg_dict_gamma = collections.OrderedDict(sorted(eeg_dict_gamma.items()))
 
 
     print(len(feature_dict.keys()), len(label_dict))
