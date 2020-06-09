@@ -33,19 +33,19 @@ def main():
 
     print("Reading EEG features from file!!")
 
-    eeg_dict = json.load(
-        open("../eeg_features/" + config.feature_set[0] + "_feats_file_" + config.class_task + ".json"))
-    print("done, ", len(eeg_dict), " sentences with EEG features.")
+    #eeg_dict = json.load(
+     #   open("../eeg_features/" + config.feature_set[0] + "_feats_file_" + config.class_task + ".json"))
+    #print("done, ", len(eeg_dict), " sentences with EEG features.")
 
 
-    #eeg_dict_theta = json.load(open("../eeg_features/eeg_theta_feats_file_" + config.class_task + ".json"))
-    #eeg_dict_alpha = json.load(open("../eeg_features/eeg_alpha_feats_file_" + config.class_task + ".json"))
-    #eeg_dict_beta = json.load(open("../eeg_features/eeg_beta_feats_file_" + config.class_task + ".json"))
-    #eeg_dict_gamma = json.load(open("../eeg_features/eeg_gamma_feats_file_" + config.class_task + ".json"))
+    eeg_dict_theta = json.load(open("../eeg_features/eeg_theta_feats_file_" + config.class_task + ".json"))
+    eeg_dict_alpha = json.load(open("../eeg_features/eeg_alpha_feats_file_" + config.class_task + ".json"))
+    eeg_dict_beta = json.load(open("../eeg_features/eeg_beta_feats_file_" + config.class_task + ".json"))
+    eeg_dict_gamma = json.load(open("../eeg_features/eeg_gamma_feats_file_" + config.class_task + ".json"))
 
-    print("Reading gaze features from file!!")
-    gaze_dict = json.load(open("feature_extraction/features/gaze_feats_file_" + config.class_task + ".json"))
-    print(len(gaze_dict))
+    #print("Reading gaze features from file!!")
+    #gaze_dict = json.load(open("feature_extraction/features/gaze_feats_file_" + config.class_task + ".json"))
+    #print(len(gaze_dict))
 
     # save EEG features
     """
@@ -56,13 +56,13 @@ def main():
 
     feature_dict = collections.OrderedDict(sorted(feature_dict.items()))
     label_dict = collections.OrderedDict(sorted(label_dict.items()))
-    eeg_dict = collections.OrderedDict(sorted(eeg_dict.items()))
-    gaze_dict = collections.OrderedDict(sorted(gaze_dict.items()))
+    #eeg_dict = collections.OrderedDict(sorted(eeg_dict.items()))
+    #gaze_dict = collections.OrderedDict(sorted(gaze_dict.items()))
 
-    #eeg_dict_theta = collections.OrderedDict(sorted(eeg_dict_theta.items()))
-    #eeg_dict_alpha = collections.OrderedDict(sorted(eeg_dict_alpha.items()))
-    #eeg_dict_beta = collections.OrderedDict(sorted(eeg_dict_beta.items()))
-    #eeg_dict_gamma = collections.OrderedDict(sorted(eeg_dict_gamma.items()))
+    eeg_dict_theta = collections.OrderedDict(sorted(eeg_dict_theta.items()))
+    eeg_dict_alpha = collections.OrderedDict(sorted(eeg_dict_alpha.items()))
+    eeg_dict_beta = collections.OrderedDict(sorted(eeg_dict_beta.items()))
+    eeg_dict_gamma = collections.OrderedDict(sorted(eeg_dict_gamma.items()))
 
 
     print(len(feature_dict.keys()), len(label_dict))
@@ -85,7 +85,17 @@ def main():
 
                                     if config.class_task == 'reldetect':
                                         for threshold in config.rel_thresholds:
-                                            if 'eeg_raw' in config.feature_set:
+                                            if 'eeg4' in config.feature_set:
+                                                fold_results = sentiment_text_eeg4_model.lstm_classifier(feature_dict,
+                                                                                                         label_dict,
+                                                                                                         eeg_dict_theta,
+                                                                                                         eeg_dict_alpha,
+                                                                                                         eeg_dict_beta,
+                                                                                                         eeg_dict_gamma,
+                                                                                                         config.embeddings,
+                                                                                                         parameter_dict,
+                                                                                                         rand)
+                                            elif 'eeg_raw' in config.feature_set:
                                                 fold_results = reldetect_eeg_model.lstm_classifier(label_dict, eeg_dict,
                                                                                                    config.embeddings,
                                                                                                    parameter_dict,
