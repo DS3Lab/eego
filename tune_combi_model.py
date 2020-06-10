@@ -1,6 +1,6 @@
 import config
 from feature_extraction import zuco_reader
-from reldetect import reldetect_eeg_model, reldetect_text_eeg_model, reldetect_eeg_gaze_model
+from reldetect import reldetect_eeg_model, reldetect_text_eeg_model, reldetect_eeg_gaze_model, reldetect_text_eeg4_model
 from ner import ner_text_model
 from sentiment import sentiment_eeg_model, sentiment_eeg_gaze_model, sentiment_text_eeg_gaze_model, sentiment_text_eeg4_model
 from data_helpers import save_results, load_matlab_files
@@ -86,7 +86,7 @@ def main():
                                     if config.class_task == 'reldetect':
                                         for threshold in config.rel_thresholds:
                                             if 'eeg4' in config.feature_set:
-                                                fold_results = sentiment_text_eeg4_model.lstm_classifier(feature_dict,
+                                                fold_results = reldetect_text_eeg4_model.lstm_classifier(feature_dict,
                                                                                                          label_dict,
                                                                                                          eeg_dict_theta,
                                                                                                          eeg_dict_alpha,
@@ -94,19 +94,20 @@ def main():
                                                                                                          eeg_dict_gamma,
                                                                                                          config.embeddings,
                                                                                                          parameter_dict,
-                                                                                                         rand)
+                                                                                                         rand, threshold)
                                             elif 'eeg_raw' in config.feature_set:
                                                 fold_results = reldetect_eeg_model.lstm_classifier(label_dict, eeg_dict,
                                                                                                    config.embeddings,
                                                                                                    parameter_dict,
                                                                                                    rand, threshold)
+                                            # todo: is this one needed here?
                                             elif 'combi_eeg_raw' in config.feature_set or 'eeg_theta' in config.feature_set or 'eeg_alpha' in config.feature_set or 'eeg_beta' in config.feature_set or 'eeg_gamma' in config.feature_set:
-                                                fold_results = sentiment_text_eeg_model.lstm_classifier(feature_dict,
+                                                fold_results = reldetect_text_eeg_model.lstm_classifier(feature_dict,
                                                                                                         label_dict,
                                                                                                         eeg_dict,
                                                                                                         config.embeddings,
                                                                                                         parameter_dict,
-                                                                                                        rand)
+                                                                                                        rand, threshold)
                                             elif 'eeg_eye_tracking' in config.feature_set:
                                                 fold_results = reldetect_eeg_gaze_model.lstm_classifier(label_dict,
                                                                                                         eeg_dict,
