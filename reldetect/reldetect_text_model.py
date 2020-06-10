@@ -43,6 +43,10 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
 
     # plot sample distribution
     #ml_helpers.plot_label_distribution(y)
+    print("Label distribuion:")
+    for cl in set(y):
+        class_count = y.count(cl)
+        print(cl, class_count)
 
     # these are already one hot categorical encodings
     y = np.asarray(y)

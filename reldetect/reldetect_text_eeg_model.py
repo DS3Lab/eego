@@ -43,6 +43,12 @@ def lstm_classifier(features, labels, eeg, embedding_type, param_dict, random_se
 
     X_text = list(features.keys())
     y = list(labels.values())
+
+    print("Label distribution:")
+    for cl in set(y):
+        class_count = y.count(cl)
+        print(cl, class_count)
+
     # these are already one hot categorical encodings
     y = np.asarray(y)
 
