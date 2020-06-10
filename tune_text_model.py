@@ -3,7 +3,7 @@ from feature_extraction import zuco_reader
 from reldetect import reldetect_text_model
 from ner import ner_text_model
 from sentiment import sentiment_text_model
-from data_helpers import save_results, load_matlab_files
+from data_helpers import save_results, load_matlab_files, drop_sentiment_sents
 import collections
 import numpy as np
 
@@ -34,6 +34,11 @@ def main():
     if len(feature_dict) != len(label_dict):
         print("WARNING: Not an equal number of sentences in features and labels!")
 
+    # test with less data
+    print(len(eeg_dict), len(label_dict), len(feature_dict))
+    drop_sentiment_sents(label_dict, feature_dict, eeg_dict)
+    print(len(eeg_dict), len(label_dict), len(feature_dict))
+
     for rand in config.random_seed_values:
         np.random.seed(rand)
         for lstmDim in config.lstm_dim:
@@ -48,14 +53,6 @@ def main():
                                                       "epochs": e_val, "random_seed": rand}
 
                                     if config.class_task == 'reldetect':
-                                        print(len(eeg_dict))
-                                        if "zuco1" in config.feature_set:
-                                            for s, feats in list(eeg_dict.items()):
-                                                # drop zuco2 sentences
-                                                if s not in label_dict:
-                                                    del eeg_dict[s]
-                                        print(len(eeg_dict))
-
                                         for threshold in config.rel_thresholds:
                                             fold_results = reldetect_text_model.lstm_classifier(feature_dict, label_dict, config.embeddings, parameter_dict, rand, threshold)
                                             save_results(fold_results, config.class_task)
@@ -67,6 +64,7 @@ def main():
                                     elif config.class_task == 'sentiment-tri':
                                         fold_results = sentiment_text_model.lstm_classifier(feature_dict, label_dict, config.embeddings, parameter_dict, rand)
                                         save_results(fold_results, config.class_task)
+
                                     elif config.class_task == 'sentiment-bin':
                                         for s, label in list(label_dict.items()):
                                             # drop neutral sentences for binary sentiment classification
