@@ -40,6 +40,10 @@ def lstm_classifier(features, labels, eeg, embedding_type, param_dict, random_se
 
     # plot sample distribution
     #ml_helpers.plot_label_distribution(y)
+    print("Label distribuion:")
+    for cl in set(y):
+        class_count = y.count(cl)
+        print(cl, class_count)
 
     # check order of sentences in labels and features dicts
     sents_y = list(labels.keys())
