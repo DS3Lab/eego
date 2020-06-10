@@ -39,8 +39,12 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
     X = list(features.keys())
     y = list(labels.values())
 
-    # plot sample distribution
+    # plot label distribution
     # ml_helpers.plot_label_distribution(y)
+    print("Label distribuion:")
+    for cl in len(set(y)):
+        class_count = y.count(cl)
+        print(cl, class_count)
 
     # convert class labels to one hot vectors
     y = np_utils.to_categorical(y)
