@@ -97,7 +97,10 @@ def save_results(fold_results_dict, task):
 
 def drop_sentiment_sents(label_dict, feature_dict, cogni_dict):
 
-    entries = list(label_dict.keys())[:100]
+    to_delete = round(len(label_dict) * 0.25)
+    print("Deleting first " + str(to_delete) + " sentences")
+
+    entries = list(label_dict.keys())[:to_delete]
 
     for key in entries:
         if key in feature_dict:
