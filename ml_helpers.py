@@ -291,5 +291,7 @@ def drop_train_sents(sample_list):
     to_delete = round(len(sample_list[0]) * config.data_percentage)
     print("Deleting first " + str(to_delete) + " training samples")
 
-    for li in sample_list:
+    for idx, li in enumerate(sample_list):
         li = li[:to_delete]
+        sample_list[idx] = li
+
