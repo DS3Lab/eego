@@ -295,3 +295,4 @@ def drop_train_sents(sample_list):
         li = li[:to_delete]
         sample_list[idx] = li
 
+    return sample_list
