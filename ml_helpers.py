@@ -284,3 +284,12 @@ def callbacks(fold, random_seed_value):
     mc = ModelCheckpoint(model_name, monitor='val_accuracy', mode='max', save_weights_only=True, save_best_only=True, verbose=1)
 
     return es, mc, model_name
+
+
+def drop_train_sents(sample_list):
+
+    to_delete = round(len(sample_list[0]) * 0.25)
+    print("Deleting first " + str(to_delete) + " training samples")
+
+    for li in sample_list:
+        li = li[:to_delete]

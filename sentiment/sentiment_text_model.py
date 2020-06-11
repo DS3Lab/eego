@@ -41,10 +41,10 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
 
     # plot label distribution
     # ml_helpers.plot_label_distribution(y)
-    print("Label distribution:")
-    for cl in set(y):
-        class_count = y.count(cl)
-        print(cl, class_count)
+    #print("Label distribution:")
+    #for cl in set(y):
+     #   class_count = y.count(cl)
+      #  print(cl, class_count)
 
     # convert class labels to one hot vectors
     y = np_utils.to_categorical(y)
@@ -66,9 +66,18 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
         print("splitting train and test data...")
         y_train, y_test = y[train_index], y[test_index]
         X_train_text, X_test_text = X_data_text[train_index], X_data_text[test_index]
+
+        print(y_train.shape)
+        print(y_test.shape)
+        print(X_train_text.shape)
+        print(X_test_text.shape)
+        print("--------")
     
         if embedding_type is 'bert':
             X_train_masks, X_test_masks = text_feats[train_index], text_feats[test_index]
+            ml_helpers.drop_train_sents([X_train_text, X_train_masks, y_train])
+        else:
+            ml_helpers.drop_train_sents([X_train_text, y_train])
 
         print(y_train.shape)
         print(y_test.shape)
