@@ -3,7 +3,7 @@ from feature_extraction import zuco_reader
 from reldetect import reldetect_text_model
 from ner import ner_text_model
 from sentiment import sentiment_text_model
-from data_helpers import save_results, load_matlab_files, drop_first_sents
+from data_helpers import save_results, load_matlab_files
 import collections
 import numpy as np
 
