@@ -292,7 +292,7 @@ def drop_train_sents(sample_list):
     print("Deleting first " + str(to_delete) + " training samples")
 
     for idx, li in enumerate(sample_list):
-        li = li[:to_delete]
+        li = li[to_delete:]
         sample_list[idx] = li
 
     return sample_list
