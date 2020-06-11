@@ -3,7 +3,7 @@ from feature_extraction import zuco_reader
 from reldetect import reldetect_eeg_model, reldetect_text_eeg_model
 from ner import ner_text_model
 from sentiment import sentiment_eeg_model, sentiment_text_eeg_model
-from data_helpers import save_results, load_matlab_files, drop_sentiment_sents
+from data_helpers import save_results, load_matlab_files, drop_first_sents
 import collections
 import json
 import numpy as np
@@ -51,7 +51,7 @@ def main():
 
     # test with less data
     #print(len(eeg_dict), len(label_dict), len(feature_dict))
-    #drop_sentiment_sents(label_dict, feature_dict, eeg_dict)
+    #drop_first_sents(label_dict, feature_dict, eeg_dict)
     #print(len(eeg_dict), len(label_dict), len(feature_dict))
 
     for rand in config.random_seed_values:

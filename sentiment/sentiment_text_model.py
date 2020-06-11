@@ -38,11 +38,10 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
 
     X = list(features.keys())
     y = list(labels.values())
-    print(y)
 
     # plot label distribution
     # ml_helpers.plot_label_distribution(y)
-    print("Label distribuion:")
+    print("Label distribution:")
     for cl in set(y):
         class_count = y.count(cl)
         print(cl, class_count)
