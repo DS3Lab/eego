@@ -45,8 +45,9 @@ def lstm_classifier(features, labels, eeg, embedding_type, param_dict, random_se
     y = list(labels.values())
 
     print("Label distribution:")
-    for cl in set(y):
-        class_count = y.count(cl)
+    for cl in range(len(y[0])):
+        class_count = [1 if n[cl] is 1 else 0 for n in y]
+        class_count = sum(class_count)
         print(cl, class_count)
 
     # these are already one hot categorical encodings
