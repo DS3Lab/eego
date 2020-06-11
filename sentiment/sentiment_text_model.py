@@ -75,9 +75,11 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
     
         if embedding_type is 'bert':
             X_train_masks, X_test_masks = text_feats[train_index], text_feats[test_index]
-            ml_helpers.drop_train_sents([X_train_text, X_train_masks, y_train])
+            if config.data_percentage > 0:
+                ml_helpers.drop_train_sents([X_train_text, X_train_masks, y_train])
         else:
-            ml_helpers.drop_train_sents([X_train_text, y_train])
+            if config.data_percentage > 0:
+                ml_helpers.drop_train_sents([X_train_text, y_train])
 
         print(y_train.shape)
         print(y_test.shape)
