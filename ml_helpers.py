@@ -288,7 +288,7 @@ def callbacks(fold, random_seed_value):
 
 def drop_train_sents(sample_list):
 
-    to_delete = round(len(sample_list[0]) * 0.25)
+    to_delete = round(len(sample_list[0]) * config.data_percentage)
     print("Deleting first " + str(to_delete) + " training samples")
 
     for li in sample_list:
