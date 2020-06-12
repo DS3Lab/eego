@@ -90,7 +90,7 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
         print("Label distribution:")
         for cl in range(len(y_train[0])):
             print(y_train[0])
-            class_count = [1 if n[cl] is 1. else 0 for n in y_train]
+            class_count = [1 if int(n[cl]) == 1 else 0 for n in y_train]
             print(class_count)
             class_count = sum(class_count)
             print(cl, class_count)
