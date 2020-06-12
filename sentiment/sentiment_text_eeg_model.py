@@ -80,8 +80,6 @@ def lstm_classifier(features, labels, eeg, embedding_type, param_dict, random_se
         print("splitting train and test data...")
         y_train, y_test = y[train_index], y[test_index]
         X_train_text, X_test_text = X_data_text[train_index], X_data_text[test_index]
-        if embedding_type is 'bert':
-            X_train_masks, X_test_masks = text_feats[train_index], text_feats[test_index]
         X_train_eeg, X_test_eeg = X_data_eeg[train_index], X_data_eeg[test_index]
 
         print(y_train.shape)
@@ -90,6 +88,27 @@ def lstm_classifier(features, labels, eeg, embedding_type, param_dict, random_se
         print(X_test_text.shape)
         print(X_train_eeg.shape)
         print(X_test_eeg.shape)
+
+        if embedding_type is 'bert':
+            X_train_masks, X_test_masks = text_feats[train_index], text_feats[test_index]
+            if config.data_percentage > 0:
+                X_train_text, X_train_masks, X_train_eeg, y_train = ml_helpers.drop_train_sents([X_train_text, X_train_masks, X_train_eeg, y_train])
+        else:
+            if config.data_percentage > 0:
+                X_train_text, X_train_eeg, y_train = ml_helpers.drop_train_sents([X_train_text, X_train_eeg, y_train])
+
+        print(y_train.shape)
+        print(y_test.shape)
+        print(X_train_text.shape)
+        print(X_test_text.shape)
+        print(X_train_eeg.shape)
+        print(X_test_eeg.shape)
+
+        print("Label distribution:")
+        for cl in range(len(y_train[0])):
+            class_count = [1 if int(n[cl]) == 1 else 0 for n in y_train]
+            class_count = sum(class_count)
+            print(cl, class_count)
 
         # reset model
         K.clear_session()

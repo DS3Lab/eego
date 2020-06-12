@@ -95,18 +95,4 @@ def save_results(fold_results_dict, task):
           std_precision, avg_recall, std_recall, avg_fscore, std_fscore, threshold, folds, fold_results_dict['training_time'], best_eps, fold_results_dict['patience'], fold_results_dict['min_delta'], fold_results_dict['model'][-1], file=result_file)
 
 
-"""
-def drop_first_sents(label_dict, feature_dict, cogni_dict=None):
 
-    to_delete = round(len(label_dict) * 0.25)
-    print("Deleting first " + str(to_delete) + " sentences")
-
-    entries = list(label_dict.keys())[:to_delete]
-
-    for key in entries:
-        if key in feature_dict:
-            del feature_dict[key]
-            del label_dict[key]
-            if cogni_dict:
-                del cogni_dict[key]
-"""
