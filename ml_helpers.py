@@ -305,6 +305,6 @@ def drop_classes(y):
 
     for sample in y:
         for cl in config.drop_classes:
-            y[cl] = 1
+            sample[cl] = 0
 
     return y
