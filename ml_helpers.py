@@ -32,14 +32,14 @@ def plot_label_distribution(y):
                        "Employer", "Awarded", "BirthPlace", "DeathPlace"]
 
         all_relations = np.sum(y, 0)
-        #print(all_relations)
-        #print(label_names)
         plt.clf()
-        # todo: make plots a bit nicer :)
-        plt.barh(range(len(all_relations)), all_relations)
-        plt.yticks(rotation=45, ticks=np.arange(len(all_relations)), labels=label_names, fontsize=12)
+        fig, ax = plt.subplots()
+        ax.barh(range(len(all_relations)), all_relations)
+        ax.set_yticklabels(rotation=45, labels=label_names, fontsize=11)
+        ax.spines["right"].set_visible(False)
+        ax.spines["top"].set_visible(False)
         plt.savefig('label-distribution-' + config.class_task + '.png')
-        plt.clf()
+        fig.clf()
 
         # plot number of relation types per sentence
         rels_per_sentence = {}
@@ -52,7 +52,7 @@ def plot_label_distribution(y):
         print(rels_per_sentence.keys())
         print(rels_per_sentence.values())
         ax.barh(range(len(rels_per_sentence)), rels_per_sentence.values(), alpha=0.5)
-        ax.set_yticklabels(fontsize=10, labels=list(range(len(rels_per_sentence))))
+        ax.set_yticklabels(fontsize=10, labels=list(rels_per_sentence.keys()))
         #ax.set_xticklabels(fontsize=10, labels=list(rels_per_sentence.values()))
         ax.set_ylabel('no. of relations')
         ax.set_xlabel('no. of sentences')
