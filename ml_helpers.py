@@ -68,7 +68,7 @@ def plot_label_distribution(y):
         sents = [i[1] for i in rels_sorted]
         print(rels)
         ax.barh(rels, sents, alpha=0.5)
-        ax.gca().invert_yaxis()
+        fig.gca().invert_yaxis()
         #ax.set_yticklabels(fontsize=10, labels=rels)
         ax.set_ylabel('no. of relations')
         ax.set_xlabel('no. of sentences')
