@@ -92,7 +92,7 @@ def plot_label_distribution(y):
         cmap = cm.viridis(np.linspace(0, 1, 11))
         print(set(y))
         print(counts)
-        ax.barh(set(y), counts, color=cmap[:len(counts)])
+        ax.barh(list(set(y)), counts, color=cmap[:len(counts)])
         # for b in barlist:
         #   b.set_color()
         #ax.set_yticks(range(len(all_relations)))
