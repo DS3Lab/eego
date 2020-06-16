@@ -37,7 +37,7 @@ def plot_label_distribution(y):
         plt.clf()
         # todo: make plots a bit nicer :)
         plt.barh(range(len(all_relations)), all_relations, alpha=0.5)
-        plt.xticks(rotation=45, ticks=np.arange(len(all_relations)), labels=label_names, fontsize=7)
+        plt.yticks(rotation=45, ticks=np.arange(len(all_relations)), labels=label_names, fontsize=7)
         plt.savefig('label-distribution-' + config.class_task + '.png')
         plt.clf()
 
@@ -50,8 +50,10 @@ def plot_label_distribution(y):
             else:
                 rels_per_sentence[sum(s)] += 1
         print(rels_per_sentence.keys())
+        print(rels_per_sentence.values())
         ax.barh(range(len(rels_per_sentence)), rels_per_sentence.values(), alpha=0.5)
         ax.set_xticklabels(fontsize=10, labels=list(range(len(rels_per_sentence))))
+        ax.set_yticklabels(fontsize=10, labels=list(rels_per_sentence.values()))
         ax.set_ylabel('no. of relations')
         ax.set_xlabel('no. of sentences')
         ax.spines["right"].set_visible(False)
