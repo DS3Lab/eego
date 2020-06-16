@@ -50,11 +50,9 @@ def lstm_classifier(features, labels, eeg, embedding_type, param_dict, random_se
         class_count = sum(class_count)
         print(cl, class_count)
 
-    print(len(X_text), len(eeg_X), len(y))
 
     y = ml_helpers.drop_classes(y)
 
-    print(len(X_text), len(eeg_X), len(y))
 
     print("Label distribution:")
     for cl in range(len(y[0])):
