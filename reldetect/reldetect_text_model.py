@@ -51,7 +51,7 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
 
     print(len(X), len(y))
 
-    y, X = ml_helpers.drop_classes(y, X)
+    y = ml_helpers.drop_classes(y)
 
     print(len(X), len(y))
 

@@ -325,35 +325,13 @@ def drop_train_sents(sample_list):
     return sample_list
 
 
-def drop_classes(y,X):
+def drop_classes(y):
 
     # tested with dropping the 4, 6 or 8 least frequent relations
     print("Deleting least frequent " + str(len(config.drop_classes)) + " classes")
 
-    new_y = []
-    new_X = []
     for idx, sample in enumerate(y):
         sample = [i for j, i in enumerate(sample) if j not in config.drop_classes]
-        if not all(v == 0 for v in sample):
-            new_y.append(sample)
-            new_X.append(X[idx])
+        new_y.append(sample)
 
-    return new_y, new_X
-
-
-def drop_classes_with_eeg(y,X_text, X_eeg):
-
-    # tested with dropping the 4, 6 or 8 least frequent relations
-    print("Deleting least frequent " + str(len(config.drop_classes)) + " classes")
-
-    new_y = []
-    new_X_text = []
-    new_X_eeg = []
-    for idx, sample in enumerate(y):
-        sample = [i for j, i in enumerate(sample) if j not in config.drop_classes]
-        if not all(v == 0 for v in sample):
-            new_y.append(sample)
-            new_X_text.append(X_text[idx])
-            new_X_eeg.append(X_eeg[idx])
-
-    return new_y, new_X_text, new_X_eeg
+    return new_y

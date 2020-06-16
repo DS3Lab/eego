@@ -44,9 +44,6 @@ def lstm_classifier(features, labels, eeg, embedding_type, param_dict, random_se
     X_text = list(features.keys())
     y = list(labels.values())
 
-    # load eeg
-    eeg_X, max_length_cogni = ml_helpers.prepare_cogni_seqs(eeg)
-
     print("Label distribution:")
     for cl in range(len(y[0])):
         class_count = [1 if int(n[cl]) == 1 else 0 for n in y]
@@ -55,7 +52,7 @@ def lstm_classifier(features, labels, eeg, embedding_type, param_dict, random_se
 
     print(len(X_text), len(eeg_X), len(y))
 
-    y, X_text, eeg_X = ml_helpers.drop_classes_with_eeg(y, X_text, eeg_X)
+    y = ml_helpers.drop_classes(y)
 
     print(len(X_text), len(eeg_X), len(y))
 
@@ -68,6 +65,8 @@ def lstm_classifier(features, labels, eeg, embedding_type, param_dict, random_se
     # prepare text samples
     X_data_text, num_words, text_feats = ml_helpers.prepare_text(X_text, embedding_type, random_seed_value)
 
+    # load eeg
+    eeg_X, max_length_cogni = ml_helpers.prepare_cogni_seqs(eeg)
     # prepare EEG data
     eeg_X = ml_helpers.scale_feature_values(eeg_X)
     X_data_eeg = ml_helpers.pad_cognitive_feature_seqs(eeg_X, max_length_cogni, "eeg")
