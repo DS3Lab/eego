@@ -51,6 +51,7 @@ def plot_label_distribution(y):
         ax.set_yticklabels(labels=label_names, fontsize=11)
         ax.spines["right"].set_visible(False)
         ax.spines["top"].set_visible(False)
+        fig.tight_layout()
         plt.savefig('label-distribution-' + config.class_task + '.png')
         fig.clf()
 
