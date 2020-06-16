@@ -304,10 +304,11 @@ def drop_classes(y,X):
     print("Deleting least frequent " + str(len(config.drop_classes)) + " classes")
 
     new_y = []
+    new_X = []
     for idx, sample in enumerate(y):
         sample = [i for j, i in enumerate(sample) if j not in config.drop_classes]
         if not all(v == 0 for v in sample):
             new_y.append(sample)
-            del X[idx]
+            new_X.append(X[idx])
 
     return new_y, X
