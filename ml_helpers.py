@@ -33,9 +33,10 @@ def plot_label_distribution(y):
                        "Employer", "Awarded", "BirthPlace", "DeathPlace"]
 
         all_relations = np.sum(y, 0)
+
         plt.clf()
         fig, ax = plt.subplots()
-        barlist = ax.barh(range(len(all_relations)), all_relations)
+        barlist = ax.barh(range(len(all_relations)), sorted(all_relations))
         #for b in barlist:
          #   b.set_color()
         ax.set_yticks(range(len(all_relations)))
@@ -59,8 +60,9 @@ def plot_label_distribution(y):
         print(rels_sorted)
         rels = [i[0] for i in rels_sorted]
         sents = [i[1] for i in rels_sorted]
+        print(rels)
         ax.barh(rels, sents, alpha=0.5)
-        ax.set_yticklabels(fontsize=10, labels=rels)
+        #ax.set_yticklabels(fontsize=10, labels=rels)
         ax.set_ylabel('no. of relations')
         ax.set_xlabel('no. of sentences')
         ax.spines["right"].set_visible(False)
