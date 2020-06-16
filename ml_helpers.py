@@ -303,8 +303,9 @@ def drop_classes(y):
     # tested with droppping the 4, 6 or 8 least frequent relations
     print("Deleting least frequent " + str(len(config.drop_classes)) + " classes")
 
+    new_y = []
     for sample in y:
-        for cl in config.drop_classes:
-            sample[cl] = 0
+        sample = [i for j, i in enumerate(sample) if j not in config.drop_classes]
+        new_y.append(sample)
 
-    return y
+    return new_y
