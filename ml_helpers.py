@@ -80,7 +80,7 @@ def plot_label_distribution(y):
         fig.clf()
 
     else:
-        fig, ax = plt.subplots(figsize=(6, 3))
+        fig, ax = plt.subplots(figsize=(6, 2))
         counts = []
         for cl in set(y):
             class_count = y.count(cl)
