@@ -311,4 +311,4 @@ def drop_classes(y,X):
             new_y.append(sample)
             new_X.append(X[idx])
 
-    return new_y, X
+    return new_y, new_X
