@@ -48,7 +48,14 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
         class_count = [1 if int(n[cl]) == 1 else 0 for n in y]
         class_count = sum(class_count)
         print(cl, class_count)
-    ml_helpers.drop_classes(X, y)
+
+    ml_helpers.drop_classes(y)
+
+    print("Label distribution:")
+    for cl in range(len(y[0])):
+        class_count = [1 if int(n[cl]) == 1 else 0 for n in y]
+        class_count = sum(class_count)
+        print(cl, class_count)
 
     # these are already one hot categorical encodings
     y = np.asarray(y)

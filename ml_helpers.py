@@ -298,12 +298,13 @@ def drop_train_sents(sample_list):
     return sample_list
 
 
-def drop_classes(X, y):
+def drop_classes(y):
 
-    print("Deleting first " + str(config.drop_classes) + " classes")
-    print(y[0])
-    print(X[0])
+    # tested with droppping the 4, 6 or 8 least frequent relations
+    print("Deleting least frequent " + str(len(config.drop_classes)) + " classes")
 
-    #for sample in y:
+    for sample in y:
+        for cl in config.drop_classes:
+            y[cl] = 1
 
-    return X, y
+    return y
