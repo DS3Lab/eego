@@ -84,11 +84,29 @@ def plot_label_distribution(y):
         fig.clf()
 
     else:
-        plt.hist(y, bins=len(set(y)), alpha=0.5)
-        plt.xticks(rotation=90, fontsize=7)
+        fig, ax = plt.subplots(figsize=(6, 3))
+        counts = []
+        for cl in set(y):
+            class_count = y.count(cl)
+            counts.append(class_count)
+        cmap = cm.viridis(np.linspace(0, 1, 11))
+        barlist = ax.barh(set(y), counts, color=cmap[:len(counts)])
+        # for b in barlist:
+        #   b.set_color()
+        #ax.set_yticks(range(len(all_relations)))
+        #ax.set_yticklabels(labels=label_names, fontsize=11)
+        ax.spines["right"].set_visible(False)
+        ax.spines["top"].set_visible(False)
+        fig.tight_layout()
         plt.savefig('label-distribution-' + config.class_task + '.png')
-        plt.tight_layout()
-        plt.clf()
+        fig.clf()
+
+
+        #plt.hist(y, bins=len(set(y)), alpha=0.5)
+        #plt.xticks(rotation=90, fontsize=7)
+        #plt.savefig('label-distribution-' + config.class_task + '.png')
+        #plt.tight_layout()
+        #plt.clf()
 
 
 def load_glove_embeddings(vocab_size, word_index, EMBEDDING_DIM):
