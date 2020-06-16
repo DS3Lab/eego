@@ -49,8 +49,9 @@ def plot_label_distribution(y):
                 rels_per_sentence[sum(s)] = 1
             else:
                 rels_per_sentence[sum(s)] += 1
+        print(rels_per_sentence.keys())
         ax.barh(range(len(rels_per_sentence)), rels_per_sentence.values(), alpha=0.5)
-        ax.set_xticklabels(np.arange(len(rels_per_sentence)), fontsize=10, labels=list(range(len(rels_per_sentence))))
+        ax.set_xticklabels(fontsize=10, labels=list(range(len(rels_per_sentence))))
         ax.set_xlabel('no. of relations')
         ax.set_ylabel('no. of sentences')
         ax.spines["right"].set_visible(False)
