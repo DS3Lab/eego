@@ -44,17 +44,29 @@ def lstm_classifier(features, labels, eeg, embedding_type, param_dict, random_se
     X_text = list(features.keys())
     y = list(labels.values())
 
+
+
+
+
+    # prepare text samples
+    X_data_text, num_words, text_feats = ml_helpers.prepare_text(X_text, embedding_type, random_seed_value)
+
+    # prepare EEG data
+    eeg_X, max_length_cogni = ml_helpers.prepare_cogni_seqs(eeg)
+    eeg_X = ml_helpers.scale_feature_values(eeg_X)
+    X_data_eeg = ml_helpers.pad_cognitive_feature_seqs(eeg_X, max_length_cogni, "eeg")
+
     print("Label distribution:")
     for cl in range(len(y[0])):
         class_count = [1 if int(n[cl]) == 1 else 0 for n in y]
         class_count = sum(class_count)
         print(cl, class_count)
 
-    print(len(X), len(y))
+    print(len(X_data_text), len(X_data_eeg), len(y))
 
-    y, X = ml_helpers.drop_classes(y, X)
+    y, X_data_text, X_data_eeg = ml_helpers.drop_classes_with_eeg(y, X_data_text, X_data_eeg)
 
-    print(len(X), len(y))
+    print(len(X_data_text), len(X_data_eeg), len(y))
 
     print("Label distribution:")
     for cl in range(len(y[0])):
@@ -64,14 +76,6 @@ def lstm_classifier(features, labels, eeg, embedding_type, param_dict, random_se
 
     # these are already one hot categorical encodings
     y = np.asarray(y)
-
-    # prepare text samples
-    X_data_text, num_words, text_feats = ml_helpers.prepare_text(X_text, embedding_type, random_seed_value)
-
-    # prepare EEG data
-    eeg_X, max_length_cogni = ml_helpers.prepare_cogni_seqs(eeg)
-    eeg_X = ml_helpers.scale_feature_values(eeg_X)
-    X_data_eeg = ml_helpers.pad_cognitive_feature_seqs(eeg_X, max_length_cogni, "eeg")
 
     # split data into train/test
     kf = KFold(n_splits=config.folds, random_state=random_seed_value, shuffle=True)

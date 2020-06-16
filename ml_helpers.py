@@ -20,7 +20,6 @@ def plot_prediction_distribution(true, pred):
 
     plt.hist(true, bins=len(set(true)), color='green', alpha=0.5)
     plt.hist(pred, bins=len(set(pred)), color='blue', alpha=0.5)
-    #plt.xticks(rotation=90, fontsize=7)
     plt.savefig('pred-label-distribution-' + config.class_task + '.png')
     plt.tight_layout()
     plt.clf()
@@ -43,7 +42,6 @@ def plot_label_distribution(y):
         # try: rainbow
         # viridis, plasma, cool, summer, inferno, cividis
         cmap = cm.viridis(np.linspace(0, 1, len(all_relations)))
-        print(cmap)
         ax.barh(range(len(all_relations)), all_relations, color=cmap)
         ax.set_yticks(range(len(all_relations)))
         ax.set_yticklabels(labels=label_names, fontsize=11)
@@ -61,13 +59,9 @@ def plot_label_distribution(y):
                 rels_per_sentence[sum(s)] = 1
             else:
                 rels_per_sentence[sum(s)] += 1
-        print(rels_per_sentence.keys())
-        print(rels_per_sentence.values())
         rels_sorted = sorted(rels_per_sentence.items(), reverse=True)
-        print(rels_sorted)
         rels = [i[0] for i in rels_sorted]
         sents = [i[1] for i in rels_sorted]
-        print(rels)
         ax.barh(rels, sents, color=cmap[:len(rels)])
         fig.gca().invert_yaxis()
         ax.set_ylabel('no. of relations')
@@ -86,11 +80,8 @@ def plot_label_distribution(y):
             class_count = y.count(cl)
             counts.append(class_count)
         cmap = cm.viridis(np.linspace(0, 1, 11))
-        print(set(y))
-        print(counts)
         ax.barh(list(set(y)), counts, color=cmap[:len(counts)])
         ax.set_yticks(range(len(counts)))
-        label_names = {'0': 2, '1': 1, '-1': 0}
         ax.set_yticklabels(labels=["negative", "positive", "neutral"], fontsize=11)
         ax.spines["right"].set_visible(False)
         ax.spines["top"].set_visible(False)
@@ -98,13 +89,6 @@ def plot_label_distribution(y):
         fig.tight_layout()
         plt.savefig('label-distribution-' + config.class_task + '.png')
         fig.clf()
-
-
-        #plt.hist(y, bins=len(set(y)), alpha=0.5)
-        #plt.xticks(rotation=90, fontsize=7)
-        #plt.savefig('label-distribution-' + config.class_task + '.png')
-        #plt.tight_layout()
-        #plt.clf()
 
 
 def load_glove_embeddings(vocab_size, word_index, EMBEDDING_DIM):
@@ -355,3 +339,21 @@ def drop_classes(y,X):
             new_X.append(X[idx])
 
     return new_y, new_X
+
+
+def drop_classes_with_eeg(y,X_text, X_eeg):
+
+    # tested with dropping the 4, 6 or 8 least frequent relations
+    print("Deleting least frequent " + str(len(config.drop_classes)) + " classes")
+
+    new_y = []
+    new_X_text = []
+    new_X_eeg = []
+    for idx, sample in enumerate(y):
+        sample = [i for j, i in enumerate(sample) if j not in config.drop_classes]
+        if not all(v == 0 for v in sample):
+            new_y.append(sample)
+            new_X_text.append(X_text[idx])
+            new_X_eeg.append(X_eeg[idx])
+
+    return new_y, new_X_text, new_X_eeg
