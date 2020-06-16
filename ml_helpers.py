@@ -42,7 +42,7 @@ def plot_label_distribution(y):
 
         # try: rainbow
         # viridis, plasma, cool, summer, inferno, cividis
-        cmap = cm.cool(np.linspace(0, 1, len(all_relations)))
+        cmap = cm.viridis(np.linspace(0, 1, len(all_relations)))
         print(cmap)
         barlist = ax.barh(range(len(all_relations)), all_relations, color=cmap)
         #for b in barlist:
