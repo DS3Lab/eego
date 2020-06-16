@@ -298,14 +298,16 @@ def drop_train_sents(sample_list):
     return sample_list
 
 
-def drop_classes(y):
+def drop_classes(y,X):
 
-    # tested with droppping the 4, 6 or 8 least frequent relations
+    # tested with dropping the 4, 6 or 8 least frequent relations
     print("Deleting least frequent " + str(len(config.drop_classes)) + " classes")
 
     new_y = []
-    for sample in y:
+    for idx, sample in enumerate(y):
         sample = [i for j, i in enumerate(sample) if j not in config.drop_classes]
-        new_y.append(sample)
+        if not all(v == 0 for v in sample):
+            new_y.append(sample)
+            del X[idx]
 
-    return new_y
+    return new_y, X
