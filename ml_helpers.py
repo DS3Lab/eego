@@ -90,7 +90,9 @@ def plot_label_distribution(y):
             class_count = y.count(cl)
             counts.append(class_count)
         cmap = cm.viridis(np.linspace(0, 1, 11))
-        barlist = ax.barh(set(y), counts, color=cmap[:len(counts)])
+        print(set(y))
+        print(counts)
+        ax.barh(set(y), counts, color=cmap[:len(counts)])
         # for b in barlist:
         #   b.set_color()
         #ax.set_yticks(range(len(all_relations)))
