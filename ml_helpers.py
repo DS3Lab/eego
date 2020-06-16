@@ -36,7 +36,8 @@ def plot_label_distribution(y):
 
         plt.clf()
         fig, ax = plt.subplots()
-        barlist = ax.barh(range(len(all_relations)), sorted(all_relations))
+        all_relations, label_names = zip(*sorted(zip(all_relations, label_names)))
+        barlist = ax.barh(range(len(all_relations)), all_relations)
         #for b in barlist:
          #   b.set_color()
         ax.set_yticks(range(len(all_relations)))
@@ -56,7 +57,7 @@ def plot_label_distribution(y):
                 rels_per_sentence[sum(s)] += 1
         print(rels_per_sentence.keys())
         print(rels_per_sentence.values())
-        rels_sorted = sorted(rels_per_sentence.items())
+        rels_sorted = sorted(rels_per_sentence.items(), reverse=True)
         print(rels_sorted)
         rels = [i[0] for i in rels_sorted]
         sents = [i[1] for i in rels_sorted]
