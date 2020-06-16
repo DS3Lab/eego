@@ -44,9 +44,7 @@ def plot_label_distribution(y):
         # viridis, plasma, cool, summer, inferno, cividis
         cmap = cm.viridis(np.linspace(0, 1, len(all_relations)))
         print(cmap)
-        barlist = ax.barh(range(len(all_relations)), all_relations, color=cmap)
-        #for b in barlist:
-         #   b.set_color()
+        ax.barh(range(len(all_relations)), all_relations, color=cmap)
         ax.set_yticks(range(len(all_relations)))
         ax.set_yticklabels(labels=label_names, fontsize=11)
         ax.spines["right"].set_visible(False)
@@ -70,10 +68,8 @@ def plot_label_distribution(y):
         rels = [i[0] for i in rels_sorted]
         sents = [i[1] for i in rels_sorted]
         print(rels)
-        #cmap = cm.rainbow(np.linspace(0, 1, len(rels)))
         ax.barh(rels, sents, color=cmap[:len(rels)])
         fig.gca().invert_yaxis()
-        #ax.set_yticklabels(fontsize=10, labels=rels)
         ax.set_ylabel('no. of relations')
         ax.set_xlabel('no. of sentences')
         ax.spines["right"].set_visible(False)
@@ -93,12 +89,12 @@ def plot_label_distribution(y):
         print(set(y))
         print(counts)
         ax.barh(list(set(y)), counts, color=cmap[:len(counts)])
-        # for b in barlist:
-        #   b.set_color()
-        #ax.set_yticks(range(len(all_relations)))
-        #ax.set_yticklabels(labels=label_names, fontsize=11)
+        ax.set_yticks(range(len(counts)))
+        label_names = {'0': 2, '1': 1, '-1': 0}
+        ax.set_yticklabels(labels=["negative", "positive", "neutral"], fontsize=11)
         ax.spines["right"].set_visible(False)
         ax.spines["top"].set_visible(False)
+        ax.set_xlabel('no. of sentences')
         fig.tight_layout()
         plt.savefig('label-distribution-' + config.class_task + '.png')
         fig.clf()
