@@ -57,7 +57,7 @@ def plot_label_distribution(y):
 
         # plot number of relation types per sentence
         rels_per_sentence = {}
-        fig, ax = plt.subplots()
+        fig, ax = plt.subplots(figsize=(6,3))
         for s in y:
             if sum(s) not in rels_per_sentence:
                 rels_per_sentence[sum(s)] = 1
