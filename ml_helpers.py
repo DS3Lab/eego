@@ -40,7 +40,7 @@ def plot_label_distribution(y):
         fig, ax = plt.subplots()
         all_relations, label_names = zip(*sorted(zip(all_relations, label_names)))
 
-        cmap = cm.tab20b(np.linspace(0, 1, len(all_relations)))
+        cmap = cm.Set3(np.linspace(0, 1, len(all_relations)))
         print(cmap)
         barlist = ax.barh(range(len(all_relations)), all_relations, color=cmap)
         #for b in barlist:
@@ -67,7 +67,8 @@ def plot_label_distribution(y):
         rels = [i[0] for i in rels_sorted]
         sents = [i[1] for i in rels_sorted]
         print(rels)
-        ax.barh(rels, sents, alpha=0.5)
+        cmap = cm.Set3(np.linspace(0, 1, len(rels)))
+        ax.barh(rels, sents, color=cmap)
         fig.gca().invert_yaxis()
         #ax.set_yticklabels(fontsize=10, labels=rels)
         ax.set_ylabel('no. of relations')
