@@ -186,6 +186,7 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
 
         label_names = ["Visited", "Founder", "Nationality", "Wife", "PoliticalAffiliation", "JobTitle", "Education",
                        "Employer", "Awarded", "BirthPlace", "DeathPlace"]
+        label_names = [i for j, i in enumerate(label_names) if j not in config.drop_classes]
         print(sklearn.metrics.classification_report(y_test, pred, target_names=label_names))
         per_class_results = sklearn.metrics.classification_report(y_test, pred, target_names=label_names, output_dict=True)
 
