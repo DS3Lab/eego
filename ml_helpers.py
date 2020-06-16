@@ -36,8 +36,8 @@ def plot_label_distribution(y):
         plt.clf()
         fig, ax = plt.subplots()
         barlist = ax.barh(range(len(all_relations)), all_relations)
-        for b in barlist:
-            b.set_color()
+        #for b in barlist:
+         #   b.set_color()
         ax.set_yticks(range(len(all_relations)))
         ax.set_yticklabels(rotation=45, labels=label_names, fontsize=11)
         ax.spines["right"].set_visible(False)
