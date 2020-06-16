@@ -10,6 +10,7 @@ from tensorflow.python.keras.preprocessing.sequence import pad_sequences
 from tensorflow.python.keras.preprocessing.text import Tokenizer
 from tensorflow.python.keras.callbacks import EarlyStopping, ModelCheckpoint
 import datetime
+from collections import OrderedDict
 import sklearn
 
 def plot_prediction_distribution(true, pred):
@@ -34,7 +35,10 @@ def plot_label_distribution(y):
         all_relations = np.sum(y, 0)
         plt.clf()
         fig, ax = plt.subplots()
-        ax.barh(range(len(all_relations)), all_relations)
+        barlist = ax.barh(range(len(all_relations)), all_relations)
+        for b in barlist:
+            b.set_color()
+        ax.set_yticks(range(len(all_relations)))
         ax.set_yticklabels(rotation=45, labels=label_names, fontsize=11)
         ax.spines["right"].set_visible(False)
         ax.spines["top"].set_visible(False)
@@ -51,6 +55,8 @@ def plot_label_distribution(y):
                 rels_per_sentence[sum(s)] += 1
         print(rels_per_sentence.keys())
         print(rels_per_sentence.values())
+        rels_sorted = sorted(rels_per_sentence.items())
+        print(rels_sorted)
         ax.barh(range(len(rels_per_sentence)), rels_per_sentence.values(), alpha=0.5)
         ax.set_yticklabels(fontsize=10, labels=list(rels_per_sentence.keys()))
         #ax.set_xticklabels(fontsize=10, labels=list(rels_per_sentence.values()))
