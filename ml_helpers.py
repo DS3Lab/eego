@@ -296,3 +296,14 @@ def drop_train_sents(sample_list):
         sample_list[idx] = li
 
     return sample_list
+
+
+def drop_classes(X, y):
+
+    print("Deleting first " + str(config.drop_classes) + " classes")
+    print(y[0])
+    print(X[0])
+
+    #for sample in y:
+
+    return X, y

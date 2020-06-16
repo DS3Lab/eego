@@ -17,7 +17,7 @@ class_task = 'sentiment-bin'
 
 # features sets {'text_only' , 'eeg_raw', 'eeg_theta', 'eeg_alpha', 'eeg_beta', 'eeg_gamma', 'combi_eeg_raw', 'eye_tracking', 'combi_eye_tracking'}
 # sentence level features: {'combi_concat', 'sent_eeg_theta'}
-# combined models: {'eeg_eye_tracking'}
+# combined models: {'eeg_eye_tracking', 'eeg4'}
 
 feature_set = ['eye_tracking']
 
@@ -45,7 +45,8 @@ random_seed_values = [13, 78, 22, 66, 42]
 validation_split = 0.1
 patience = 80
 min_delta = 0.0000001
-data_percentage = 0.25
+data_percentage = 0
+drop_classes = 4
 
 # only for Relation Detection:
 rel_thresholds = [0.3, 0.5, 0.7]
