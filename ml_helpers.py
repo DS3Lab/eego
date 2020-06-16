@@ -12,6 +12,8 @@ from tensorflow.python.keras.callbacks import EarlyStopping, ModelCheckpoint
 import datetime
 from collections import OrderedDict
 import sklearn
+from matplotlib import cm
+
 
 def plot_prediction_distribution(true, pred):
     """Analyze label distribution of dataset"""
@@ -37,7 +39,10 @@ def plot_label_distribution(y):
         plt.clf()
         fig, ax = plt.subplots()
         all_relations, label_names = zip(*sorted(zip(all_relations, label_names)))
-        barlist = ax.barh(range(len(all_relations)), all_relations)
+
+        cmap = cm.tab20b(np.linspace(0, 1, len(all_relations)))
+        print(cmap)
+        barlist = ax.barh(range(len(all_relations)), all_relations, color=cmap)
         #for b in barlist:
          #   b.set_color()
         ax.set_yticks(range(len(all_relations)))
@@ -63,11 +68,13 @@ def plot_label_distribution(y):
         sents = [i[1] for i in rels_sorted]
         print(rels)
         ax.barh(rels, sents, alpha=0.5)
+        ax.gca().invert_yaxis()
         #ax.set_yticklabels(fontsize=10, labels=rels)
         ax.set_ylabel('no. of relations')
         ax.set_xlabel('no. of sentences')
         ax.spines["right"].set_visible(False)
         ax.spines["top"].set_visible(False)
+
         fig.tight_layout()
         fig.savefig('relation-distribution-' + config.class_task + '.png')
         fig.clf()
