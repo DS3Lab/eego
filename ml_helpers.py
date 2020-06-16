@@ -39,7 +39,7 @@ def plot_label_distribution(y):
         #for b in barlist:
          #   b.set_color()
         ax.set_yticks(range(len(all_relations)))
-        ax.set_yticklabels(rotation=45, labels=label_names, fontsize=11)
+        ax.set_yticklabels(labels=label_names, fontsize=11)
         ax.spines["right"].set_visible(False)
         ax.spines["top"].set_visible(False)
         plt.savefig('label-distribution-' + config.class_task + '.png')
@@ -57,9 +57,10 @@ def plot_label_distribution(y):
         print(rels_per_sentence.values())
         rels_sorted = sorted(rels_per_sentence.items())
         print(rels_sorted)
-        ax.barh(range(len(rels_per_sentence)), rels_per_sentence.values(), alpha=0.5)
-        ax.set_yticklabels(fontsize=10, labels=list(rels_per_sentence.keys()))
-        #ax.set_xticklabels(fontsize=10, labels=list(rels_per_sentence.values()))
+        rels = [i[0] for i in rels_sorted]
+        sents = [i[1] for i in rels_sorted]
+        ax.barh(rels, sents, alpha=0.5)
+        ax.set_yticklabels(fontsize=10, labels=rels)
         ax.set_ylabel('no. of relations')
         ax.set_xlabel('no. of sentences')
         ax.spines["right"].set_visible(False)
