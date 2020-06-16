@@ -43,19 +43,21 @@ def plot_label_distribution(y):
 
         # plot number of relation types per sentence
         rels_per_sentence = {}
+        fig, ax = plt.subplots()
         for s in y:
             if sum(s) not in rels_per_sentence:
                 rels_per_sentence[sum(s)] = 1
             else:
                 rels_per_sentence[sum(s)] += 1
-        plt.barh(range(len(rels_per_sentence)), rels_per_sentence.values(), alpha=0.5)
-        plt.xticks(fontsize=10, ticks=np.arange(len(rels_per_sentence)), labels=list(range(len(rels_per_sentence))))
+        ax.barh(range(len(rels_per_sentence)), rels_per_sentence.values(), alpha=0.5)
+        ax.xticks(fontsize=10, ticks=np.arange(len(rels_per_sentence)), labels=list(range(len(rels_per_sentence))))
         plt.xlabel('no. of relations')
-        plt.ylabel('no. of sentences')
-        plt.axis('off')
-        plt.tight_layout()
-        plt.savefig('relation-distribution-' + config.class_task + '.png')
-        plt.clf()
+        ax.ylabel('no. of sentences')
+        ax.spines["right"].set_visible(False)
+        ax.spines["top"].set_visible(False)
+        fig.tight_layout()
+        fig.savefig('relation-distribution-' + config.class_task + '.png')
+        fig.clf()
 
     else:
         plt.hist(y, bins=len(set(y)), alpha=0.5)
