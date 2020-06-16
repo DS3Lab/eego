@@ -44,6 +44,24 @@ def lstm_classifier(features, labels, eeg, embedding_type, param_dict, random_se
     X_text = list(features.keys())
     y = list(labels.values())
 
+    print("Label distribution:")
+    for cl in range(len(y[0])):
+        class_count = [1 if int(n[cl]) == 1 else 0 for n in y]
+        class_count = sum(class_count)
+        print(cl, class_count)
+
+    print(len(X), len(y))
+
+    y, X = ml_helpers.drop_classes(y, X)
+
+    print(len(X), len(y))
+
+    print("Label distribution:")
+    for cl in range(len(y[0])):
+        class_count = [1 if int(n[cl]) == 1 else 0 for n in y]
+        class_count = sum(class_count)
+        print(cl, class_count)
+
     # these are already one hot categorical encodings
     y = np.asarray(y)
 
@@ -196,6 +214,7 @@ def lstm_classifier(features, labels, eeg, embedding_type, param_dict, random_se
 
         label_names = ["Visited", "Founder", "Nationality", "Wife", "PoliticalAffiliation", "JobTitle", "Education",
                        "Employer", "Awarded", "BirthPlace", "DeathPlace"]
+        label_names = [i for j, i in enumerate(label_names) if j not in config.drop_classes]
         print(sklearn.metrics.classification_report(y_test, pred, target_names=label_names))
         per_class_results = sklearn.metrics.classification_report(y_test, pred, target_names=label_names,
                                                                   output_dict=True)
