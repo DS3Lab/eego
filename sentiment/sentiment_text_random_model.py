@@ -68,7 +68,8 @@ def lstm_classifier(features, labels, eeg, embedding_type, param_dict, random_se
 
     # Initiating random
     print("Random data instead of real EEG data!")
-    X_data_eeg_random = np.random.randint(1, 100, size=X_data_eeg.shape)
+    X_data_eeg_random = np.random.uniform(1, 100, size=X_data_eeg.shape)
+    print(X_data_eeg_random[0][0])
 
     # split data into train/test
     kf = KFold(n_splits=config.folds, random_state=random_seed_value, shuffle=True)
