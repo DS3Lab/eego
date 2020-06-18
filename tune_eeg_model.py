@@ -141,7 +141,7 @@ def main():
                                                                                                rand)
 
                                         elif 'random' in config.feature_set and 'eeg_alpha' in config.feature_set:
-                                            fold_results = sentiment_text_random_model.lstm_classifier(label_dict,
+                                            fold_results = sentiment_text_random_model.lstm_classifier(feature_dict, label_dict,
                                                                                                eeg_dict,
                                                                                                config.embeddings,
                                                                                                parameter_dict,
