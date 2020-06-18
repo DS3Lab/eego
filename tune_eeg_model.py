@@ -2,7 +2,7 @@ import config
 from feature_extraction import zuco_reader
 from reldetect import reldetect_eeg_model, reldetect_text_eeg_model
 from ner import ner_text_model
-from sentiment import sentiment_eeg_model, sentiment_text_eeg_model
+from sentiment import sentiment_eeg_model, sentiment_text_eeg_model, sentiment_text_model_random
 from data_helpers import save_results, load_matlab_files
 import collections
 import json
@@ -134,6 +134,13 @@ def main():
                                                                                                     parameter_dict,
                                                                                                     rand)
                                         elif 'eeg_raw' in config.feature_set:
+                                            fold_results = sentiment_eeg_model.lstm_classifier(label_dict,
+                                                                                               eeg_dict,
+                                                                                               config.embeddings,
+                                                                                               parameter_dict,
+                                                                                               rand)
+
+                                        elif 'random' in config.feature_set and 'eeg_theta' in config.feature_set:
                                             fold_results = sentiment_eeg_model.lstm_classifier(label_dict,
                                                                                                eeg_dict,
                                                                                                config.embeddings,
