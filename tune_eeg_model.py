@@ -140,7 +140,7 @@ def main():
                                                                                                parameter_dict,
                                                                                                rand)
 
-                                        elif 'random' in config.feature_set and 'eeg_theta' in config.feature_set:
+                                        elif 'random' in config.feature_set and 'eeg_alpha' in config.feature_set:
                                             fold_results = sentiment_eeg_model.lstm_classifier(label_dict,
                                                                                                eeg_dict,
                                                                                                config.embeddings,
