@@ -1,6 +1,6 @@
 import config
 from feature_extraction import zuco_reader
-from reldetect import reldetect_eeg_model, reldetect_text_eeg_model
+from reldetect import reldetect_eeg_model, reldetect_text_eeg_model, reldetect_text_random_model
 from ner import ner_text_model
 from sentiment import sentiment_eeg_model, sentiment_text_eeg_model, sentiment_text_random_model
 from data_helpers import save_results, load_matlab_files
@@ -78,6 +78,13 @@ def main():
                                                                                                    config.embeddings,
                                                                                                    parameter_dict,
                                                                                                    rand, threshold)
+                                            elif 'random' in config.feature_set and 'eeg_gamma' in config.feature_set:
+                                                fold_results = reldetect_text_random_model.lstm_classifier(feature_dict,
+                                                                                                           label_dict,
+                                                                                                           eeg_dict,
+                                                                                                           config.embeddings,
+                                                                                                           parameter_dict,
+                                                                                                           rand, threshold)
                                             elif 'combi_eeg_raw' in config.feature_set or 'eeg_theta' in config.feature_set or 'eeg_alpha' in config.feature_set or 'eeg_beta' in config.feature_set or 'eeg_gamma' in config.feature_set:
                                                 print("this model....")
                                                 fold_results = reldetect_text_eeg_model.lstm_classifier(feature_dict,
