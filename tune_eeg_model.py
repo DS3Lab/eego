@@ -78,7 +78,7 @@ def main():
                                                                                                    config.embeddings,
                                                                                                    parameter_dict,
                                                                                                    rand, threshold)
-                                            elif 'random' in config.feature_set and 'eeg_gamma' in config.feature_set:
+                                            elif 'random' in config.feature_set and 'eeg_theta' in config.feature_set:
                                                 fold_results = reldetect_text_random_model.lstm_classifier(feature_dict,
                                                                                                            label_dict,
                                                                                                            eeg_dict,
