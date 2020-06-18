@@ -67,6 +67,7 @@ def lstm_classifier(features, labels, eeg, embedding_type, param_dict, random_se
     X_data_eeg = ml_helpers.pad_cognitive_feature_seqs(eeg_X, max_length_cogni, "eeg")
 
     # Initiating random
+    "Random data instead of real EEG data!"
     X_data_eeg_random = np.random.randint(1, 100, size=X_data_eeg.shape)
 
     # split data into train/test
