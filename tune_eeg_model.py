@@ -79,6 +79,7 @@ def main():
                                                                                                     config.embeddings,
                                                                                                     parameter_dict,
                                                                                                     rand)
+                                            """
                                             if 'eeg_raw' in config.feature_set:
                                                 fold_results = reldetect_eeg_model.lstm_classifier(label_dict, eeg_dict,
                                                                                                    config.embeddings,
@@ -99,6 +100,7 @@ def main():
                                                                                                         config.embeddings,
                                                                                                         parameter_dict,
                                                                                                         rand, threshold)
+                                            """
                                             save_results(fold_results, config.class_task)
 
                                     elif config.class_task == 'ner':
