@@ -352,12 +352,12 @@ def drop_samples(y, X, X_eeg=None):
         if job_title:
             new_y.append(np.array([1.,0.]))
             new_X.append(X[idx])
-            if X_eeg:
+            if X_eeg is not None:
                 new_X_eeg.append(X[idx])
         if no_rel:
             new_y.append(np.array([0., 1.]))
             new_X.append(X[idx])
-            if X_eeg:
+            if X_eeg is not None:
                 new_X_eeg.append(X[idx])
 
     if not X_eeg:
