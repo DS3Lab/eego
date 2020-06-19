@@ -1,6 +1,6 @@
 import config
 from feature_extraction import zuco_reader
-from reldetect import reldetect_eeg_model, reldetect_text_eeg_model, reldetect_text_random_model
+from reldetect import reldetect_eeg_model, reldetect_text_eeg_model, reldetect_text_random_model, reldetect_text_model_binary
 from ner import ner_text_model
 from sentiment import sentiment_eeg_model, sentiment_text_eeg_model, sentiment_text_random_model
 from data_helpers import save_results, load_matlab_files
@@ -73,6 +73,12 @@ def main():
                                         print(len(eeg_dict))
 
                                         for threshold in config.rel_thresholds:
+                                            if 'binary' in config.feature_set:
+                                                fold_results = reldetect_text_model_binary.lstm_classifier(feature_dict,
+                                                                                                    label_dict, eeg_dict,
+                                                                                                    config.embeddings,
+                                                                                                    parameter_dict,
+                                                                                                    rand)
                                             if 'eeg_raw' in config.feature_set:
                                                 fold_results = reldetect_eeg_model.lstm_classifier(label_dict, eeg_dict,
                                                                                                    config.embeddings,

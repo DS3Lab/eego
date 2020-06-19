@@ -5,7 +5,6 @@ import tensorflow.python.keras.backend as K
 from tensorflow.python.keras.layers import Input, Dense, Embedding, LSTM, Bidirectional, Flatten, Dropout
 from tensorflow.python.keras.layers.merge import concatenate
 from tensorflow.python.keras.models import Model, load_model
-from tensorflow.python.keras.callbacks import EarlyStopping, ModelCheckpoint
 import sklearn.metrics
 from sklearn.model_selection import KFold
 import ml_helpers
@@ -25,7 +24,7 @@ os.environ['KERAS_BACKEND'] = 'tensorflow'
 # Jointly learning from text and cognitive word-level features (EEG pr eye-tracking)
 
 
-def lstm_classifier(features, labels, eeg, embedding_type, param_dict, random_seed_value, threshold):
+def lstm_classifier(features, labels, eeg, embedding_type, param_dict, random_seed_value):
 
     # set random seeds
     np.random.seed(random_seed_value)
@@ -227,7 +226,7 @@ def lstm_classifier(features, labels, eeg, embedding_type, param_dict, random_se
             fold_results['precision'] = [p]
             fold_results['recall'] = [r]
             fold_results['fscore'] = [f]
-            fold_results['threshold'] = threshold
+            fold_results['threshold'] = '-'
             fold_results['model'] = [model_name]
             fold_results['best-e'] = [len(history.history['loss'])-config.patience]
             fold_results['patience'] = config.patience
