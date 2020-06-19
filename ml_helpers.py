@@ -346,13 +346,8 @@ def drop_samples(y, X):
     new_y = []
     new_X = []
     for idx, sample in enumerate(y):
-        print(sample)
-        print(type(sample))
         job_title = True if int(sample[5]) == 1 else False
         no_rel = True if all(int(n) == 0 for n in sample) else False
-        print(job_title)
-        print(no_rel)
-        print("---")
         if job_title:
             new_y.append(np.array([1.,0.]))
             new_X.append(X[idx])
