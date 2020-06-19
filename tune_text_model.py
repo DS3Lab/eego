@@ -1,6 +1,6 @@
 import config
 from feature_extraction import zuco_reader
-from reldetect import reldetect_text_model
+from reldetect import reldetect_text_model, reldetect_text_model_binary
 from ner import ner_text_model
 from sentiment import sentiment_text_model
 from data_helpers import save_results, load_matlab_files
@@ -56,6 +56,13 @@ def main():
                                         for threshold in config.rel_thresholds:
                                             fold_results = reldetect_text_model.lstm_classifier(feature_dict, label_dict, config.embeddings, parameter_dict, rand, threshold)
                                             save_results(fold_results, config.class_task)
+                                            if 'binary' in config.feature_set:
+                                                fold_results = reldetect_text_model_binary.lstm_classifier(feature_dict,
+                                                                                                    label_dict,
+                                                                                                    config.embeddings,
+                                                                                                    parameter_dict,
+                                                                                                    rand, threshold)
+                                                save_results(fold_results, config.class_task)
 
                                     elif config.class_task == 'ner':
                                         fold_results = ner_text_model.lstm_classifier(feature_dict, label_dict, config.embeddings, parameter_dict, rand)
