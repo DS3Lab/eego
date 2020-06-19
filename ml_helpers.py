@@ -353,12 +353,12 @@ def drop_samples(y, X, X_eeg=None):
             new_y.append(np.array([1.,0.]))
             new_X.append(X[idx])
             if X_eeg is not None:
-                new_X_eeg.append(X[idx])
+                new_X_eeg.append(X_eeg[idx])
         if no_rel:
             new_y.append(np.array([0., 1.]))
             new_X.append(X[idx])
             if X_eeg is not None:
-                new_X_eeg.append(X[idx])
+                new_X_eeg.append(X_eeg[idx])
 
     if not new_X_eeg:
         return new_y, new_X
