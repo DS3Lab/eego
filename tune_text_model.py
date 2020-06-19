@@ -54,15 +54,17 @@ def main():
 
                                     if config.class_task == 'reldetect':
                                         for threshold in config.rel_thresholds:
-                                            fold_results = reldetect_text_model.lstm_classifier(feature_dict, label_dict, config.embeddings, parameter_dict, rand, threshold)
-                                            save_results(fold_results, config.class_task)
                                             if 'binary' in config.feature_set:
                                                 fold_results = reldetect_text_model_binary.lstm_classifier(feature_dict,
                                                                                                     label_dict,
                                                                                                     config.embeddings,
                                                                                                     parameter_dict,
-                                                                                                    rand, threshold)
+                                                                                                    rand)
                                                 save_results(fold_results, config.class_task)
+                                            else:
+                                                fold_results = reldetect_text_model.lstm_classifier(feature_dict, label_dict, config.embeddings, parameter_dict, rand, threshold)
+                                                save_results(fold_results, config.class_task)
+
 
                                     elif config.class_task == 'ner':
                                         fold_results = ner_text_model.lstm_classifier(feature_dict, label_dict, config.embeddings, parameter_dict, rand)

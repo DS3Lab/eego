@@ -24,7 +24,7 @@ os.environ['KERAS_BACKEND'] = 'tensorflow'
 # Only learning from text
 
 
-def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_value, threshold):
+def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_value):
     # set random seed
     np.random.seed(random_seed_value)
     tf.random.set_seed(random_seed_value)
@@ -206,7 +206,7 @@ def lstm_classifier(features, labels, embedding_type, param_dict, random_seed_va
             fold_results['precision'] = [p]
             fold_results['recall'] = [r]
             fold_results['fscore'] = [f]
-            fold_results['threshold'] = threshold
+            fold_results['threshold'] = '-'
             fold_results['model'] = [model_name]
             fold_results['best-e'] = [len(history.history['loss'])-config.patience]
             fold_results['patience'] = config.patience
