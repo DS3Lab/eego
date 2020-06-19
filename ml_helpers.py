@@ -336,3 +336,28 @@ def drop_classes(y):
         new_y.append(sample)
 
     return new_y
+
+
+def drop_samples(y, X):
+
+    # tested with dropping the 4, 6 or 8 least frequent relations
+    print("JOB TITLE vs. no relatoin - binary classification")
+
+    new_y = []
+    new_X = []
+    for idx, sample in enumerate(y):
+        print(sample)
+        print(type(sample))
+        job_title = True if int(sample[5]) == 1 else False
+        no_rel = True if all(int(n) == 0 for n in sample) else False
+        print(job_title)
+        print(no_rel)
+        print("---")
+        if job_title:
+            new_y.append(np.array([1.,0.]))
+            new_X.append(X[idx])
+        if no_rel:
+            new_y.append(np.array([0., 1.]))
+            new_X.append(X[idx])
+
+    return new_y, new_X
