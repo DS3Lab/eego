@@ -360,7 +360,7 @@ def drop_samples(y, X, X_eeg=None):
             if X_eeg is not None:
                 new_X_eeg.append(X[idx])
 
-    if not X_eeg:
+    if not new_X_eeg:
         return new_y, new_X
     else:
         return new_y, new_X, new_X_eeg
