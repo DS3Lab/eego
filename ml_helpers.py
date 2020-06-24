@@ -38,7 +38,8 @@ def plot_label_distribution(y):
 
         cmap = cm.viridis(np.linspace(0, 1, len(all_relations)))
         ax.barh(range(len(all_relations)), all_relations, color=cmap)
-        ax.set_yticks(range(len(all_relations)), fontsize=12)
+        ax.set_yticks(range(len(all_relations)))
+        ax.set_yticklabels(fontsize=12)
         ax.set_yticklabels(labels=label_names, fontsize=12)
         ax.spines["right"].set_visible(False)
         ax.spines["top"].set_visible(False)
