@@ -1,5 +1,4 @@
 import matplotlib.pyplot as plt
-import matplotlib.colors as colors
 import os
 import numpy as np
 import config
@@ -10,8 +9,6 @@ from tensorflow.python.keras.preprocessing.sequence import pad_sequences
 from tensorflow.python.keras.preprocessing.text import Tokenizer
 from tensorflow.python.keras.callbacks import EarlyStopping, ModelCheckpoint
 import datetime
-from collections import OrderedDict
-import sklearn
 from matplotlib import cm
 
 
@@ -39,12 +36,10 @@ def plot_label_distribution(y):
         fig, ax = plt.subplots()
         all_relations, label_names = zip(*sorted(zip(all_relations, label_names)))
 
-        # try: rainbow
-        # viridis, plasma, cool, summer, inferno, cividis
         cmap = cm.viridis(np.linspace(0, 1, len(all_relations)))
         ax.barh(range(len(all_relations)), all_relations, color=cmap)
-        ax.set_yticks(range(len(all_relations)))
-        ax.set_yticklabels(labels=label_names, fontsize=11)
+        ax.set_yticks(range(len(all_relations)), fontsize=12)
+        ax.set_yticklabels(labels=label_names, fontsize=12)
         ax.spines["right"].set_visible(False)
         ax.spines["top"].set_visible(False)
         fig.tight_layout()
