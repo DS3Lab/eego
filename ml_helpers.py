@@ -27,8 +27,8 @@ def plot_label_distribution(y):
 
     if config.class_task == "reldetect":
 
-        label_names = ["Visited", "Founder", "Nationality", "Wife", "PoliticalAffiliation", "JobTitle", "Education",
-                       "Employer", "Awarded", "BirthPlace", "DeathPlace"]
+        label_names = ["Visited", "Founder", "Nationality", "Wife", "Political Affiliation", "Job Title", "Education",
+                       "Employer", "Awarded", "Birth Place", "Death Place"]
 
         all_relations = np.sum(y, 0)
 
@@ -38,8 +38,10 @@ def plot_label_distribution(y):
 
         cmap = cm.viridis(np.linspace(0, 1, len(all_relations)))
         ax.barh(range(len(all_relations)), all_relations, color=cmap)
-        ax.set_yticks(range(len(all_relations)))
+
+        ax.set_xticks([0, 50, 100, 150, 200])
         ax.set_xticklabels([0, 50, 100, 150, 200], fontsize=12)
+        ax.set_yticks(range(len(all_relations)))
         ax.set_yticklabels(labels=label_names, fontsize=12)
         ax.spines["right"].set_visible(False)
         ax.spines["top"].set_visible(False)
