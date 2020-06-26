@@ -339,20 +339,23 @@ def drop_classes(y):
 def drop_samples(y, X, X_eeg=None):
 
     # tested with dropping the 4, 6 or 8 least frequent relations
-    print("VISITED vs. no relation - binary classification")
-
     label_names = ["Visited", "Founder", "Nationality", "Wife", "Political Affiliation", "Job Title", "Education",
                    "Employer", "Awarded", "Birth Place", "Death Place"]
+    print(label_names[rel_index], " vs. no relation - binary classification")
+
+    # sample[5] = job_title
+    # sample[0] = visited
+    # 7 = employer
+    rel_index = 7
+    print("taking only ", label_names[rel_index], " samples.")
+
 
     new_y = []
     new_X = []
     new_X_eeg = []
     for idx, sample in enumerate(y):
-        # sample[5] = job_title
-        # sample[0] = visited
-        rel_index = 0
-        print("taking only ", label_names[rel_index], " samples.")
-        job_title = True if int(sample[0]) == 1 else False
+
+        job_title = True if int(sample[rel_index]) == 1 else False
         no_rel = True if all(int(n) == 0 for n in sample) else False
         if job_title:
             new_y.append(np.array([1.,0.]))
