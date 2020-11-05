@@ -133,20 +133,44 @@ def lstm_classifier(features, labels, eeg, embedding_type, param_dict_text, para
         text_model_model.summary()
 
         # the second branch operates on the second input (EEG data)
-        cognitive_model = Bidirectional(LSTM(param_dict_eeg['lstm_dim'], return_sequences=True))(input_eeg)
-        cognitive_model = Flatten()(cognitive_model)
-        cognitive_model = Dense(param_dict_eeg['dense_dim'], activation="relu")(cognitive_model)
-        cognitive_model = Dropout(param_dict_eeg['dropout'])(cognitive_model)
-        cognitive_model = Dense(16, activation="relu")(cognitive_model)
-        cognitive_model_model = Model(inputs=input_eeg, outputs=cognitive_model)
+        if config.model is 'lstm':
+            cognitive_model = Bidirectional(LSTM(param_dict_eeg['lstm_dim'], return_sequences=True))(input_eeg)
+            cognitive_model = Flatten()(cognitive_model)
+            cognitive_model = Dense(param_dict_eeg['dense_dim'], activation="relu")(cognitive_model)
+            cognitive_model = Dropout(param_dict_eeg['dropout'])(cognitive_model)
+            cognitive_model = Dense(16, activation="relu")(cognitive_model)
+            cognitive_model_model = Model(inputs=input_eeg, outputs=cognitive_model)
 
-        cognitive_model_model.summary()
+            cognitive_model_model.summary()
 
-        # combine the output of the two branches
-        combined = concatenate([text_model_model.output, cognitive_model_model.output])
-        # apply another dense layer and then a softmax prediction on the combined outputs
-        combi_model = Dense(y_train.shape[1], activation="softmax")(combined)
-
+            # combine the output of the two branches
+            combined = concatenate([text_model_model.output, cognitive_model_model.output])
+            # apply another dense layer and then a softmax prediction on the combined outputs
+            combi_model = Dense(y_train.shape[1], activation="softmax")(combined)
+        
+        elif config.model is 'cnn':
+            for i in range(len(config.eeg_cnn_network)):
+                layer_type = config.eeg_cnn_network[i]
+                n_filters = config.eeg_cnn_filters[0]
+                kernel_size = config.eeg_cnn_kernel_size[0]
+                if layer_type is 'Conv':
+                    cognitive_model = Conv1D(n_eeg_filters, kernel_size, activation='relu', input_shape=(X_train_eeg.shape[1], X_train_eeg.shape[2]))(input_eeg)
+                elif layer_type is 'Pooling':
+                    cognitive_model = MaxPooling1D(pool_size=2)(cognitive_model)
+                    
+                cognitive_model = Flatten()(cognitive_model)
+                cognitive_model = Dense(param_dict_eeg['dense_dim'], activation="relu")(cognitive_model)
+                cognitive_model = Dropout(param_dict_eeg['dropout'])(cognitive_model)
+                cognitive_model = Dense(16, activation="relu")(cognitive_model)
+                cognitive_model_model = Model(inputs=input_eeg, outputs=cognitive_model)
+                
+                cognitive_model_model.summary()
+                
+                # combine the output of the two branches
+                combined = concatenate([text_model_model.output, cognitive_model_model.output])
+                # apply another dense layer and then a softmax prediction on the combined outputs
+                combi_model = Dense(y_train.shape[1], activation="softmax")(combined)
+        
         model = Model(inputs=[text_model_model.input, cognitive_model_model.input], outputs=combi_model)
 
         model.compile(loss='categorical_crossentropy',
@@ -154,6 +178,9 @@ def lstm_classifier(features, labels, eeg, embedding_type, param_dict_text, para
                       metrics=['accuracy'])
 
         model.summary()
+        
+        # plotting the model
+        # plot_model(model, to_file='{}_model.png'.format(config.model))
 
         # callbacks for early stopping and saving the best model
         early_stop, model_save, model_name = ml_helpers.callbacks(fold, random_seed_value)
