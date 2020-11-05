@@ -19,7 +19,7 @@ class_task = 'sentiment-bin'
 # sentence level features: {'combi_concat', 'sent_eeg_theta'}
 # combined models: {'eeg_eye_tracking', 'eeg4'}
 
-feature_set = ['eye_tracking']
+feature_set = ['eeg_alpha']
 
 # word embeddings {none, glove (300d), bert}
 embeddings = 'glove'
@@ -33,6 +33,10 @@ batch_size = [40]
 epochs = [200]
 lr = [0.001]
 
+# params for CNN model
+eeg_cnn_filters = [64]
+eeg_cnn_kernel_size = [3]
+eeg_cnn_network = ['Conv', 'Conv', 'Pooling', 'Conv', 'Conv', 'Pooling']
 
 # best params raw eeg:
 eeg_lstm_dim = [64]
