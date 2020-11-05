@@ -26,7 +26,7 @@ os.environ['KERAS_BACKEND'] = 'tensorflow'
 # Jointly learning from text and cognitive word-level features (EEG pr eye-tracking)
 
 
-def lstm_classifier(features, labels, eeg, embedding_type, param_dict_text, param_dict_eeg, random_seed_value):
+def classifier(features, labels, eeg, embedding_type, param_dict_text, param_dict_eeg, random_seed_value):
 
     # set random seeds
     np.random.seed(random_seed_value)
