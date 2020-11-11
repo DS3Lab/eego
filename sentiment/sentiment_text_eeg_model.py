@@ -3,7 +3,7 @@ import numpy as np
 from tensorflow.python.keras.utils import np_utils
 from tensorflow.python.keras.initializers import Constant
 import tensorflow.python.keras.backend as K
-from tensorflow.python.keras.layers import Input, Dense, Embedding, LSTM, Bidirectional, Flatten, Dropout
+from tensorflow.python.keras.layers import Input, Dense, Embedding, LSTM, Bidirectional, Flatten, Dropout, Conv1D, MaxPooling1D
 from tensorflow.python.keras.layers.merge import concatenate, add, subtract, dot, maximum
 from tensorflow.python.keras.models import Model, load_model
 from tensorflow.python.keras.callbacks import EarlyStopping, ModelCheckpoint
@@ -26,7 +26,7 @@ os.environ['KERAS_BACKEND'] = 'tensorflow'
 # Jointly learning from text and cognitive word-level features (EEG pr eye-tracking)
 
 
-def lstm_classifier(features, labels, eeg, embedding_type, param_dict, random_seed_value):
+def classifier(features, labels, eeg, embedding_type, param_dict, random_seed_value):
 
     # set random seeds
     np.random.seed(random_seed_value)
@@ -40,6 +40,7 @@ def lstm_classifier(features, labels, eeg, embedding_type, param_dict, random_se
 
     # plot sample distribution
     #ml_helpers.plot_label_distribution(y)
+
     print("Label distribuion:")
     for cl in set(y):
         class_count = y.count(cl)
@@ -120,7 +121,11 @@ def lstm_classifier(features, labels, eeg, embedding_type, param_dict, random_se
         batch_size = param_dict['batch_size']
         epochs = param_dict['epochs']
         lr = param_dict['lr']
+        cnn_kernel_size = 3
+        cnn_filters = param_dict['cnn_filter']
+        cnn_model = param_dict['cnn_model']
 
+        # TODO see what fold_results change, add cnn_kernel, cnn_filters
         fold_results['params'] = [lstm_dim, lstm_layers, dense_dim, dropout, batch_size, epochs, lr, embedding_type,
                                   random_seed_value]
 
@@ -148,6 +153,7 @@ def lstm_classifier(features, labels, eeg, embedding_type, param_dict, random_se
             input_mask = tf.keras.layers.Input((X_train_masks.shape[1],), dtype=tf.int32, name='input_mask')
             input_text_list.append(input_mask)
             text_model = ml_helpers.create_new_bert_layer()(input_text, attention_mask=input_mask)[0]
+        
         text_model = Bidirectional(LSTM(lstm_dim, return_sequences=True))(text_model)
         text_model = Flatten()(text_model)
         text_model = Dense(dense_dim, activation="relu")(text_model)
@@ -158,19 +164,42 @@ def lstm_classifier(features, labels, eeg, embedding_type, param_dict, random_se
         text_model_model.summary()
 
         # the second branch operates on the second input (EEG data)
-        cognitive_model = Bidirectional(LSTM(lstm_dim, return_sequences=True))(input_eeg)
-        cognitive_model = Flatten()(cognitive_model)
-        cognitive_model = Dense(dense_dim, activation="relu")(cognitive_model)
-        cognitive_model = Dropout(dropout)(cognitive_model)
-        cognitive_model = Dense(16, activation="relu")(cognitive_model)
-        cognitive_model_model = Model(inputs=input_eeg, outputs=cognitive_model)
+        if config.model is 'lstm':
+            cognitive_model = Bidirectional(LSTM(lstm_dim, return_sequences=True))(input_eeg)
+            cognitive_model = Flatten()(cognitive_model)
+            cognitive_model = Dense(dense_dim, activation="relu")(cognitive_model)
+            cognitive_model = Dropout(dropout)(cognitive_model)
+            cognitive_model = Dense(16, activation="relu")(cognitive_model)
+            cognitive_model_model = Model(inputs=input_eeg, outputs=cognitive_model)
 
-        cognitive_model_model.summary()
+            cognitive_model_model.summary()
+            # combine the output of the two branches
+            combined = concatenate([text_model_model.output, cognitive_model_model.output])
+            # apply another dense layer and then a softmax prediction on the combined outputs
+            combi_model = Dense(y_train.shape[1], activation="softmax")(combined)
 
-        # combine the output of the two branches
-        combined = concatenate([text_model_model.output, cognitive_model_model.output])
-        # apply another dense layer and then a softmax prediction on the combined outputs
-        combi_model = Dense(y_train.shape[1], activation="softmax")(combined)
+        elif config.model is 'cnn':
+
+            for i in range(len(cnn_model)):
+                layer_type = cnn_model[i]
+                if layer_type is 'Conv':
+                    cognitive_model = Conv1D(cnn_filters, cnn_kernel_size, activation='relu', input_shape=(X_train_eeg.shape[1], X_train_eeg.shape[2]))(input_eeg)
+                elif layer_type is 'Pooling':
+                    cognitive_model = MaxPooling1D(pool_size=2)(cognitive_model)
+
+            # TODO parameters here shouldn't be the same as for text model 
+            cognitive_model = Flatten()(cognitive_model)
+            cognitive_model = Dense(param_dict['dense_dim'], activation="relu")(cognitive_model)
+            cognitive_model = Dropout(param_dict['dropout'])(cognitive_model)
+            cognitive_model = Dense(16, activation="relu")(cognitive_model)
+            cognitive_model_model = Model(inputs=input_eeg, outputs=cognitive_model)
+            
+            cognitive_model_model.summary()
+            # combine the output of the two branches
+            combined = concatenate([text_model_model.output, cognitive_model_model.output])
+            # apply another dense layer and then a softmax prediction on the combined outputs
+            combi_model = Dense(y_train.shape[1], activation="softmax")(combined)
+
 
         model = Model(inputs=[text_model_model.input, cognitive_model_model.input], outputs=combi_model)
 
