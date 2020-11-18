@@ -3,10 +3,10 @@ import numpy as np
 import time
 from datetime import timedelta
 import tensorflow as tf
-from tensorflow.python.keras.layers import Input, Dense, LSTM, Bidirectional, Flatten, Dropout
+from tensorflow.python.keras.layers import Input, Dense, LSTM, Bidirectional, Flatten, Dropout, Conv1D, MaxPooling1D
 from tensorflow.python.keras.models import Model, load_model
 from tensorflow.python.keras.callbacks import EarlyStopping, ModelCheckpoint
-from tensorflow.python.keras.utils import np_utils
+from tensorflow.python.keras.utils import np_utils, plot_model
 import tensorflow.python.keras.backend as K
 import sklearn.metrics
 from sklearn.model_selection import KFold
@@ -23,7 +23,7 @@ os.environ['KERAS_BACKEND'] = 'tensorflow'
 # Machine learning model for sentiment classification (binary and ternary)
 # Learning on EEG data only!
 
-def lstm_classifier(labels, eeg, embedding_type, param_dict, random_seed_value):
+def classifier(labels, eeg, embedding_type, param_dict, random_seed_value):
 
     # set random seeds
     np.random.seed(random_seed_value)
@@ -78,6 +78,12 @@ def lstm_classifier(labels, eeg, embedding_type, param_dict, random_seed_value):
         epochs = param_dict['epochs']
         lr = param_dict['lr']
 
+        cnn_kernel_size = 3
+        cnn_filters = param_dict['cnn_filter']
+        cnn_model = param_dict['cnn_model']
+        cnn_pool_size = 2
+
+        # TODO see what fold_results change, add cnn_kernel, cnn_filters
         fold_results['params'] = [lstm_dim, lstm_layers, dense_dim, dropout, batch_size, epochs, lr, embedding_type,
                                   random_seed_value]
 
@@ -85,14 +91,30 @@ def lstm_classifier(labels, eeg, embedding_type, param_dict, random_seed_value):
         print("Preparing model...")
         input_text = Input(shape=(X_train.shape[1], X_train.shape[2]), name='eeg_input_tensor')
 
-        # todo: dropout and recurrent dropout needed in LSTM layers?
-        text_model = Bidirectional(LSTM(lstm_dim, return_sequences=True))(input_text)
-        for _ in list(range(lstm_layers-1)):
-            text_model = Bidirectional(LSTM(lstm_dim, return_sequences=True))(text_model)
-        text_model = Flatten()(text_model)
-        text_model = Dense(dense_dim, activation="relu")(text_model)
-        text_model = Dropout(dropout)(text_model)
-        text_model = Dense(y_train.shape[1], activation="softmax")(text_model)
+        if config.model is 'lstm':
+            # todo: dropout and recurrent dropout needed in LSTM layers?
+            text_model = Bidirectional(LSTM(lstm_dim, return_sequences=True))(input_text)
+            for _ in list(range(lstm_layers-1)):
+                text_model = Bidirectional(LSTM(lstm_dim, return_sequences=True))(text_model)
+            text_model = Flatten()(text_model)
+            text_model = Dense(dense_dim, activation="relu")(text_model)
+            text_model = Dropout(dropout)(text_model)
+            text_model = Dense(y_train.shape[1], activation="softmax")(text_model)
+        
+        elif config.model is 'cnn':
+            text_model = Conv1D(cnn_filters, cnn_kernel_size, activation='relu', input_shape=(X_train.shape[1], X_train.shape[2]))(input_text)
+            for i in range(len(cnn_model)):
+                layer_type = cnn_model[i]
+                print('\n{}\n'.format(layer_type))
+                if layer_type == 'Conv':
+                    text_model = Conv1D(cnn_filters, cnn_kernel_size, activation='relu', input_shape=(X_train.shape[1], X_train.shape[2]))(text_model)
+                elif layer_type == 'Pooling':
+                    text_model = MaxPooling1D(pool_size=cnn_pool_size)(text_model)
+            text_model = Flatten()(text_model)
+            text_model = Dense(dense_dim, activation="relu")(text_model)
+            text_model = Dropout(dropout)(text_model)
+            text_model = Dense(y_train.shape[1], activation="softmax")(text_model)
+
 
         model = Model(inputs=input_text, outputs=text_model)
 
@@ -101,6 +123,9 @@ def lstm_classifier(labels, eeg, embedding_type, param_dict, random_seed_value):
                       metrics=['accuracy'])
 
         model.summary()
+
+        # plotting the model
+        plot_model(model, show_shapes=True, show_layer_names=True, to_file='{}_model.png'.format(config.model))
 
         # callbacks for early stopping and saving the best model
         early_stop, model_save, model_name = ml_helpers.callbacks(fold, random_seed_value)
@@ -138,8 +163,15 @@ def lstm_classifier(labels, eeg, embedding_type, param_dict, random_seed_value):
             fold_results['fscore'] = [f]
             fold_results['model'] = [model_name]
             fold_results['best-e'] = [len(history.history['loss']) - config.patience]
+            
             fold_results['patience'] = config.patience
             fold_results['min_delta'] = config.min_delta
+            
+            fold_results['model_type'] = config.model
+            fold_results['cnn_filters'] = cnn_filters
+            fold_results['cnn_pool_size'] = cnn_pool_size
+            fold_results['cnn_kernel_size'] = cnn_kernel_size
+
         else:
             fold_results['train-loss'].append(history.history['loss'])
             fold_results['train-accuracy'].append(history.history['accuracy'])

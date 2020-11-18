@@ -159,47 +159,46 @@ def extract_word_level_data(data_container, word_objects, eeg_float_resolution =
             word_string = load_matlab_string(data_container[word_obj[0]])
             if is_real_word(word_string):
                 data_dict = {}
-                # todo check H5pyDeprecationWarning for .value
                 data_dict["RAW_EEG"] = extract_all_fixations(data_container, raw_eegs_obj[0], eeg_float_resolution)
                 #data_dict["ICA_EEG"] = extract_all_fixations(data_container, ica_eegs_obj[0], eeg_float_resolution)
                 data_dict["RAW_ET"] = extract_all_fixations(data_container, ets_obj[0], np.float32)
-                data_dict["FFD"] = data_container[ffd[0]].value[0, 0] if len(data_container[ffd[0]].value.shape) == 2 else None
-                data_dict["GD"] = data_container[gd[0]].value[0, 0] if len(data_container[gd[0]].value.shape) == 2 else None
-                data_dict["GPT"] = data_container[gpt[0]].value[0, 0] if len(data_container[gpt[0]].value.shape) == 2 else None
-                data_dict["TRT"] = data_container[trt[0]].value[0, 0] if len(data_container[trt[0]].value.shape) == 2 else None
-                data_dict["nFix"] = data_container[nFix[0]].value[0, 0] if len(data_container[nFix[0]].value.shape) == 2 else None
-                data_dict["TRT_t1"] = data_container[trt_t1[0]].value if len(
-                    data_container[trt_t1[0]].value.shape) == 2 else None
-                data_dict["TRT_t2"] = data_container[trt_t2[0]].value if len(
-                    data_container[trt_t2[0]].value.shape) == 2 else None
-                data_dict["TRT_a1"] = data_container[trt_a1[0]].value if len(
-                    data_container[trt_a1[0]].value.shape) == 2 else None
-                data_dict["TRT_a2"] = data_container[trt_a2[0]].value if len(
-                    data_container[trt_t2[0]].value.shape) == 2 else None
-                data_dict["TRT_b1"] = data_container[trt_b1[0]].value if len(
-                    data_container[trt_b1[0]].value.shape) == 2 else None
-                data_dict["TRT_b2"] = data_container[trt_b2[0]].value if len(
-                    data_container[trt_b2[0]].value.shape) == 2 else None
-                data_dict["TRT_g1"] = data_container[trt_g1[0]].value if len(
-                    data_container[trt_g1[0]].value.shape) == 2 else None
-                data_dict["TRT_g2"] = data_container[trt_g2[0]].value if len(
-                    data_container[trt_g2[0]].value.shape) == 2 else None
-                data_dict["FFD_t1"] = data_container[ffd_t1[0]].value if len(
-                    data_container[ffd_t1[0]].value.shape) == 2 else None
-                data_dict["FFD_t2"] = data_container[ffd_t2[0]].value if len(
-                    data_container[ffd_t2[0]].value.shape) == 2 else None
-                data_dict["FFD_a1"] = data_container[ffd_a1[0]].value if len(
-                    data_container[ffd_a1[0]].value.shape) == 2 else None
-                data_dict["FFD_a2"] = data_container[ffd_a2[0]].value if len(
-                    data_container[ffd_t2[0]].value.shape) == 2 else None
-                data_dict["FFD_b1"] = data_container[ffd_b1[0]].value if len(
-                    data_container[ffd_b1[0]].value.shape) == 2 else None
-                data_dict["FFD_b2"] = data_container[ffd_b2[0]].value if len(
-                    data_container[ffd_b2[0]].value.shape) == 2 else None
-                data_dict["FFD_g1"] = data_container[ffd_g1[0]].value if len(
-                    data_container[ffd_g1[0]].value.shape) == 2 else None
-                data_dict["FFD_g2"] = data_container[ffd_g2[0]].value if len(
-                    data_container[ffd_g2[0]].value.shape) == 2 else None
+                data_dict["FFD"] = data_container[ffd[0]][(0, 0)] if len(data_container[ffd[0]][()].shape) == 2 else None
+                data_dict["GD"] = data_container[gd[0]][(0, 0)] if len(data_container[gd[0]][()].shape) == 2 else None
+                data_dict["GPT"] = data_container[gpt[0]][(0, 0)] if len(data_container[gpt[0]][()].shape) == 2 else None
+                data_dict["TRT"] = data_container[trt[0]][(0, 0)] if len(data_container[trt[0]][()].shape) == 2 else None
+                data_dict["nFix"] = data_container[nFix[0]][(0, 0)] if len(data_container[nFix[0]][()].shape) == 2 else None
+                data_dict["TRT_t1"] = data_container[trt_t1[0]][()] if len(
+                    data_container[trt_t1[0]][()].shape) == 2 else None
+                data_dict["TRT_t2"] = data_container[trt_t2[0]][()] if len(
+                    data_container[trt_t2[0]][()].shape) == 2 else None
+                data_dict["TRT_a1"] = data_container[trt_a1[0]][()] if len(
+                    data_container[trt_a1[0]][()].shape) == 2 else None
+                data_dict["TRT_a2"] = data_container[trt_a2[0]][()] if len(
+                    data_container[trt_t2[0]][()].shape) == 2 else None
+                data_dict["TRT_b1"] = data_container[trt_b1[0]][()] if len(
+                    data_container[trt_b1[0]][()].shape) == 2 else None
+                data_dict["TRT_b2"] = data_container[trt_b2[0]][()] if len(
+                    data_container[trt_b2[0]][()].shape) == 2 else None
+                data_dict["TRT_g1"] = data_container[trt_g1[0]][()] if len(
+                    data_container[trt_g1[0]][()].shape) == 2 else None
+                data_dict["TRT_g2"] = data_container[trt_g2[0]][()] if len(
+                    data_container[trt_g2[0]][()].shape) == 2 else None
+                data_dict["FFD_t1"] = data_container[ffd_t1[0]][()] if len(
+                    data_container[ffd_t1[0]][()].shape) == 2 else None
+                data_dict["FFD_t2"] = data_container[ffd_t2[0]][()] if len(
+                    data_container[ffd_t2[0]][()].shape) == 2 else None
+                data_dict["FFD_a1"] = data_container[ffd_a1[0]][()] if len(
+                    data_container[ffd_a1[0]][()].shape) == 2 else None
+                data_dict["FFD_a2"] = data_container[ffd_a2[0]][()] if len(
+                    data_container[ffd_t2[0]][()].shape) == 2 else None
+                data_dict["FFD_b1"] = data_container[ffd_b1[0]][()] if len(
+                    data_container[ffd_b1[0]][()].shape) == 2 else None
+                data_dict["FFD_b2"] = data_container[ffd_b2[0]][()] if len(
+                    data_container[ffd_b2[0]][()].shape) == 2 else None
+                data_dict["FFD_g1"] = data_container[ffd_g1[0]][()] if len(
+                    data_container[ffd_g1[0]][()].shape) == 2 else None
+                data_dict["FFD_g2"] = data_container[ffd_g2[0]][()] if len(
+                    data_container[ffd_g2[0]][()].shape) == 2 else None
 
                 fixations_order_per_word.append(np.array(data_container[fixPos[0]]))
 

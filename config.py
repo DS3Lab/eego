@@ -1,7 +1,8 @@
 # dataset directories
 #rootdir_zuco1 = "/Volumes/methlab/NLP/Ce_ETH/OSF-ZuCo1.0-200107/mat7.3/"
 #rootdir_zuco2 = "/Volumes/methlab/NLP/Ce_ETH/2019/FirstLevel_V2/"
-base_dir = "/mnt/ds3lab-scratch/noraho/coling2020/"
+#base_dir = "/mnt/ds3lab-scratch/noraho/coling2020/"
+base_dir = '/Users/benjaminglaus/Desktop/BA_code/'
 rootdir_zuco1 = base_dir+"zuco1/"
 rootdir_zuco2 = base_dir+"zuco2/"
 
@@ -14,12 +15,14 @@ subjects = ["ZKW"]#], "ZJS"]#, "ZDN"]#, "ZJN"]#, "ZPH", "ZAB", "ZJM", "ZKB", "ZK
 
 # ML task {sentiment-bin, sentiment-tri, ner, reldetect}
 class_task = 'sentiment-bin'
+# ML model {lstm, cnn}
+model = 'cnn'
 
 # features sets {'text_only' , 'eeg_raw', 'eeg_theta', 'eeg_alpha', 'eeg_beta', 'eeg_gamma', 'combi_eeg_raw', 'eye_tracking', 'combi_eye_tracking'}
 # sentence level features: {'combi_concat', 'sent_eeg_theta'}
 # combined models: {'eeg_eye_tracking', 'eeg4'}
 
-feature_set = ['eeg_alpha']
+feature_set = ['eeg_raw']
 
 # word embeddings {none, glove (300d), bert}
 embeddings = 'glove'
@@ -30,13 +33,13 @@ lstm_layers = [1]
 dense_dim = [64]
 dropout = [0.]
 batch_size = [40]
-epochs = [200]
+epochs = [10]
 lr = [0.001]
 
 # params for CNN model
 eeg_cnn_filters = [64]
 eeg_cnn_kernel_size = [3]
-eeg_cnn_network = ['Conv', 'Conv', 'Pooling', 'Conv', 'Conv', 'Pooling']
+eeg_cnn_network = [['Conv', 'Pooling', 'Conv', 'Conv', 'Pooling']] # there's already a Conv layer infront
 
 # best params raw eeg:
 eeg_lstm_dim = [64]
@@ -44,8 +47,8 @@ eeg_dense_dim = [64]
 eeg_dropout = [0.1]
 
 # other parameters
-folds = 5
-random_seed_values = [13, 78, 22, 66, 42]
+folds = 2
+random_seed_values = [13]#, 78, 22, 66, 42]
 validation_split = 0.1
 patience = 80
 min_delta = 0.0000001

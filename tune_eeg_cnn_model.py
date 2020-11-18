@@ -34,9 +34,11 @@ def main():
         elapsed = (time.time() - start)
         print('{}: {}'.format(subject, timedelta(seconds=int(elapsed))))
 
-    print("Reading EEG features from file!!")
-    eeg_dict = json.load(
-        open("../eeg_features/" + config.feature_set[0] + "_feats_file_" + config.class_task + ".json"))
+    print('len(feature_dict): {}\nlen(label_dict): {}\nlen(eeg_dict): {}'.format(len(feature_dict), len(label_dict), len(eeg_dict)))
+
+    #print("Reading EEG features from file!!")
+    #eeg_dict = json.load(
+        #open("../eeg_features/" + config.feature_set[0] + "_feats_file_" + config.class_task + ".json"))
     print("done, ", len(eeg_dict), " sentences with EEG features.")
  
     # save EEG features
@@ -50,17 +52,20 @@ def main():
 
     if len(feature_dict) != len(label_dict) or len(feature_dict) != len(eeg_dict) or len(label_dict) != len(eeg_dict):
         print("WARNING: Not an equal number of sentences in features and labels!")
-    print('{} - {} - {}'.format(len(feature_dict), len(label_dict), len(eeg_dict)))
+
+    if config.model is not 'cnn':
+        print("WARNING: Not running CNN model!")
 
     print('Starting loop')
-    start = time.time() # remove later
+    start = time.time()
+
     for rand in config.random_seed_values:
         np.random.seed(rand)
         for lstmDim in config.lstm_dim: # needed for text model
             for lstmLayers in config.lstm_layers: 
                 for denseDim in config.dense_dim: # needed for text model
-                    for cnn_filter in config.cnn_filters:
-                        for cnn_model in config.cnn_network:
+                    for cnn_filter in config.eeg_cnn_filters:
+                        for cnn_model in config.eeg_cnn_network:
                             for drop in config.dropout:
                                 for bs in config.batch_size:
                                     for lr_val in config.lr:
@@ -96,8 +101,12 @@ def main():
                                                     continue
                                                 
                                                 elif 'eeg_raw' in config.feature_set:
-                                                        #fold_results =
-                                                        continue
+                                                        fold_results = sentiment_eeg_model.classifier(label_dict,
+                                                                                                        eeg_dict,
+                                                                                                        config.embeddings,
+                                                                                                        parameter_dict,
+                                                                                                        rand)
+                                                        
 
                                                 elif 'random' in config.feature_set and 'eeg_alpha' in config.feature_set:
                                                         #fold_results =

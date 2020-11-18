@@ -68,9 +68,15 @@ def save_results(fold_results_dict, task):
         result_file = open('reldetect/results/' + str(date.today()) + "_results_" + task + "_" + "-".join(config.feature_set) + "-" + config.embeddings + ".txt", 'a')
 
     # print header
-    print("lstm_dim", "lstm_layers", "dense_dim", "dropout", "batch_size", "epochs", "lr", "embedding_type",
-          "random_seed", "train_acc", "val_acc", "test_acc", "test_std", "avg_precision", "std_precision",
-          "avg_recall", "std_recall", "avg_fscore", "std_fscore", "threshold", "folds", "training_time", 'best_ep', 'patience', 'min_delta', "model", file=result_file)
+    if config.model is 'cnn':
+        print("lstm_dim", "lstm_layers", "dense_dim", "dropout", "batch_size", "epochs", "lr", "embedding_type",
+            "random_seed", "train_acc", "val_acc", "test_acc", "test_std", "avg_precision", "std_precision",
+            "avg_recall", "std_recall", "avg_fscore", "std_fscore", "threshold", "folds", "training_time", 'best_ep', 
+            'patience', 'min_delta', "model", "model_type", "cnn_filters", "cnn_pool_size", "cnn_kernel_size", "cnn_model", file=result_file)
+    else:
+        print("lstm_dim", "lstm_layers", "dense_dim", "dropout", "batch_size", "epochs", "lr", "embedding_type",
+            "random_seed", "train_acc", "val_acc", "test_acc", "test_std", "avg_precision", "std_precision",
+            "avg_recall", "std_recall", "avg_fscore", "std_fscore", "threshold", "folds", "training_time", 'best_ep', 'patience', 'min_delta', "model", "model_type", file=result_file)
 
     # training scores
     train_acc = np.mean([ep[-1] for ep in fold_results_dict['train-accuracy']])
@@ -90,9 +96,22 @@ def save_results(fold_results_dict, task):
     threshold = fold_results_dict['threshold'] if 'threshold' in fold_results_dict else "-"
     best_eps = ",".join(map(str, fold_results_dict['best-e']))
     folds = config.folds
+    model_type = config.model
 
-    print(" ".join(map(str, fold_results_dict['params'])),train_acc, val_acc, avg_accuracy, std_accuracy, avg_precision,
-          std_precision, avg_recall, std_recall, avg_fscore, std_fscore, threshold, folds, fold_results_dict['training_time'], best_eps, fold_results_dict['patience'], fold_results_dict['min_delta'], fold_results_dict['model'][-1], file=result_file)
+    if config.model is 'cnn':
+        cnn_filters = fold_results_dict['cnn_filters']
+        cnn_pool_size = fold_results_dict['cnn_pool_size']
+        cnn_kernel_size = fold_results_dict['cnn_kernel_size']
+
+        print(" ".join(map(str, fold_results_dict['params'])),train_acc, val_acc, avg_accuracy, std_accuracy, avg_precision,
+          std_precision, avg_recall, std_recall, avg_fscore, std_fscore, threshold, folds, fold_results_dict['training_time'], 
+          best_eps, fold_results_dict['patience'], fold_results_dict['min_delta'], fold_results_dict['model'][-1], 
+          model_type, cnn_filters, cnn_pool_size, cnn_kernel_size, file=result_file)
+    
+    else:
+        print(" ".join(map(str, fold_results_dict['params'])),train_acc, val_acc, avg_accuracy, std_accuracy, avg_precision,
+            std_precision, avg_recall, std_recall, avg_fscore, std_fscore, threshold, folds, fold_results_dict['training_time'], 
+            best_eps, fold_results_dict['patience'], fold_results_dict['min_delta'], fold_results_dict['model'][-1], model_type, file=result_file)
 
 
 
