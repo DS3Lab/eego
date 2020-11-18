@@ -72,7 +72,7 @@ def save_results(fold_results_dict, task):
         print("lstm_dim", "lstm_layers", "dense_dim", "dropout", "batch_size", "epochs", "lr", "embedding_type",
             "random_seed", "train_acc", "val_acc", "test_acc", "test_std", "avg_precision", "std_precision",
             "avg_recall", "std_recall", "avg_fscore", "std_fscore", "threshold", "folds", "training_time", 'best_ep', 
-            'patience', 'min_delta', "model", "model_type", "cnn_filters", "cnn_pool_size", "cnn_kernel_size", "cnn_model", file=result_file)
+            'patience', 'min_delta', "model", "model_type", "cnn_filters", "cnn_pool_size", "cnn_kernel_size", file=result_file)
     else:
         print("lstm_dim", "lstm_layers", "dense_dim", "dropout", "batch_size", "epochs", "lr", "embedding_type",
             "random_seed", "train_acc", "val_acc", "test_acc", "test_std", "avg_precision", "std_precision",
