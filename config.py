@@ -1,14 +1,15 @@
 # dataset directories
 #rootdir_zuco1 = "/Volumes/methlab/NLP/Ce_ETH/OSF-ZuCo1.0-200107/mat7.3/"
 #rootdir_zuco2 = "/Volumes/methlab/NLP/Ce_ETH/2019/FirstLevel_V2/"
-#base_dir = "/mnt/ds3lab-scratch/noraho/coling2020/"
-base_dir = '/Users/benjaminglaus/Desktop/BA_code/'
+base_dir = "/mnt/ds3lab-scratch/noraho/coling2020/"
+#base_dir = '/Users/benjaminglaus/Desktop/BA_code/'
 rootdir_zuco1 = base_dir+"zuco1/"
 rootdir_zuco2 = base_dir+"zuco2/"
 
 # subjects (subejcts starting with "Z" are from ZuCo 1, subjects starting with "Y" are from ZuCo 2)
 #subjects = ['YAC', 'YAG', 'YAK', 'YDG', 'YDR', 'YFR', 'YFS', 'YHS', 'YIS', 'YLS', 'YMD', 'YMS', 'YRH', 'YRK', 'YRP', 'YSD', 'YSL', 'YTL']  # exclude YMH
-subjects = ["ZKW"]#], "ZJS"]#, "ZDN"]#, "ZJN"]#, "ZPH", "ZAB", "ZJM", "ZKB", "ZKH", "ZMG", "ZGW", "ZKW", "ZDM"]
+#subjects = ["ZKW", "ZJS", "ZDN", "ZJN", "ZPH", "ZAB", "ZJM", "ZKB", "ZKH", "ZMG", "ZGW", "ZKW", "ZDM"]
+subjects = ["ZKW", "ZJS", "ZDN", "ZJN", "ZPH", "ZAB", "ZJM", "ZKB", "ZKH", "ZMG", "ZGW", "ZKW", "ZDM", 'YAC', 'YAG', 'YAK', 'YDG', 'YDR', 'YFR', 'YFS', 'YHS', 'YIS', 'YLS', 'YMD', 'YMS', 'YRH', 'YRK', 'YRP', 'YSD', 'YSL', 'YTL']
 
 # for running the experiments with previously extracted feature only one subject (from each dataset) is necessary
 
@@ -31,9 +32,9 @@ embeddings = 'glove'
 lstm_dim = [64]
 lstm_layers = [1]
 dense_dim = [64]
-dropout = [0.]
+dropout = [0.3]
 batch_size = [40]
-epochs = [10]
+epochs = [200]
 lr = [0.001]
 
 # params for CNN model
@@ -47,8 +48,8 @@ eeg_dense_dim = [64]
 eeg_dropout = [0.1]
 
 # other parameters
-folds = 2
-random_seed_values = [13]#, 78, 22, 66, 42]
+folds = 5
+random_seed_values = [13, 78, 22, 66, 42]
 validation_split = 0.1
 patience = 80
 min_delta = 0.0000001
