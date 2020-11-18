@@ -6,7 +6,7 @@ import tensorflow as tf
 from tensorflow.python.keras.layers import Input, Dense, LSTM, Bidirectional, Flatten, Dropout, Conv1D, MaxPooling1D
 from tensorflow.python.keras.models import Model, load_model
 from tensorflow.python.keras.callbacks import EarlyStopping, ModelCheckpoint
-from tensorflow.python.keras.utils import np_utils, plot_model
+from tensorflow.python.keras.utils import np_utils# plot_model
 import tensorflow.python.keras.backend as K
 import sklearn.metrics
 from sklearn.model_selection import KFold
@@ -125,7 +125,7 @@ def classifier(labels, eeg, embedding_type, param_dict, random_seed_value):
         model.summary()
 
         # plotting the model
-        plot_model(model, show_shapes=True, show_layer_names=True, to_file='{}_model.png'.format(config.model))
+        # plot_model(model, show_shapes=True, show_layer_names=True, to_file='{}_model.png'.format(config.model))
 
         # callbacks for early stopping and saving the best model
         early_stop, model_save, model_name = ml_helpers.callbacks(fold, random_seed_value)
