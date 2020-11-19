@@ -121,9 +121,11 @@ def classifier(features, labels, eeg, embedding_type, param_dict, random_seed_va
         batch_size = param_dict['batch_size']
         epochs = param_dict['epochs']
         lr = param_dict['lr']
-        cnn_kernel_size = 3
+
+        cnn_kernel_size = param_dict['cnn_kernel_size']
         cnn_filters = param_dict['cnn_filter']
         cnn_model = param_dict['cnn_model']
+        cnn_pool_size = 2
 
         # TODO see what fold_results change, add cnn_kernel, cnn_filters
         fold_results['params'] = [lstm_dim, lstm_layers, dense_dim, dropout, batch_size, epochs, lr, embedding_type,
@@ -179,13 +181,14 @@ def classifier(features, labels, eeg, embedding_type, param_dict, random_seed_va
             combi_model = Dense(y_train.shape[1], activation="softmax")(combined)
 
         elif config.model is 'cnn':
-
+            
+            cognitive_model = Conv1D(cnn_filters, cnn_kernel_size, activation='relu', input_shape=(X_train_eeg.shape[1], X_train_eeg.shape[2]))(input_eeg)
             for i in range(len(cnn_model)):
                 layer_type = cnn_model[i]
                 if layer_type is 'Conv':
-                    cognitive_model = Conv1D(cnn_filters, cnn_kernel_size, activation='relu', input_shape=(X_train_eeg.shape[1], X_train_eeg.shape[2]))(input_eeg)
+                    cognitive_model = Conv1D(cnn_filters, cnn_kernel_size, activation='relu', input_shape=(X_train_eeg.shape[1], X_train_eeg.shape[2]))(cognitive_model)
                 elif layer_type is 'Pooling':
-                    cognitive_model = MaxPooling1D(pool_size=2)(cognitive_model)
+                    cognitive_model = MaxPooling1D(pool_size=cnn_pool_size)(cognitive_model)
 
             # TODO parameters here shouldn't be the same as for text model 
             cognitive_model = Flatten()(cognitive_model)
@@ -248,8 +251,16 @@ def classifier(features, labels, eeg, embedding_type, param_dict, random_seed_va
             fold_results['fscore'] = [f]
             fold_results['model'] = [model_name]
             fold_results['best-e'] = [len(history.history['loss']) - config.patience]
+            
             fold_results['patience'] = config.patience
             fold_results['min_delta'] = config.min_delta
+
+            fold_results['model_type'] = config.model
+            
+            if config.model is 'cnn':
+                fold_results['cnn_filters'] = cnn_filters
+                fold_results['cnn_pool_size'] = cnn_pool_size
+                fold_results['cnn_kernel_size'] = cnn_kernel_size
         else:
             fold_results['train-loss'].append(history.history['loss'])
             fold_results['train-accuracy'].append(history.history['accuracy'])

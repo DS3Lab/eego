@@ -9,7 +9,7 @@ rootdir_zuco2 = base_dir+"zuco2/"
 # subjects (subejcts starting with "Z" are from ZuCo 1, subjects starting with "Y" are from ZuCo 2)
 #subjects = ['YAC', 'YAG', 'YAK', 'YDG', 'YDR', 'YFR', 'YFS', 'YHS', 'YIS', 'YLS', 'YMD', 'YMS', 'YRH', 'YRK', 'YRP', 'YSD', 'YSL', 'YTL']  # exclude YMH
 #subjects = ["ZKW", "ZJS", "ZDN", "ZJN", "ZPH", "ZAB", "ZJM", "ZKB", "ZKH", "ZMG", "ZGW", "ZKW", "ZDM"]
-subjects = ["ZKW", "ZJS", "ZDN", "ZJN", "ZPH", "ZAB", "ZJM", "ZKB", "ZKH", "ZMG", "ZGW", "ZKW", "ZDM", 'YAC', 'YAG', 'YAK', 'YDG', 'YDR', 'YFR', 'YFS', 'YHS', 'YIS', 'YLS', 'YMD', 'YMS', 'YRH', 'YRK', 'YRP', 'YSD', 'YSL', 'YTL']
+subjects = ["ZKW"]#, "ZJS", "ZDN", "ZJN", "ZPH", "ZAB", "ZJM", "ZKB", "ZKH", "ZMG", "ZGW", "ZKW", "ZDM", 'YAC', 'YAG', 'YAK', 'YDG', 'YDR', 'YFR', 'YFS', 'YHS', 'YIS', 'YLS', 'YMD', 'YMS', 'YRH', 'YRK', 'YRP', 'YSD', 'YSL', 'YTL']
 
 # for running the experiments with previously extracted feature only one subject (from each dataset) is necessary
 
@@ -23,7 +23,7 @@ model = 'cnn'
 # sentence level features: {'combi_concat', 'sent_eeg_theta'}
 # combined models: {'eeg_eye_tracking', 'eeg4'}
 
-feature_set = ['eeg_raw']
+feature_set = ['combi_eeg_raw']
 
 # word embeddings {none, glove (300d), bert}
 embeddings = 'glove'
@@ -41,6 +41,7 @@ lr = [0.001]
 eeg_cnn_filters = [64]
 eeg_cnn_kernel_size = [3]
 eeg_cnn_network = [['Conv', 'Pooling', 'Conv', 'Conv', 'Pooling']] # there's already a Conv layer infront
+cnn_pool_size = [2,3,4]
 
 # best params raw eeg:
 eeg_lstm_dim = [64]
