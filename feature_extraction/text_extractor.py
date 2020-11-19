@@ -20,7 +20,7 @@ def extract_sentences(sentence_data, sentence_dict):
             # whitespace tokenization
             split_tokens = sent.split()
             # linguistic tokenization
-            spacy_tokens = nltk.word_tokenize(sent)
+            # spacy_tokens = nltk.word_tokenize(sent)
 
             # for sentiment and relation detection
             if config.class_task.startswith('sentiment') or config.class_task == "reldetect":
@@ -30,5 +30,5 @@ def extract_sentences(sentence_data, sentence_dict):
             # for ner (different tokenization needed for NER)
             if config.class_task == "ner":
                 if sent not in sentence_dict:
-                    sentence_dict[sent] = spacy_tokens
-
+                    # sentence_dict[sent] = spacy_tokens
+                    continue
