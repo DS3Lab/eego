@@ -8,47 +8,52 @@ import collections
 import json
 import numpy as np
 
+from datetime import timedelta
+import time
+
 # Usage on spaceml:
 # $ conda activate env-eego
 # $ CUDA_VISIBLE_DEVICES=7 python tune_model.py
 
 
 def main():
+    start = time.time()
     feature_dict = {}
     label_dict = {}
     eeg_dict = {}
     gaze_dict = {}
     print("TASK: ", config.class_task)
     print("Extracting", config.feature_set, "features....")
+    
     for subject in config.subjects:
-        print(subject)
-
         loaded_data = load_matlab_files(config.class_task, subject)
 
         zuco_reader.extract_features(loaded_data, config.feature_set, feature_dict, eeg_dict, gaze_dict)
         zuco_reader.extract_labels(feature_dict, label_dict, config.class_task, subject)
 
-    print(len(feature_dict), len(label_dict), len(eeg_dict))
+        elapsed = (time.time() - start)
+        print('{}: {}'.format(subject, timedelta(seconds=int(elapsed))))
 
-    print("Reading EEG features from file!!")
-    eeg_dict = json.load(
-        open("../eeg_features/" + config.feature_set[0] + "_feats_file_" + config.class_task + ".json"))
+    print('len(feature_dict): {}\nlen(label_dict): {}\nlen(eeg_dict): {}'.format(len(feature_dict), len(label_dict), len(eeg_dict)))
+
+    #print("Reading EEG features from file!!")
+    #eeg_dict = json.load(
+        #open("../eeg_features/" + config.feature_set[0] + "_feats_file_" + config.class_task + ".json"))
     print("done, ", len(eeg_dict), " sentences with EEG features.")
 
     # save EEG features
-    """
     with open(config.feature_set[0] + '_feats_file_'+config.class_task+'.json', 'w') as fp:
        json.dump(eeg_dict, fp)
     print("saved.")
-    """
 
     feature_dict = collections.OrderedDict(sorted(feature_dict.items()))
     label_dict = collections.OrderedDict(sorted(label_dict.items()))
     eeg_dict = collections.OrderedDict(sorted(eeg_dict.items()))
 
-    if len(feature_dict) != len(label_dict) != len(eeg_dict):
+    if len(feature_dict) != len(label_dict) or len(feature_dict) != len(eeg_dict) or len(label_dict) != len(eeg_dict):
         print("WARNING: Not an equal number of sentences in features and labels!")
 
+    print('Starting Loop: ' + config.model)
 
     for rand in config.random_seed_values:
         np.random.seed(rand)
@@ -155,7 +160,7 @@ def main():
                                                                                                     parameter_dict,
                                                                                                     rand)
                                         elif 'eeg_raw' in config.feature_set:
-                                            fold_results = sentiment_eeg_model.lstm_classifier(label_dict,
+                                            fold_results = sentiment_eeg_model.classifier(label_dict,
                                                                                                eeg_dict,
                                                                                                config.embeddings,
                                                                                                parameter_dict,
@@ -181,3 +186,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+

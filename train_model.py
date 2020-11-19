@@ -31,7 +31,7 @@ def main():
     print(len(feature_dict), len(label_dict), len(eeg_dict))
 
     print("Reading EEG features from file!!")
-    eeg_dict = json.load(open("../eeg_features/"+config.feature_set[0] + "_feats_file_" + config.class_task + ".json"))
+    #eeg_dict = json.load(open("../eeg_features/"+config.feature_set[0] + "_feats_file_" + config.class_task + ".json"))
     print("done, ", len(eeg_dict), " sentences with EEG features.")
 
     feature_dict = collections.OrderedDict(sorted(feature_dict.items()))
@@ -102,7 +102,7 @@ def main():
                                                                    emb, parameter_dict,
                                                                    rand)
             elif 'eeg_raw' in config.feature_set:
-                fold_results = sentiment_eeg_model.lstm_classifier(label_dict,
+                fold_results = sentiment_eeg_model.classifier(label_dict,
                                                                         eeg_dict,
                                                                         emb,
                                                                         parameter_dict,
