@@ -125,7 +125,7 @@ def classifier(features, labels, eeg, embedding_type, param_dict, random_seed_va
         cnn_kernel_size = param_dict['cnn_kernel_size']
         cnn_filters = param_dict['cnn_filter']
         cnn_model = param_dict['cnn_model']
-        cnn_pool_size = 2
+        cnn_pool_size = param_dict['cnn_pool_size']
 
         # TODO see what fold_results change, add cnn_kernel, cnn_filters
         fold_results['params'] = [lstm_dim, lstm_layers, dense_dim, dropout, batch_size, epochs, lr, embedding_type,

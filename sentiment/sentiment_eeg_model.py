@@ -101,14 +101,14 @@ def classifier(labels, eeg, embedding_type, param_dict, random_seed_value):
             cnn_kernel_size = param_dict['cnn_kernel_size']
             cnn_filters = param_dict['cnn_filter']
             cnn_model = param_dict['cnn_model']
-            cnn_pool_size = 2
+            cnn_pool_size = param_dict['cnn_pool_size']
 
-            text_model = Conv1D(cnn_filters, cnn_kernel_size, activation='relu', input_shape=(X_train.shape[1], X_train.shape[2]))(input_text)
+            #text_model = Conv1D(cnn_filters, cnn_kernel_size, activation='relu', input_shape=(X_train.shape[1], X_train.shape[2]))(input_text)
             for i in range(len(cnn_model)):
                 layer_type = cnn_model[i]
-                print('\n{}\n'.format(layer_type))
+                #print('\n{}\n'.format(layer_type))
                 if layer_type == 'Conv':
-                    text_model = Conv1D(cnn_filters, cnn_kernel_size, activation='relu', input_shape=(X_train.shape[1], X_train.shape[2]))(text_model)
+                    text_model = Conv1D(cnn_filters, cnn_kernel_size, activation='relu')(input_text)
                 elif layer_type == 'Pooling':
                     text_model = MaxPooling1D(pool_size=cnn_pool_size)(text_model)
             text_model = Flatten()(text_model)
