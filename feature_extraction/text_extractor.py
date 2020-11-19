@@ -3,6 +3,7 @@ import config
 import nltk
 
 
+
 def extract_sentences(sentence_data, sentence_dict):
     """extract tokens of all sentences."""
 
@@ -30,5 +31,11 @@ def extract_sentences(sentence_data, sentence_dict):
             # for ner (different tokenization needed for NER)
             if config.class_task == "ner":
                 if sent not in sentence_dict:
+<<<<<<< HEAD
                     # sentence_dict[sent] = spacy_tokens
                     continue
+=======
+                    continue
+                    # sentence_dict[sent] = spacy_tokens
+
+>>>>>>> f4c1a0c639baea38117b0918dc90d1d6a7fd09f0

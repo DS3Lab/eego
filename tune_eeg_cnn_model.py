@@ -65,64 +65,65 @@ def main():
             for lstmLayers in config.lstm_layers: 
                 for denseDim in config.dense_dim: # needed for text model
                     for cnn_filter in config.eeg_cnn_filters:
-                        for cnn_model in config.eeg_cnn_network:
-                            for drop in config.dropout:
-                                for bs in config.batch_size:
-                                    for lr_val in config.lr:
-                                        for e_val in config.epochs:
-                                            parameter_dict = {"lr": lr_val, "lstm_dim": lstmDim, "lstm_layers": lstmLayers,
-                                                            "dense_dim": denseDim, "dropout": drop, "batch_size": bs,
-                                                            "epochs": e_val, "random_seed": rand, "cnn_model": cnn_model,
-                                                            "cnn_filter": cnn_filter}
+                        for cnn_kernel_size in config.eeg_cnn_kernel_size:
+                            for cnn_model in config.eeg_cnn_network:
+                                for drop in config.dropout:
+                                    for bs in config.batch_size:
+                                        for lr_val in config.lr:
+                                            for e_val in config.epochs:
+                                                parameter_dict = {"lr": lr_val, "lstm_dim": lstmDim, "lstm_layers": lstmLayers,
+                                                                "dense_dim": denseDim, "dropout": drop, "batch_size": bs,
+                                                                "epochs": e_val, "random_seed": rand, "cnn_model": cnn_model,
+                                                                "cnn_filter": cnn_filter, "cnn_kernel_size": cnn_kernel_size}
 
-                                            if config.class_task == "reldetect":
-                                                #TODO
-                                                continue
+                                                if config.class_task == "reldetect":
+                                                    #TODO
+                                                    continue
 
-                                            elif config.class_task == "ner":
-                                                #TODO
-                                                continue
+                                                elif config.class_task == "ner":
+                                                    #TODO
+                                                    continue
 
-                                            elif config.class_task == "sentiment-tri":
-                                                #TODO
-                                                continue
-                                            
-                                            elif config.class_task == "sentiment-bin":
-                                                for s, label in list(label_dict.items()):
-                                                        # drop neutral sentences for binary sentiment classification
-                                                        if label == 2:
-                                                            del label_dict[s]
-                                                            del feature_dict[s]
-                                                            del eeg_dict[s]
-
-                                                if 'combi_concat' in config.feature_set:
-                                                    print("Starting EEG + text combi model")
-                                                    #fold_results =
+                                                elif config.class_task == "sentiment-tri":
+                                                    #TODO
                                                     continue
                                                 
-                                                elif 'eeg_raw' in config.feature_set:
-                                                        fold_results = sentiment_eeg_model.classifier(label_dict,
-                                                                                                        eeg_dict,
-                                                                                                        config.embeddings,
-                                                                                                        parameter_dict,
-                                                                                                        rand)
-                                                        
+                                                elif config.class_task == "sentiment-bin":
+                                                    for s, label in list(label_dict.items()):
+                                                            # drop neutral sentences for binary sentiment classification
+                                                            if label == 2:
+                                                                del label_dict[s]
+                                                                del feature_dict[s]
+                                                                del eeg_dict[s]
 
-                                                elif 'random' in config.feature_set and 'eeg_alpha' in config.feature_set:
+                                                    if 'combi_concat' in config.feature_set:
+                                                        print("Starting EEG + text combi model")
                                                         #fold_results =
                                                         continue
+                                                    
+                                                    elif 'eeg_raw' in config.feature_set:
+                                                            fold_results = sentiment_eeg_model.classifier(label_dict,
+                                                                                                            eeg_dict,
+                                                                                                            config.embeddings,
+                                                                                                            parameter_dict,
+                                                                                                            rand)
+                                                            
 
-                                                elif 'combi_eeg_raw' in config.feature_set or 'eeg_theta' in config.feature_set or 'eeg_alpha' in config.feature_set or 'eeg_beta' in config.feature_set or 'eeg_gamma' in config.feature_set:
-                                                        fold_results = sentiment_text_eeg_model.classifier(feature_dict,
-                                                                                                                label_dict,
-                                                                                                                eeg_dict,
-                                                                                                                config.embeddings,
-                                                                                                                parameter_dict,
-                                                                                                                rand)
+                                                    elif 'random' in config.feature_set and 'eeg_alpha' in config.feature_set:
+                                                            #fold_results =
+                                                            continue
 
-                                                save_results(fold_results, config.class_task)
-                                                elapsed = (time.time() - start)
-                                                print('\nTIME since starting loop: {}\n'.format(timedelta(seconds=int(elapsed))))
+                                                    elif 'combi_eeg_raw' in config.feature_set or 'eeg_theta' in config.feature_set or 'eeg_alpha' in config.feature_set or 'eeg_beta' in config.feature_set or 'eeg_gamma' in config.feature_set:
+                                                            fold_results = sentiment_text_eeg_model.classifier(feature_dict,
+                                                                                                                    label_dict,
+                                                                                                                    eeg_dict,
+                                                                                                                    config.embeddings,
+                                                                                                                    parameter_dict,
+                                                                                                                    rand)
 
-if __name__ == '__main__':
-    main()
+                                                    save_results(fold_results, config.class_task)
+                                                    elapsed = (time.time() - start)
+                                                    print('\nTIME since starting loop: {}\n'.format(timedelta(seconds=int(elapsed))))
+
+    if __name__ == '__main__':
+        main()
