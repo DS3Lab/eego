@@ -125,5 +125,5 @@ def main():
                                                     elapsed = (time.time() - start)
                                                     print('\nTIME since starting loop: {}\n'.format(timedelta(seconds=int(elapsed))))
 
-    if __name__ == '__main__':
-        main()
+if __name__ == '__main__':
+    main()
