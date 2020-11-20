@@ -23,7 +23,7 @@ model = 'cnn'
 # sentence level features: {'combi_concat', 'sent_eeg_theta'}
 # combined models: {'eeg_eye_tracking', 'eeg4'}
 
-feature_set = ['eeg_raw']
+feature_set = ['eeg_beta']
 
 # word embeddings {none, glove (300d), bert}
 embeddings = 'glove'
@@ -38,7 +38,7 @@ epochs = [200]
 lr = [0.001]
 
 # params for CNN model
-eeg_cnn_filters = [32,64]
+eeg_cnn_filters = [32]
 eeg_cnn_kernel_size = [6,9]
 eeg_cnn_network = [['Conv', 'Pooling', 'Conv', 'Conv', 'Pooling']] # there's already a Conv layer infront
 cnn_pool_size = [4,6]
