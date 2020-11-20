@@ -109,8 +109,9 @@ def extract_word_band_eeg(sentence_data, eeg_dict):
                     #print(len(samples))
 
                     # todo: filter
-                    if len(samples) < 100 or len(samples) > 25000:
-                        print('HERE:\t{}'.format(len(samples)))
+                    if word_data[widx]["RAW_EEG"]:
+                        if len(samples) < 100 or len(samples) > 25000:
+                            print('HERE:\t{}'.format(len(samples)))
                     if word_data[widx]["RAW_EEG"] and len(samples) >= 100 and len(samples) <= 25000:
                     #if word_data[widx]["RAW_EEG"]:
                         # t, a, b, or g
