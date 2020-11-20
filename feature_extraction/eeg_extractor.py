@@ -33,7 +33,13 @@ def extract_word_raw_eeg(sentence_data, eeg_dict):
                     fixations_eeg = word_data[widx]["RAW_EEG"]
 
                     word_eeg = []
-                    if len(fixations_eeg) > 0:
+
+                    # number of EEG samples in sent
+                    obj_reference_samples = rawData[idx][0]
+                    samples = np.array(f[obj_reference_samples])
+                    
+                    #if len(fixations_eeg) > 0:
+                    if len(fixations_eeg) > 0 and len(samples) >= 100 and len(samples) <= 25000:
                         for fixation in fixations_eeg:
                             fix = np.nanmean(fixation, axis=0)
                             if not np.isnan(fix).any():
@@ -96,8 +102,16 @@ def extract_word_band_eeg(sentence_data, eeg_dict):
 
                 for widx in range(len(word_data)):
                     #word = word_data[widx]['content']
-                    if word_data[widx]["RAW_EEG"]:
 
+                    # number of EEG samples in sent
+                    obj_reference_samples = rawData[idx][0]
+                    samples = np.array(f[obj_reference_samples])
+                    #print(len(samples))
+
+                    # todo: filter
+
+                    if word_data[widx]["RAW_EEG"] and len(samples) >= 100 and len(samples) <= 25000:
+                    #if word_data[widx]["RAW_EEG"]:
                         # t, a, b, or g
                         word_t1 = word_data[widx]["TRT_"+band1]
                         word_t2 = word_data[widx]["TRT_"+band2]
@@ -158,7 +172,13 @@ def extract_fix_band_eeg(sentence_data, eeg_dict):
 
                 for widx in range(len(word_data)):
                     #word = word_data[widx]['content']
-                    if word_data[widx]["RAW_EEG"]:
+                    # number of EEG samples in sent
+                    obj_reference_samples = rawData[idx][0]
+                    samples = np.array(f[obj_reference_samples])
+                    
+                    #if len(fixations_eeg) > 0:
+                    if word_data[widx]["RAW_EEG"] and len(samples) >= 100 and len(samples) <= 25000:
+                    #if word_data[widx]["RAW_EEG"]:
 
                         # t, a, b, or g
                         word_t1 = word_data[widx]["FFD_"+band1]
