@@ -122,11 +122,6 @@ def classifier(features, labels, eeg, embedding_type, param_dict, random_seed_va
         epochs = param_dict['epochs']
         lr = param_dict['lr']
 
-        cnn_kernel_size = param_dict['cnn_kernel_size']
-        cnn_filters = param_dict['cnn_filter']
-        cnn_model = param_dict['cnn_model']
-        cnn_pool_size = param_dict['cnn_pool_size']
-
         # TODO see what fold_results change, add cnn_kernel, cnn_filters
         fold_results['params'] = [lstm_dim, lstm_layers, dense_dim, dropout, batch_size, epochs, lr, embedding_type,
                                   random_seed_value]
@@ -181,6 +176,10 @@ def classifier(features, labels, eeg, embedding_type, param_dict, random_seed_va
             combi_model = Dense(y_train.shape[1], activation="softmax")(combined)
 
         elif config.model is 'cnn':
+            cnn_kernel_size = param_dict['cnn_kernel_size']
+            cnn_filters = param_dict['cnn_filter']
+            cnn_model = param_dict['cnn_model']
+            cnn_pool_size = param_dict['cnn_pool_size']
             
             cognitive_model = Conv1D(cnn_filters, cnn_kernel_size, activation='relu', input_shape=(X_train_eeg.shape[1], X_train_eeg.shape[2]))(input_eeg)
             for i in range(len(cnn_model)):

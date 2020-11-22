@@ -153,7 +153,7 @@ def main():
                                                 del eeg_dict[s]
                                         if 'combi_concat' in config.feature_set:
                                             print("Starting EEG + text combi model")
-                                            fold_results = sentiment_text_eeg_model.lstm_classifier(feature_dict,
+                                            fold_results = sentiment_text_eeg_model.classifier(feature_dict,
                                                                                                     label_dict,
                                                                                                     eeg_dict,
                                                                                                     config.embeddings,
@@ -166,7 +166,7 @@ def main():
                                                                                                parameter_dict,
                                                                                                rand)
 
-                                        elif 'random' in config.feature_set and 'eeg_alpha' in config.feature_set:
+                                        elif 'randpom' in config.feature_set and 'eeg_alpha' in config.feature_set:
                                             fold_results = sentiment_text_random_model.lstm_classifier(feature_dict, label_dict,
                                                                                                eeg_dict,
                                                                                                config.embeddings,
@@ -174,12 +174,12 @@ def main():
                                                                                                rand)
 
                                         elif 'combi_eeg_raw' in config.feature_set or 'eeg_theta' in config.feature_set or 'eeg_alpha' in config.feature_set or 'eeg_beta' in config.feature_set or 'eeg_gamma' in config.feature_set:
-                                            fold_results = sentiment_text_eeg_model.lstm_classifier(feature_dict,
-                                                                                                    label_dict,
-                                                                                                    eeg_dict,
-                                                                                                    config.embeddings,
-                                                                                                    parameter_dict,
-                                                                                                    rand)
+                                            fold_results = sentiment_text_eeg_model.classifier(feature_dict,
+                                                                                                label_dict,
+                                                                                                eeg_dict,
+                                                                                                config.embeddings,
+                                                                                                parameter_dict,
+                                                                                                rand)
 
                                         save_results(fold_results, config.class_task)
 

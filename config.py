@@ -23,7 +23,7 @@ model = 'lstm'
 # sentence level features: {'combi_concat', 'sent_eeg_theta'}
 # combined models: {'eeg_eye_tracking', 'eeg4'}
 
-feature_set = ['eeg_raw']
+feature_set = ['combi_eeg_raw']
 
 # word embeddings {none, glove (300d), bert}
 embeddings = 'glove'
@@ -32,8 +32,8 @@ embeddings = 'glove'
 lstm_dim = [64]
 lstm_layers = [1]
 dense_dim = [64]
-dropout = [0.1]
-batch_size = [60]
+dropout = [0.3]
+batch_size = [40]
 epochs = [200]
 lr = [0.001]
 
