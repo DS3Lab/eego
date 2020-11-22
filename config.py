@@ -8,7 +8,7 @@ rootdir_zuco2 = base_dir+"zuco2/"
 
 # subjects (subejcts starting with "Z" are from ZuCo 1, subjects starting with "Y" are from ZuCo 2)
 #subjects = ['YAC', 'YAG', 'YAK', 'YDG', 'YDR', 'YFR', 'YFS', 'YHS', 'YIS', 'YLS', 'YMD', 'YMS', 'YRH', 'YRK', 'YRP', 'YSD', 'YSL', 'YTL']  # exclude YMH
-subjects = ["ZKW", "ZJS", "ZDN", "ZJN", "ZPH"]#, "ZAB", "ZJM", "ZKB", "ZKH", "ZMG", "ZGW", "ZKW", "ZDM"]
+subjects = ["ZKW", "ZJS", "ZDN", "ZJN", "ZPH", "ZAB", "ZJM", "ZKB", "ZKH", "ZMG", "ZGW", "ZKW", "ZDM"]
 #subjects = ["ZKW", "ZJS", "ZDN", "ZJN", "ZPH", "ZAB", "ZJM", "ZKB", "ZKH", "ZMG", "ZGW", "ZKW", "ZDM", 'YAC', 'YAG', 'YAK', 'YDG', 'YDR', 'YFR', 'YFS', 'YHS', 'YIS', 'YLS', 'YMD', 'YMS', 'YRH', 'YRK', 'YRP', 'YSD', 'YSL', 'YTL']
 
 # for running the experiments with previously extracted feature only one subject (from each dataset) is necessary
@@ -17,13 +17,13 @@ subjects = ["ZKW", "ZJS", "ZDN", "ZJN", "ZPH"]#, "ZAB", "ZJM", "ZKB", "ZKH", "ZM
 # ML task {sentiment-bin, sentiment-tri, ner, reldetect}
 class_task = 'sentiment-bin'
 # ML model {lstm, cnn}
-model = 'cnn'
+model = 'lstm'
 
 # features sets {'text_only' , 'eeg_raw', 'eeg_theta', 'eeg_alpha', 'eeg_beta', 'eeg_gamma', 'combi_eeg_raw', 'eye_tracking', 'combi_eye_tracking'}
 # sentence level features: {'combi_concat', 'sent_eeg_theta'}
 # combined models: {'eeg_eye_tracking', 'eeg4'}
 
-feature_set = ['eeg_alpha']
+feature_set = ['eeg_raw']
 
 # word embeddings {none, glove (300d), bert}
 embeddings = 'glove'
@@ -32,8 +32,8 @@ embeddings = 'glove'
 lstm_dim = [64]
 lstm_layers = [1]
 dense_dim = [64]
-dropout = [0.3]
-batch_size = [40]
+dropout = [0.1]
+batch_size = [60]
 epochs = [200]
 lr = [0.001]
 
