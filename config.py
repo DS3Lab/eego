@@ -26,16 +26,16 @@ model = 'lstm'
 feature_set = ['combi_eeg_raw']
 
 # word embeddings {none, glove (300d), bert}
-embeddings = 'glove'
+embeddings = 'bert'
 
 # hyper-parameters to test - general
-lstm_dim = [64]
+lstm_dim = [128]
 lstm_layers = [1]
-dense_dim = [64]
-dropout = [0.3]
+dense_dim = [128]
+dropout = [0.1]
 batch_size = [40]
 epochs = [200]
-lr = [0.001]
+lr = [0.0001]
 
 # params for CNN model
 eeg_cnn_filters = [32]
