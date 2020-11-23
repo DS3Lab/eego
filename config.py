@@ -23,19 +23,19 @@ model = 'lstm'
 # sentence level features: {'combi_concat', 'sent_eeg_theta'}
 # combined models: {'eeg_eye_tracking', 'eeg4'}
 
-feature_set = ['combi_eeg_raw']
+feature_set = ['eeg_alpha']
 
 # word embeddings {none, glove (300d), bert}
 embeddings = 'bert'
 
 # hyper-parameters to test - general
-lstm_dim = [128]
+lstm_dim = [64]
 lstm_layers = [1]
-dense_dim = [128]
+dense_dim = [256]
 dropout = [0.1]
-batch_size = [40]
+batch_size = [60]
 epochs = [200]
-lr = [0.0001]
+lr = [0.00001]
 
 # params for CNN model
 eeg_cnn_filters = [32]
