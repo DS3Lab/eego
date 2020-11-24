@@ -99,14 +99,15 @@ def save_results(fold_results_dict, task):
     model_type = config.model
 
     if config.model is 'cnn':
-        cnn_filters = fold_results_dict['cnn_filters']
-        cnn_pool_size = fold_results_dict['cnn_pool_size']
-        cnn_kernel_size = fold_results_dict['cnn_kernel_size']
+        cnn_network = fold_results_dict['cnn_network']
+        #cnn_filters = fold_results_dict['cnn_filters']
+        #cnn_pool_size = fold_results_dict['cnn_pool_size']
+        #cnn_kernel_size = fold_results_dict['cnn_kernel_size']
 
         print(" ".join(map(str, fold_results_dict['params'])),train_acc, val_acc, avg_accuracy, std_accuracy, avg_precision,
           std_precision, avg_recall, std_recall, avg_fscore, std_fscore, threshold, folds, fold_results_dict['training_time'], 
           best_eps, fold_results_dict['patience'], fold_results_dict['min_delta'], fold_results_dict['model'][-1], 
-          model_type, cnn_filters, cnn_pool_size, cnn_kernel_size, file=result_file)
+          model_type, cnn_network, file=result_file)
     
     else:
         print(" ".join(map(str, fold_results_dict['params'])),train_acc, val_acc, avg_accuracy, std_accuracy, avg_precision,

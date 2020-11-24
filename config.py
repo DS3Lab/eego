@@ -17,40 +17,56 @@ subjects = ["ZKW", "ZJS", "ZDN", "ZJN", "ZPH", "ZAB", "ZJM", "ZKB", "ZKH", "ZMG"
 # ML task {sentiment-bin, sentiment-tri, ner, reldetect}
 class_task = 'sentiment-bin'
 # ML model {lstm, cnn}
-model = 'lstm'
+model = 'cnn'
 
 # features sets {'text_only' , 'eeg_raw', 'eeg_theta', 'eeg_alpha', 'eeg_beta', 'eeg_gamma', 'combi_eeg_raw', 'eye_tracking', 'combi_eye_tracking'}
 # sentence level features: {'combi_concat', 'sent_eeg_theta'}
 # combined models: {'eeg_eye_tracking', 'eeg4'}
 
-feature_set = ['eeg_alpha']
+feature_set = ['eeg_raw']
 
 # word embeddings {none, glove (300d), bert}
-embeddings = 'bert'
+embeddings = 'glove'
 
 # hyper-parameters to test - general
 lstm_dim = [64]
 lstm_layers = [1]
 dense_dim = [256]
 dropout = [0.1]
-batch_size = [60]
-epochs = [200]
+batch_size = [40]
+epochs = [2]
 lr = [0.00001]
 
 # params for CNN model
-eeg_cnn_filters = [32]
-eeg_cnn_kernel_size = [6,9]
-eeg_cnn_network = [['Conv', 'Pooling', 'Conv', 'Conv', 'Pooling']] # there's already a Conv layer infront
-cnn_pool_size = [4,6]
+eeg_cnn_filters = [70]
+eeg_cnn_kernel_size = [2]
+eeg_cnn_network = [[]]#['Pooling', 'Conv', 'Conv', 'Pooling']] # there's already a Conv layer infront
+cnn_pool_size = [1,2]
 
+# list of list of (layer_type, params)
+# layer types:
+# Conv, [filters, kernel_size, activation]
+# Pooling, [pool_size]
+# Flatten, []
+# Dense, [units, activation]
+# Droupout, [rate]
+cnn_network =  [[('Conv', [64,8,'relu']), ('Flatten',[]), ('Dense', [512, 'relu'])],
+                [('Conv', [64,8,'relu']), ('Pooling', [4]), ('Flatten',[]), ('Dense', [256, 'relu'])],
+                [('Conv', [64,4,'relu']), ('Conv', [32,4,'relu']), ('Pooling', [2]), ('Flatten',[]), ('Dense', [128,'relu'])],
+                [('Conv', [64,4,'elu']), ('Conv', [32,4,'elu']), ('Pooling', [2]), ('Flatten',[]), ('Dense', [128,'relu'])],
+                [('Conv', [64,4,'relu']), ('Conv', [32,4,'relu']), ('Conv', [20,4,'relu']), ('Conv', [12,4,'relu']), ('Pooling', [4]), ('Flatten',[]), ('Dense', [64,'relu'])],
+                [('Conv', [64,4,'elu']), ('Conv', [32,4,'elu']), ('Conv', [20,4,'relu']), ('Conv', [12,4,'relu']), ('Pooling', [4]), ('Flatten',[]), ('Dense', [64,'relu'])],
+                [('Conv', [64,4,'relu']), ('Conv', [32,4,'relu']), ('Pooling', [2]), ('Conv', [32,2,'relu']), ('Conv', [32,2,'relu']), ('Pooling', [4]), ('Flatten',[]), ('Dense', [64,'relu'])],
+                [('Conv', [64,4,'elu']), ('Conv', [32,4,'elu']), ('Pooling', [2]), ('Conv', [32,2,'elu']), ('Conv', [32,2,'elu']), ('Pooling', [4]), ('Flatten',[]), ('Dense', [64,'relu'])]]
+                # always dropout and dense at end: control dropout
 # best params raw eeg:
 eeg_lstm_dim = [64]
 eeg_dense_dim = [64]
 eeg_dropout = [0.1]
 
 # other parameters
-folds = 5
-random_seed_values = [13, 78, 22, 66, 42]
+folds = 2
+random_seed_values = [13]#, 78, 22, 66, 42]
 validation_split = 0.1
 patience = 80
 min_delta = 0.0000001
