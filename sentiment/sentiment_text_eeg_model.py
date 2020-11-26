@@ -1,6 +1,6 @@
 import os
 import numpy as np
-from tensorflow.python.keras.utils import np_utils
+from tensorflow.python.keras.utils import np_utils, plot_model
 from tensorflow.python.keras.initializers import Constant
 import tensorflow.python.keras.backend as K
 from tensorflow.python.keras.layers import Input, Dense, Embedding, LSTM, Bidirectional, Flatten, Dropout, Conv1D, MaxPooling1D
@@ -178,22 +178,20 @@ def classifier(features, labels, eeg, embedding_type, param_dict, random_seed_va
         elif config.model is 'cnn':
             cnn_kernel_size = param_dict['cnn_kernel_size']
             cnn_filters = param_dict['cnn_filter']
-            cnn_model = param_dict['cnn_model']
             cnn_pool_size = param_dict['cnn_pool_size']
             
-            cognitive_model = Conv1D(cnn_filters, cnn_kernel_size, activation='relu', input_shape=(X_train_eeg.shape[1], X_train_eeg.shape[2]))(input_eeg)
-            for i in range(len(cnn_model)):
-                layer_type = cnn_model[i]
-                if layer_type is 'Conv':
-                    cognitive_model = Conv1D(cnn_filters, cnn_kernel_size, activation='relu', input_shape=(X_train_eeg.shape[1], X_train_eeg.shape[2]))(cognitive_model)
-                elif layer_type is 'Pooling':
-                    cognitive_model = MaxPooling1D(pool_size=cnn_pool_size)(cognitive_model)
-
-            # TODO parameters here shouldn't be the same as for text model 
+            cognitive_model = Conv1D(cnn_filters[0], cnn_kernel_size[0], activation='elu')(input_eeg)
+            cognitive_model = Conv1D(cnn_filters[1], cnn_kernel_size[1], activation='elu')(cognitive_model)
+            cognitive_model = MaxPooling1D(pool_size=cnn_pool_size[0])(cognitive_model)
+            cognitive_model = Conv1D(cnn_filters[2], cnn_kernel_size[2], activation='elu')(cognitive_model)
+            cognitive_model = Conv1D(cnn_filters[3], cnn_kernel_size[3], activation='elu')(cognitive_model)
+            cognitive_model = MaxPooling1D(pool_size=cnn_pool_size[1])(cognitive_model)
+            
             cognitive_model = Flatten()(cognitive_model)
-            cognitive_model = Dense(param_dict['dense_dim'], activation="relu")(cognitive_model)
+            cognitive_model = Dense(dense_dim, activation="relu")(cognitive_model)
             cognitive_model = Dropout(param_dict['dropout'])(cognitive_model)
             cognitive_model = Dense(16, activation="relu")(cognitive_model)
+
             cognitive_model_model = Model(inputs=input_eeg, outputs=cognitive_model)
             
             cognitive_model_model.summary()
@@ -210,6 +208,9 @@ def classifier(features, labels, eeg, embedding_type, param_dict, random_seed_va
                       metrics=['accuracy'])
 
         model.summary()
+
+        # plotting the model
+        plot_model(model, show_shapes=True, show_layer_names=True, to_file='{}_model.png'.format(config.model))
 
         # callbacks for early stopping and saving the best model
         early_stop, model_save, model_name = ml_helpers.callbacks(fold, random_seed_value)
@@ -257,6 +258,7 @@ def classifier(features, labels, eeg, embedding_type, param_dict, random_seed_va
             fold_results['model_type'] = config.model
             
             if config.model is 'cnn':
+                # fold_results['cnn_network'] = cnn_network
                 fold_results['cnn_filters'] = cnn_filters
                 fold_results['cnn_pool_size'] = cnn_pool_size
                 fold_results['cnn_kernel_size'] = cnn_kernel_size
