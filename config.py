@@ -23,7 +23,7 @@ model = 'cnn'
 # sentence level features: {'combi_concat', 'sent_eeg_theta'}
 # combined models: {'eeg_eye_tracking', 'eeg4'}
 
-feature_set = ['combi_eeg_raw']
+feature_set = ['eeg_alpha']
 
 # word embeddings {none, glove (300d), bert}
 embeddings = 'bert'
