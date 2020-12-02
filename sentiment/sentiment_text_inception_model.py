@@ -1,6 +1,6 @@
 import os
 import numpy as np
-from tensorflow.python.keras.utils import np_utils, plot_model
+from tensorflow.python.keras.utils import np_utils#, plot_model
 from tensorflow.python.keras.initializers import Constant
 import tensorflow.python.keras.backend as K
 from tensorflow.python.keras.layers import Input, Dense, Embedding, LSTM, Bidirectional, Flatten, Dropout, Conv1D, MaxPooling1D, GlobalMaxPooling1D, BatchNormalization, ReLU, AveragePooling1D, GlobalAveragePooling1D
@@ -198,7 +198,7 @@ def classifier(features, labels, eeg, embedding_type, param_dict, random_seed_va
 
 
         # plotting the model
-        plot_model(model, show_shapes=True, show_layer_names=True, to_file='inception_combi_model.png')
+        # plot_model(model, show_shapes=True, show_layer_names=True, to_file='inception_combi_model.png')
 
         # callbacks for early stopping and saving the best model
         early_stop, model_save, model_name = ml_helpers.callbacks(fold, random_seed_value)
