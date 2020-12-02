@@ -26,21 +26,21 @@ model = 'cnn'
 feature_set = ['eeg_alpha']
 
 # word embeddings {none, glove (300d), bert}
-embeddings = 'glove'
+embeddings = 'bert'
 
 # hyper-parameters to test - general
 lstm_dim = [64]
 lstm_layers = [1]
 dense_dim = [128]
-dropout = [0.2]#, 0.2]
-batch_size = [40]
+dropout = [0.3, 0.5]
+batch_size = [40, 60]
 epochs = [200]
-lr = [0.0001]
+lr = [0.01, 0.0001, 0.00001]
 
 # params for CNN model
-eeg_cnn_filters = [[64,32,32,32]]
-eeg_cnn_kernel_size = [[4,4,2,2]]
-cnn_pool_size = [[2,4]]
+# eeg_cnn_filters = [[64,32,32,32]]
+# eeg_cnn_kernel_size = [[4,4,2,2]]
+# cnn_pool_size = [[2,4]]
 
 # list of list of (layer_type, params)
 # layer types:

@@ -28,21 +28,21 @@ def main():
         elapsed = (time.time() - start)
         print('{}: {}'.format(subject, timedelta(seconds=int(elapsed))))
 
+
     print("Reading EEG features from file!!")
-    
     '''
-    eeg_dict = json.load(
-        open("../eeg_features/" + config.feature_set[0] + "_feats_file_" + config.class_task + ".json"))
+    eeg_dict = json.load(open("../eeg_features/" + config.feature_set[0] + "_feats_file_" + config.class_task + ".json"))
     print("done, ", len(eeg_dict), " sentences with EEG features.")
+    '''
 
     print('len(feature_dict): {}\nlen(label_dict): {}\nlen(eeg_dict): {}'.format(len(feature_dict), len(label_dict), len(eeg_dict)))
 
     # save EEG features 
-    '''
+    
     with open('../eeg_features/' + config.feature_set[0] + '_feats_file_' + config.class_task + '.json', 'w') as fp:
        json.dump(eeg_dict, fp)
     print("saved to ../eeg_features/{}_feats_file_{}.json".format(config.feature_set[0], config.class_task))
-
+    
     feature_dict = collections.OrderedDict(sorted(feature_dict.items()))
     label_dict = collections.OrderedDict(sorted(label_dict.items()))
     eeg_dict = collections.OrderedDict(sorted(eeg_dict.items()))

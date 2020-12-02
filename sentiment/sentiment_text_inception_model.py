@@ -1,6 +1,6 @@
 import os
 import numpy as np
-from tensorflow.python.keras.utils import np_utils#, plot_model
+from tensorflow.python.keras.utils import np_utils, plot_model
 from tensorflow.python.keras.initializers import Constant
 import tensorflow.python.keras.backend as K
 from tensorflow.python.keras.layers import Input, Dense, Embedding, LSTM, Bidirectional, Flatten, Dropout, Conv1D, MaxPooling1D, GlobalMaxPooling1D, BatchNormalization, ReLU, AveragePooling1D, GlobalAveragePooling1D
@@ -176,12 +176,11 @@ def classifier(features, labels, eeg, embedding_type, param_dict, random_seed_va
         pool_proj = Conv1D(filters=inception_filters, kernel_size=inception_kernel_sizes[0], activation='elu', strides=1, use_bias=False, padding='same')(pool_proj)
 
         cognitive_model = concatenate([conv_1, conv_3, conv_5, pool_proj])
-        cognitive_model = Dense(64, activation='elu')(cognitive_model)
         cognitive_model = Flatten()(cognitive_model)
+        cognitive_model = Dense(128, activation='elu')(cognitive_model)
 
         cognitive_model = Dropout(dropout)(cognitive_model)
-        cognitive_model = Dense(128, activation='elu')(cognitive_model)
-        cognitive_model = Dense(y_train.shape[1], activation="softmax")(cognitive_model)
+        cognitive_model = Dense(16, activation='elu')(cognitive_model)
 
         cognitive_model_model = Model(inputs=input_eeg, outputs=cognitive_model)
         # combine the output of the two branches
@@ -199,7 +198,7 @@ def classifier(features, labels, eeg, embedding_type, param_dict, random_seed_va
 
 
         # plotting the model
-        # plot_model(model, show_shapes=True, show_layer_names=True, to_file='{}_model.png'.format(config.model))
+        plot_model(model, show_shapes=True, show_layer_names=True, to_file='inception_combi_model.png')
 
         # callbacks for early stopping and saving the best model
         early_stop, model_save, model_name = ml_helpers.callbacks(fold, random_seed_value)
