@@ -7,7 +7,7 @@ from tensorflow.python.keras.layers import Input, Dense, LSTM, Bidirectional, Fl
 from tensorflow.python.keras.models import Model, load_model
 from tensorflow.python.keras.layers.merge import concatenate
 from tensorflow.python.keras.callbacks import EarlyStopping, ModelCheckpoint
-from tensorflow.python.keras.utils import np_utils, plot_model
+from tensorflow.python.keras.utils import np_utils#, plot_model
 import tensorflow.python.keras.backend as K
 import sklearn.metrics
 from sklearn.model_selection import KFold
