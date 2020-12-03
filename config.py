@@ -32,10 +32,10 @@ embeddings = 'bert'
 lstm_dim = [64]
 lstm_layers = [1]
 dense_dim = [128]
-dropout = [0.1, 0.5]
+dropout = [0.5]
 batch_size = [40]
 epochs = [200]
-lr = [0.00001, 0.000001]
+lr = [0.00001]
 
 # params for CNN model
 # eeg_cnn_filters = [[64,32,32,32]]
@@ -65,6 +65,7 @@ cnn_network =  [#[('Conv', [64,8,'relu']), ('Flatten',[]), ('Dense', [512, 'relu
 inception_filters = [16]#,16]
 inception_kernel_sizes = [[1,4,7]]
 inception_pool_size = [5]
+inception_dense_dim = [(128, 16), (128,32), (256, 16), (256, 32)]
 #inception_activation_function=['elu', 'relu']
 
 # best params raw eeg:

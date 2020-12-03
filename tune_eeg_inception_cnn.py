@@ -66,58 +66,58 @@ def main():
                 for inception_filters in config.inception_filters:
                     for inception_kernel_sizes in config.inception_kernel_sizes:
                         for inception_pool_size in config.inception_pool_size:
-
-                            for drop in config.dropout:
-                                for bs in config.batch_size:
-                                    for lr_val in config.lr:
-                                        for e_val in config.epochs:
-                                            for rand in config.random_seed_values:
-                                                np.random.seed(rand)
-                                                parameter_dict = {"dropout": drop, "batch_size": bs, "epochs": e_val, "random_seed": rand, 
-                                                                "inception_filters": inception_filters, "inception_kernel_sizes": inception_kernel_sizes,
-                                                                "inception_pool_size": inception_pool_size, "lr": lr_val, "lstm_dim": lstmDim,
-                                                                "lstm_layers": lstmLayers, "dense_dim": denseDim}
-                                                
-                                                if config.class_task == "reldetect":
-                                                    #TODO
-                                                    continue
-                                                
-                                                elif config.class_task == "ner":
-                                                    #TODO
-                                                    continue
-                                                            
-                                                elif config.class_task == "sentiment-tri":
-                                                    #TODO
-                                                    continue
-                                                
-                                                elif config.class_task == "sentiment-bin":
-                                                    for s, label in list(label_dict.items()):
-                                                            # drop neutral sentences for binary sentiment classification
-                                                            if label == 2:
-                                                                del label_dict[s]
-                                                                del feature_dict[s]
-                                                                del eeg_dict[s]
+                            for inception_dense_dim in config.inception_dense_dim:
+                                for drop in config.dropout:
+                                    for bs in config.batch_size:
+                                        for lr_val in config.lr:
+                                            for e_val in config.epochs:
+                                                for rand in config.random_seed_values:
+                                                    np.random.seed(rand)
+                                                    parameter_dict = {"dropout": drop, "batch_size": bs, "epochs": e_val, "random_seed": rand, 
+                                                                    "inception_filters": inception_filters, "inception_kernel_sizes": inception_kernel_sizes,
+                                                                    "inception_pool_size": inception_pool_size, "lr": lr_val, "lstm_dim": lstmDim,
+                                                                    "lstm_layers": lstmLayers, "dense_dim": denseDim, "inception_dense_dim": inception_dense_dim}
                                                     
-                                                    if 'eeg_raw' in config.feature_set:
-                                                        fold_results = sentiment_inception_model.classifier(label_dict,
-                                                                                                            eeg_dict,
-                                                                                                            config.embeddings,
-                                                                                                            parameter_dict,
-                                                                                                            rand)
+                                                    if config.class_task == "reldetect":
+                                                        #TODO
+                                                        continue
+                                                    
+                                                    elif config.class_task == "ner":
+                                                        #TODO
+                                                        continue
+                                                                
+                                                    elif config.class_task == "sentiment-tri":
+                                                        #TODO
+                                                        continue
+                                                    
+                                                    elif config.class_task == "sentiment-bin":
+                                                        for s, label in list(label_dict.items()):
+                                                                # drop neutral sentences for binary sentiment classification
+                                                                if label == 2:
+                                                                    del label_dict[s]
+                                                                    del feature_dict[s]
+                                                                    del eeg_dict[s]
+                                                        
+                                                        if 'eeg_raw' in config.feature_set:
+                                                            fold_results = sentiment_inception_model.classifier(label_dict,
+                                                                                                                eeg_dict,
+                                                                                                                config.embeddings,
+                                                                                                                parameter_dict,
+                                                                                                                rand)
 
-                                                    elif 'combi_eeg_raw' in config.feature_set or 'eeg_theta' in config.feature_set or 'eeg_alpha' in config.feature_set or 'eeg_beta' in config.feature_set or 'eeg_gamma' in config.feature_set:
-                                                        fold_results = sentiment_text_inception_model.classifier(feature_dict,
-                                                                                                            label_dict,
-                                                                                                            eeg_dict,
-                                                                                                            config.embeddings,
-                                                                                                            parameter_dict,
-                                                                                                            rand)
+                                                        elif 'combi_eeg_raw' in config.feature_set or 'eeg_theta' in config.feature_set or 'eeg_alpha' in config.feature_set or 'eeg_beta' in config.feature_set or 'eeg_gamma' in config.feature_set:
+                                                            fold_results = sentiment_text_inception_model.classifier(feature_dict,
+                                                                                                                label_dict,
+                                                                                                                eeg_dict,
+                                                                                                                config.embeddings,
+                                                                                                                parameter_dict,
+                                                                                                                rand)
 
-                                                    save_results(fold_results, config.class_task)
-                                                    count += 1
-                                                    print('\n\n\nIteration {} from {}'.format(count, n_iter))
-                                                    elapsed = (time.time() - start)
-                                                    print('\nTIME since starting loop: {}\n\n\n'.format(timedelta(seconds=int(elapsed))))
+                                                        save_results(fold_results, config.class_task)
+                                                        count += 1
+                                                        print('\n\n\nIteration {} from {}'.format(count, n_iter))
+                                                        elapsed = (time.time() - start)
+                                                        print('\nTIME since starting loop: {}\n\n\n'.format(timedelta(seconds=int(elapsed))))
 
 if __name__ == '__main__':
     main()

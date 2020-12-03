@@ -125,6 +125,7 @@ def classifier(features, labels, eeg, embedding_type, param_dict, random_seed_va
         inception_filters = param_dict['inception_filters']
         inception_kernel_sizes = param_dict['inception_kernel_sizes']
         inception_pool_size = param_dict['inception_pool_size']
+        inception_dense_dim = param_dict['inception_dense_dim']
 
         fold_results['params'] = [lstm_dim, lstm_layers, dense_dim, dropout, batch_size, epochs, lr, embedding_type,
                                   random_seed_value]
@@ -177,10 +178,10 @@ def classifier(features, labels, eeg, embedding_type, param_dict, random_seed_va
 
         cognitive_model = concatenate([conv_1, conv_3, conv_5, pool_proj])
         cognitive_model = Flatten()(cognitive_model)
-        cognitive_model = Dense(128, activation='elu')(cognitive_model)
+        cognitive_model = Dense(inception_dense_dim[0], activation='elu')(cognitive_model)
 
         cognitive_model = Dropout(dropout)(cognitive_model)
-        cognitive_model = Dense(16, activation='elu')(cognitive_model)
+        cognitive_model = Dense(inception_dense_dim[1], activation='elu')(cognitive_model)
 
         cognitive_model_model = Model(inputs=input_eeg, outputs=cognitive_model)
         # combine the output of the two branches
@@ -248,6 +249,7 @@ def classifier(features, labels, eeg, embedding_type, param_dict, random_seed_va
             fold_results['inception_filters'] = inception_filters
             fold_results['inception_kernel_sizes'] = inception_kernel_sizes
             fold_results['inception_pool_size'] = inception_pool_size
+            fold_results['inception_dense_dim'] = inception_dense_dim
         else:
             fold_results['train-loss'].append(history.history['loss'])
             fold_results['train-accuracy'].append(history.history['accuracy'])
