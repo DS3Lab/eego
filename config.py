@@ -32,10 +32,10 @@ embeddings = 'bert'
 lstm_dim = [64]
 lstm_layers = [1]
 dense_dim = [128]
-dropout = [0.3, 0.5]
-batch_size = [40, 60]
+dropout = [0.1, 0.5]
+batch_size = [40]
 epochs = [200]
-lr = [0.01, 0.0001, 0.00001]
+lr = [0.00001, 0.000001]
 
 # params for CNN model
 # eeg_cnn_filters = [[64,32,32,32]]
