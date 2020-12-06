@@ -74,6 +74,7 @@ def classifier(labels, eeg, embedding_type, param_dict, random_seed_value):
         #lstm_dim = param_dict['lstm_dim']
         #lstm_layers = param_dict['lstm_layers']
         #dense_dim = param_dict['dense_dim']
+
         dropout = param_dict['dropout']
         batch_size = param_dict['batch_size']
         epochs = param_dict['epochs']
@@ -82,6 +83,8 @@ def classifier(labels, eeg, embedding_type, param_dict, random_seed_value):
         inception_filters = param_dict['inception_filters']
         inception_kernel_sizes = param_dict['inception_kernel_sizes']
         inception_pool_size = param_dict['inception_pool_size']
+
+        inception_dense_dim = param_dict['inception_dense_dim']
 
         # TODO see what fold_results change, add cnn_kernel, cnn_filters
         fold_results['params'] = [dropout, batch_size, epochs, lr, embedding_type, random_seed_value]
@@ -108,12 +111,12 @@ def classifier(labels, eeg, embedding_type, param_dict, random_seed_value):
         pool_proj = Conv1D(filters=inception_filters, kernel_size=inception_kernel_sizes[0], activation='elu', strides=1, use_bias=False, padding='same')(pool_proj)
 
         output = concatenate([conv_1, conv_3, conv_5, pool_proj])
-        output = Dense(64, activation='elu')(output)
         output = Flatten()(output)
+        output = Dense(inception_dense_dim[0], activation='elu')(output)
 
         output = Dropout(dropout)(output)
-        output = Dense(256, activation='elu')(output)
-        output = Dense(64, activation='elu')(output)
+        output = Dense(inception_dense_dim[1], activation='elu')(output)
+
         output = Dense(y_train.shape[1], activation="softmax")(output)
 
         model = Model(inputs=input_text, outputs=output)
@@ -173,6 +176,7 @@ def classifier(labels, eeg, embedding_type, param_dict, random_seed_value):
             fold_results['inception_filters'] = inception_filters
             fold_results['inception_kernel_sizes'] = inception_kernel_sizes
             fold_results['inception_pool_size'] = inception_pool_size
+            fold_results['inception_dense_dim'] = inception_dense_dim
 
         else:
             fold_results['train-loss'].append(history.history['loss'])

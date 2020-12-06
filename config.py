@@ -26,46 +26,21 @@ model = 'cnn'
 feature_set = ['eeg_alpha']
 
 # word embeddings {none, glove (300d), bert}
-embeddings = 'bert'
+embeddings = 'glove'
 
 # hyper-parameters to test - general
 lstm_dim = [64]
 lstm_layers = [1]
 dense_dim = [128]
-dropout = [0.5]
-batch_size = [40]
+dropout = [0.3, 0.5]
+batch_size = [40, 60]
 epochs = [200]
-lr = [0.00001]
+lr = [0.01, 0.001]
 
-# params for CNN model
-# eeg_cnn_filters = [[64,32,32,32]]
-# eeg_cnn_kernel_size = [[4,4,2,2]]
-# cnn_pool_size = [[2,4]]
-
-# list of list of (layer_type, params)
-# layer types:
-# Conv, [filters, kernel_size, activation]
-# Pooling, [pool_size]
-# GlobalPooling, []
-# Flatten, []
-# Dense, [units, activation]
-# Droupout, [rate]
-cnn_network =  [#[('Conv', [64,8,'relu']), ('Flatten',[]), ('Dense', [512, 'relu'])],
-                #[('Conv', [64,8,'relu']), ('Pooling', [4]), ('Flatten',[]), ('Dense', [256, 'relu'])],
-                #[('Conv', [64,4,'relu']), ('Conv', [32,4,'relu']), ('Pooling', [2]), ('Flatten',[]), ('Dense', [128,'relu'])],
-                #[('Conv', [64,4,'elu']), ('Conv', [32,4,'elu']), ('Pooling', [2]), ('Flatten',[]), ('Dense', [128,'relu'])],
-                #[('Conv', [64,4,'relu']), ('Conv', [32,4,'relu']), ('Conv', [20,4,'relu']), ('Conv', [12,4,'relu']), ('Pooling', [4]), ('Flatten',[]), ('Dense', [64,'relu'])],
-                [('Conv', [64,4,'elu']), ('Conv', [32,4,'elu']), ('Conv', [20,4,'relu']), ('Conv', [12,4,'relu']), ('Pooling', [4]), ('Flatten',[]), ('Dense', [64,'relu'])],
-                [('Conv', [64,4,'elu']), ('Conv', [32,4,'elu']), ('Conv', [20,4,'relu']), ('Conv', [12,4,'relu']), ('GlobalPooling',[]), ('Dense', [64,'relu'])],
-                #[('Conv', [64,4,'relu']), ('Conv', [32,4,'relu']), ('Pooling', [2]), ('Conv', [32,2,'relu']), ('Conv', [32,2,'relu']), ('Pooling', [4]), ('Flatten',[]), ('Dense', [64,'relu'])],
-                [('Conv', [64,4,'elu']), ('Conv', [32,4,'elu']), ('Pooling', [2]), ('Conv', [32,2,'elu']), ('Conv', [32,2,'elu']), ('Pooling', [4]), ('Flatten',[]), ('Dense', [64,'relu'])],
-                [('Conv', [64,4,'elu']), ('Conv', [32,4,'elu']), ('Pooling', [2]), ('Conv', [32,2,'elu']), ('Conv', [32,2,'elu']), ('GlobalPooling',[]), ('Dense', [64,'relu'])]]
-                # always dropout and dense at end: control dropout
-
-inception_filters = [16]#,16]
+inception_filters = [14]#,16]
 inception_kernel_sizes = [[1,4,7]]
-inception_pool_size = [5]
-inception_dense_dim = [(128, 16), (128,32), (256, 16), (256, 32)]
+inception_pool_size = [3,5,7]
+inception_dense_dim = [(128,16), (256,16), (128,32), (256,32), (512,32)]
 #inception_activation_function=['elu', 'relu']
 
 # best params raw eeg:
