@@ -58,20 +58,21 @@ def main():
     count = 0
     n_iter = len(config.random_seed_values) * len(config.inception_filters) * len(config.inception_kernel_sizes) * len(config.inception_pool_size) * len(config.dropout) * len(config.batch_size) * len(config.epochs) * len(config.lr)
     
-    for lstmDim in config.lstm_dim: # needed for text model
-        for lstmLayers in config.lstm_layers: 
-            for denseDim in config.dense_dim: # needed for text model
+    for rand in config.random_seed_values:
+       np.random.seed(rand)
+        for lstmDim in config.lstm_dim: # needed for text model
+            for lstmLayers in config.lstm_layers: 
+                for denseDim in config.dense_dim: # needed for text model
 
-                for inception_filters in config.inception_filters:
-                    for inception_kernel_sizes in config.inception_kernel_sizes:
-                        for inception_pool_size in config.inception_pool_size:
-                            for inception_dense_dim in config.inception_dense_dim:
-                                for drop in config.dropout:
-                                    for bs in config.batch_size:
-                                        for lr_val in config.lr:
-                                            for e_val in config.epochs:
-                                                for rand in config.random_seed_values:
-                                                    np.random.seed(rand)
+                    for inception_filters in config.inception_filters:
+                        for inception_kernel_sizes in config.inception_kernel_sizes:
+                            for inception_pool_size in config.inception_pool_size:
+                                for inception_dense_dim in config.inception_dense_dim:
+                                    for drop in config.dropout:
+                                        for bs in config.batch_size:
+                                            for lr_val in config.lr:
+                                                for e_val in config.epochs:
+                                                
                                                     parameter_dict = {"dropout": drop, "batch_size": bs, "epochs": e_val, "random_seed": rand, 
                                                                     "inception_filters": inception_filters, "inception_kernel_sizes": inception_kernel_sizes,
                                                                     "inception_pool_size": inception_pool_size, "lr": lr_val, "lstm_dim": lstmDim,
