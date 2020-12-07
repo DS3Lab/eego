@@ -23,7 +23,7 @@ model = 'cnn'
 # sentence level features: {'combi_concat', 'sent_eeg_theta'}
 # combined models: {'eeg_eye_tracking', 'eeg4'}
 
-feature_set = ['eeg_alpha']
+feature_set = ['eeg_raw']
 
 # word embeddings {none, glove (300d), bert}
 embeddings = 'glove'
@@ -50,7 +50,7 @@ eeg_dropout = [0.1]
 
 # other parameters
 folds = 5
-random_seed_values = [13, 78, 22, 66, 42]
+random_seed_values = [13, 78]#, 22, 66, 42]
 validation_split = 0.1
 patience = 80
 min_delta = 0.0000001
