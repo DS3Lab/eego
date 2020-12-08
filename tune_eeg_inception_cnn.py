@@ -1,6 +1,6 @@
 import config
 from feature_extraction import zuco_reader
-from sentiment import sentiment_inception_model, sentiment_text_inception_model
+from sentiment import sentiment_inception_model, sentiment_text_inception_model, sentiment_text_random_inception_model
 from data_helpers import save_results, load_matlab_files
 import numpy as np
 import collections
@@ -59,7 +59,7 @@ def main():
     n_iter = len(config.random_seed_values) * len(config.inception_filters) * len(config.inception_kernel_sizes) * len(config.inception_pool_size) * len(config.dropout) * len(config.batch_size) * len(config.epochs) * len(config.lr)
     
     for rand in config.random_seed_values:
-       np.random.seed(rand)
+        np.random.seed(rand)
         for lstmDim in config.lstm_dim: # needed for text model
             for lstmLayers in config.lstm_layers: 
                 for denseDim in config.dense_dim: # needed for text model
@@ -100,6 +100,13 @@ def main():
                                                         
                                                         if 'eeg_raw' in config.feature_set:
                                                             fold_results = sentiment_inception_model.classifier(label_dict,
+                                                                                                                eeg_dict,
+                                                                                                                config.embeddings,
+                                                                                                                parameter_dict,
+                                                                                                                rand)
+
+                                                        elif 'random' in config.feature_set and 'eeg_alpha' in config.feature_set:
+                                                            fold_results = sentiment_text_random_inception_model.classifier(feature_dict, label_dict,
                                                                                                                 eeg_dict,
                                                                                                                 config.embeddings,
                                                                                                                 parameter_dict,
