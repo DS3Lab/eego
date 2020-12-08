@@ -23,23 +23,23 @@ model = 'cnn'
 # sentence level features: {'combi_concat', 'sent_eeg_theta'}
 # combined models: {'eeg_eye_tracking', 'eeg4'}
 
-feature_set = ['eeg_alpha']
+feature_set = ['eeg_beta']
 
 # word embeddings {none, glove (300d), bert}
 embeddings = 'glove'
 
 # hyper-parameters to test - general
-lstm_dim = [64]
+lstm_dim = [64,128,256]
 lstm_layers = [1]
-dense_dim = [128]
-dropout = [0.1, 0.3, 0.5]
+dense_dim = [64,128]
+dropout = [0.3, 0.5]
 batch_size = [40, 60]
 epochs = [200]
 lr = [0.01]
 
-inception_filters = [16]
+inception_filters = [14]
 inception_kernel_sizes = [[1,4,7]]
-inception_pool_size = [5]
+inception_pool_size = [3,5]
 inception_dense_dim = [(128,16)]
 #inception_activation_function=['elu', 'relu']
 
