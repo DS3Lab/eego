@@ -3,7 +3,7 @@ import numpy as np
 from tensorflow.python.keras.utils import np_utils
 from tensorflow.python.keras.initializers import Constant
 import tensorflow.python.keras.backend as K
-from tensorflow.python.keras.layers import Input, Dense, Embedding, LSTM, Bidirectional, Flatten, Dropout
+from tensorflow.python.keras.layers import Input, Dense, Embedding, LSTM, Bidirectional, Flatten, Dropout, Conv1D, MaxPooling1D, GlobalMaxPooling1D, BatchNormalization, ReLU, AveragePooling1D, GlobalAveragePooling1D
 from tensorflow.python.keras.layers.merge import concatenate
 from tensorflow.python.keras.models import Model, load_model
 from tensorflow.python.keras.callbacks import EarlyStopping, ModelCheckpoint
@@ -26,7 +26,7 @@ os.environ['KERAS_BACKEND'] = 'tensorflow'
 # Jointly learning from text and cognitive word-level features (EEG pr eye-tracking)
 
 
-def lstm_classifier(features, labels, gaze, embedding_type, param_dict, random_seed_value):
+def classifier(features, labels, gaze, embedding_type, param_dict, random_seed_value):
 
     # set random seeds
     np.random.seed(random_seed_value)
@@ -92,6 +92,12 @@ def lstm_classifier(features, labels, gaze, embedding_type, param_dict, random_s
         epochs = param_dict['epochs']
         lr = param_dict['lr']
 
+        inception_filters = param_dict['inception_filters']
+        inception_kernel_sizes = param_dict['inception_kernel_sizes']
+        inception_pool_size = param_dict['inception_pool_size']
+        
+        inception_dense_dim = param_dict['inception_dense_dim']
+
         fold_results['params'] = [lstm_dim, lstm_layers, dense_dim, dropout, batch_size, epochs, lr, embedding_type,
                                   random_seed_value]
 
@@ -128,11 +134,24 @@ def lstm_classifier(features, labels, gaze, embedding_type, param_dict, random_s
         text_model_model.summary()
 
         # the second branch operates on the second input (gaze data)
-        cognitive_model = Bidirectional(LSTM(lstm_dim, return_sequences=True))(input_gaze)
+        conv_1 = Conv1D(filters=inception_filters, kernel_size=inception_kernel_sizes[0], activation='elu', strides=1, use_bias=False, padding='same')(input_gaze)
+
+        conv_3 = Conv1D(filters=inception_filters, kernel_size=inception_kernel_sizes[0], activation='elu', strides=1, use_bias=False, padding='same')(input_gaze)
+        conv_3 = Conv1D(filters=inception_filters, kernel_size=inception_kernel_sizes[1], activation='elu', strides=1, use_bias=False, padding='same')(conv_3)
+
+        conv_5 = Conv1D(filters=inception_filters, kernel_size=inception_kernel_sizes[0], activation='elu', strides=1, use_bias=False, padding='same')(input_gaze)
+        conv_5 = Conv1D(filters=inception_filters, kernel_size=inception_kernel_sizes[2], activation='elu', strides=1, use_bias=False, padding='same')(conv_5)
+
+        pool_proj = MaxPooling1D(pool_size=inception_pool_size, strides=1, padding='same')(input_gaze)
+        pool_proj = Conv1D(filters=inception_filters, kernel_size=inception_kernel_sizes[0], activation='elu', strides=1, use_bias=False, padding='same')(pool_proj)
+
+        cognitive_model = concatenate([conv_1, conv_3, conv_5, pool_proj])
         cognitive_model = Flatten()(cognitive_model)
-        cognitive_model = Dense(dense_dim, activation="relu")(cognitive_model)
+        cognitive_model = Dense(inception_dense_dim[0], activation='elu')(cognitive_model)
+
         cognitive_model = Dropout(dropout)(cognitive_model)
-        cognitive_model = Dense(16, activation="relu")(cognitive_model)
+        cognitive_model = Dense(inception_dense_dim[1], activation='elu')(cognitive_model)
+
         cognitive_model_model = Model(inputs=input_gaze, outputs=cognitive_model)
 
         cognitive_model_model.summary()
@@ -191,6 +210,13 @@ def lstm_classifier(features, labels, gaze, embedding_type, param_dict, random_s
             fold_results['best-e'] = [len(history.history['loss']) - config.patience]
             fold_results['patience'] = config.patience
             fold_results['min_delta'] = config.min_delta
+
+            fold_results['model_type'] = config.model
+
+            fold_results['inception_filters'] = inception_filters
+            fold_results['inception_kernel_sizes'] = inception_kernel_sizes
+            fold_results['inception_pool_size'] = inception_pool_size
+            fold_results['inception_dense_dim'] = inception_dense_dim
         else:
             fold_results['train-loss'].append(history.history['loss'])
             fold_results['train-accuracy'].append(history.history['accuracy'])

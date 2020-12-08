@@ -49,79 +49,85 @@ def main():
         for lstmDim in config.lstm_dim:
             for lstmLayers in config.lstm_layers:
                 for denseDim in config.dense_dim:
-                    for drop in config.dropout:
-                        for bs in config.batch_size:
-                            for lr_val in config.lr:
-                                for e_val in config.epochs:
-                                    parameter_dict = {"lr": lr_val, "lstm_dim": lstmDim, "lstm_layers": lstmLayers,
-                                                      "dense_dim": denseDim, "dropout": drop, "batch_size": bs,
-                                                      "epochs": e_val, "random_seed": rand}
+                    for inception_filters in config.inception_filters:
+                        for inception_kernel_sizes in config.inception_kernel_sizes:
+                            for inception_pool_size in config.inception_pool_size:
+                                for inception_dense_dim in config.inception_dense_dim:
+                                    for drop in config.dropout:
+                                        for bs in config.batch_size:
+                                            for lr_val in config.lr:
+                                                for e_val in config.epochs:
+                                                    parameter_dict = {"lr": lr_val, "lstm_dim": lstmDim, "lstm_layers": lstmLayers,
+                                                                    "dense_dim": denseDim, "dropout": drop, "batch_size": bs,
+                                                                    "epochs": e_val, "random_seed": rand, "inception_filters": inception_filters, 
+                                                                    "inception_kernel_sizes": inception_kernel_sizes, "inception_pool_size": inception_pool_size, 
+                                                                    "inception_dense_dim": inception_dense_dim}
 
-                                    if config.class_task == 'reldetect':
-                                        for threshold in config.rel_thresholds:
-                                            if 'combi_eye_tracking' in config.feature_set:
-                                                fold_results = reldetect_text_gaze_model.lstm_classifier(feature_dict,
-                                                                                                         label_dict,
-                                                                                                         gaze_dict,
-                                                                                                         config.embeddings,
-                                                                                                         parameter_dict,
-                                                                                                         rand,
-                                                                                                         threshold)
+                                                    if config.class_task == 'reldetect':
+                                                        for threshold in config.rel_thresholds:
+                                                            if 'combi_eye_tracking' in config.feature_set:
+                                                                fold_results = reldetect_text_gaze_model.lstm_classifier(feature_dict,
+                                                                                                                        label_dict,
+                                                                                                                        gaze_dict,
+                                                                                                                        config.embeddings,
+                                                                                                                        parameter_dict,
+                                                                                                                        rand,
+                                                                                                                        threshold)
 
-                                            elif 'eye_tracking' in config.feature_set:
-                                                fold_results = reldetect_gaze_model.lstm_classifier(label_dict,
-                                                                                                    gaze_dict,
-                                                                                                    config.embeddings,
-                                                                                                    parameter_dict,
-                                                                                                    rand, threshold)
+                                                            elif 'eye_tracking' in config.feature_set:
+                                                                fold_results = reldetect_gaze_model.lstm_classifier(label_dict,
+                                                                                                                    gaze_dict,
+                                                                                                                    config.embeddings,
+                                                                                                                    parameter_dict,
+                                                                                                                    rand, threshold)
 
-                                            save_results(fold_results, config.class_task)
+                                                            save_results(fold_results, config.class_task)
 
-                                    elif config.class_task == 'ner':
-                                        if 'combi_eye_tracking' in config.feature_set:
-                                            fold_results = ner_text_gaze_model.lstm_classifier(feature_dict, label_dict,
-                                                                                               gaze_dict,
-                                                                                               config.embeddings,
-                                                                                               parameter_dict,
-                                                                                               rand)
-                                        save_results(fold_results, config.class_task)
+                                                    elif config.class_task == 'ner':
+                                                        if 'combi_eye_tracking' in config.feature_set:
+                                                            fold_results = ner_text_gaze_model.lstm_classifier(feature_dict, label_dict,
+                                                                                                            gaze_dict,
+                                                                                                            config.embeddings,
+                                                                                                            parameter_dict,
+                                                                                                            rand)
+                                                        save_results(fold_results, config.class_task)
 
-                                    elif config.class_task == 'sentiment-tri':
-                                        if 'eye_tracking' in config.feature_set:
-                                            fold_results = sentiment_gaze_model.lstm_classifier(label_dict, gaze_dict,
-                                                                                                config.embeddings,
-                                                                                                parameter_dict,
-                                                                                                rand)
-                                        elif 'combi_eye_tracking' in config.feature_set:
-                                            fold_results = sentiment_text_gaze_model.lstm_classifier(feature_dict,
-                                                                                                     label_dict,
-                                                                                                     gaze_dict,
-                                                                                                     config.embeddings,
-                                                                                                     parameter_dict,
-                                                                                                     rand)
+                                                    elif config.class_task == 'sentiment-tri':
+                                                        if 'eye_tracking' in config.feature_set:
+                                                            fold_results = sentiment_gaze_model.lstm_classifier(label_dict, gaze_dict,
+                                                                                                                config.embeddings,
+                                                                                                                parameter_dict,
+                                                                                                                rand)
+                                                        elif 'combi_eye_tracking' in config.feature_set:
+                                                            fold_results = sentiment_text_gaze_model.classifier(feature_dict,
+                                                                                                                    label_dict,
+                                                                                                                    gaze_dict,
+                                                                                                                    config.embeddings,
+                                                                                                                    parameter_dict,
+                                                                                                                    rand)
 
-                                        save_results(fold_results, config.class_task)
-                                    elif config.class_task == 'sentiment-bin':
-                                        for s, label in list(label_dict.items()):
-                                            # drop neutral sentences for binary sentiment classification
-                                            if label == 2:
-                                                del label_dict[s]
-                                                del feature_dict[s]
-                                                # del gaze_dict[s]
+                                                        save_results(fold_results, config.class_task)
+                                                    elif config.class_task == 'sentiment-bin':
+                                                        for s, label in list(label_dict.items()):
+                                                            # drop neutral sentences for binary sentiment classification
+                                                            if label == 2:
+                                                                del label_dict[s]
+                                                                del feature_dict[s]
+                                                                # del gaze_dict[s]
 
-                                        if 'eye_tracking' in config.feature_set:
-                                            fold_results = sentiment_gaze_model.lstm_classifier(label_dict, gaze_dict,
-                                                                                                config.embeddings,
-                                                                                                parameter_dict,
-                                                                                                rand)
-                                        elif 'combi_eye_tracking' in config.feature_set:
-                                            fold_results = sentiment_text_gaze_model.lstm_classifier(feature_dict,
-                                                                                                     label_dict,
-                                                                                                     gaze_dict,
-                                                                                                     config.embeddings,
-                                                                                                     parameter_dict,
-                                                                                                     rand)
-                                        save_results(fold_results, config.class_task)
+                                                        if 'eye_tracking' in config.feature_set:
+                                                            fold_results = sentiment_gaze_model.lstm_classifier(label_dict, gaze_dict,
+                                                                                                                config.embeddings,
+                                                                                                                parameter_dict,
+                                                                                                                rand)
+                                                        elif 'combi_eye_tracking' in config.feature_set:
+                                                            fold_results = sentiment_text_gaze_model.classifier(feature_dict,
+                                                                                                                    label_dict,
+                                                                                                                    gaze_dict,
+                                                                                                                    config.embeddings,
+                                                                                                                    parameter_dict,
+                                                                                                                    rand)
+                                                        save_results(fold_results, config.class_task)
 
 
 if __name__ == '__main__':
