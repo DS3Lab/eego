@@ -173,7 +173,8 @@ def prepare_sequences_for_bert_with_mask(X, max_length):
 
 
 def create_new_bert_layer():
-    bert = TFBertModel.from_pretrained("bert-base-uncased")
+    #bert = TFBertModel.from_pretrained("bert-base-uncased")
+    bert = TFBertModel.from_pretrained("/mnt/ds3lab-scratch/bglaus/berts/")
     return bert
 
 
