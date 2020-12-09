@@ -8,7 +8,7 @@ rootdir_zuco2 = base_dir+"zuco2/"
 
 # subjects (subejcts starting with "Z" are from ZuCo 1, subjects starting with "Y" are from ZuCo 2)
 #subjects = ['YAC', 'YAG', 'YAK', 'YDG', 'YDR', 'YFR', 'YFS', 'YHS', 'YIS', 'YLS', 'YMD', 'YMS', 'YRH', 'YRK', 'YRP', 'YSD', 'YSL', 'YTL']  # exclude YMH
-subjects = ["ZKW"]#, "ZJS", "ZDN", "ZJN", "ZPH", "ZAB", "ZJM", "ZKB", "ZKH", "ZMG", "ZGW", "ZKW", "ZDM"]
+subjects = ["ZKW", "ZJS", "ZDN", "ZJN", "ZPH", "ZAB", "ZJM", "ZKB", "ZKH", "ZMG", "ZGW", "ZKW", "ZDM"]
 #subjects = ["ZKW", "ZJS", "ZDN", "ZJN", "ZPH", "ZAB", "ZJM", "ZKB", "ZKH", "ZMG", "ZGW", "ZKW", "ZDM", 'YAC', 'YAG', 'YAK', 'YDG', 'YDR', 'YFR', 'YFS', 'YHS', 'YIS', 'YLS', 'YMD', 'YMS', 'YRH', 'YRK', 'YRP', 'YSD', 'YSL', 'YTL']
 
 # for running the experiments with previously extracted feature only one subject (from each dataset) is necessary
@@ -23,24 +23,24 @@ model = 'cnn'
 # sentence level features: {'combi_concat', 'sent_eeg_theta'}
 # combined models: {'eeg_eye_tracking', 'eeg4'}
 
-feature_set = ['eeg_alpha']
+feature_set = ['eeg_theta']
 
 # word embeddings {none, glove (300d), bert}
 embeddings = 'bert'
 
 # hyper-parameters to test - general
-lstm_dim = [64]#,128,256]
+lstm_dim = [128,256]
 lstm_layers = [1]
-dense_dim = [256]#,128]
-dropout = [0.1]
-batch_size = [60]
+dense_dim = [64,128]#,128]
+dropout = [0.3]
+batch_size = [40]
 epochs = [200]
-lr = [0.00001]
+lr = [0.001, 0.0001, 0.00001]
 
-inception_filters = [14]
+inception_filters = [14,16]
 inception_kernel_sizes = [[1,4,7]]
-inception_pool_size = [5]#,7]
-inception_dense_dim = [(128,16)]#, (256,16)]
+inception_pool_size = [5]
+inception_dense_dim = [(128,16)]
 #inception_activation_function=['elu', 'relu']
 
 # best params raw eeg:
