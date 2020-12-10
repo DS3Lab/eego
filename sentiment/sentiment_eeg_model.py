@@ -3,21 +3,70 @@ import numpy as np
 import time
 from datetime import timedelta
 import tensorflow as tf
-from tensorflow.python.keras.layers import Input, Dense, LSTM, Bidirectional, Flatten, Dropout, Conv1D, MaxPooling1D
+from tensorflow.python.keras.layers import Input, Dense, LSTM, Bidirectional, Flatten, Dropout, Conv1D, MaxPooling1D, GlobalMaxPooling1D
 from tensorflow.python.keras.models import Model, load_model
+from tensorflow.python.keras.layers.merge import concatenate
 from tensorflow.python.keras.callbacks import EarlyStopping, ModelCheckpoint
 from tensorflow.python.keras.utils import np_utils#, plot_model
 import tensorflow.python.keras.backend as K
 import sklearn.metrics
+import ml_helpers
 from sklearn.model_selection import KFold
 import config
-import ml_helpers
 import datetime
 import sys
 
 d = datetime.datetime.now()
 
 os.environ['KERAS_BACKEND'] = 'tensorflow'
+
+def create_lstm_cognitive_model(param_dict, X_train_eeg_shape, y_train_shape): # X_train_eeg_shape = (X_train_eeg.shape[1], X_train_eeg.shape[2])
+    lstm_dim = param_dict['lstm_dim']
+    dense_dim = param_dict['dense_dim']
+    dropout = param_dict['dropout']
+    lstm_layers = param_dict['lstm_layers']
+
+    input_text = Input(shape=X_train_eeg_shape, name='eeg_input_tensor')
+    text_model = Bidirectional(LSTM(lstm_dim, return_sequences=True))(input_text)
+    for _ in list(range(lstm_layers-1)):
+        text_model = Bidirectional(LSTM(lstm_dim, return_sequences=True))(text_model)
+    text_model = Flatten()(text_model)
+    text_model = Dense(dense_dim, activation="relu")(text_model)
+    text_model = Dropout(dropout)(text_model)
+    text_model = Dense(y_train_shape, activation="softmax")(text_model)
+
+    model = Model(inputs=input_text, outputs=text_model)
+    return model
+
+
+def create_inception_cognitive_model(param_dict, X_train_eeg_shape, y_train_shape):
+    inception_filters = param_dict['inception_filters']
+    inception_kernel_sizes = param_dict['inception_kernel_sizes']
+    inception_pool_size = param_dict['inception_pool_size']    
+    inception_dense_dim = param_dict['inception_dense_dim']
+    dropout = param_dict['dropout']
+
+    input_eeg = Input(shape=X_train_eeg_shape, name='eeg_input_tensor')
+
+    conv_1 = Conv1D(filters=inception_filters, kernel_size=inception_kernel_sizes[0], activation='elu', strides=1, use_bias=False, padding='same')(input_eeg)
+
+    conv_3 = Conv1D(filters=inception_filters, kernel_size=inception_kernel_sizes[0], activation='elu', strides=1, use_bias=False, padding='same')(input_eeg)
+    conv_3 = Conv1D(filters=inception_filters, kernel_size=inception_kernel_sizes[1], activation='elu', strides=1, use_bias=False, padding='same')(conv_3)
+
+    conv_5 = Conv1D(filters=inception_filters, kernel_size=inception_kernel_sizes[0], activation='elu', strides=1, use_bias=False, padding='same')(input_eeg)
+    conv_5 = Conv1D(filters=inception_filters, kernel_size=inception_kernel_sizes[2], activation='elu', strides=1, use_bias=False, padding='same')(conv_5)
+
+    pool_proj = MaxPooling1D(pool_size=inception_pool_size, strides=1, padding='same')(input_eeg)
+    pool_proj = Conv1D(filters=inception_filters, kernel_size=inception_kernel_sizes[0], activation='elu', strides=1, use_bias=False, padding='same')(pool_proj)
+
+    cognitive_model = concatenate([conv_1, conv_3, conv_5, pool_proj])
+    cognitive_model = Flatten()(cognitive_model)
+    cognitive_model = Dense(inception_dense_dim[0], activation='elu')(cognitive_model)
+    cognitive_model = Dropout(dropout)(cognitive_model)
+    cognitive_model = Dense(y_train_shape, activation="softmax")(cognitive_model)
+
+    model = Model(inputs=input_eeg, outputs=cognitive_model)
+    return model
 
 
 # Machine learning model for sentiment classification (binary and ternary)
@@ -77,6 +126,10 @@ def classifier(labels, eeg, embedding_type, param_dict, random_seed_value):
         batch_size = param_dict['batch_size']
         epochs = param_dict['epochs']
         lr = param_dict['lr']
+        inception_filters = param_dict['inception_filters']
+        inception_kernel_sizes = param_dict['inception_kernel_sizes']
+        inception_pool_size = param_dict['inception_pool_size']    
+        inception_dense_dim = param_dict['inception_dense_dim']
 
 
         # TODO see what fold_results change, add cnn_kernel, cnn_filters
@@ -85,37 +138,10 @@ def classifier(labels, eeg, embedding_type, param_dict, random_seed_value):
 
         # define model
         print("Preparing model...")
-        input_text = Input(shape=(X_train.shape[1], X_train.shape[2]), name='eeg_input_tensor')
-
-        if config.model is 'lstm':
-            # todo: dropout and recurrent dropout needed in LSTM layers?
-            text_model = Bidirectional(LSTM(lstm_dim, return_sequences=True))(input_text)
-            for _ in list(range(lstm_layers-1)):
-                text_model = Bidirectional(LSTM(lstm_dim, return_sequences=True))(text_model)
-            text_model = Flatten()(text_model)
-            text_model = Dense(dense_dim, activation="relu")(text_model)
-            text_model = Dropout(dropout)(text_model)
-            text_model = Dense(y_train.shape[1], activation="softmax")(text_model)
-        
-        elif config.model is 'cnn':
-            cnn_kernel_size = param_dict['cnn_kernel_size']
-            cnn_filters = param_dict['cnn_filter']
-            cnn_pool_size = param_dict['cnn_pool_size']
-
-            text_model = Conv1D(cnn_filters[0], cnn_kernel_size[0], activation='elu')(input_text)
-            text_model = Conv1D(cnn_filters[1], cnn_kernel_size[1], activation='elu')(text_model)
-            text_model = MaxPooling1D(pool_size=cnn_pool_size[0])(text_model)
-            text_model = Conv1D(cnn_filters[2], cnn_kernel_size[2], activation='elu')(text_model)
-            text_model = Conv1D(cnn_filters[3], cnn_kernel_size[3], activation='elu')(text_model)
-            text_model = MaxPooling1D(pool_size=cnn_pool_size[1])(text_model)
-            
-            text_model = Flatten()(text_model)
-            text_model = Dense(dense_dim, activation="relu")(text_model)
-            text_model = Dropout(dropout)(text_model)
-            text_model = Dense(y_train.shape[1], activation="softmax")(text_model)
-
-
-        model = Model(inputs=input_text, outputs=text_model)
+        if config.model is 'cnn':
+            model = create_inception_cognitive_model(param_dict, (X_train.shape[1], X_train.shape[2]), y_train.shape[1])
+        elif config.model is 'lstm':
+            model = create_lstm_cognitive_model(param_dict, (X_train.shape[1], X_train.shape[2]), y_train.shape[1])
 
         model.compile(loss='categorical_crossentropy',
                       optimizer=tf.keras.optimizers.Adam(lr=lr),
@@ -169,9 +195,11 @@ def classifier(labels, eeg, embedding_type, param_dict, random_seed_value):
             fold_results['model_type'] = config.model
             
             if config.model is 'cnn':
-                fold_results['cnn_filters'] = cnn_filters
-                fold_results['cnn_pool_size'] = cnn_pool_size
-                fold_results['cnn_kernel_size'] = cnn_kernel_size
+                fold_results['inception_filters'] = inception_filters
+                fold_results['inception_kernel_sizes'] = inception_kernel_sizes
+                fold_results['inception_pool_size'] = inception_pool_size
+                fold_results['inception_dense_dim'] = inception_dense_dim
+                
 
         else:
             fold_results['train-loss'].append(history.history['loss'])

@@ -26,7 +26,89 @@ os.environ['KERAS_BACKEND'] = 'tensorflow'
 # Jointly learning from text and cognitive word-level features (EEG theta + alpha + beta + gamma)
 
 
-def lstm_classifier(features, labels, eeg_theta, eeg_alpha, eeg_beta, eeg_gamma, embedding_type, param_dict, random_seed_value):
+def create_lstm_word_model(param_dict, embedding_type, X_train_shape, num_words, text_feats): # X_train_shape = X_train_text.shape[1]
+    lstm_dim = param_dict['lstm_dim']
+    dense_dim = param_dict['dense_dim']
+    dropout = param_dict['dropout']
+
+    input_text = Input(shape=(X_train_shape,), name='text_input_tensor') if embedding_type is not 'bert' else Input(
+            shape=(X_train_shape,), dtype=tf.int32, name='text_input_tensor')
+    input_text_list = [input_text]
+    
+    if embedding_type is 'none':
+            text_model = Embedding(num_words, 32, input_length=X_train_shape,
+                  name='none_input_embeddings')(input_text)
+    elif embedding_type is 'glove':
+        text_model = Embedding(num_words,
+                  300, # glove embedding dim
+                  embeddings_initializer=Constant(text_feats),
+                  input_length=X_train_shape,
+                  trainable=False,
+                  name='glove_input_embeddings')(input_text)
+    elif embedding_type is 'bert':
+        input_mask = tf.keras.layers.Input((X_train_shape,), dtype=tf.int32, name='input_mask')
+        input_text_list.append(input_mask)
+        text_model = ml_helpers.create_new_bert_layer()(input_text, attention_mask=input_mask)[0]
+    
+    text_model = Bidirectional(LSTM(lstm_dim, return_sequences=True))(text_model)
+    text_model = Flatten()(text_model)
+    text_model = Dense(dense_dim, activation="relu")(text_model)
+    text_model = Dropout(dropout)(text_model)
+    text_model = Dense(16, activation="relu")(text_model)
+    text_model_model = Model(inputs=input_text_list, outputs=text_model)
+    return text_model_model
+
+
+
+def create_lstm_cognitive_model(param_dict, X_train_eeg_shape, input_tensor_name):
+    lstm_dim = param_dict['lstm_dim']
+    dense_dim = param_dict['dense_dim']
+    dropout = param_dict['dropout']
+    
+    input_eeg = Input(shape=X_train_eeg_shape, name=input_tensor_name)
+    cognitive_model = Bidirectional(LSTM(lstm_dim, return_sequences=True))(input_eeg)
+    cognitive_model = Flatten()(cognitive_model)
+    cognitive_model = Dense(dense_dim, activation="relu")(cognitive_model)
+    cognitive_model = Dropout(dropout)(cognitive_model)
+    cognitive_model = Dense(16, activation="relu")(cognitive_model)
+
+    cognitive_model_model = Model(inputs=input_eeg, outputs=cognitive_model)
+    return cognitive_model_model
+
+
+
+def create_inception_cognitive_model(param_dict, X_train_eeg_shape, input_tensor_name):  # X_train_eeg_shape = (X_train_eeg.shape[1], X_train_eeg.shape[2])
+    inception_filters = param_dict['inception_filters']
+    inception_kernel_sizes = param_dict['inception_kernel_sizes']
+    inception_pool_size = param_dict['inception_pool_size']    
+    inception_dense_dim = param_dict['inception_dense_dim']
+    dropout = param_dict['dropout']
+
+    input_eeg = Input(shape=X_train_eeg_shape, name=input_tensor_name) # eeg_input_tensor / gaze_input_tensor
+
+    conv_1 = Conv1D(filters=inception_filters, kernel_size=inception_kernel_sizes[0], activation='elu', strides=1, use_bias=False, padding='same')(input_eeg)
+
+    conv_3 = Conv1D(filters=inception_filters, kernel_size=inception_kernel_sizes[0], activation='elu', strides=1, use_bias=False, padding='same')(input_eeg)
+    conv_3 = Conv1D(filters=inception_filters, kernel_size=inception_kernel_sizes[1], activation='elu', strides=1, use_bias=False, padding='same')(conv_3)
+
+    conv_5 = Conv1D(filters=inception_filters, kernel_size=inception_kernel_sizes[0], activation='elu', strides=1, use_bias=False, padding='same')(input_eeg)
+    conv_5 = Conv1D(filters=inception_filters, kernel_size=inception_kernel_sizes[2], activation='elu', strides=1, use_bias=False, padding='same')(conv_5)
+
+    pool_proj = MaxPooling1D(pool_size=inception_pool_size, strides=1, padding='same')(input_eeg)
+    pool_proj = Conv1D(filters=inception_filters, kernel_size=inception_kernel_sizes[0], activation='elu', strides=1, use_bias=False, padding='same')(pool_proj)
+
+    cognitive_model = concatenate([conv_1, conv_3, conv_5, pool_proj])
+    cognitive_model = Flatten()(cognitive_model)
+    cognitive_model = Dense(inception_dense_dim[0], activation='elu')(cognitive_model)
+    cognitive_model = Dropout(dropout)(cognitive_model)
+    cognitive_model = Dense(inception_dense_dim[1], activation='elu')(cognitive_model)
+
+    cognitive_model_model = Model(inputs=input_eeg, outputs=cognitive_model)
+    return cognitive_model_model
+
+    
+
+def classifier(features, labels, eeg_theta, eeg_alpha, eeg_beta, eeg_gamma, embedding_type, param_dict, random_seed_value):
 
     # set random seeds
     np.random.seed(random_seed_value)
@@ -105,76 +187,19 @@ def lstm_classifier(features, labels, eeg_theta, eeg_alpha, eeg_beta, eeg_gamma,
 
         # define model
         print("Preparing model...")
+        text_model_model = create_lstm_word_model(param_dict, embedding_type, X_train_text.shape[1], num_words, text_feats)
 
-        # define two sets of inputs
-        input_text = Input(shape=(X_train_text.shape[1],), name='text_input_tensor') if embedding_type is not 'bert' else Input(
-            shape=(X_train_text.shape[1],), dtype=tf.int32, name='text_input_tensor')
-        input_text_list = [input_text]
-        input_theta = Input(shape=(X_train_theta.shape[1], X_train_theta.shape[2]), name='t_input_tensor')
-        input_alpha = Input(shape=(X_train_alpha.shape[1], X_train_alpha.shape[2]), name='a_input_tensor')
-        input_beta = Input(shape=(X_train_beta.shape[1], X_train_beta.shape[2]), name='b_input_tensor')
-        input_gamma = Input(shape=(X_train_gamma.shape[1], X_train_gamma.shape[2]), name='g_input_tensor')
+        if config.model is 'lstm':
+            theta_model_model = create_lstm_cognitive_model(param_dict, (X_train_theta.shape[1], X_train_theta.shape[2]), 't_input_tensor')
+            alpha_model_model = create_lstm_cognitive_model(param_dict, (X_train_alpha.shape[1], X_train_alpha.shape[2]), 'a_input_tensor')
+            beta_model_model = create_lstm_cognitive_model(param_dict, (X_train_beta.shape[1], X_train_beta.shape[2]), 'b_input_tensor')
+            gamma_model_model = create_lstm_cognitive_model(param_dict, (X_train_gamma.shape[1], X_train_gamma.shape[2]), 'g_input_tensor')
+        elif config.model is 'cnn':
+            theta_model_model = create_inception_cognitive_model(param_dict, (X_train_theta.shape[1], X_train_theta.shape[2]), 't_input_tensor')
+            alpha_model_model = create_inception_cognitive_model(param_dict, (X_train_alpha.shape[1], X_train_alpha.shape[2]), 'a_input_tensor')
+            beta_model_model = create_inception_cognitive_model(param_dict, (X_train_beta.shape[1], X_train_beta.shape[2]), 'b_input_tensor')
+            gamma_model_model = create_inception_cognitive_model(param_dict, (X_train_gamma.shape[1], X_train_gamma.shape[2]), 'g_input_tensor')
 
-        # the first branch operates on the first input (word embeddings)
-        if embedding_type is 'none':
-            text_model = Embedding(num_words, 32, input_length=X_train_text.shape[1],
-                  name='none_input_embeddings')(input_text)
-        elif embedding_type is 'glove':
-            text_model = Embedding(num_words,
-                      300, # glove embedding dim
-                      embeddings_initializer=Constant(text_feats),
-                      input_length=X_train_text.shape[1],
-                      trainable=False,
-                      name='glove_input_embeddings')(input_text)
-        elif embedding_type is 'bert':
-            input_mask = tf.keras.layers.Input((X_train_masks.shape[1],), dtype=tf.int32, name='input_mask')
-            input_text_list.append(input_mask)
-            text_model = ml_helpers.create_new_bert_layer()(input_text, attention_mask=input_mask)[0]
-        text_model = Bidirectional(LSTM(lstm_dim, return_sequences=True))(text_model)
-        text_model = Flatten()(text_model)
-        text_model = Dense(dense_dim, activation="relu")(text_model)
-        text_model = Dropout(dropout)(text_model)
-        text_model = Dense(16, activation="relu")(text_model)
-        text_model_model = Model(inputs=input_text_list, outputs=text_model)
-
-        text_model_model.summary()
-
-        # the second branch operates on the second input (EEG data)
-        theta_model = Bidirectional(LSTM(lstm_dim, return_sequences=True))(input_theta)
-        theta_model = Flatten()(theta_model)
-        theta_model = Dense(dense_dim, activation="relu")(theta_model)
-        theta_model = Dropout(dropout)(theta_model)
-        theta_model = Dense(16, activation="relu")(theta_model)
-        theta_model_model = Model(inputs=input_theta, outputs=theta_model)
-
-        theta_model_model.summary()
-
-        alpha_model = Bidirectional(LSTM(lstm_dim, return_sequences=True))(input_alpha)
-        alpha_model = Flatten()(alpha_model)
-        alpha_model = Dense(dense_dim, activation="relu")(alpha_model)
-        alpha_model = Dropout(dropout)(alpha_model)
-        alpha_model = Dense(16, activation="relu")(alpha_model)
-        alpha_model_model = Model(inputs=input_alpha, outputs=alpha_model)
-
-        alpha_model_model.summary()
-
-        beta_model = Bidirectional(LSTM(lstm_dim, return_sequences=True))(input_beta)
-        beta_model = Flatten()(beta_model)
-        beta_model = Dense(dense_dim, activation="relu")(beta_model)
-        beta_model = Dropout(dropout)(beta_model)
-        beta_model = Dense(16, activation="relu")(beta_model)
-        beta_model_model = Model(inputs=input_beta, outputs=beta_model)
-
-        beta_model_model.summary()
-
-        gamma_model = Bidirectional(LSTM(lstm_dim, return_sequences=True))(input_gamma)
-        gamma_model = Flatten()(gamma_model)
-        gamma_model = Dense(dense_dim, activation="relu")(gamma_model)
-        gamma_model = Dropout(dropout)(gamma_model)
-        gamma_model = Dense(16, activation="relu")(gamma_model)
-        gamma_model_model = Model(inputs=input_gamma, outputs=gamma_model)
-
-        gamma_model_model.summary()
 
         # combine the output of the two branches
         combined = concatenate([text_model_model.output, alpha_model_model.output, beta_model_model.output, gamma_model_model.output, theta_model_model.output])
@@ -230,6 +255,14 @@ def lstm_classifier(features, labels, eeg_theta, eeg_alpha, eeg_beta, eeg_gamma,
             fold_results['best-e'] = [len(history.history['loss']) - config.patience]
             fold_results['patience'] = config.patience
             fold_results['min_delta'] = config.min_delta
+
+            fold_results['model_type'] = config.model
+
+            if config.model is 'cnn':
+                fold_results['inception_filters'] = param_dict['inception_filters'] 
+                fold_results['inception_kernel_sizes'] = param_dict['inception_kernel_sizes']
+                fold_results['inception_pool_size'] = param_dict['inception_pool_size']
+                fold_results['inception_dense_dim'] = param_dict['inception_dense_dim']
         else:
             fold_results['train-loss'].append(history.history['loss'])
             fold_results['train-accuracy'].append(history.history['accuracy'])

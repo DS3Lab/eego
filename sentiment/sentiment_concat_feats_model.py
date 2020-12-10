@@ -18,12 +18,46 @@ from tensorflow.python.keras.layers.merge import concatenate
 
 os.environ['KERAS_BACKEND'] = 'tensorflow'
 
-
 # Machine learning model for sentiment classification (binary and ternary)
 # Only learning from text 
 
+def create_lstm_concat_model(param_dict, embedding_type, X_train_shape, X_train_eeg_shape, num_words, text_feats, y_train_shape): # X_train_shape = X_train_text.shape[1], X_train_eeg_shape = (X_train_eeg.shape[1], X_train_eeg.shape[2]), y_train_shape = y_train.shape[1]
+    lstm_dim = param_dict['lstm_dim']
+    dense_dim = param_dict['dense_dim']
+    dropout = param_dict['dropout']
 
-def lstm_classifier(features, labels, eeg, embedding_type, param_dict, random_seed_value):
+    input_text = Input(shape=(X_train_shape,), name='text_input_tensor') if embedding_type is not 'bert' else Input(
+            shape=(X_train_shape,), dtype=tf.int32, name='text_input_tensor')
+    input_text_list = [input_text]
+    input_eeg = Input(shape=X_train_eeg_shape, name='eeg_input_tensor')
+    
+    if embedding_type is 'none':
+            text_model = Embedding(num_words, 32, input_length=X_train_shape,
+                  name='none_input_embeddings')(input_text)
+    elif embedding_type is 'glove':
+        text_model = Embedding(num_words,
+                  300, # glove embedding dim
+                  embeddings_initializer=Constant(text_feats),
+                  input_length=X_train_shape,
+                  trainable=False,
+                  name='glove_input_embeddings')(input_text)
+    elif embedding_type is 'bert':
+        input_mask = tf.keras.layers.Input((X_train_shape,), dtype=tf.int32, name='input_mask')
+        input_text_list.append(input_mask)
+        text_model = ml_helpers.create_new_bert_layer()(input_text, attention_mask=input_mask)[0]
+    
+    text_model = concatenate([text_model, input_eeg], name='concat_layer')
+    text_model = Bidirectional(LSTM(lstm_dim, return_sequences=True))(text_model)
+    text_model = Flatten()(text_model)
+    text_model = Dense(dense_dim, activation="relu")(text_model)
+    text_model = Dropout(dropout)(text_model)
+    text_model = Dense(y_train_shape, activation="softmax")(text_model)
+    model = Model(inputs=[input_text_list, input_eeg], outputs=text_model)
+    return model
+
+
+
+def classifier(features, labels, eeg, embedding_type, param_dict, random_seed_value):
 
     # set random seeds
     np.random.seed(random_seed_value)
@@ -99,39 +133,8 @@ def lstm_classifier(features, labels, eeg, embedding_type, param_dict, random_se
 
         # define model
         print("Preparing model...")
-
-        # define two sets of inputs
-        input_text = Input(shape=(X_train_text.shape[1],),
-                           name='text_input_tensor') if embedding_type is not 'bert' else Input(
-            shape=(X_train_text.shape[1],), dtype=tf.int32, name='text_input_tensor')
-        input_text_list = [input_text]
-        input_eeg = Input(shape=(X_train_eeg.shape[1], X_train_eeg.shape[2]), name='eeg_input_tensor')
-
-        # the first branch operates on the first input (word embeddings)
-        if embedding_type is 'none':
-            text_model = Embedding(num_words, 32, input_length=X_train_text.shape[1],
-                  name='none_input_embeddings')(input_text)
-        elif embedding_type is 'glove':
-            text_model = Embedding(num_words,
-                      300,  # glove embedding dim
-                      embeddings_initializer=Constant(text_feats),
-                      input_length=X_train_text.shape[1],
-                      trainable=False,
-                      name='glove_input_embeddings')(input_text)
-        elif embedding_type is 'bert':
-            input_mask = tf.keras.layers.Input((X_train_masks.shape[1],), dtype=tf.int32)
-            input_text_list.append(input_mask)
-            text_model = ml_helpers.create_new_bert_layer()(input_text, attention_mask=input_mask)[0]
-
-        text_model = concatenate([text_model, input_eeg], name='concat_layer')
-        text_model = Bidirectional(LSTM(lstm_dim, return_sequences=True))(text_model)
-        text_model = Flatten()(text_model)
-        text_model = Dense(dense_dim, activation="relu")(text_model)
-        text_model = Dropout(dropout)(text_model)
-        text_model = Dense(y_train.shape[1], activation="softmax")(text_model)
-
-        model = Model(inputs=[input_text_list, input_eeg], outputs=text_model)
-
+        model = create_lstm_concat_model(param_dict, embedding_type, X_train_text.shape[1], (X_train_eeg.shape[1], X_train_eeg.shape[2]), num_words, text_feats, y_train.shape[1])
+        
         model.compile(loss='categorical_crossentropy',
                       optimizer=tf.keras.optimizers.Adam(lr=lr),
                       metrics=['accuracy'])
@@ -177,6 +180,14 @@ def lstm_classifier(features, labels, eeg, embedding_type, param_dict, random_se
             fold_results['best-e'] = [len(history.history['loss'])-config.patience]
             fold_results['patience'] = config.patience
             fold_results['min_delta'] = config.min_delta
+
+            fold_results['model_type'] = config.model
+
+            if config.model is 'cnn':
+                fold_results['inception_filters'] = param_dict['inception_filters'] 
+                fold_results['inception_kernel_sizes'] = param_dict['inception_kernel_sizes']
+                fold_results['inception_pool_size'] = param_dict['inception_pool_size']
+                fold_results['inception_dense_dim'] = param_dict['inception_dense_dim']
         else:
             fold_results['train-loss'].append(history.history['loss'])
             fold_results['train-accuracy'].append(history.history['accuracy'])
