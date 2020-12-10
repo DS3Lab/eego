@@ -34,11 +34,9 @@ def main():
         elapsed = (time.time() - start)
         print('{}: {}'.format(subject, timedelta(seconds=int(elapsed))))
 
-    print('len(feature_dict): {}\nlen(label_dict): {}\nlen(eeg_dict): {}'.format(len(feature_dict), len(label_dict), len(eeg_dict)))
-
     print("Reading EEG features from file!!")
     
-    '''
+
     eeg_dict = json.load(
         open("../eeg_features/" + config.feature_set[0] + "_feats_file_" + config.class_task + ".json"))
     print("done, ", len(eeg_dict), " sentences with EEG features.")
@@ -48,11 +46,13 @@ def main():
     with open('../eeg_features/' + config.feature_set[0] + '_feats_file_' + config.class_task + '.json', 'w') as fp:
        json.dump(eeg_dict, fp)
     print("saved to ../eeg_features/{}_feats_file_{}.json".format(config.feature_set[0], config.class_task))
-    
+    '''
 
     feature_dict = collections.OrderedDict(sorted(feature_dict.items()))
     label_dict = collections.OrderedDict(sorted(label_dict.items()))
     eeg_dict = collections.OrderedDict(sorted(eeg_dict.items()))
+
+    print('len(feature_dict): {}\nlen(label_dict): {}\nlen(eeg_dict): {}'.format(len(feature_dict), len(label_dict), len(eeg_dict)))
 
     if len(feature_dict) != len(label_dict) or len(feature_dict) != len(eeg_dict) or len(label_dict) != len(eeg_dict):
         print("WARNING: Not an equal number of sentences in features and labels!")
@@ -64,13 +64,14 @@ def main():
     start = time.time()
 
     count = 0
-    n_iter = len(config.random_seed_values) * len(config.lstm_dim) * len(config.lstm_layers) * len(config.dense_dim) * len(config.dropout) * len(config.batch_size) * len(config.epochs) * len(config.eeg_cnn_filters) * len(config.eeg_cnn_kernel_size) * len(config.cnn_pool_size)
+    n_iter = len(config.random_seed_values) * len(config.lstm_dim) * len(config.lstm_layers) * len(config.dense_dim) * len(config.dropout) * len(config.batch_size) * len(config.epochs) * len(config.cnn_network) #* len(config.eeg_cnn_kernel_size) * len(config.cnn_pool_size)
     
     for rand in config.random_seed_values:
         np.random.seed(rand)
         for lstmDim in config.lstm_dim: # needed for text model
             for lstmLayers in config.lstm_layers: 
                 for denseDim in config.dense_dim: # needed for text model
+                    #for cnn_network in config.cnn_network:
                     for cnn_filter in config.eeg_cnn_filters:
                         for cnn_kernel_size in config.eeg_cnn_kernel_size:
                             for cnn_pool_size in config.cnn_pool_size:
@@ -80,8 +81,8 @@ def main():
                                             for e_val in config.epochs:
                                                 parameter_dict = {"lr": lr_val, "lstm_dim": lstmDim, "lstm_layers": lstmLayers,
                                                                 "dense_dim": denseDim, "dropout": drop, "batch_size": bs,
-                                                                "epochs": e_val, "random_seed": rand, "cnn_kernel_size": cnn_kernel_size,
-                                                                "cnn_filter": cnn_filter, "cnn_pool_size": cnn_pool_size}
+                                                                "epochs": e_val, "random_seed": rand, "cnn_filter": cnn_filter,
+                                                                "cnn_kernel_size": cnn_kernel_size, "cnn_pool_size": cnn_pool_size}
                                                 
                                                 if config.class_task == "reldetect":
                                                     #TODO

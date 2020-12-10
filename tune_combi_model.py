@@ -8,6 +8,8 @@ import numpy as np
 import collections
 import json
 
+from datetime import timedelta
+import time
 
 # Usage on spaceml:
 # $ conda activate env-eego
@@ -15,6 +17,7 @@ import json
 
 
 def main():
+    start = time.time()
     feature_dict = {}
     label_dict = {}
     eeg_dict = {}
@@ -22,53 +25,57 @@ def main():
     print("TASK: ", config.class_task)
     print("Extracting", config.feature_set, "features....")
     for subject in config.subjects:
-        print(subject)
-
         loaded_data = load_matlab_files(config.class_task, subject)
 
         zuco_reader.extract_features(loaded_data, config.feature_set, feature_dict, eeg_dict, gaze_dict)
         zuco_reader.extract_labels(feature_dict, label_dict, config.class_task, subject)
 
-    print(len(feature_dict), len(label_dict), len(eeg_dict))
+        elapsed = (time.time() - start)
+        print('{}: {}'.format(subject, timedelta(seconds=int(elapsed))))
 
-    print("Reading EEG features from file!!")
+    if not config.run_eeg_extraction:
+        print("Reading EEG features from file!!")
+        eeg_dict = json.load(
+            open("../eeg_features/" + config.feature_set[0] + "_feats_file_" + config.class_task + ".json"))
+        print("done, ", len(eeg_dict), " sentences with EEG features.")
+        
+        if 'eeg4' in config.feature_set:
+            eeg_dict_theta = json.load(open("../eeg_features/eeg_theta_feats_file_" + config.class_task + ".json"))
+            eeg_dict_beta = json.load(open("../eeg_features/eeg_beta_feats_file_" + config.class_task + ".json"))
+            eeg_dict_alpha = json.load(open("../eeg_features/eeg_alpha_feats_file_" + config.class_task + ".json"))
+            eeg_dict_gamma = json.load(open("../eeg_features/eeg_gamma_feats_file_" + config.class_task + ".json"))
+        
+        print("Reading gaze features from file!!")
+        gaze_dict = json.load(open("feature_extraction/features/gaze_feats_file_" + config.class_task + ".json"))
+    
+    else:
+        # save EEG features
+        with open(config.feature_set[0] + '_feats_file_'+config.class_task+'.json', 'w') as fp:
+            json.dump(eeg_dict, fp)
+        print("saved.")
 
-    eeg_dict = json.load(
-        open("../eeg_features/" + config.feature_set[0] + "_feats_file_" + config.class_task + ".json"))
-    print("done, ", len(eeg_dict), " sentences with EEG features.")
-
-
-    #eeg_dict_theta = json.load(open("../eeg_features/eeg_theta_feats_file_" + config.class_task + ".json"))
-    #eeg_dict_alpha = json.load(open("../eeg_features/eeg_alpha_feats_file_" + config.class_task + ".json"))
-    #eeg_dict_beta = json.load(open("../eeg_features/eeg_beta_feats_file_" + config.class_task + ".json"))
-    #eeg_dict_gamma = json.load(open("../eeg_features/eeg_gamma_feats_file_" + config.class_task + ".json"))
-
-    print("Reading gaze features from file!!")
-    gaze_dict = json.load(open("feature_extraction/features/gaze_feats_file_" + config.class_task + ".json"))
-    print(len(gaze_dict))
-
-    # save EEG features
-    """
-    with open(config.feature_set[0] + '_feats_file_'+config.class_task+'.json', 'w') as fp:
-       json.dump(eeg_dict, fp)
-    print("saved.")
-    """
+    print('len(feature_dict): {}\nlen(label_dict): {}\nlen(eeg_dict): {}'.format(len(feature_dict), len(label_dict), len(eeg_dict)))
 
     feature_dict = collections.OrderedDict(sorted(feature_dict.items()))
     label_dict = collections.OrderedDict(sorted(label_dict.items()))
     eeg_dict = collections.OrderedDict(sorted(eeg_dict.items()))
     gaze_dict = collections.OrderedDict(sorted(gaze_dict.items()))
 
-    #eeg_dict_theta = collections.OrderedDict(sorted(eeg_dict_theta.items()))
-    #eeg_dict_alpha = collections.OrderedDict(sorted(eeg_dict_alpha.items()))
-    #eeg_dict_beta = collections.OrderedDict(sorted(eeg_dict_beta.items()))
-    #eeg_dict_gamma = collections.OrderedDict(sorted(eeg_dict_gamma.items()))
+    if 'eeg4' in config.feature_set:
+        eeg_dict_alpha = collections.OrderedDict(sorted(eeg_dict_alpha.items()))
+        eeg_dict_beta = collections.OrderedDict(sorted(eeg_dict_beta.items()))
+        eeg_dict_theta = collections.OrderedDict(sorted(eeg_dict_theta.items()))
+        eeg_dict_gamma = collections.OrderedDict(sorted(eeg_dict_gamma.items()))
 
 
     print(len(feature_dict.keys()), len(label_dict))
 
-    if len(feature_dict) != len(label_dict) != len(eeg_dict):
+    if len(feature_dict) != len(label_dict) or len(feature_dict) != len(eeg_dict) or len(label_dict) != len(eeg_dict):
         print("WARNING: Not an equal number of sentences in features and labels!")
+
+    print('Starting Loop')
+    start = time.time()
+    count = 0
 
     for rand in config.random_seed_values:
         np.random.seed(rand)
@@ -79,118 +86,130 @@ def main():
                         for bs in config.batch_size:
                             for lr_val in config.lr:
                                 for e_val in config.epochs:
-                                    parameter_dict = {"lr": lr_val, "lstm_dim": lstmDim, "lstm_layers": lstmLayers,
-                                                      "dense_dim": denseDim, "dropout": drop, "batch_size": bs,
-                                                      "epochs": e_val, "random_seed": rand}
+                                    for inception_filters in config.inception_filters:
+                                        for inception_kernel_sizes in config.inception_kernel_sizes:
+                                            for inception_pool_size in config.inception_pool_size:
+                                                for inception_dense_dim in config.inception_dense_dim:
+                                                    parameter_dict = {"lr": lr_val, "lstm_dim": lstmDim, "lstm_layers": lstmLayers,
+                                                                    "dense_dim": denseDim, "dropout": drop, "batch_size": bs,
+                                                                    "epochs": e_val, "random_seed": rand, "inception_filters": inception_filters,
+                                                                    "inception_dense_dim": inception_dense_dim, "inception_kernel_sizes": inception_kernel_sizes,
+                                                                    "inception_pool_size": inception_pool_size}
 
-                                    if config.class_task == 'reldetect':
-                                        for threshold in config.rel_thresholds:
-                                            if 'eeg4' in config.feature_set:
-                                                fold_results = reldetect_text_eeg4_model.lstm_classifier(feature_dict,
-                                                                                                         label_dict,
-                                                                                                         eeg_dict_theta,
-                                                                                                         eeg_dict_alpha,
-                                                                                                         eeg_dict_beta,
-                                                                                                         eeg_dict_gamma,
-                                                                                                         config.embeddings,
-                                                                                                         parameter_dict,
-                                                                                                         rand, threshold)
-                                            elif 'eeg_raw' in config.feature_set:
-                                                fold_results = reldetect_eeg_model.lstm_classifier(label_dict, eeg_dict,
-                                                                                                   config.embeddings,
-                                                                                                   parameter_dict,
-                                                                                                   rand, threshold)
-                                            # todo: is this one needed here?
-                                            elif 'combi_eeg_raw' in config.feature_set or 'eeg_theta' in config.feature_set or 'eeg_alpha' in config.feature_set or 'eeg_beta' in config.feature_set or 'eeg_gamma' in config.feature_set:
-                                                fold_results = reldetect_text_eeg_model.lstm_classifier(feature_dict,
-                                                                                                        label_dict,
-                                                                                                        eeg_dict,
-                                                                                                        config.embeddings,
-                                                                                                        parameter_dict,
-                                                                                                        rand, threshold)
-                                            elif 'eeg_eye_tracking' in config.feature_set:
-                                                print("here")
-                                                fold_results = reldetect_eeg_gaze_model.lstm_classifier(label_dict,
-                                                                                                        eeg_dict,
-                                                                                                        gaze_dict,
-                                                                                                        config.embeddings,
-                                                                                                        parameter_dict,
-                                                                                                        rand, threshold)
-                                            save_results(fold_results, config.class_task)
+                                                    if config.class_task == 'reldetect':
+                                                        for threshold in config.rel_thresholds:
+                                                            if 'eeg4' in config.feature_set:
+                                                                fold_results = reldetect_text_eeg4_model.lstm_classifier(feature_dict,
+                                                                                                                        label_dict,
+                                                                                                                        eeg_dict_theta,
+                                                                                                                        eeg_dict_alpha,
+                                                                                                                        eeg_dict_beta,
+                                                                                                                        eeg_dict_gamma,
+                                                                                                                        config.embeddings,
+                                                                                                                        parameter_dict,
+                                                                                                                        rand, threshold)
+                                                            elif 'eeg_raw' in config.feature_set:
+                                                                fold_results = reldetect_eeg_model.lstm_classifier(label_dict, eeg_dict,
+                                                                                                                config.embeddings,
+                                                                                                                parameter_dict,
+                                                                                                                rand, threshold)
+                                                            # todo: is this one needed here?
+                                                            elif 'combi_eeg_raw' in config.feature_set or 'eeg_theta' in config.feature_set or 'eeg_alpha' in config.feature_set or 'eeg_beta' in config.feature_set or 'eeg_gamma' in config.feature_set:
+                                                                fold_results = reldetect_text_eeg_model.lstm_classifier(feature_dict,
+                                                                                                                        label_dict,
+                                                                                                                        eeg_dict,
+                                                                                                                        config.embeddings,
+                                                                                                                        parameter_dict,
+                                                                                                                        rand, threshold)
+                                                            elif 'eeg_eye_tracking' in config.feature_set:
+                                                                print("here")
+                                                                fold_results = reldetect_eeg_gaze_model.lstm_classifier(label_dict,
+                                                                                                                        eeg_dict,
+                                                                                                                        gaze_dict,
+                                                                                                                        config.embeddings,
+                                                                                                                        parameter_dict,
+                                                                                                                        rand, threshold)
+                                                            save_results(fold_results, config.class_task)
 
-                                    elif config.class_task == 'ner':
-                                        fold_results = ner_text_model.lstm_classifier(feature_dict, label_dict,
-                                                                                      config.embeddings,
-                                                                                      parameter_dict, rand)
-                                        save_results(fold_results, config.class_task)
-
-                                    elif config.class_task == 'sentiment-tri':
-                                        if 'eeg4' in config.feature_set:
-                                            fold_results = sentiment_text_eeg4_model.lstm_classifier(feature_dict, label_dict, eeg_dict_theta,
-                                                                                               eeg_dict_alpha, eeg_dict_beta, eeg_dict_gamma,
-                                                                                               config.embeddings,
-                                                                                               parameter_dict,
-                                                                                               rand)
-                                        elif 'eeg_raw' in config.feature_set:
-                                            fold_results = sentiment_eeg_model.lstm_classifier(label_dict,
-                                                                                               eeg_dict,
-                                                                                               config.embeddings,
-                                                                                               parameter_dict,
-                                                                                               rand)
-                                        elif 'combi_all' in config.feature_set:
-                                            fold_results = sentiment_text_eeg_gaze_model.lstm_classifier(feature_dict,
-                                                                                                         label_dict,
-                                                                                                         eeg_dict,
-                                                                                                         gaze_dict,
-                                                                                                         config.embeddings,
-                                                                                                         parameter_dict,
-                                                                                                         rand)
-                                        elif 'eeg_eye_tracking' in config.feature_set:
-                                            fold_results = sentiment_eeg_gaze_model.lstm_classifier(label_dict,
-                                                                                                    eeg_dict,
-                                                                                                    gaze_dict,
+                                                    elif config.class_task == 'ner':
+                                                        fold_results = ner_text_model.lstm_classifier(feature_dict, label_dict,
                                                                                                     config.embeddings,
-                                                                                                    parameter_dict,
-                                                                                                    rand)
-                                        save_results(fold_results, config.class_task)
-                                    elif config.class_task == 'sentiment-bin':
-                                        for s, label in list(label_dict.items()):
-                                            # drop neutral sentences for binary sentiment classification
-                                            if label == 2:
-                                                del label_dict[s]
-                                                del feature_dict[s]
-                                                del eeg_dict_alpha[s]
-                                                del eeg_dict_beta[s]
+                                                                                                    parameter_dict, rand)
+                                                        save_results(fold_results, config.class_task)
 
-                                        if 'eeg4' in config.feature_set:
-                                            fold_results = sentiment_text_eeg4_model.lstm_classifier(feature_dict, label_dict, eeg_dict_theta,
-                                                                                               eeg_dict_alpha, eeg_dict_beta, eeg_dict_gamma,
-                                                                                               config.embeddings,
-                                                                                               parameter_dict,
-                                                                                               rand)
+                                                    elif config.class_task == 'sentiment-tri':
+                                                        if 'eeg4' in config.feature_set:
+                                                            fold_results = sentiment_text_eeg4_model.classifier(feature_dict, label_dict, eeg_dict_theta,
+                                                                                                            eeg_dict_alpha, eeg_dict_beta, eeg_dict_gamma,
+                                                                                                            config.embeddings,
+                                                                                                            parameter_dict,
+                                                                                                            rand)
+                                                        elif 'eeg_raw' in config.feature_set:
+                                                            fold_results = sentiment_eeg_model.classifier(label_dict,
+                                                                                                            eeg_dict,
+                                                                                                            config.embeddings,
+                                                                                                            parameter_dict,
+                                                                                                            rand)
+                                                        elif 'combi_all' in config.feature_set:
+                                                            fold_results = sentiment_text_eeg_gaze_model.classifier(feature_dict,
+                                                                                                                        label_dict,
+                                                                                                                        eeg_dict,
+                                                                                                                        gaze_dict,
+                                                                                                                        config.embeddings,
+                                                                                                                        parameter_dict,
+                                                                                                                        rand)
+                                                        elif 'eeg_eye_tracking' in config.feature_set:
+                                                            fold_results = sentiment_eeg_gaze_model.classifier(label_dict,
+                                                                                                                    eeg_dict,
+                                                                                                                    gaze_dict,
+                                                                                                                    config.embeddings,
+                                                                                                                    parameter_dict,
+                                                                                                                    rand)
+                                                        save_results(fold_results, config.class_task)
+                                                    elif config.class_task == 'sentiment-bin':
+                                                        for s, label in list(label_dict.items()):
+                                                            # drop neutral sentences for binary sentiment classification
+                                                            if label == 2:
+                                                                del label_dict[s]
+                                                                del feature_dict[s]
+                                                                if 'eeg4' in config.feature_set:
+                                                                    del eeg_dict_alpha[s]
+                                                                    del eeg_dict_beta[s]
 
-                                        if 'eeg_raw' in config.feature_set:
-                                            fold_results = sentiment_eeg_model.lstm_classifier(label_dict,
-                                                                                               eeg_dict,
-                                                                                               config.embeddings,
-                                                                                               parameter_dict,
-                                                                                               rand)
-                                        elif 'combi_all' in config.feature_set:
-                                            fold_results = sentiment_text_eeg_gaze_model.lstm_classifier(feature_dict,
-                                                                                                         label_dict,
-                                                                                                         eeg_dict,
-                                                                                                         gaze_dict,
-                                                                                                         config.embeddings,
-                                                                                                         parameter_dict,
-                                                                                                         rand)
-                                        elif 'eeg_eye_tracking' in config.feature_set:
-                                            fold_results = sentiment_eeg_gaze_model.lstm_classifier(label_dict,
-                                                                                                    eeg_dict, gaze_dict,
-                                                                                                    config.embeddings,
-                                                                                                    parameter_dict,
-                                                                                                    rand)
+                                                        if 'eeg4' in config.feature_set:
+                                                            fold_results = sentiment_text_eeg4_model.classifier(feature_dict, label_dict, eeg_dict_theta,
+                                                                                                            eeg_dict_alpha, eeg_dict_beta, eeg_dict_gamma,
+                                                                                                            config.embeddings,
+                                                                                                            parameter_dict,
+                                                                                                            rand)
 
-                                        save_results(fold_results, config.class_task)
+                                                        if 'eeg_raw' in config.feature_set:
+                                                            fold_results = sentiment_eeg_model.classifier(label_dict,
+                                                                                                            eeg_dict,
+                                                                                                            config.embeddings,
+                                                                                                            parameter_dict,
+                                                                                                            rand)
+                                                        elif 'combi_all' in config.feature_set:
+                                                            fold_results = sentiment_text_eeg_gaze_model.classifier(feature_dict,
+                                                                                                                        label_dict,
+                                                                                                                        eeg_dict,
+                                                                                                                        gaze_dict,
+                                                                                                                        config.embeddings,
+                                                                                                                        parameter_dict,
+                                                                                                                        rand)
+                                                        elif 'eeg_eye_tracking' in config.feature_set:
+                                                            fold_results = sentiment_eeg_gaze_model.classifier(label_dict,
+                                                                                                                    eeg_dict, gaze_dict,
+                                                                                                                    config.embeddings,
+                                                                                                                    parameter_dict,
+                                                                                                                    rand)
+
+                                                        save_results(fold_results, config.class_task)
+
+                                                    elapsed = (time.time() - start)
+                                                    print('iteration {} done'.format(count))
+                                                    print('Time since starting the loop: {}'.format(timedelta(seconds=int(elapsed))))
+                                                    count += 1
 
 
 if __name__ == '__main__':

@@ -8,6 +8,8 @@ import json
 import collections
 import numpy as np
 
+from datetime import timedelta
+import time
 
 # Usage on spaceml:
 # $ conda activate env-eego
@@ -15,6 +17,7 @@ import numpy as np
 
 
 def main():
+    start = time.time()
     feature_dict = {}
     label_dict = {}
     eeg_dict = {}
@@ -22,27 +25,35 @@ def main():
     print("TASK: ", config.class_task)
     print("extracting", config.feature_set, "features....")
     for subject in config.subjects:
-        print(subject)
-
         loaded_data = load_matlab_files(config.class_task, subject)
 
         zuco_reader.extract_features(loaded_data, config.feature_set, feature_dict, eeg_dict, gaze_dict)
         zuco_reader.extract_labels(feature_dict, label_dict, config.class_task, subject)
 
-    print("Reading gaze features from file!!")
-    gaze_dict = json.load(open("feature_extraction/features/gaze_feats_file_" + config.class_task + ".json"))
+        elapsed = (time.time() - start)
+        print('{}: {}'.format(subject, timedelta(seconds=int(elapsed))))
 
-    # print(len(gaze_dict))
-    # with open('gaze_feats_file_ner.json', 'w') as fp:
-    #   json.dump(gaze_dict, fp)
+    if config.run_eeg_extraction:
+        print(len(gaze_dict))
+        with open('gaze_feats_file_ner.json', 'w') as fp:
+            json.dump(gaze_dict, fp)
+    else:
+        print("Reading gaze features from file!!")
+        gaze_dict = json.load(open("feature_extraction/features/gaze_feats_file_" + config.class_task + ".json"))
+
 
     feature_dict = collections.OrderedDict(sorted(feature_dict.items()))
     label_dict = collections.OrderedDict(sorted(label_dict.items()))
     gaze_dict = collections.OrderedDict(sorted(gaze_dict.items()))
 
-    print(len(feature_dict), len(label_dict), len(gaze_dict))
-    if len(feature_dict) != len(label_dict) != len(gaze_dict):
+    print('len(feature_dict): {}\nlen(label_dict): {}\nlen(eeg_dict): {}'.format(len(feature_dict), len(label_dict), len(eeg_dict)))
+
+    if len(feature_dict) != len(label_dict) or len(feature_dict) != len(eeg_dict) or len(label_dict) != len(eeg_dict):
         print("WARNING: Not an equal number of sentences in features and labels!")
+
+    print('Starting Loop')
+    start = time.time()
+    count = 0
 
     for rand in config.random_seed_values:
         np.random.seed(rand)
@@ -94,7 +105,7 @@ def main():
 
                                                     elif config.class_task == 'sentiment-tri':
                                                         if 'eye_tracking' in config.feature_set:
-                                                            fold_results = sentiment_gaze_model.lstm_classifier(label_dict, gaze_dict,
+                                                            fold_results = sentiment_gaze_model.classifier(label_dict, gaze_dict,
                                                                                                                 config.embeddings,
                                                                                                                 parameter_dict,
                                                                                                                 rand)
@@ -116,7 +127,7 @@ def main():
                                                                 # del gaze_dict[s]
 
                                                         if 'eye_tracking' in config.feature_set:
-                                                            fold_results = sentiment_gaze_model.lstm_classifier(label_dict, gaze_dict,
+                                                            fold_results = sentiment_gaze_model.classifier(label_dict, gaze_dict,
                                                                                                                 config.embeddings,
                                                                                                                 parameter_dict,
                                                                                                                 rand)
@@ -128,6 +139,11 @@ def main():
                                                                                                                     parameter_dict,
                                                                                                                     rand)
                                                         save_results(fold_results, config.class_task)
+
+                                                    elapsed = (time.time() - start)
+                                                    print('iteration {} done'.format(count))
+                                                    print('Time since starting the loop: {}'.format(timedelta(seconds=int(elapsed))))
+                                                    count += 1
 
 
 if __name__ == '__main__':
