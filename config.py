@@ -1,8 +1,8 @@
 # dataset directories
 #rootdir_zuco1 = "/Volumes/methlab/NLP/Ce_ETH/OSF-ZuCo1.0-200107/mat7.3/"
 #rootdir_zuco2 = "/Volumes/methlab/NLP/Ce_ETH/2019/FirstLevel_V2/"
-base_dir = "/mnt/ds3lab-scratch/noraho/coling2020/"
-#base_dir = '/Users/benjaminglaus/Desktop/BA_code/' 
+#base_dir = "/mnt/ds3lab-scratch/noraho/coling2020/"
+base_dir = '/Users/benjaminglaus/Desktop/BA_code/' 
 rootdir_zuco1 = base_dir+"zuco1/"
 rootdir_zuco2 = base_dir+"zuco2/"
 
@@ -21,25 +21,25 @@ class_task = 'sentiment-bin'
 # ML model {lstm, cnn}
 model = 'cnn'
 # word embeddings {none, glove (300d), bert}
-embeddings = 'bert'
+embeddings = 'glove'
 
 # features sets {'text_only' , 'eeg_raw', 'eeg_theta', 'eeg_alpha', 'eeg_beta', 'eeg_gamma', 'combi_eeg_raw', 'eye_tracking', 'combi_eye_tracking'}
 # sentence level features: {'combi_concat', 'sent_eeg_theta'}
 # combined models: {'eeg_eye_tracking', 'eeg4'}
-feature_set = ['eeg_alpha', 'random']
+feature_set = ['eeg4']
 
 # hyper-parameters to test - general
 lstm_dim = [64]
 lstm_layers = [1]
-dense_dim = [64]#,128]
-dropout = [0.5]
+dense_dim = [256]
+dropout = [0.3]
 batch_size = [40]
 epochs = [200]
-lr = [0.01]
+lr = [0.00001]
 
-inception_filters = [14]
+inception_filters = [16]
 inception_kernel_sizes = [[1,4,7]]
-inception_pool_size = [3]
+inception_pool_size = [5]
 inception_dense_dim = [(128,16)]
 
 # best params raw eeg:
@@ -59,3 +59,4 @@ drop_classes = [10, 8]#, 1, 4, 6, 3, 9, 2]
 # only for Relation Detection:
 rel_thresholds = [0.3, 0.5, 0.7]
 
+# EEG4+Bert

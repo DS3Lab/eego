@@ -33,28 +33,28 @@ def main():
         elapsed = (time.time() - start)
         print('{}: {}'.format(subject, timedelta(seconds=int(elapsed))))
 
-    if not config.run_eeg_extraction:
+    if config.run_eeg_extraction:
+        # save EEG features
+        with open(config.feature_set[0] + '_feats_file_'+config.class_task+'.json', 'w') as fp:
+            json.dump(eeg_dict, fp)
+        print("saved.")
+    else:
         print("Reading EEG features from file!!")
-        eeg_dict = json.load(
-            open("../eeg_features/" + config.feature_set[0] + "_feats_file_" + config.class_task + ".json"))
-        print("done, ", len(eeg_dict), " sentences with EEG features.")
         
         if 'eeg4' in config.feature_set:
             eeg_dict_theta = json.load(open("../eeg_features/eeg_theta_feats_file_" + config.class_task + ".json"))
             eeg_dict_beta = json.load(open("../eeg_features/eeg_beta_feats_file_" + config.class_task + ".json"))
             eeg_dict_alpha = json.load(open("../eeg_features/eeg_alpha_feats_file_" + config.class_task + ".json"))
             eeg_dict_gamma = json.load(open("../eeg_features/eeg_gamma_feats_file_" + config.class_task + ".json"))
+        else:
+            eeg_dict = json.load(
+            open("../eeg_features/" + config.feature_set[0] + "_feats_file_" + config.class_task + ".json"))
+
+        print("done, ", len(eeg_dict), " sentences with EEG features.")
         
         print("Reading gaze features from file!!")
         gaze_dict = json.load(open("feature_extraction/features/gaze_feats_file_" + config.class_task + ".json"))
     
-    else:
-        # save EEG features
-        with open(config.feature_set[0] + '_feats_file_'+config.class_task+'.json', 'w') as fp:
-            json.dump(eeg_dict, fp)
-        print("saved.")
-
-    print('len(feature_dict): {}\nlen(label_dict): {}\nlen(eeg_dict): {}'.format(len(feature_dict), len(label_dict), len(eeg_dict)))
 
     feature_dict = collections.OrderedDict(sorted(feature_dict.items()))
     label_dict = collections.OrderedDict(sorted(label_dict.items()))
@@ -67,11 +67,21 @@ def main():
         eeg_dict_theta = collections.OrderedDict(sorted(eeg_dict_theta.items()))
         eeg_dict_gamma = collections.OrderedDict(sorted(eeg_dict_gamma.items()))
 
-
     print(len(feature_dict.keys()), len(label_dict))
 
-    if len(feature_dict) != len(label_dict) or len(feature_dict) != len(eeg_dict) or len(label_dict) != len(eeg_dict):
-        print("WARNING: Not an equal number of sentences in features and labels!")
+    if 'eeg4' in config.feature_set:
+        if len(set([len(feature_dict), len(label_dict), len(eeg_dict_alpha), len(eeg_dict_beta), len(eeg_dict_gamma), len(eeg_dict_theta)])) > 1:
+            print("WARNING: Not an equal number of sentences in features and labels!")
+        print('len(feature_dict):\t', len(feature_dict))
+        print('len(label_dict):\t', len(label_dict))
+        print('len(eeg_dict_alpha):\t', len(eeg_dict_alpha))
+        print('len(eeg_dict_beta):\t', len(eeg_dict_beta))
+        print('len(eeg_dict_gamma):\t', len(eeg_dict_gamma))
+        print('len(eeg_dict_theta):\t', len(eeg_dict_theta))
+    else:
+        if len(feature_dict) != len(label_dict) or len(feature_dict) != len(eeg_dict) or len(label_dict) != len(eeg_dict):
+            print("WARNING: Not an equal number of sentences in features and labels!")
+        print('len(feature_dict): {}\nlen(label_dict): {}\nlen(eeg_dict): {}'.format(len(feature_dict), len(label_dict), len(eeg_dict)))
 
     print('Starting Loop')
     start = time.time()
