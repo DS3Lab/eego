@@ -35,7 +35,7 @@ def main():
 
     if config.run_eeg_extraction:
         # save EEG features
-        with open(config.feature_set[0] + '_feats_file_'+config.class_task+'.json', 'w') as fp:
+        with open('../eeg_features' + config.feature_set[0] + '_feats_file_'+config.class_task+'.json', 'w') as fp:
             json.dump(eeg_dict, fp)
         print("saved.")
     else:
