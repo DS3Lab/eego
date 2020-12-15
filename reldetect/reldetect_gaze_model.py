@@ -22,8 +22,56 @@ os.environ['KERAS_BACKEND'] = 'tensorflow'
 # Machine learning model for sentiment classification (binary and ternary)
 # Jointly learning from text and cognitive word-level features (EEG pr eye-tracking)
 
+def create_lstm_gaze_model(param_dict, X_train_eeg_shape, y_train_shape): # X_train_eeg_shape = (X_train_eeg.shape[1], X_train_eeg.shape[2])
+    lstm_dim = param_dict['lstm_dim']
+    dense_dim = param_dict['dense_dim']
+    dropout = param_dict['dropout']
+    lstm_layers = param_dict['lstm_layers']
 
-def lstm_classifier(labels, gaze, embedding_type, param_dict, random_seed_value, threshold):
+    input_text = Input(shape=X_train_eeg_shape, name='gaze_input_tensor')
+    text_model = Bidirectional(LSTM(lstm_dim, return_sequences=True))(input_text)
+    for _ in list(range(lstm_layers-1)):
+        text_model = Bidirectional(LSTM(lstm_dim, return_sequences=True))(text_model)
+    text_model = Flatten()(text_model)
+    text_model = Dense(dense_dim, activation="relu")(text_model)
+    text_model = Dropout(dropout)(text_model)
+    text_model = Dense(y_train_shape, activation="sigmoid")(text_model)
+
+    model = Model(inputs=input_text, outputs=text_model)
+    return model
+
+
+def create_inception_gaze_model(param_dict, X_train_eeg_shape, y_train_shape):
+    inception_filters = param_dict['inception_filters']
+    inception_kernel_sizes = param_dict['inception_kernel_sizes']
+    inception_pool_size = param_dict['inception_pool_size']    
+    inception_dense_dim = param_dict['inception_dense_dim']
+    dropout = param_dict['dropout']
+
+    input_eeg = Input(shape=X_train_eeg_shape, name='gaze_input_tensor')
+
+    conv_1 = Conv1D(filters=inception_filters, kernel_size=inception_kernel_sizes[0], activation='elu', strides=1, use_bias=False, padding='same')(input_eeg)
+
+    conv_3 = Conv1D(filters=inception_filters, kernel_size=inception_kernel_sizes[0], activation='elu', strides=1, use_bias=False, padding='same')(input_eeg)
+    conv_3 = Conv1D(filters=inception_filters, kernel_size=inception_kernel_sizes[1], activation='elu', strides=1, use_bias=False, padding='same')(conv_3)
+
+    conv_5 = Conv1D(filters=inception_filters, kernel_size=inception_kernel_sizes[0], activation='elu', strides=1, use_bias=False, padding='same')(input_eeg)
+    conv_5 = Conv1D(filters=inception_filters, kernel_size=inception_kernel_sizes[2], activation='elu', strides=1, use_bias=False, padding='same')(conv_5)
+
+    pool_proj = MaxPooling1D(pool_size=inception_pool_size, strides=1, padding='same')(input_eeg)
+    pool_proj = Conv1D(filters=inception_filters, kernel_size=inception_kernel_sizes[0], activation='elu', strides=1, use_bias=False, padding='same')(pool_proj)
+
+    cognitive_model = concatenate([conv_1, conv_3, conv_5, pool_proj])
+    cognitive_model = Flatten()(cognitive_model)
+    cognitive_model = Dense(inception_dense_dim[0], activation='elu')(cognitive_model)
+    cognitive_model = Dropout(dropout)(cognitive_model)
+    cognitive_model = Dense(y_train_shape, activation="sigmoid")(cognitive_model)
+
+    model = Model(inputs=input_eeg, outputs=cognitive_model)
+    return model
+
+
+def classifier(labels, gaze, embedding_type, param_dict, random_seed_value, threshold):
 
     # set random seeds
     np.random.seed(random_seed_value)
@@ -81,21 +129,14 @@ def lstm_classifier(labels, gaze, embedding_type, param_dict, random_seed_value,
         fold_results['params'] = [lstm_dim, lstm_layers, dense_dim, dropout, batch_size, epochs, lr, embedding_type,
                                   random_seed_value]
 
-        print("Preparing model...")
         # define model
         print("Preparing model...")
-        input_gaze = Input(shape=(X_train.shape[1], X_train.shape[2]), name='gaze_input_tensor')
-        gaze_model = Bidirectional(LSTM(lstm_dim, return_sequences=True))(input_gaze)
-        for _ in list(range(lstm_layers - 1)):
-            gaze_model = Bidirectional(LSTM(lstm_dim, return_sequences=True))(gaze_model)
-        gaze_model = Flatten()(gaze_model)
-        gaze_model = Dense(dense_dim, activation="relu")(gaze_model)
-        gaze_model = Dropout(dropout)(gaze_model)
-        gaze_model = Dense(y_train.shape[1], activation="sigmoid")(gaze_model)
+        if config.model is 'lstm':
+            model = create_lstm_gaze_model(param_dict, (X_train.shape[1], X_train.shape[2]), y_train.shape[1])
+        elif config.model is 'cnn':
+            model = create_inception_gaze_model(param_dict, (X_train.shape[1], X_train.shape[2]), y_train.shape[1])
 
-        model = Model(inputs=input_gaze, outputs=gaze_model)
-
-        model.compile(loss='binary_crossentropy',
+        model.compile(loss='categorical_crossentropy',
                       optimizer=tf.keras.optimizers.Adam(lr=lr),
                       metrics=['accuracy'])
 
@@ -148,6 +189,14 @@ def lstm_classifier(labels, gaze, embedding_type, param_dict, random_seed_value,
             fold_results['best-e'] = [len(history.history['loss'])-config.patience]
             fold_results['patience'] = config.patience
             fold_results['min_delta'] = config.min_delta
+
+            fold_results['model_type'] = config.model
+
+            if config.model is 'cnn':
+                fold_results['inception_filters'] = param_dict['inception_filters'] 
+                fold_results['inception_kernel_sizes'] = param_dict['inception_kernel_sizes']
+                fold_results['inception_pool_size'] = param_dict['inception_pool_size']
+                fold_results['inception_dense_dim'] = param_dict['inception_dense_dim']
         else:
             fold_results['train-loss'].append(history.history['loss'])
             fold_results['train-accuracy'].append(history.history['accuracy'])
