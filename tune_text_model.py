@@ -36,15 +36,14 @@ def main():
     label_dict = collections.OrderedDict(sorted(label_dict.items()))
     print(len(feature_dict.keys()), len(label_dict))
 
+    # test with less data
+    #drop_first_sents(label_dict, feature_dict, eeg_dict)
+    
     print('len(feature_dict): {}\nlen(label_dict): {}\nlen(eeg_dict): {}'.format(len(feature_dict), len(label_dict), len(eeg_dict)))
 
     if len(feature_dict) != len(label_dict) or len(feature_dict) != len(eeg_dict) or len(label_dict) != len(eeg_dict):
         print("WARNING: Not an equal number of sentences in features and labels!")
 
-    # test with less data
-    # print(len(eeg_dict), len(label_dict), len(feature_dict))
-    #drop_first_sents(label_dict, feature_dict, eeg_dict)
-    # print(len(eeg_dict), len(label_dict), len(feature_dict))
 
     print('starting loop')
     start = time.time()
@@ -79,12 +78,12 @@ def main():
                                                                                                                     rand)
                                                                 save_results(fold_results, config.class_task)
                                                             else:
-                                                                fold_results = reldetect_text_model.lstm_classifier(feature_dict, label_dict, config.embeddings, parameter_dict, rand, threshold)
+                                                                fold_results = reldetect_text_model.classifier(feature_dict, label_dict, config.embeddings, parameter_dict, rand, threshold)
                                                                 save_results(fold_results, config.class_task)
 
 
                                                     elif config.class_task == 'ner':
-                                                        fold_results = ner_text_model.lstm_classifier(feature_dict, label_dict, config.embeddings, parameter_dict, rand)
+                                                        fold_results = ner_text_model.classifier(feature_dict, label_dict, config.embeddings, parameter_dict, rand)
                                                         save_results(fold_results, config.class_task)
 
                                                     elif config.class_task == 'sentiment-tri':

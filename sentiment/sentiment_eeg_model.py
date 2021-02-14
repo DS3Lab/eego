@@ -3,7 +3,7 @@ import numpy as np
 import time
 from datetime import timedelta
 import tensorflow as tf
-from tensorflow.python.keras.layers import Input, Dense, LSTM, Bidirectional, Flatten, Dropout, Conv1D, MaxPooling1D, GlobalMaxPooling1D
+from tensorflow.python.keras.layers import Input, Dense, LSTM, Bidirectional, Flatten, Dropout, Conv1D, MaxPooling1D
 from tensorflow.python.keras.models import Model, load_model
 from tensorflow.python.keras.layers.merge import concatenate
 from tensorflow.python.keras.callbacks import EarlyStopping, ModelCheckpoint

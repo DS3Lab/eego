@@ -3,7 +3,7 @@ import numpy as np
 from tensorflow.python.keras.utils import np_utils
 from tensorflow.python.keras.initializers import Constant
 import tensorflow.python.keras.backend as K
-from tensorflow.python.keras.layers import Input, Dense, Embedding, LSTM, Bidirectional, Flatten, Dropout
+from tensorflow.python.keras.layers import Input, Dense, Embedding, LSTM, Bidirectional, Flatten, Dropout, Conv1D, MaxPooling1D
 from tensorflow.python.keras.models import Model, load_model
 import sklearn.metrics
 from sklearn.model_selection import KFold

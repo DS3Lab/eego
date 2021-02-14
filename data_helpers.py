@@ -72,7 +72,7 @@ def save_results(fold_results_dict, task):
         print("lstm_dim", "lstm_layers", "dense_dim", "dropout", "batch_size", "epochs", "lr", "embedding_type", "random_seed", "train_acc", "val_acc", 
             "test_acc", "test_std", "avg_precision", "std_precision", "avg_recall", "std_recall", "avg_fscore", "std_fscore", "threshold", "folds", 
             "training_time", 'best_ep', 'patience', 'min_delta', "model", "model_type", "inception_filters", "inception_kernel_sizes",
-            "inception_pool_size", "inception_dense_dim", file=result_file)
+            "inception_pool_size", "inception_dense_dim", "data_percentage", file=result_file)
     else:
         print("lstm_dim", "lstm_layers", "dense_dim", "dropout", "batch_size", "epochs", "lr", "embedding_type", "random_seed", "train_acc", "val_acc", 
             "test_acc", "test_std", "avg_precision", "std_precision", "avg_recall", "std_recall", "avg_fscore", "std_fscore", "threshold", "folds", 
@@ -103,6 +103,7 @@ def save_results(fold_results_dict, task):
         inception_kernel_sizes = fold_results_dict['inception_kernel_sizes']
         inception_pool_size = fold_results_dict['inception_pool_size']
         inception_dense_dim = fold_results_dict['inception_dense_dim']
+        data_percentage = fold_results_dict['data_percentage']
 
         inception_kernel_sizes = str(inception_kernel_sizes).replace(' ', '')
         inception_dense_dim = str(inception_dense_dim).replace(' ', '')
@@ -110,7 +111,7 @@ def save_results(fold_results_dict, task):
         print(" ".join(map(str, fold_results_dict['params'])),train_acc, val_acc, avg_accuracy, std_accuracy, avg_precision,
           std_precision, avg_recall, std_recall, avg_fscore, std_fscore, threshold, folds, fold_results_dict['training_time'], 
           best_eps, fold_results_dict['patience'], fold_results_dict['min_delta'], fold_results_dict['model'][-1], 
-          model_type, inception_filters, inception_kernel_sizes, inception_pool_size, inception_dense_dim, file=result_file)
+          model_type, inception_filters, inception_kernel_sizes, inception_pool_size, inception_dense_dim, data_percentage, file=result_file)
     
     else:
         print(" ".join(map(str, fold_results_dict['params'])),train_acc, val_acc, avg_accuracy, std_accuracy, avg_precision,

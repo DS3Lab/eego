@@ -88,19 +88,19 @@ def main():
 
                                                         for threshold in config.rel_thresholds:
                                                             if 'binary' in config.feature_set:
-                                                                fold_results = reldetect_text_eeg_model_binary.lstm_classifier(feature_dict,
+                                                                fold_results = reldetect_text_eeg_model_binary.classifier(feature_dict,
                                                                                                                     label_dict, eeg_dict,
                                                                                                                     config.embeddings,
                                                                                                                     parameter_dict,
                                                                                                                     rand)
-                                                            """
+                                                            
                                                             if 'eeg_raw' in config.feature_set:
-                                                                fold_results = reldetect_eeg_model.lstm_classifier(label_dict, eeg_dict,
+                                                                fold_results = reldetect_eeg_model.classifier(label_dict, eeg_dict,
                                                                                                                 config.embeddings,
                                                                                                                 parameter_dict,
                                                                                                                 rand, threshold)
                                                             elif 'random' in config.feature_set and 'eeg_theta' in config.feature_set:
-                                                                fold_results = reldetect_text_random_model.lstm_classifier(feature_dict,
+                                                                fold_results = reldetect_text_random_model.classifier(feature_dict,
                                                                                                                         label_dict,
                                                                                                                         eeg_dict,
                                                                                                                         config.embeddings,
@@ -108,13 +108,13 @@ def main():
                                                                                                                         rand, threshold)
                                                             elif 'combi_eeg_raw' in config.feature_set or 'eeg_theta' in config.feature_set or 'eeg_alpha' in config.feature_set or 'eeg_beta' in config.feature_set or 'eeg_gamma' in config.feature_set:
                                                                 print("this model....")
-                                                                fold_results = reldetect_text_eeg_model.lstm_classifier(feature_dict,
+                                                                fold_results = reldetect_text_eeg_model.classifier(feature_dict,
                                                                                                                         label_dict,
                                                                                                                         eeg_dict,
                                                                                                                         config.embeddings,
                                                                                                                         parameter_dict,
                                                                                                                         rand, threshold)
-                                                            """
+                                                            
                                                             save_results(fold_results, config.class_task)
 
                                                     elif config.class_task == 'ner':
