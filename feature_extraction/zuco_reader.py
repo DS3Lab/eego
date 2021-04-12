@@ -45,7 +45,7 @@ def extract_labels(feature_dict, label_dict, task, subject):
         i = 0
 
         if subject.startswith('Z'):  # subjects from ZuCo 1
-            with open(config.base_dir+'eego/feature_extraction/labels/sentiment_sents_labels-corrected.txt', 'r') as csv_file:
+            with open('feature_extraction/labels/sentiment_sents_labels-corrected.txt', 'r') as csv_file:
                 csv_reader = csv.reader(csv_file, delimiter=';')
                 for row in csv_reader:
                     sent = row[1]
@@ -73,7 +73,7 @@ def extract_labels(feature_dict, label_dict, task, subject):
 
         if subject.startswith('Z'):  # subjects from ZuCo 1
             # use NR + sentiment task from ZuCo 1
-            ner_ground_truth = open(config.base_dir+'eego/feature_extraction/labels/zuco1_nr_ner.bio', 'r').readlines() + open(config.base_dir+'eego/feature_extraction/labels/zuco1_nr_sentiment_ner.bio', 'r').readlines()
+            ner_ground_truth = open('feature_extraction/labels/zuco1_nr_ner.bio', 'r').readlines() + open('feature_extraction/labels/zuco1_nr_sentiment_ner.bio', 'r').readlines()
 
             sent_tokens = []
             sent_labels = []
@@ -100,7 +100,7 @@ def extract_labels(feature_dict, label_dict, task, subject):
 
         if subject.startswith('Y'):  # subjects from ZuCo 2
             # use NR task from ZuCo 2
-            ner_ground_truth = open(config.base_dir+'eego/feature_extraction/labels/zuco2_nr_ner.bio', 'r').readlines()
+            ner_ground_truth = open('feature_extraction/labels/zuco2_nr_ner.bio', 'r').readlines()
 
             sent_tokens = []
             sent_labels = []
@@ -133,7 +133,7 @@ def extract_labels(feature_dict, label_dict, task, subject):
 
         if subject.startswith('Z'):  # subjects from ZuCo 1
             # use NR + sentiment task from ZuCo 1
-            ner_ground_truth = open(config.base_dir + 'eego/feature_extraction/labels/zuco1_nr_rel.bio',
+            ner_ground_truth = open('feature_extraction/labels/zuco1_nr_rel.bio',
                                     'r').readlines()
 
             for line in ner_ground_truth:
@@ -153,7 +153,7 @@ def extract_labels(feature_dict, label_dict, task, subject):
 
         if subject.startswith('Y'):  # subjects from ZuCo 2
             # use NR task from ZuCo 2
-            ner_ground_truth = open(config.base_dir + 'eego/feature_extraction/labels/zuco2_nr_rel.bio',
+            ner_ground_truth = open('feature_extraction/labels/zuco2_nr_rel.bio',
                                     'r').readlines()
 
             for line in ner_ground_truth:

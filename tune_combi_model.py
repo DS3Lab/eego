@@ -35,7 +35,7 @@ def main():
 
     if config.run_eeg_extraction:
         # save EEG features
-        with open('../eeg_features' + config.feature_set[0] + '_feats_file_'+config.class_task+'.json', 'w') as fp:
+        with open(config.feature_dir + config.feature_set[0] + '_feats_file_'+config.class_task+'.json', 'w') as fp:
             json.dump(eeg_dict, fp)
         print("saved.")
     else:
@@ -125,7 +125,7 @@ def main():
                                                                                                                 rand, threshold)
                                                             # todo: is this one needed here?
                                                             elif 'combi_eeg_raw' in config.feature_set or 'eeg_theta' in config.feature_set or 'eeg_alpha' in config.feature_set or 'eeg_beta' in config.feature_set or 'eeg_gamma' in config.feature_set:
-                                                                fold_results = reldetect_text_eeg_model.lstm_classifier(feature_dict,
+                                                                fold_results = reldetect_text_eeg_model.classifier(feature_dict,
                                                                                                                         label_dict,
                                                                                                                         eeg_dict,
                                                                                                                         config.embeddings,

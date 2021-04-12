@@ -1,21 +1,23 @@
 # dataset directories
 #rootdir_zuco1 = "/Volumes/methlab/NLP/Ce_ETH/OSF-ZuCo1.0-200107/mat7.3/"
 #rootdir_zuco2 = "/Volumes/methlab/NLP/Ce_ETH/2019/FirstLevel_V2/"
-base_dir = "/mnt/ds3lab-scratch/noraho/coling2020/"
-rootdir_zuco1 = base_dir+"zuco1/"
-rootdir_zuco2 = base_dir+"zuco2/"
+
+#base_dir = "/mnt/ds3lab-scratch/noraho/coling2020/"
+base_dir = "/mnt/ds3lab-scratch/noraho/datasets/zuco/" # WITH UNFOLD!
+rootdir_zuco1 = base_dir+"zuco1_preprocessed_sep2020/"
+rootdir_zuco2 = base_dir+"zuco2_preprocessed_sep2020/"
 
 # subjects (subejcts starting with "Z" are from ZuCo 1, subjects starting with "Y" are from ZuCo 2)
 #subjects = ['YAC', 'YAG', 'YAK', 'YDG', 'YDR', 'YFR', 'YFS', 'YHS', 'YIS', 'YLS', 'YMD', 'YMS', 'YRH', 'YRK', 'YRP', 'YSD', 'YSL', 'YTL']  # exclude YMH
-subjects = ["ZKW", "ZJS", "ZDN", "ZJN", "ZPH", "ZAB", "ZJM", "ZKB", "ZKH", "ZMG", "ZGW", "ZKW", "ZDM"]
+subjects = ["ZKW", "ZDN"]#, "ZDN", "ZJN", "ZPH", "ZAB", "ZJM", "ZKB", "ZKH", "ZMG", "ZGW", "ZKW", "ZDM"] # missing files: ZJS
 
 
 # for running the experiments with previously extracted feature only one subject (from each dataset) is necessary
+run_eeg_extraction = False
+feature_dir = "../eeg_features/"
 
-run_eeg_extraction = True
-
-# ML task {sentiment-bin, sentiment-tri, ner, reldetect}
-class_task = 'sentiment-bin'
+# ML task {sentiment-bin, sentiment-tri, reldetect}
+class_task = 'reldetect'
 # ML model {lstm, cnn}
 model = 'cnn'
 # word embeddings {none, glove (300d), bert}
