@@ -80,7 +80,7 @@ def classifier(features, labels, embedding_type, param_dict, random_seed_value, 
         class_count = sum(class_count)
         label_names = ["Visited", "Founder", "Nationality", "Wife", "PoliticalAffiliation", "JobTitle", "Education",
                        "Employer", "Awarded", "BirthPlace", "DeathPlace"]
-        print(cl, class_count, label_names)
+        print(cl, class_count, label_names[range(len(y[0])).index(cl)])
 
     print(len(X), len(y))
 
