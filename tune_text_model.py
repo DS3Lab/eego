@@ -39,9 +39,9 @@ def main():
     # test with less data
     #drop_first_sents(label_dict, feature_dict, eeg_dict)
     
-    print('len(feature_dict): {}\nlen(label_dict): {}\nlen(eeg_dict): {}'.format(len(feature_dict), len(label_dict), len(eeg_dict)))
+    print('len(feature_dict): {}\nlen(label_dict): {}'.format(len(feature_dict), len(label_dict)))
 
-    if len(feature_dict) != len(label_dict) or len(feature_dict) != len(eeg_dict) or len(label_dict) != len(eeg_dict):
+    if len(feature_dict) != len(label_dict):
         print("WARNING: Not an equal number of sentences in features and labels!")
 
 

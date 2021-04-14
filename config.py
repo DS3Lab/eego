@@ -58,4 +58,4 @@ data_percentage = 0#0.75
 drop_classes = []#, 1, 4, 6, 3, 9, 2]
 
 # only for Relation Detection:
-rel_thresholds = [0.3, 0.5, 0.7]
+rel_thresholds = [0.3]#, 0.5, 0.7]
