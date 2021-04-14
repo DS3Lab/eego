@@ -36,7 +36,7 @@ def create_lstm_word_model(param_dict, embedding_type, X_train_shape, num_words,
                   name='none_input_embeddings')(input_text)
     elif embedding_type is 'glove':
         text_model = Embedding(num_words,
-                  300, # glove embedding dim
+                  300,  # glove embedding dim
                   embeddings_initializer=Constant(text_feats),
                   input_length=X_train_shape,
                   trainable=False,
@@ -78,7 +78,9 @@ def classifier(features, labels, embedding_type, param_dict, random_seed_value, 
     for cl in range(len(y[0])):
         class_count = [1 if int(n[cl]) == 1 else 0 for n in y]
         class_count = sum(class_count)
-        print(cl, class_count)
+        label_names = ["Visited", "Founder", "Nationality", "Wife", "PoliticalAffiliation", "JobTitle", "Education",
+                       "Employer", "Awarded", "BirthPlace", "DeathPlace"]
+        print(cl, class_count, label_names)
 
     print(len(X), len(y))
 
