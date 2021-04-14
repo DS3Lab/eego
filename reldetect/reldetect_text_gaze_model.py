@@ -196,8 +196,8 @@ def classifier(features, labels, gaze, embedding_type, param_dict, random_seed_v
 
         # combine the output of the two branches
         combined = concatenate([text_model_model.output, cognitive_model_model.output])
-        # apply another dense layer and then a softmax prediction on the combined outputs
-        combi_model = Dense(y_train.shape[1], activation="softmax")(combined)
+        # apply another dense layer and then a sigmoid prediction on the combined outputs
+        combi_model = Dense(y_train.shape[1], activation="sigmoid")(combined)
 
         model = Model(inputs=[text_model_model.input, cognitive_model_model.input], outputs=combi_model)
 

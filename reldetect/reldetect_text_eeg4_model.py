@@ -178,8 +178,8 @@ def lstm_classifier(features, labels, eeg_theta, eeg_alpha, eeg_beta, eeg_gamma,
 
         # combine the output of the two branches
         combined = concatenate([text_model_model.output, alpha_model_model.output, beta_model_model.output, gamma_model_model.output, theta_model_model.output])
-        # apply another dense layer and then a softmax prediction on the combined outputs
-        combi_model = Dense(y_train.shape[1], activation="softmax")(combined)
+        # apply another dense layer and then a sigmoid prediction on the combined outputs
+        combi_model = Dense(y_train.shape[1], activation="sigmoid")(combined)
 
         model = Model(inputs=[text_model_model.input, alpha_model_model.input, beta_model_model.input, gamma_model_model.input, theta_model_model.input], outputs=combi_model)
 
