@@ -207,10 +207,8 @@ def extract_word_level_data(data_container, word_objects, eeg_float_resolution =
                 data_dict["content"] = word_string
                 word_level_data[word_idx] = data_dict
                 word_idx += 1
-            #else:
-             #   print(word_string + " is not a real word.")
+
     else:
-        # If there are no word-level data it will be word embeddings alone
         word_level_data = {}
         word_idx = 0
         for word_obj in contentData:
@@ -235,11 +233,9 @@ def extract_word_level_data(data_container, word_objects, eeg_float_resolution =
                 data_dict["content"] = word_string
                 word_level_data[word_idx] = data_dict
                 word_idx += 1
-            #else:
-             #   print(word_string + " is not a real word.")
+
         sentence = " ".join([load_matlab_string(data_container[word_obj[0]]) for word_obj in word_objects['content']])
-        print("Only available objects for the sentence '{}' are {}.".format(sentence, available_objects))
-    #word_level_data["word_reading_order"] = extract_word_order_from_fixations(fixations_order_per_word)
+        #print("Only available objects for the sentence '{}' are {}.".format(sentence, available_objects))
     return word_level_data
 
 
@@ -260,6 +256,7 @@ def extract_all_fixations(data_container, word_data_object, float_resolution = n
         for fixation_idx in range(word_data.shape[0]):
             fixations_data.append(np.array(data_container[word_data[fixation_idx][0]]).astype(float_resolution))
     return fixations_data
+
 
 def extract_sentence_level_data(subject, eeg_float_resolution=np.float16):
     """

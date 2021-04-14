@@ -108,13 +108,7 @@ def extract_word_band_eeg(sentence_data, eeg_dict):
                     samples = np.array(f[obj_reference_samples])
                     #print(len(samples))
 
-                    # todo: filter
-                    '''
-                    if word_data[widx]["RAW_EEG"]:
-                        if len(samples) < 100 or len(samples) > 25000:
-                            print('HERE:\t{}'.format(len(samples))) '''
                     if word_data[widx]["RAW_EEG"] and len(samples) >= 100 and len(samples) <= 25000:
-                    #if word_data[widx]["RAW_EEG"]:
                         # t, a, b, or g
                         word_t1 = word_data[widx]["TRT_"+band1]
                         word_t2 = word_data[widx]["TRT_"+band2]
@@ -130,7 +124,8 @@ def extract_word_band_eeg(sentence_data, eeg_dict):
                         sent_features[widx] = nan_array
 
             except ValueError:
-                print("NO sentence data available!")
+                continue
+                #print("NO sentence data available!")
 
             #if sent_features:
             # for sentiment and relation detection

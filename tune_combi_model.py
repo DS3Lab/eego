@@ -23,7 +23,7 @@ def main():
     eeg_dict = {}
     gaze_dict = {}
     print("TASK: ", config.class_task)
-    print("Extracting", config.feature_set, "features....")
+    print("Extracting", config.feature_set[0], "features....")
     for subject in config.subjects:
         loaded_data = load_matlab_files(config.class_task, subject)
 
