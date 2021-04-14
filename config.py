@@ -54,8 +54,8 @@ random_seed_values = [13, 78, 22, 66, 42]
 validation_split = 0.1
 patience = 80
 min_delta = 0.0000001
-data_percentage = 0.75
-drop_classes = [10, 8]#, 1, 4, 6, 3, 9, 2]
+data_percentage = 0#0.75
+drop_classes = []#, 1, 4, 6, 3, 9, 2]
 
 # only for Relation Detection:
 rel_thresholds = [0.3, 0.5, 0.7]
