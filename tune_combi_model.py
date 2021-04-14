@@ -7,6 +7,7 @@ from data_helpers import save_results, load_matlab_files
 import numpy as np
 import collections
 import json
+import sys
 
 from datetime import timedelta
 import time
@@ -33,15 +34,12 @@ def main():
         elapsed = (time.time() - start)
         print('{}: {}'.format(subject, timedelta(seconds=int(elapsed))))
 
-    print(len(eeg_dict))
-    for x, y in eeg_dict.items():
-        print(x,y)
-
     if config.run_eeg_extraction:
         # save EEG features
         with open(config.feature_dir + config.feature_set[0] + '_feats_file_'+config.class_task+'.json', 'w') as fp:
             json.dump(eeg_dict, fp)
         print("saved.")
+        sys.exit()
     else:
         print("Reading EEG features from file!!")
         

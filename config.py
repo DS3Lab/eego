@@ -8,12 +8,12 @@ rootdir_zuco1 = base_dir+"zuco1_preprocessed_sep2020/"
 rootdir_zuco2 = base_dir+"zuco2_preprocessed_sep2020/"
 
 # subjects (subejcts starting with "Z" are from ZuCo 1, subjects starting with "Y" are from ZuCo 2)
-#subjects = ['YAC', 'YAG', 'YAK', 'YDG', 'YDR', 'YFR', 'YFS', 'YHS', 'YIS', 'YLS', 'YMD', 'YMS', 'YRH', 'YRK', 'YRP', 'YSD', 'YSL', 'YTL']  # exclude YMH
-subjects = ["ZKW", "ZDN"]#, "ZDN", "ZJN", "ZPH", "ZAB", "ZJM", "ZKB", "ZKH", "ZMG", "ZGW", "ZKW", "ZDM"] # missing files: ZJS
+subjects = ['YAC', 'YAG', 'YAK', 'YDG', 'YDR', 'YFR', 'YFS', 'YHS', 'YIS', 'YLS', 'YMD', 'YMS', 'YRH', 'YRK', 'YRP', 'YSD', 'YSL', 'YTL']  # exclude YMH
+#subjects = ["ZKW", "ZDN", "ZDN", "ZJN", "ZPH", "ZAB", "ZJM", "ZKB", "ZKH", "ZMG", "ZGW", "ZKW", "ZDM"] # missing files: ZJS
 
 
 # for running the experiments with previously extracted feature only one subject (from each dataset) is necessary
-run_eeg_extraction = False
+run_eeg_extraction = True
 feature_dir = "../eeg_features/"
 
 # ML task {sentiment-bin, sentiment-tri, reldetect}
@@ -26,7 +26,7 @@ embeddings = 'none'
 # features sets {'text_only' , 'eeg_raw', 'eeg_theta', 'eeg_alpha', 'eeg_beta', 'eeg_gamma', 'combi_eeg_raw', 'eye_tracking', 'combi_eye_tracking'}
 # sentence level features: {'combi_concat', 'sent_eeg_theta'}
 # combined models: {'eeg_eye_tracking', 'eeg4'} 'binary' ?
-feature_set = ['eeg_alpha']
+feature_set = ['eeg_theta']
 
 # hyper-parameters to test - general
 lstm_dim = [64]
