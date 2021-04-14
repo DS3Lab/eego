@@ -4,7 +4,6 @@ from tensorflow.python.keras.initializers import Constant
 import tensorflow.python.keras.backend as K
 from tensorflow.python.keras.layers import Input, Dense, concatenate, Embedding, LSTM, Bidirectional, Flatten, Dropout, Conv1D, MaxPooling1D
 from tensorflow.python.keras.models import Model, load_model
-from tensorflow.python.keras.callbacks import EarlyStopping, ModelCheckpoint
 import sklearn.metrics
 from sklearn.model_selection import KFold
 import ml_helpers
@@ -128,7 +127,6 @@ def classifier(features, labels, embedding_type, param_dict, random_seed_value, 
             if config.data_percentage > 0:
                 X_train_text, y_train = ml_helpers.drop_train_sents([X_train_text, y_train])
 
-
         print(y_train.shape)
         print(y_test.shape)
         print(X_train_text.shape)
@@ -214,7 +212,7 @@ def classifier(features, labels, embedding_type, param_dict, random_seed_value, 
             fold_results['best-e'] = [len(history.history['loss'])-config.patience]
             fold_results['patience'] = config.patience
             fold_results['min_delta'] = config.min_delta
-
+            fold_results['min_delta'] = config.data_percentage
             fold_results['model_type'] = config.model
 
             if config.model is 'cnn':
@@ -240,11 +238,6 @@ def classifier(features, labels, embedding_type, param_dict, random_seed_value, 
     elapsed = (time.time() - start)
     print("Training time (all folds):", str(timedelta(seconds=elapsed)))
     fold_results['training_time'] = elapsed
-
     print(sklearn.metrics.classification_report(all_labels, all_predictions))
-    #conf_matrix = sklearn.metrics.confusion_matrix(all_labels, all_predictions)  # todo: add labels
-    #print(conf_matrix)
-    #ml_helpers.plot_confusion_matrix(conf_matrix)
-    #ml_helpers.plot_prediction_distribution(all_labels, all_predictions)
 
     return fold_results

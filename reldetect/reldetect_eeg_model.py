@@ -2,8 +2,8 @@ import os
 import numpy as np
 import tensorflow.python.keras.backend as K
 from tensorflow.python.keras.layers import Input, Dense, Embedding, LSTM, Bidirectional, Flatten, Dropout, Conv1D, MaxPooling1D
+from tensorflow.python.keras.layers.merge import concatenate
 from tensorflow.python.keras.models import Model, load_model
-from tensorflow.python.keras.callbacks import EarlyStopping, ModelCheckpoint
 import sklearn.metrics
 from sklearn.model_selection import KFold
 import ml_helpers
@@ -22,7 +22,7 @@ os.environ['KERAS_BACKEND'] = 'tensorflow'
 # Machine learning model for sentiment classification (binary and ternary)
 # Jointly learning from text and cognitive word-level features (EEG pr eye-tracking)
 
-def create_lstm_cognitive_model(param_dict, X_train_eeg_shape, y_train_shape): # X_train_eeg_shape = (X_train_eeg.shape[1], X_train_eeg.shape[2])
+def create_lstm_cognitive_model(param_dict, X_train_eeg_shape, y_train_shape):
     lstm_dim = param_dict['lstm_dim']
     dense_dim = param_dict['dense_dim']
     dropout = param_dict['dropout']
@@ -191,7 +191,7 @@ def classifier(labels, eeg, embedding_type, param_dict, random_seed_value, thres
             fold_results['best-e'] = [len(history.history['loss']) - config.patience]
             fold_results['patience'] = config.patience
             fold_results['min_delta'] = config.min_delta
-
+            fold_results['min_delta'] = config.data_percentage
             fold_results['model_type'] = config.model
             
             if config.model is 'cnn':
