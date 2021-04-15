@@ -237,6 +237,7 @@ def lstm_classifier(features, labels, eeg_theta, eeg_alpha, eeg_beta, eeg_gamma,
             fold_results['model'] = [model_name]
             fold_results['best-e'] = [len(history.history['loss']) - config.patience]
             fold_results['patience'] = config.patience
+            fold_results['data_percentage'] = config.data_percentage
             fold_results['min_delta'] = config.min_delta
         else:
             fold_results['train-loss'].append(history.history['loss'])

@@ -255,6 +255,7 @@ def classifier(features, labels, gaze, embedding_type, param_dict, random_seed_v
             fold_results['model'] = [model_name]
             fold_results['best-e'] = [len(history.history['loss']) - config.patience]
             fold_results['patience'] = config.patience
+            fold_results['data_percentage'] = config.data_percentage
             fold_results['min_delta'] = config.min_delta
 
             fold_results['model_type'] = config.model
