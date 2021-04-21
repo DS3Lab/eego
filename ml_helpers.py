@@ -10,7 +10,7 @@ from tensorflow.python.keras.preprocessing.text import Tokenizer
 from tensorflow.python.keras.callbacks import EarlyStopping, ModelCheckpoint
 import datetime
 from matplotlib import cm
-
+import tensorflow as tf
 
 def plot_prediction_distribution(true, pred):
     """Analyze label distribution of dataset"""
@@ -222,6 +222,8 @@ def plot_confusion_matrix(cm):
 def prepare_text(X_text, embedding_type, random_seed):
 
     np.random.seed(random_seed)
+    tf.random.set_seed(random_seed)
+    os.environ['PYTHONHASHSEED'] = str(random_seed)
 
     vocab_size = 100000
 

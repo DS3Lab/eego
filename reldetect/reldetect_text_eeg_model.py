@@ -151,7 +151,6 @@ def classifier(features, labels, eeg, embedding_type, param_dict, random_seed_va
     X_data_eeg = ml_helpers.pad_cognitive_feature_seqs(eeg_X, max_length_cogni, "eeg")
 
 
-
     # these are already one hot categorical encodings
     y = np.asarray(y)
 

@@ -124,19 +124,7 @@ def classifier(features, labels, eeg, embedding_type, param_dict, random_seed_va
     X_text = list(features.keys())
     y = list(labels.values())
 
-    print("Label distribution:")
-    for cl in range(len(y[0])):
-        class_count = [1 if int(n[cl]) == 1 else 0 for n in y]
-        class_count = sum(class_count)
-        print(cl, class_count)
-
-    y = ml_helpers.drop_classes(y)
-
-    print("Label distribution:")
-    for cl in range(len(y[0])):
-        class_count = [1 if int(n[cl]) == 1 else 0 for n in y]
-        class_count = sum(class_count)
-        print(cl, class_count)
+    #y = ml_helpers.drop_classes(y)
 
     # prepare text samples
     X_data_text, num_words, text_feats = ml_helpers.prepare_text(X_text, embedding_type, random_seed_value)
@@ -186,19 +174,6 @@ def classifier(features, labels, eeg, embedding_type, param_dict, random_seed_va
             if config.data_percentage > 0:
                 X_train_text, X_train_eeg, y_train = ml_helpers.drop_train_sents([X_train_text, X_train_eeg, y_train])
 
-
-        print("Label distribution:")
-        for cl in range(len(y_train[0])):
-            class_count = [1 if int(n[cl]) == 1 else 0 for n in y_train]
-            class_count = sum(class_count)
-            print(cl, class_count)
-
-        print(y_train.shape)
-        print(y_test.shape)
-        print(X_train_text.shape)
-        print(X_test_text.shape)
-        print(X_train_eeg.shape)
-        print(X_test_eeg.shape)
 
         # reset model
         K.clear_session()
