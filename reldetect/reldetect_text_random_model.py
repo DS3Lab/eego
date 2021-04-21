@@ -2,10 +2,9 @@ import os
 import numpy as np
 from tensorflow.python.keras.initializers import Constant
 import tensorflow.python.keras.backend as K
-from tensorflow.python.keras.layers import Input, Dense, Embedding, LSTM, Bidirectional, Flatten, Dropout
+from tensorflow.python.keras.layers import Input, Dense, Embedding, LSTM, Bidirectional, Flatten, Dropout, Conv1D, MaxPooling1D
 from tensorflow.python.keras.layers.merge import concatenate
 from tensorflow.python.keras.models import Model, load_model
-from tensorflow.python.keras.callbacks import EarlyStopping, ModelCheckpoint
 import sklearn.metrics
 from sklearn.model_selection import KFold
 import ml_helpers
@@ -131,9 +130,7 @@ def classifier(features, labels, eeg, embedding_type, param_dict, random_seed_va
         class_count = sum(class_count)
         print(cl, class_count)
 
-
     y = ml_helpers.drop_classes(y)
-
 
     print("Label distribution:")
     for cl in range(len(y[0])):
