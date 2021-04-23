@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import os
 import numpy as np
 import config
-from transformers import BertTokenizer
+from transformers import BertTokenizer, BertConfig
 from transformers import TFBertModel
 from sklearn.preprocessing import MinMaxScaler
 from tensorflow.python.keras.preprocessing.sequence import pad_sequences
@@ -174,8 +174,8 @@ def prepare_sequences_for_bert_with_mask(X, max_length):
 
 def create_new_bert_layer():
     #bert = TFBertModel.from_pretrained("bert-base-uncased")
-    bert = TFBertModel.from_pretrained("/mnt/ds3lab-scratch/noraho/embeddings/bert/bert-base-uncased/", from_pt=True)
-    #bert = TFBertModel.from_pretrained("/mnt/ds3lab-scratch/bglaus/berts/")
+    bert = TFBertModel.from_pretrained("/mnt/ds3lab-scratch/bglaus/berts/")
+
     return bert
 
 
