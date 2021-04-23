@@ -121,7 +121,7 @@ def load_glove_embeddings(vocab_size, word_index, EMBEDDING_DIM):
 
 def get_bert_max_len(X):
 
-    tokenizer = BertTokenizer.from_pretrained("/mnt/ds3lab-scratch/noraho/berts/", do_lower_case=True)
+    tokenizer = BertTokenizer.from_pretrained("bert-base-uncased", do_lower_case=True)
 
     max_len = 0
     # For every sentence...
@@ -137,7 +137,7 @@ def get_bert_max_len(X):
 
 def prepare_sequences_for_bert_with_mask(X, max_length):
     
-    tokenizer = BertTokenizer.from_pretrained("/mnt/ds3lab-scratch/noraho/berts/", do_lower_case=True)
+    tokenizer = BertTokenizer.from_pretrained("bert-base-uncased", do_lower_case=True)
     # Tokenize all of the sentences and map the tokens to their word IDs.
     input_ids = []
     attention_masks = []
