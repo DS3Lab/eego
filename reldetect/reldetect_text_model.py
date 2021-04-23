@@ -88,12 +88,6 @@ def classifier(features, labels, embedding_type, param_dict, random_seed_value, 
 
     print(len(X), len(y))
 
-    print("Label distribution:")
-    for cl in range(len(y[0])):
-        class_count = [1 if int(n[cl]) == 1 else 0 for n in y]
-        class_count = sum(class_count)
-        print(cl, class_count)
-
     # these are already one hot categorical encodings
     y = np.asarray(y)
 
@@ -186,6 +180,7 @@ def classifier(features, labels, embedding_type, param_dict, random_seed_value, 
         pred[pred >= threshold] = 1
         pred[pred < threshold] = 0
 
+
         p, r, f, support = sklearn.metrics.precision_recall_fscore_support(y_test, pred,
                                                                            average='micro')
         print(p, r, f)
@@ -240,6 +235,6 @@ def classifier(features, labels, embedding_type, param_dict, random_seed_value, 
     elapsed = (time.time() - start)
     print("Training time (all folds):", str(timedelta(seconds=elapsed)))
     fold_results['training_time'] = elapsed
-    print(sklearn.metrics.classification_report(all_labels, all_predictions))
+    #print(sklearn.metrics.classification_report(all_labels, all_predictions))
 
     return fold_results
