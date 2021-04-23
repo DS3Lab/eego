@@ -177,8 +177,10 @@ def classifier(features, labels, embedding_type, param_dict, random_seed_value, 
 
         print("For threshold:", threshold)
         pred = predictions.copy()
+        print(pred)
         pred[pred >= threshold] = 1
         pred[pred < threshold] = 0
+        print(pred)
 
 
         p, r, f, support = sklearn.metrics.precision_recall_fscore_support(y_test, pred,
