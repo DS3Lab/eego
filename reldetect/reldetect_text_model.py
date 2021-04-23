@@ -73,7 +73,8 @@ def classifier(features, labels, embedding_type, param_dict, random_seed_value, 
     y = list(labels.values())
 
     # plot sample distribution
-    ml_helpers.plot_label_distribution(y)
+    #ml_helpers.plot_label_distribution(y)
+
     print("Label distribution:")
     for cl in range(len(y[0])):
         class_count = [1 if int(n[cl]) == 1 else 0 for n in y]
@@ -169,6 +170,7 @@ def classifier(features, labels, embedding_type, param_dict, random_seed_value, 
 
         # evaluate model
         # load the best saved model
+        print(model_name)
         model.load_weights(model_name)
 
         scores = model.evaluate([X_test_text] if embedding_type is not 'bert' else [X_test_text, X_test_masks], y_test,
