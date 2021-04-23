@@ -265,7 +265,7 @@ def lstm_classifier(features, labels, eeg_theta, eeg_alpha, eeg_beta, eeg_gamma,
     print("Training time (all folds):", str(timedelta(seconds=elapsed)))
     fold_results['training_time'] = elapsed
 
-    print(sklearn.metrics.classification_report(all_labels, all_predictions))
+    #print(sklearn.metrics.classification_report(all_labels, all_predictions))
     #conf_matrix = sklearn.metrics.confusion_matrix(all_labels, all_predictions)  # todo: add labels
     #print(conf_matrix)
     #ml_helpers.plot_confusion_matrix(conf_matrix)
