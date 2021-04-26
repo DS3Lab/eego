@@ -48,6 +48,8 @@ def main():
             eeg_dict_beta = json.load(open("../eeg_features/eeg_beta_feats_file_" + config.class_task + ".json"))
             eeg_dict_alpha = json.load(open("../eeg_features/eeg_alpha_feats_file_" + config.class_task + ".json"))
             eeg_dict_gamma = json.load(open("../eeg_features/eeg_gamma_feats_file_" + config.class_task + ".json"))
+        if 'text_eeg_eye_tracking' in config.feature_set:
+            eeg_dict = json.load(open("../eeg_features/combi_eeg_raw_feats_file_"+ config.class_task + ".json"))
         else:
             eeg_dict = json.load(
             open("../eeg_features/" + config.feature_set[0] + "_feats_file_" + config.class_task + ".json"))
