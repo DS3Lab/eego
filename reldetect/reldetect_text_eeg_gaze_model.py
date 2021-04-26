@@ -239,7 +239,7 @@ def classifier(features, labels, eeg, gaze, embedding_type, param_dict, random_s
         if config.model is 'lstm':
             gaze_model_model = create_lstm_cognitive_model(param_dict, (X_train_gaze.shape[1], X_train_gaze.shape[2]),
                                                  'gaze_input_tensor')
-        elif config.modul is 'cnn':
+        elif config.model is 'cnn':
             gaze_model_model = create_inception_cognitive_model(param_dict, (X_train_gaze.shape[1], X_train_gaze.shape[2]),
                                                       'gaze_input_tensor')
 
