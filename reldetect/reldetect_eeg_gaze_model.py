@@ -20,7 +20,7 @@ os.environ['KERAS_BACKEND'] = 'tensorflow'
 
 
 # Machine learning model for sentiment classification (binary and ternary)
-# Jointly learning from text and cognitive word-level features (EEG pr eye-tracking)
+# Jointly learning from text and cognitive word-level features (EEG or eye-tracking)
 
 def create_lstm_model(param_dict, X_train_shape, tensor_name):
     lstm_dim = param_dict['lstm_dim']
