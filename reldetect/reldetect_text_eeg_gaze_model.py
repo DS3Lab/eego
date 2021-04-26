@@ -74,7 +74,6 @@ def create_lstm_cognitive_model(param_dict, X_train_eeg_shape, input_tensor_name
     return cognitive_model_model
 
 
-
 def create_inception_cognitive_model(param_dict, X_train_eeg_shape, input_tensor_name):  # X_train_eeg_shape = (X_train_eeg.shape[1], X_train_eeg.shape[2])
     inception_filters = param_dict['inception_filters']
     inception_kernel_sizes = param_dict['inception_kernel_sizes']
@@ -288,8 +287,6 @@ def classifier(features, labels, eeg, gaze, embedding_type, param_dict, random_s
                        "Employer", "Awarded", "BirthPlace", "DeathPlace"]
         label_names = [i for j, i in enumerate(label_names) if j not in config.drop_classes]
         print(sklearn.metrics.classification_report(y_test, pred, target_names=label_names))
-        per_class_results = sklearn.metrics.classification_report(y_test, pred, target_names=label_names,
-                                                                  output_dict=True)
 
         all_labels += list(y_test)
         all_predictions += list(pred)
@@ -335,11 +332,5 @@ def classifier(features, labels, eeg, gaze, embedding_type, param_dict, random_s
     elapsed = (time.time() - start)
     print("Training time (all folds):", str(timedelta(seconds=elapsed)))
     fold_results['training_time'] = elapsed
-
-    #print(sklearn.metrics.classification_report(all_labels, all_predictions))
-    #conf_matrix = sklearn.metrics.confusion_matrix(all_labels, all_predictions)  # todo: add labels
-    #print(conf_matrix)
-    #ml_helpers.plot_confusion_matrix(conf_matrix)
-    #ml_helpers.plot_prediction_distribution(all_labels, all_predictions)
 
     return fold_results
