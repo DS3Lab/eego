@@ -4,6 +4,7 @@ import tensorflow.python.keras.backend as K
 from tensorflow.python.keras.layers import Input, Dense, Embedding, LSTM, Bidirectional, Flatten, Dropout, Conv1D, MaxPooling1D
 from tensorflow.python.keras.models import Model, load_model
 from tensorflow.python.keras.layers.merge import concatenate
+from tensorflow.python.keras.callbacks import EarlyStopping, ModelCheckpoint
 import sklearn.metrics
 from sklearn.model_selection import KFold
 import ml_helpers
@@ -168,8 +169,6 @@ def classifier(labels, gaze, embedding_type, param_dict, random_seed_value, thre
         label_names = ["Visited", "Founder", "Nationality", "Wife", "PoliticalAffiliation", "JobTitle", "Education",
                        "Employer", "Awarded", "BirthPlace", "DeathPlace"]
         print(sklearn.metrics.classification_report(y_test, pred, target_names=label_names))
-        per_class_results = sklearn.metrics.classification_report(y_test, pred, target_names=label_names,
-                                                                  output_dict=True)
 
         all_labels += list(y_test)
         all_predictions += list(pred)
@@ -216,7 +215,7 @@ def classifier(labels, gaze, embedding_type, param_dict, random_seed_value, thre
     print("Training time (all folds):", str(timedelta(seconds=elapsed)))
     fold_results['training_time'] = elapsed
 
-    print(sklearn.metrics.classification_report(all_labels, all_predictions))
+    #print(sklearn.metrics.classification_report(all_labels, all_predictions))
     #conf_matrix = sklearn.metrics.confusion_matrix(all_labels, all_predictions)  # todo: add labels
     #print(conf_matrix)
     #ml_helpers.plot_confusion_matrix(conf_matrix)
