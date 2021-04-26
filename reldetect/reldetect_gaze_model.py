@@ -3,7 +3,7 @@ import numpy as np
 import tensorflow.python.keras.backend as K
 from tensorflow.python.keras.layers import Input, Dense, Embedding, LSTM, Bidirectional, Flatten, Dropout, Conv1D, MaxPooling1D
 from tensorflow.python.keras.models import Model, load_model
-from tensorflow.python.keras.callbacks import EarlyStopping, ModelCheckpoint
+from tensorflow.python.keras.layers.merge import concatenate
 import sklearn.metrics
 from sklearn.model_selection import KFold
 import ml_helpers
