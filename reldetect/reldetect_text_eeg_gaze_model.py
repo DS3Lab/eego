@@ -212,10 +212,6 @@ def classifier(features, labels, eeg, gaze, embedding_type, param_dict, random_s
         batch_size = param_dict['batch_size']
         epochs = param_dict['epochs']
         lr = param_dict['lr']
-        inception_filters = param_dict['inception_filters']
-        inception_kernel_sizes = param_dict['inception_kernel_sizes']
-        inception_pool_size = param_dict['inception_pool_size']
-        inception_dense_dim = param_dict['inception_dense_dim']
 
         fold_results['params'] = [lstm_dim, lstm_layers, dense_dim, dropout, batch_size, epochs, lr, embedding_type,
                                   random_seed_value]
