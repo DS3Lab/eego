@@ -190,7 +190,6 @@ def classifier(features, labels, embedding_type, param_dict, random_seed_value, 
                        "Employer", "Awarded", "BirthPlace", "DeathPlace"]
         label_names = [i for j, i in enumerate(label_names) if j not in config.drop_classes]
         print(sklearn.metrics.classification_report(y_test, pred, target_names=label_names))
-        per_class_results = sklearn.metrics.classification_report(y_test, pred, target_names=label_names, output_dict=True)
 
         all_labels += list(y_test)
         all_predictions += list(pred)

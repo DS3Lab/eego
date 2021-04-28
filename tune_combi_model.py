@@ -8,6 +8,8 @@ import numpy as np
 import collections
 import json
 import sys
+import os
+import tensorflow as tf
 
 from datetime import timedelta
 import time
@@ -93,6 +95,8 @@ def main():
 
     for rand in config.random_seed_values:
         np.random.seed(rand)
+        tf.random.set_seed(rand)
+        os.environ['PYTHONHASHSEED'] = str(rand)
         for lstmDim in config.lstm_dim:
             for lstmLayers in config.lstm_layers:
                 for denseDim in config.dense_dim:

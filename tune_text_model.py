@@ -6,6 +6,8 @@ from sentiment import sentiment_text_model
 from data_helpers import save_results, load_matlab_files
 import collections
 import numpy as np
+import os
+import tensorflow as tf
 
 from datetime import timedelta
 import time
@@ -51,6 +53,8 @@ def main():
 
     for rand in config.random_seed_values:
         np.random.seed(rand)
+        tf.random.set_seed(rand)
+        os.environ['PYTHONHASHSEED'] = str(rand)
         for lstmDim in config.lstm_dim:
             for lstmLayers in config.lstm_layers:
                 for denseDim in config.dense_dim:
