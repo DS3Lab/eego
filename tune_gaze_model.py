@@ -7,6 +7,8 @@ from reldetect import reldetect_text_gaze_model, reldetect_gaze_model
 import json
 import collections
 import numpy as np
+import os
+import tensorflow as tf
 
 from datetime import timedelta
 import time
@@ -57,6 +59,8 @@ def main():
 
     for rand in config.random_seed_values:
         np.random.seed(rand)
+        tf.random.set_seed(rand)
+        os.environ['PYTHONHASHSEED'] = str(rand)
         for lstmDim in config.lstm_dim:
             for lstmLayers in config.lstm_layers:
                 for denseDim in config.dense_dim:
