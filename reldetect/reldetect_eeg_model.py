@@ -78,7 +78,7 @@ def classifier(labels, eeg, embedding_type, param_dict, random_seed_value, thres
     np.random.seed(random_seed_value)
     tf.random.set_seed(random_seed_value)
     os.environ['PYTHONHASHSEED'] = str(random_seed_value)
-    random.seed(rand)
+    random.seed(random_seed_value)
 
     start = time.time()
 
