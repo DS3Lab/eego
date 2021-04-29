@@ -13,6 +13,7 @@ from datetime import timedelta
 import tensorflow as tf
 import sys
 import datetime
+import random
 
 d = datetime.datetime.now()
 
@@ -60,6 +61,7 @@ def classifier(features, labels, embedding_type, param_dict, random_seed_value, 
     np.random.seed(random_seed_value)
     tf.random.set_seed(random_seed_value)
     os.environ['PYTHONHASHSEED'] = str(random_seed_value)
+    random.seed(random_seed_value)
 
     start = time.time()
 
