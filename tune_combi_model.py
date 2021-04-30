@@ -140,7 +140,7 @@ def main():
                                                                                                                         parameter_dict,
                                                                                                                         rand, threshold)
                                                             elif 'eeg_eye_tracking' in config.feature_set:
-                                                                fold_results = reldetect_eeg_gaze_model.lstm_classifier(label_dict,
+                                                                fold_results = reldetect_eeg_gaze_model.classifier(label_dict,
                                                                                                                         eeg_dict,
                                                                                                                         gaze_dict,
                                                                                                                         config.embeddings,
