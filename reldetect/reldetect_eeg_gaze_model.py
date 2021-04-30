@@ -147,7 +147,7 @@ def classifier(labels, eeg, gaze, embedding_type, param_dict, random_seed_value,
         # the second branch operates on the second input (gaze data)
         if config.model is 'lstm':
             gaze_model_model = create_lstm_model(param_dict, (X_train_gaze.shape[1], X_train_gaze.shape[2]), 'gaze_input_tensor')
-        elif config.modul is 'cnn':
+        elif config.model is 'cnn':
             gaze_model_model = create_inception_model(param_dict, (X_train_gaze.shape[1], X_train_gaze.shape[2]), 'gaze_input_tensor')
 
 
