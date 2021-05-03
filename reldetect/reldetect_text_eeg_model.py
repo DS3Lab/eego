@@ -15,6 +15,7 @@ from datetime import timedelta
 import tensorflow as tf
 import datetime
 import sys
+from models import create_lstm_word_model_combi
 
 d = datetime.datetime.now()
 
@@ -24,7 +25,8 @@ os.environ['KERAS_BACKEND'] = 'tensorflow'
 # Machine learning model for sentiment classification (binary and ternary)
 # Jointly learning from text and cognitive word-level features (EEG pr eye-tracking)
 
-def create_lstm_word_model(param_dict, embedding_type, X_train_shape, num_words, text_feats): # X_train_shape = X_train_text.shape[1]
+"""
+def create_lstm_word_model_combi(param_dict, embedding_type, X_train_shape, num_words, text_feats, seed_value): # X_train_shape = X_train_text.shape[1]
     lstm_dim = param_dict['lstm_dim']
     dense_dim = param_dict['dense_dim']
     dropout = param_dict['dropout']
@@ -51,13 +53,11 @@ def create_lstm_word_model(param_dict, embedding_type, X_train_shape, num_words,
     text_model = Bidirectional(LSTM(lstm_dim, return_sequences=True))(text_model)
     text_model = Flatten()(text_model)
     text_model = Dense(dense_dim, activation="relu")(text_model)
-    text_model = Dropout(dropout)(text_model)
+    text_model = Dropout(dropout, seed=seed_value)(text_model)
     text_model = Dense(16, activation="relu")(text_model)
     text_model_model = Model(inputs=input_text_list, outputs=text_model)
     return text_model_model
-
-
-
+    
 def create_lstm_cognitive_model(param_dict, X_train_eeg_shape, input_tensor_name): # X_train_eeg_shape = (X_train_eeg.shape[1], X_train_eeg.shape[2])
     lstm_dim = param_dict['lstm_dim']
     dense_dim = param_dict['dense_dim']
@@ -104,6 +104,10 @@ def create_inception_cognitive_model(param_dict, X_train_eeg_shape, input_tensor
 
     cognitive_model_model = Model(inputs=input_eeg, outputs=cognitive_model)
     return cognitive_model_model
+
+"""
+
+
 
 
 def classifier(features, labels, eeg, embedding_type, param_dict, random_seed_value, threshold):
@@ -217,14 +221,14 @@ def classifier(features, labels, eeg, embedding_type, param_dict, random_seed_va
         print("Preparing model...")
 
         # the first branch operates on the first input (word embeddings)
-        text_model_model = create_lstm_word_model(param_dict, embedding_type, X_train_text.shape[1], num_words, text_feats)
+        text_model_model = create_lstm_word_model_combi(param_dict, embedding_type, X_train_text.shape[1], num_words, text_feats, random_seed_value)
         text_model_model.summary()
 
         # the second branch operates on the second input (EEG data)
         if config.model is 'lstm':
-            cognitive_model_model = create_lstm_cognitive_model(param_dict, (X_train_eeg.shape[1], X_train_eeg.shape[2]), 'eeg_input_tensor')
+            cognitive_model_model = create_lstm_cognitive_model(param_dict, (X_train_eeg.shape[1], X_train_eeg.shape[2]), 'eeg_input_tensor', random_seed_value)
         elif config.model is 'cnn':
-            cognitive_model_model = create_inception_cognitive_model(param_dict, (X_train_eeg.shape[1], X_train_eeg.shape[2]), 'eeg_input_tensor')
+            cognitive_model_model = create_inception_cognitive_model(param_dict, (X_train_eeg.shape[1], X_train_eeg.shape[2]), 'eeg_input_tensor', random_seed_value)
             
         cognitive_model_model.summary()
 
