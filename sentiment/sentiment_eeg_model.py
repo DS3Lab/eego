@@ -15,7 +15,7 @@ from sklearn.model_selection import KFold
 import config
 import datetime
 import sys
-from ml_models import create_inception_cognitive_model_single, create_lstm_eeg_model
+from ml_models import create_inception_cognitive_model_single, create_lstm_cognitive_model_single
 
 d = datetime.datetime.now()
 
