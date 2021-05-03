@@ -13,12 +13,14 @@ import time
 from datetime import timedelta
 import tensorflow as tf
 import sys
+from models import create_lstm_word_model
 
 os.environ['KERAS_BACKEND'] = 'tensorflow'
 
 # Machine learning model for sentiment classification (binary and ternary)
-# Only learning from text 
+# Only learning from text
 
+"""
 def create_lstm_word_model(param_dict, embedding_type, X_train_shape, num_words, text_feats, y_train_shape): # X_train_shape = X_train_text.shape[1], y_train_shape = y_train.shape[1]
     lstm_dim = param_dict['lstm_dim']
     dense_dim = param_dict['dense_dim']
@@ -50,7 +52,7 @@ def create_lstm_word_model(param_dict, embedding_type, X_train_shape, num_words,
     text_model = Dense(y_train_shape, activation="softmax")(text_model)
     model = Model(inputs=input_text_list, outputs=text_model)
     return model
-
+"""
 
 
 def classifier(features, labels, embedding_type, param_dict, random_seed_value):
@@ -142,7 +144,7 @@ def classifier(features, labels, embedding_type, param_dict, random_seed_value):
         # define model
         print("Preparing model...")
 
-        model = create_lstm_word_model(param_dict, embedding_type, X_train_text.shape[1], num_words, text_feats, y_train.shape[1])
+        model = create_lstm_word_model(param_dict, embedding_type, X_train_text.shape[1], num_words, text_feats, y_train.shape[1], random_seed_value)
 
         model.compile(loss='categorical_crossentropy',
                       optimizer=tf.keras.optimizers.Adam(lr=lr),

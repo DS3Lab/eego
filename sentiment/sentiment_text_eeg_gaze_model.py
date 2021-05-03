@@ -16,6 +16,8 @@ from datetime import timedelta
 import tensorflow as tf
 import datetime
 import sys
+from models import create_lstm_cognitive_model, create_inception_cognitive_model, create_lstm_word_model_combi
+
 
 d = datetime.datetime.now()
 
@@ -25,7 +27,7 @@ os.environ['KERAS_BACKEND'] = 'tensorflow'
 # Machine learning model for sentiment classification (binary and ternary)
 # Jointly learning from text and cognitive word-level features (EEG pr eye-tracking)
 
-
+"""
 def create_lstm_word_model(param_dict, embedding_type, X_train_shape, num_words,
                            text_feats):  # X_train_shape = X_train_text.shape[1]
     lstm_dim = param_dict['lstm_dim']
@@ -113,9 +115,10 @@ def create_inception_cognitive_model(param_dict, X_train_eeg_shape,
 
     cognitive_model_model = Model(inputs=input_eeg, outputs=cognitive_model)
     return cognitive_model_model
+"""
 
 
-def lstm_classifier(features, labels, eeg, gaze, embedding_type, param_dict, random_seed_value):
+def classifier(features, labels, eeg, gaze, embedding_type, param_dict, random_seed_value):
 
     # set random seeds
     np.random.seed(random_seed_value)
@@ -201,28 +204,28 @@ def lstm_classifier(features, labels, eeg, gaze, embedding_type, param_dict, ran
         print("Preparing model...")
 
         # the first branch operates on the first input (word embeddings)
-        text_model_model = create_lstm_word_model(param_dict, embedding_type, X_train_text.shape[1], num_words,
-                                                  text_feats)
+        text_model_model = create_lstm_word_model_combi(param_dict, embedding_type, X_train_text.shape[1], num_words,
+                                                  text_feats, random_seed_value)
         text_model_model.summary()
 
         # the second branch operates on the second input (EEG data)
         if config.model is 'lstm':
             eeg_model_model = create_lstm_cognitive_model(param_dict, (X_train_eeg.shape[1], X_train_eeg.shape[2]),
-                                                          'eeg_input_tensor')
+                                                          'eeg_input_tensor', random_seed_value)
         elif config.model is 'cnn':
             eeg_model_model = create_inception_cognitive_model(param_dict, (X_train_eeg.shape[1], X_train_eeg.shape[2]),
-                                                               'eeg_input_tensor')
+                                                               'eeg_input_tensor', random_seed_value)
 
         eeg_model_model.summary()
 
         # the second branch operates on the second input (gaze data)
         if config.model is 'lstm':
             gaze_model_model = create_lstm_cognitive_model(param_dict, (X_train_gaze.shape[1], X_train_gaze.shape[2]),
-                                                           'gaze_input_tensor')
+                                                           'gaze_input_tensor', random_seed_value)
         elif config.model is 'cnn':
             gaze_model_model = create_inception_cognitive_model(param_dict,
                                                                 (X_train_gaze.shape[1], X_train_gaze.shape[2]),
-                                                                'gaze_input_tensor')
+                                                                'gaze_input_tensor', random_seed_value)
 
         gaze_model_model.summary()
 
@@ -247,10 +250,10 @@ def lstm_classifier(features, labels, eeg, gaze, embedding_type, param_dict, ran
                             validation_split=0.1, epochs=epochs, batch_size=batch_size, callbacks=[early_stop, model_save])
         print("Best epoch:", len(history.history['loss']) - config.patience)
 
-        # evaluate model
         # load the best saved model
         model.load_weights(model_name)
 
+        # evaluate model
         scores = model.evaluate([X_test_text, X_test_eeg, X_test_gaze] if embedding_type is not 'bert' else [X_test_text, X_test_masks, X_test_eeg, X_test_gaze], y_test,
                                 verbose=0)
         predictions = model.predict([X_test_text, X_test_eeg, X_test_gaze] if embedding_type is not 'bert' else [X_test_text, X_test_masks, X_test_eeg, X_test_gaze])

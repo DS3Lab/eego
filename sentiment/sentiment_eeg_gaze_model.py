@@ -15,6 +15,8 @@ from datetime import timedelta
 import tensorflow as tf
 import sys
 import datetime
+from models import create_lstm_cognitive_model, create_inception_cognitive_model
+
 
 d = datetime.datetime.now()
 
@@ -24,7 +26,7 @@ os.environ['KERAS_BACKEND'] = 'tensorflow'
 # Machine learning model for sentiment classification (binary and ternary)
 # Jointly learning from cognitive word-level features (EEG and eye-tracking)
 
-
+"""
 def create_lstm_model(param_dict, X_train_shape, tensor_name):
     lstm_dim = param_dict['lstm_dim']
     dense_dim = param_dict['dense_dim']
@@ -70,7 +72,7 @@ def create_inception_model(param_dict, X_train_shape, tensor_name):
     inception_model = Dense(inception_dense_dim[1], activation='elu')(inception_model)
     inception_model_model = Model(inputs=input_tensor, outputs=inception_model)
     return inception_model_model
-
+"""
 
 
 def classifier(labels, eeg, gaze, embedding_type, param_dict, random_seed_value):
@@ -154,15 +156,15 @@ def classifier(labels, eeg, gaze, embedding_type, param_dict, random_seed_value)
 
         # the first branch operates on the second input (EEG data)
         if config.model is 'lstm':
-            eeg_model_model = create_lstm_model(param_dict, (X_train_eeg.shape[1], X_train_eeg.shape[2]), 'eeg_input_tensor')
+            eeg_model_model = create_lstm_cognitive_model(param_dict, (X_train_eeg.shape[1], X_train_eeg.shape[2]), 'eeg_input_tensor', random_seed_value)
         elif config.model is 'cnn':
-            eeg_model_model = create_inception_model(param_dict, (X_train_eeg.shape[1], X_train_eeg.shape[2]), 'eeg_input_tensor')
+            eeg_model_model = create_lstm_cognitive_model(param_dict, (X_train_eeg.shape[1], X_train_eeg.shape[2]), 'eeg_input_tensor', random_seed_value)
 
         # the second branch operates on the second input (gaze data)
         if config.model is 'lstm':
-            gaze_model_model = create_lstm_model(param_dict, (X_train_gaze.shape[1], X_train_gaze.shape[2]), 'gaze_input_tensor')
+            gaze_model_model = create_inception_cognitive_model(param_dict, (X_train_gaze.shape[1], X_train_gaze.shape[2]), 'gaze_input_tensor', random_seed_value)
         elif config.modul is 'cnn':
-            gaze_model_model = create_inception_model(param_dict, (X_train_gaze.shape[1], X_train_gaze.shape[2]), 'gaze_input_tensor')
+            gaze_model_model = create_inception_cognitive_model(param_dict, (X_train_gaze.shape[1], X_train_gaze.shape[2]), 'gaze_input_tensor', random_seed_value)
 
         # combine the output of the three branches
         combined = concatenate([eeg_model_model.output, gaze_model_model.output])

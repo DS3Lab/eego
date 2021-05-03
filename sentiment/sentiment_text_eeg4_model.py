@@ -16,6 +16,7 @@ from datetime import timedelta
 import tensorflow as tf
 import datetime
 import sys
+from models import create_lstm_cognitive_model, create_inception_cognitive_model, create_lstm_word_model_combi
 
 d = datetime.datetime.now()
 
@@ -25,7 +26,7 @@ os.environ['KERAS_BACKEND'] = 'tensorflow'
 # Machine learning model for sentiment classification (binary and ternary)
 # Jointly learning from text and cognitive word-level features (EEG theta + alpha + beta + gamma)
 
-
+"""
 def create_lstm_word_model(param_dict, embedding_type, X_train_shape, num_words, text_feats): # X_train_shape = X_train_text.shape[1]
     lstm_dim = param_dict['lstm_dim']
     dense_dim = param_dict['dense_dim']
@@ -106,7 +107,8 @@ def create_inception_cognitive_model(param_dict, X_train_eeg_shape, input_tensor
     cognitive_model_model = Model(inputs=input_eeg, outputs=cognitive_model)
     return cognitive_model_model
 
-    
+"""
+
 
 def classifier(features, labels, eeg_theta, eeg_alpha, eeg_beta, eeg_gamma, embedding_type, param_dict, random_seed_value):
 
@@ -187,18 +189,18 @@ def classifier(features, labels, eeg_theta, eeg_alpha, eeg_beta, eeg_gamma, embe
 
         # define model
         print("Preparing model...")
-        text_model_model = create_lstm_word_model(param_dict, embedding_type, X_train_text.shape[1], num_words, text_feats)
+        text_model_model = create_lstm_word_model_combi(param_dict, embedding_type, X_train_text.shape[1], num_words, text_feats, random_seed_value)
 
         if config.model is 'lstm':
-            theta_model_model = create_lstm_cognitive_model(param_dict, (X_train_theta.shape[1], X_train_theta.shape[2]), 't_input_tensor')
-            alpha_model_model = create_lstm_cognitive_model(param_dict, (X_train_alpha.shape[1], X_train_alpha.shape[2]), 'a_input_tensor')
-            beta_model_model = create_lstm_cognitive_model(param_dict, (X_train_beta.shape[1], X_train_beta.shape[2]), 'b_input_tensor')
-            gamma_model_model = create_lstm_cognitive_model(param_dict, (X_train_gamma.shape[1], X_train_gamma.shape[2]), 'g_input_tensor')
+            theta_model_model = create_lstm_cognitive_model(param_dict, (X_train_theta.shape[1], X_train_theta.shape[2]), 't_input_tensor', random_seed_value)
+            alpha_model_model = create_lstm_cognitive_model(param_dict, (X_train_alpha.shape[1], X_train_alpha.shape[2]), 'a_input_tensor', random_seed_value)
+            beta_model_model = create_lstm_cognitive_model(param_dict, (X_train_beta.shape[1], X_train_beta.shape[2]), 'b_input_tensor', random_seed_value)
+            gamma_model_model = create_lstm_cognitive_model(param_dict, (X_train_gamma.shape[1], X_train_gamma.shape[2]), 'g_input_tensor', random_seed_value)
         elif config.model is 'cnn':
-            theta_model_model = create_inception_cognitive_model(param_dict, (X_train_theta.shape[1], X_train_theta.shape[2]), 't_input_tensor')
-            alpha_model_model = create_inception_cognitive_model(param_dict, (X_train_alpha.shape[1], X_train_alpha.shape[2]), 'a_input_tensor')
-            beta_model_model = create_inception_cognitive_model(param_dict, (X_train_beta.shape[1], X_train_beta.shape[2]), 'b_input_tensor')
-            gamma_model_model = create_inception_cognitive_model(param_dict, (X_train_gamma.shape[1], X_train_gamma.shape[2]), 'g_input_tensor')
+            theta_model_model = create_inception_cognitive_model(param_dict, (X_train_theta.shape[1], X_train_theta.shape[2]), 't_input_tensor', random_seed_value)
+            alpha_model_model = create_inception_cognitive_model(param_dict, (X_train_alpha.shape[1], X_train_alpha.shape[2]), 'a_input_tensor', random_seed_value)
+            beta_model_model = create_inception_cognitive_model(param_dict, (X_train_beta.shape[1], X_train_beta.shape[2]), 'b_input_tensor', random_seed_value)
+            gamma_model_model = create_inception_cognitive_model(param_dict, (X_train_gamma.shape[1], X_train_gamma.shape[2]), 'g_input_tensor', random_seed_value)
 
 
         # combine the output of the two branches
@@ -222,10 +224,10 @@ def classifier(features, labels, eeg_theta, eeg_alpha, eeg_beta, eeg_gamma, embe
                             validation_split=0.1, epochs=epochs, batch_size=batch_size,callbacks=[early_stop, model_save])
         print("Best epoch:", len(history.history['loss']) - config.patience)
 
-        # evaluate model
         # load the best saved model
         model.load_weights(model_name)
 
+        # evaluate model
         scores = model.evaluate([X_test_text, X_test_theta, X_test_alpha, X_test_beta, X_test_gamma] if embedding_type is not 'bert' else [X_test_text, X_test_masks, X_test_theta, X_test_alpha, X_test_beta, X_test_gamma], y_test,
                                 verbose=0)
         predictions = model.predict([X_test_text, X_test_theta, X_test_alpha, X_test_beta, X_test_gamma] if embedding_type is not 'bert' else [X_test_text, X_test_masks, X_test_theta, X_test_alpha, X_test_beta, X_test_gamma])
