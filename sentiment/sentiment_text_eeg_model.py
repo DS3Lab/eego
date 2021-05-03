@@ -16,8 +16,8 @@ from datetime import timedelta
 import tensorflow as tf
 import datetime
 import sys
-sys.path.append('./models.py')
-from models import create_lstm_cognitive_model, create_inception_cognitive_model, create_lstm_word_model_combi
+sys.path.append('./sentiment_ml_models.py')
+from ml_models import create_lstm_cognitive_model, create_inception_cognitive_model, create_lstm_word_model_combi
 
 d = datetime.datetime.now()
 

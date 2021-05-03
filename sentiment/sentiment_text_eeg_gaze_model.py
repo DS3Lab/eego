@@ -16,7 +16,7 @@ from datetime import timedelta
 import tensorflow as tf
 import datetime
 import sys
-from models import create_lstm_cognitive_model, create_inception_cognitive_model, create_lstm_word_model_combi
+from ml_models import create_lstm_cognitive_model, create_inception_cognitive_model, create_lstm_word_model_combi
 
 
 d = datetime.datetime.now()

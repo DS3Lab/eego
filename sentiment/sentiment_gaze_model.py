@@ -15,7 +15,7 @@ from tensorflow.python.keras.callbacks import EarlyStopping, ModelCheckpoint
 import ml_helpers
 import datetime
 import sys
-from models import create_lstm_cognitive_model_single, create_inception_cognitive_model_single
+from ml_models import create_lstm_cognitive_model_single, create_inception_cognitive_model_single
 
 d = datetime.datetime.now()
 

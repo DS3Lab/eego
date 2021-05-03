@@ -13,7 +13,7 @@ import time
 from datetime import timedelta
 import tensorflow as tf
 import sys
-from models import create_lstm_word_model
+from ml_models import create_lstm_word_model
 
 os.environ['KERAS_BACKEND'] = 'tensorflow'
 
