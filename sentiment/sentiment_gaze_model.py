@@ -15,6 +15,7 @@ from tensorflow.python.keras.callbacks import EarlyStopping, ModelCheckpoint
 import ml_helpers
 import datetime
 import sys
+from models import create_lstm_cognitive_model_single, create_inception_cognitive_model_single
 
 d = datetime.datetime.now()
 
@@ -24,7 +25,7 @@ os.environ['KERAS_BACKEND'] = 'tensorflow'
 # Machine learning model for sentiment classification (binary and ternary)
 # Learning on eye-tracking data only!
 
-
+"""
 def create_lstm_gaze_model(param_dict, X_train_eeg_shape, y_train_shape): # X_train_eeg_shape = (X_train_eeg.shape[1], X_train_eeg.shape[2])
     lstm_dim = param_dict['lstm_dim']
     dense_dim = param_dict['dense_dim']
@@ -72,6 +73,7 @@ def create_inception_gaze_model(param_dict, X_train_eeg_shape, y_train_shape):
 
     model = Model(inputs=input_eeg, outputs=cognitive_model)
     return model
+"""
 
 
 def classifier(labels, gaze, embedding_type, param_dict, random_seed_value):
@@ -139,9 +141,9 @@ def classifier(labels, gaze, embedding_type, param_dict, random_seed_value):
         # define model
         print("Preparing model...")
         if config.model is 'lstm':
-            model = create_lstm_gaze_model(param_dict, (X_train.shape[1], X_train.shape[2]), y_train.shape[1])
+            model = create_lstm_cognitive_model_single(param_dict, (X_train.shape[1], X_train.shape[2]), y_train.shape[1], 'gaze_input_tensor', random_seed_value)
         elif config.model is 'cnn':
-            model = create_inception_gaze_model(param_dict, (X_train.shape[1], X_train.shape[2]), y_train.shape[1])
+            model = create_inception_cognitive_model_single(param_dict, (X_train.shape[1], X_train.shape[2]), y_train.shape[1], 'gaze_input_tensor', random_seed_value)
 
         model.compile(loss='categorical_crossentropy',
                       optimizer=tf.keras.optimizers.Adam(lr=lr),

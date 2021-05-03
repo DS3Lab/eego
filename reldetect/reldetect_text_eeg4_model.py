@@ -16,6 +16,8 @@ from datetime import timedelta
 import tensorflow as tf
 import datetime
 import sys
+from models import create_lstm_word_model_combi, create_lstm_cognitive_model, create_inception_cognitive_model
+
 
 d = datetime.datetime.now()
 
@@ -25,7 +27,7 @@ os.environ['KERAS_BACKEND'] = 'tensorflow'
 # Machine learning model for sentiment classification (binary and ternary)
 # Jointly learning from text and cognitive word-level features (EEG theta + alpha + beta + gamma)
 
-
+"""
 def create_lstm_word_model(param_dict, embedding_type, X_train_shape, num_words,
                            text_feats):  # X_train_shape = X_train_text.shape[1]
     lstm_dim = param_dict['lstm_dim']
@@ -111,6 +113,7 @@ def create_inception_cognitive_model(param_dict, X_train_eeg_shape,
 
     cognitive_model_model = Model(inputs=input_eeg, outputs=cognitive_model)
     return cognitive_model_model
+"""
 
 
 def classifier(features, labels, eeg_theta, eeg_alpha, eeg_beta, eeg_gamma, embedding_type, param_dict, random_seed_value, threshold):
@@ -192,34 +195,34 @@ def classifier(features, labels, eeg_theta, eeg_alpha, eeg_beta, eeg_gamma, embe
 
         # define model
         print("Preparing model...")
-        text_model_model = create_lstm_word_model(param_dict, embedding_type, X_train_text.shape[1], num_words,
-                                                  text_feats)
+        text_model_model = create_lstm_word_model_combi(param_dict, embedding_type, X_train_text.shape[1], num_words,
+                                                  text_feats, random_seed_value)
 
         if config.model is 'lstm':
             theta_model_model = create_lstm_cognitive_model(param_dict,
                                                             (X_train_theta.shape[1], X_train_theta.shape[2]),
-                                                            't_input_tensor')
+                                                            't_input_tensor', random_seed_value)
             alpha_model_model = create_lstm_cognitive_model(param_dict,
                                                             (X_train_alpha.shape[1], X_train_alpha.shape[2]),
-                                                            'a_input_tensor')
+                                                            'a_input_tensor', random_seed_value)
             beta_model_model = create_lstm_cognitive_model(param_dict, (X_train_beta.shape[1], X_train_beta.shape[2]),
-                                                           'b_input_tensor')
+                                                           'b_input_tensor', random_seed_value)
             gamma_model_model = create_lstm_cognitive_model(param_dict,
                                                             (X_train_gamma.shape[1], X_train_gamma.shape[2]),
-                                                            'g_input_tensor')
+                                                            'g_input_tensor', random_seed_value)
         elif config.model is 'cnn':
             theta_model_model = create_inception_cognitive_model(param_dict,
                                                                  (X_train_theta.shape[1], X_train_theta.shape[2]),
-                                                                 't_input_tensor')
+                                                                 't_input_tensor', random_seed_value)
             alpha_model_model = create_inception_cognitive_model(param_dict,
                                                                  (X_train_alpha.shape[1], X_train_alpha.shape[2]),
-                                                                 'a_input_tensor')
+                                                                 'a_input_tensor', random_seed_value)
             beta_model_model = create_inception_cognitive_model(param_dict,
                                                                 (X_train_beta.shape[1], X_train_beta.shape[2]),
-                                                                'b_input_tensor')
+                                                                'b_input_tensor', random_seed_value)
             gamma_model_model = create_inception_cognitive_model(param_dict,
                                                                  (X_train_gamma.shape[1], X_train_gamma.shape[2]),
-                                                                 'g_input_tensor')
+                                                                 'g_input_tensor', random_seed_value)
 
         # combine the output of the two branches
         combined = concatenate(
