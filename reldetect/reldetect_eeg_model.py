@@ -25,55 +25,6 @@ os.environ['KERAS_BACKEND'] = 'tensorflow'
 # Machine learning model for sentiment classification (binary and ternary)
 # Jointly learning from text and cognitive word-level features (EEG pr eye-tracking)
 
-"""
-def create_lstm_cognitive_model(param_dict, X_train_eeg_shape, y_train_shape):
-    lstm_dim = param_dict['lstm_dim']
-    dense_dim = param_dict['dense_dim']
-    dropout = param_dict['dropout']
-    lstm_layers = param_dict['lstm_layers']
-
-    input_text = Input(shape=X_train_eeg_shape, name='eeg_input_tensor')
-    text_model = Bidirectional(LSTM(lstm_dim, return_sequences=True))(input_text)
-    for _ in list(range(lstm_layers-1)):
-        text_model = Bidirectional(LSTM(lstm_dim, return_sequences=True))(text_model)
-    text_model = Flatten()(text_model)
-    text_model = Dense(dense_dim, activation="relu")(text_model)
-    text_model = Dropout(dropout)(text_model)
-    text_model = Dense(y_train_shape, activation="sigmoid")(text_model)
-
-    model = Model(inputs=input_text, outputs=text_model)
-    return model
-
-
-def create_inception_cognitive_model(param_dict, X_train_eeg_shape, y_train_shape):
-    inception_filters = param_dict['inception_filters']
-    inception_kernel_sizes = param_dict['inception_kernel_sizes']
-    inception_pool_size = param_dict['inception_pool_size']    
-    inception_dense_dim = param_dict['inception_dense_dim']
-    dropout = param_dict['dropout']
-
-    input_eeg = Input(shape=X_train_eeg_shape, name='eeg_input_tensor')
-
-    conv_1 = Conv1D(filters=inception_filters, kernel_size=inception_kernel_sizes[0], activation='elu', strides=1, use_bias=False, padding='same')(input_eeg)
-
-    conv_3 = Conv1D(filters=inception_filters, kernel_size=inception_kernel_sizes[0], activation='elu', strides=1, use_bias=False, padding='same')(input_eeg)
-    conv_3 = Conv1D(filters=inception_filters, kernel_size=inception_kernel_sizes[1], activation='elu', strides=1, use_bias=False, padding='same')(conv_3)
-
-    conv_5 = Conv1D(filters=inception_filters, kernel_size=inception_kernel_sizes[0], activation='elu', strides=1, use_bias=False, padding='same')(input_eeg)
-    conv_5 = Conv1D(filters=inception_filters, kernel_size=inception_kernel_sizes[2], activation='elu', strides=1, use_bias=False, padding='same')(conv_5)
-
-    pool_proj = MaxPooling1D(pool_size=inception_pool_size, strides=1, padding='same')(input_eeg)
-    pool_proj = Conv1D(filters=inception_filters, kernel_size=inception_kernel_sizes[0], activation='elu', strides=1, use_bias=False, padding='same')(pool_proj)
-
-    cognitive_model = concatenate([conv_1, conv_3, conv_5, pool_proj])
-    cognitive_model = Flatten()(cognitive_model)
-    cognitive_model = Dense(inception_dense_dim[0], activation='elu')(cognitive_model)
-    cognitive_model = Dropout(dropout)(cognitive_model)
-    cognitive_model = Dense(y_train_shape, activation="sigmoid")(cognitive_model)
-
-    model = Model(inputs=input_eeg, outputs=cognitive_model)
-    return model
-"""
 
 def classifier(labels, eeg, embedding_type, param_dict, random_seed_value, threshold):
 
@@ -158,10 +109,10 @@ def classifier(labels, eeg, embedding_type, param_dict, random_seed_value, thres
         history = model.fit(X_train, y_train, validation_split=config.validation_split, epochs=epochs, batch_size=batch_size, callbacks=[early_stop, model_save])
         print("Best epoch:", len(history.history['loss']) - config.patience)
 
-        # evaluate model
         # load the best saved model
         model.load_weights(model_name)
 
+        # evaluate model
         scores = model.evaluate(X_test, y_test, verbose=0)
         predictions = model.predict(X_test)
 

@@ -24,49 +24,6 @@ os.environ['KERAS_BACKEND'] = 'tensorflow'
 # Machine learning model for relation detection
 # Jointly learning from text and cognitive word-level features (EEG or eye-tracking)
 
-"""
-def create_lstm_model(param_dict, X_train_shape, tensor_name):
-    lstm_dim = param_dict['lstm_dim']
-    dense_dim = param_dict['dense_dim']
-    dropout = param_dict['dropout']
-
-    input_tensor = Input(shape=X_train_shape, name=tensor_name)
-    lstm_model = Bidirectional(LSTM(lstm_dim, return_sequences=True))(input_tensor)
-    lstm_model = Flatten()(lstm_model)
-    lstm_model = Dense(dense_dim, activation="relu")(lstm_model)
-    lstm_model = Dropout(dropout)(lstm_model)
-    lstm_model = Dense(16, activation="relu")(lstm_model)
-    lstm_model_model = Model(inputs=input_tensor, outputs=lstm_model)
-    return lstm_model_model
-
-
-def create_inception_model(param_dict, X_train_shape, tensor_name):
-    inception_filters = param_dict['inception_filters']
-    inception_kernel_sizes = param_dict['inception_kernel_sizes']
-    inception_pool_size = param_dict['inception_pool_size']    
-    inception_dense_dim = param_dict['inception_dense_dim']
-    dropout = param_dict['dropout']
-
-    input_tensor = Input(shape=X_train_shape, name=tensor_name)
-    conv_1 = Conv1D(filters=inception_filters, kernel_size=inception_kernel_sizes[0], activation='elu', strides=1, use_bias=False, padding='same')(input_tensor)
-
-    conv_3 = Conv1D(filters=inception_filters, kernel_size=inception_kernel_sizes[0], activation='elu', strides=1, use_bias=False, padding='same')(input_tensor)
-    conv_3 = Conv1D(filters=inception_filters, kernel_size=inception_kernel_sizes[1], activation='elu', strides=1, use_bias=False, padding='same')(conv_3)
-
-    conv_5 = Conv1D(filters=inception_filters, kernel_size=inception_kernel_sizes[0], activation='elu', strides=1, use_bias=False, padding='same')(input_tensor)
-    conv_5 = Conv1D(filters=inception_filters, kernel_size=inception_kernel_sizes[2], activation='elu', strides=1, use_bias=False, padding='same')(conv_5)
-
-    pool_proj = MaxPooling1D(pool_size=inception_pool_size, strides=1, padding='same')(input_tensor)
-    pool_proj = Conv1D(filters=inception_filters, kernel_size=inception_kernel_sizes[0], activation='elu', strides=1, use_bias=False, padding='same')(pool_proj)
-
-    inception_model = concatenate([conv_1, conv_3, conv_5, pool_proj])
-    inception_model = Flatten()(inception_model)
-    inception_model = Dense(inception_dense_dim[0], activation='elu')(inception_model)
-    inception_model = Dropout(dropout)(inception_model)
-    inception_model = Dense(inception_dense_dim[1], activation='elu')(inception_model)
-    inception_model_model = Model(inputs=input_tensor, outputs=inception_model)
-    return inception_model_model
-"""
 
 def classifier(labels, eeg, gaze, embedding_type, param_dict, random_seed_value, threshold):
 
