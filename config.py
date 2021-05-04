@@ -6,7 +6,7 @@
 base_dir = "/mnt/ds3lab-scratch/noraho/datasets/zuco/" # WITH UNFOLD!
 rootdir_zuco1 = base_dir+"zuco1_preprocessed_sep2020/"
 rootdir_zuco2 = base_dir+"zuco2_preprocessed_sep2020/"
-rootdir_zuco1 = base_dir+"zuco1_SR_preprocessed_apr2020/" # new sentiment dara
+rootdir_zuco1 = base_dir+"zuco1_SR_preprocessed_apr2021/" # new sentiment dara
 rootdir_zuco1 = "/Users/norahollenstein/Downloads/SRnew_for_Nora/"  #  on local
 
 # subjects (subejcts starting with "Z" are from ZuCo 1, subjects starting with "Y" are from ZuCo 2)
