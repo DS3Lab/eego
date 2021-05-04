@@ -257,7 +257,7 @@ def classifier(features, labels, eeg_theta, eeg_alpha, eeg_beta, eeg_gamma, embe
             fold_results['best-e'] = [len(history.history['loss']) - config.patience]
             fold_results['patience'] = config.patience
             fold_results['min_delta'] = config.min_delta
-
+            fold_results['data_percentage'] = config.data_percentage
             fold_results['model_type'] = config.model
 
             if config.model is 'cnn':

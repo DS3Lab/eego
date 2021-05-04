@@ -218,7 +218,7 @@ def classifier(labels, eeg, gaze, embedding_type, param_dict, random_seed_value)
             fold_results['best-e'] = [len(history.history['loss']) - config.patience]
             fold_results['patience'] = config.patience
             fold_results['min_delta'] = config.min_delta
-
+            fold_results['data_percentage'] = config.data_percentage
             fold_results['model_type'] = config.model
 
             if config.model is 'cnn':
