@@ -26,9 +26,4 @@ def extract_sentences(sentence_data, sentence_dict):
             if config.class_task.startswith('sentiment') or config.class_task == "reldetect":
                 if sent not in sentence_dict:
                     sentence_dict[sent] = split_tokens
-
-                       # for ner (different tokenization needed for NER)
-            if config.class_task == "ner":
-                if sent not in sentence_dict:
-                    #sentence_dict[sent] = spacy_tokens
-                    continue
+        print(len(sentence_dict))

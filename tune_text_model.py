@@ -46,7 +46,6 @@ def main():
     if len(feature_dict) != len(label_dict):
         print("WARNING: Not an equal number of sentences in features and labels!")
 
-
     print('starting loop')
     start = time.time()
     count = 0
