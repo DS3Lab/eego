@@ -156,7 +156,7 @@ def classifier(features, labels, embedding_type, param_dict, random_seed_value, 
         # define model
         print("Preparing model...")
 
-        model = create_lstm_word_model(param_dict, embedding_type, X_train_text.shape[1], num_words, text_feats, y_train.shape[1])
+        model = create_lstm_word_model(param_dict, embedding_type, X_train_text.shape[1], num_words, text_feats, y_train.shape[1], random_seed_value)
 
         model.compile(loss='categorical_crossentropy',
                       optimizer=tf.keras.optimizers.Adam(lr=lr),
