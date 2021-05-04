@@ -163,8 +163,6 @@ def classifier(features, labels, eeg_theta, eeg_alpha, eeg_beta, eeg_gamma, embe
 
     fold = 0
     fold_results = {}
-    all_labels = []
-    all_predictions = []
 
     for train_index, test_index in kf.split(X_data_text):
 
@@ -226,8 +224,7 @@ def classifier(features, labels, eeg_theta, eeg_alpha, eeg_beta, eeg_gamma, embe
 
         # combine the output of the two branches
         combined = concatenate(
-            [text_model_model.output, alpha_model_model.output, beta_model_model.output, gamma_model_model.output,
-             theta_model_model.output])
+            [text_model_model.output, theta_model_model.output, alpha_model_model.output, beta_model_model.output, gamma_model_model.output])
         # apply another dense layer and then a softmax prediction on the combined outputs
         combi_model = Dense(y_train.shape[1], activation="sigmoid")(combined)
 

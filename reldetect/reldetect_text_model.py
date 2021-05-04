@@ -14,6 +14,7 @@ import tensorflow as tf
 import sys
 import datetime
 import random
+from ml_models import create_lstm_word_model
 
 d = datetime.datetime.now()
 
@@ -23,6 +24,7 @@ os.environ['KERAS_BACKEND'] = 'tensorflow'
 # Machine learning model for relation detection (11 classes)
 # Only learning from text
 
+"""
 def create_lstm_word_model(param_dict, embedding_type, X_train_shape, num_words, text_feats, y_train_shape): # X_train_shape = X_train_text.shape[1], y_train_shape = y_train.shape[1]
     lstm_dim = param_dict['lstm_dim']
     dense_dim = param_dict['dense_dim']
@@ -54,7 +56,7 @@ def create_lstm_word_model(param_dict, embedding_type, X_train_shape, num_words,
     text_model = Dense(y_train_shape, activation="sigmoid")(text_model)
     model = Model(inputs=input_text_list, outputs=text_model)
     return model
-
+"""
 
 def classifier(features, labels, embedding_type, param_dict, random_seed_value, threshold):
     # set random seed

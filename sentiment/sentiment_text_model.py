@@ -115,7 +115,6 @@ def classifier(features, labels, embedding_type, param_dict, random_seed_value):
             if config.data_percentage > 0:
                 X_train_text, y_train = ml_helpers.drop_train_sents([X_train_text, y_train])
 
-
         print(y_train.shape)
         print(y_test.shape)
         print(X_train_text.shape)
