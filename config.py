@@ -52,7 +52,7 @@ eeg_dropout = [0.1]
 
 # other parameters
 folds = 5
-random_seed_values = [13]#, 78, 22, 66, 42]
+random_seed_values = [13, 78, 22, 66, 42]
 validation_split = 0.1
 patience = 80
 min_delta = 0.0000001
