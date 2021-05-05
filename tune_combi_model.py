@@ -88,6 +88,8 @@ def main():
         if len(feature_dict) != len(label_dict) or len(feature_dict) != len(eeg_dict) or len(label_dict) != len(eeg_dict):
             print("WARNING: Not an equal number of sentences in features and labels!")
         print('len(feature_dict): {}\nlen(label_dict): {}\nlen(eeg_dict): {}'.format(len(feature_dict), len(label_dict), len(eeg_dict)))
+        if "eye_tracking" in config.feature_set[0]:
+            print('len(feature_dict): {}'.format(len(gaze_dict)))
 
     print('Starting Loop')
     start = time.time()
