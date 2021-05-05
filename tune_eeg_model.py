@@ -145,7 +145,7 @@ def main():
                                                                                                             config.embeddings,
                                                                                                             parameter_dict,
                                                                                                             rand)
-                                                        elif 'random' in config.feature_set and 'eeg_gamma' in config.feature_set:
+                                                        elif 'random' in config.feature_set and 'eeg_theta' in config.feature_set:
                                                             fold_results = sentiment_text_random_model.classifier(feature_dict, label_dict,
                                                                                                             eeg_dict,
                                                                                                             config.embeddings,
@@ -180,21 +180,6 @@ def main():
                                                                                                             config.embeddings,
                                                                                                             parameter_dict,
                                                                                                             rand)
-
-                                                        elif 'random' in config.feature_set and 'eeg_alpha' in config.feature_set:
-                                                            fold_results = sentiment_text_random_model.classifier(feature_dict, label_dict,
-                                                                                                            eeg_dict,
-                                                                                                            config.embeddings,
-                                                                                                            parameter_dict,
-                                                                                                            rand)
-
-                                                        elif 'combi_eeg_raw' in config.feature_set or 'eeg_theta' in config.feature_set or 'eeg_alpha' in config.feature_set or 'eeg_beta' in config.feature_set or 'eeg_gamma' in config.feature_set:
-                                                            fold_results = sentiment_text_eeg_model.classifier(feature_dict,
-                                                                                                                label_dict,
-                                                                                                                eeg_dict,
-                                                                                                                config.embeddings,
-                                                                                                                parameter_dict,
-                                                                                                                rand)
 
                                                         save_results(fold_results, config.class_task)
                                                     

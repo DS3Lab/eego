@@ -124,7 +124,6 @@ def main():
                                                             if label == 2:
                                                                 del label_dict[s]
                                                                 del feature_dict[s]
-                                                                # del gaze_dict[s]
 
                                                         if 'eye_tracking' in config.feature_set:
                                                             fold_results = sentiment_gaze_model.classifier(label_dict, gaze_dict,

@@ -1,8 +1,8 @@
 import config
 from feature_extraction import zuco_reader
-from reldetect import reldetect_eeg_model, reldetect_text_eeg_model, reldetect_eeg_gaze_model, reldetect_text_eeg4_model, reldetect_text_eeg_gaze_model
+from reldetect import reldetect_text_eeg_model, reldetect_eeg_gaze_model, reldetect_text_eeg4_model, reldetect_text_eeg_gaze_model
 from ner import ner_text_model
-from sentiment import sentiment_eeg_model, sentiment_eeg_gaze_model, sentiment_text_eeg_gaze_model, sentiment_text_eeg4_model
+from sentiment import sentiment_eeg_model, sentiment_eeg_gaze_model, sentiment_text_eeg_gaze_model, sentiment_text_eeg4_model, sentiment_text_random_model, sentiment_text_eeg_model
 from data_helpers import save_results, load_matlab_files
 import numpy as np
 import collections
@@ -170,7 +170,7 @@ def main():
                                                                                                             config.embeddings,
                                                                                                             parameter_dict,
                                                                                                             rand)
-                                                        elif 'combi_all' in config.feature_set:
+                                                        elif 'text_eeg_eye_tracking' in config.feature_set:
                                                             fold_results = sentiment_text_eeg_gaze_model.classifier(feature_dict,
                                                                                                                         label_dict,
                                                                                                                         eeg_dict,
@@ -209,7 +209,7 @@ def main():
                                                                                                             config.embeddings,
                                                                                                             parameter_dict,
                                                                                                             rand)
-                                                        elif 'combi_all' in config.feature_set:
+                                                        elif 'text_eeg_eye_tracking' in config.feature_set:
                                                             fold_results = sentiment_text_eeg_gaze_model.classifier(feature_dict,
                                                                                                                         label_dict,
                                                                                                                         eeg_dict,
@@ -223,6 +223,21 @@ def main():
                                                                                                                     config.embeddings,
                                                                                                                     parameter_dict,
                                                                                                                     rand)
+
+                                                        elif 'random' in config.feature_set and 'eeg_theta' in config.feature_set:
+                                                            fold_results = sentiment_text_random_model.classifier(feature_dict, label_dict,
+                                                                                                            eeg_dict,
+                                                                                                            config.embeddings,
+                                                                                                            parameter_dict,
+                                                                                                            rand)
+
+                                                        elif 'combi_eeg_raw' in config.feature_set or 'eeg_theta' in config.feature_set or 'eeg_alpha' in config.feature_set or 'eeg_beta' in config.feature_set or 'eeg_gamma' in config.feature_set:
+                                                            fold_results = sentiment_text_eeg_model.classifier(feature_dict,
+                                                                                                                label_dict,
+                                                                                                                eeg_dict,
+                                                                                                                config.embeddings,
+                                                                                                                parameter_dict,
+                                                                                                                rand)
 
                                                         save_results(fold_results, config.class_task)
 
