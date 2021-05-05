@@ -36,14 +36,8 @@ def main():
         elapsed = (time.time() - start)
         print('{}: {}'.format(subject, timedelta(seconds=int(elapsed))))
 
-    if config.run_eeg_extraction:
-        print(len(gaze_dict))
-        with open('gaze_feats_file_ner.json', 'w') as fp:
-            json.dump(gaze_dict, fp)
-    else:
-        print("Reading gaze features from file!!")
-        gaze_dict = json.load(open("feature_extraction/features/gaze_feats_file_" + config.class_task + ".json"))
-
+    print("Reading gaze features from file!!")
+    gaze_dict = json.load(open("feature_extraction/features/gaze_feats_file_" + config.class_task + ".json"))
 
     feature_dict = collections.OrderedDict(sorted(feature_dict.items()))
     label_dict = collections.OrderedDict(sorted(label_dict.items()))
