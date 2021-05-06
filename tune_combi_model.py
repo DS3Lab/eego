@@ -153,12 +153,6 @@ def main():
                                                                                                                         rand, threshold)
                                                             save_results(fold_results, config.class_task)
 
-                                                    elif config.class_task == 'ner':
-                                                        fold_results = ner_text_model.lstm_classifier(feature_dict, label_dict,
-                                                                                                    config.embeddings,
-                                                                                                    parameter_dict, rand)
-                                                        save_results(fold_results, config.class_task)
-
                                                     elif config.class_task == 'sentiment-tri':
                                                         if 'eeg4' in config.feature_set:
                                                             fold_results = sentiment_text_eeg4_model.classifier(feature_dict, label_dict, eeg_dict_theta,
@@ -195,12 +189,13 @@ def main():
                                                             if label == 2:
                                                                 del label_dict[s]
                                                                 del feature_dict[s]
-                                                                del eeg_dict[s]
                                                                 if 'eeg4' in config.feature_set:
                                                                     del eeg_dict_theta[s]
                                                                     del eeg_dict_alpha[s]
                                                                     del eeg_dict_beta[s]
                                                                     del eeg_dict_gamma[s]
+                                                                else:
+                                                                    del eeg_dict[s]
 
                                                         if 'eeg4' in config.feature_set:
                                                             fold_results = sentiment_text_eeg4_model.classifier(feature_dict, label_dict, eeg_dict_theta,
