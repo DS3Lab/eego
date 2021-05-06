@@ -148,7 +148,7 @@ def classifier(features, labels, eeg, gaze, embedding_type, param_dict, random_s
     X_data_text, num_words, text_feats = ml_helpers.prepare_text(X_text, embedding_type, random_seed_value)
 
     # prepare EEG data
-    eeg_X, max_length_cogni = ml_helpers.prepare_eeg(eeg)
+    eeg_X, max_length_cogni = ml_helpers.prepare_cogni_seqs(eeg)
     eeg_X = ml_helpers.scale_feature_values(eeg_X)
     X_data_eeg = ml_helpers.pad_cognitive_feature_seqs(eeg_X, max_length_cogni, "eeg")
 

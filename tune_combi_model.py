@@ -201,7 +201,6 @@ def main():
                                                                     del eeg_dict_alpha[s]
                                                                     del eeg_dict_beta[s]
                                                                     del eeg_dict_gamma[s]
-                                                        print(len(eeg_dict))
 
                                                         if 'eeg4' in config.feature_set:
                                                             fold_results = sentiment_text_eeg4_model.classifier(feature_dict, label_dict, eeg_dict_theta,
