@@ -246,7 +246,7 @@ def classifier(features, labels, eeg, gaze, embedding_type, param_dict, random_s
         early_stop, model_save, model_name = ml_helpers.callbacks(fold, random_seed_value)
 
         # train model
-        history = model.fit([X_train_text, X_train_eeg, X_train_gaze] if embedding_type is not 'bert' else [X_train_text, X_train_masks, X_train_eeg. X_train_gaze], y_train,
+        history = model.fit([X_train_text, X_train_eeg, X_train_gaze] if embedding_type is not 'bert' else [X_train_text, X_train_masks, X_train_eeg, X_train_gaze], y_train,
                             validation_split=0.1, epochs=epochs, batch_size=batch_size, callbacks=[early_stop, model_save])
         print("Best epoch:", len(history.history['loss']) - config.patience)
 
