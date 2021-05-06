@@ -140,9 +140,9 @@ def classifier(features, labels, eeg, embedding_type, param_dict, random_seed_va
 
         # the second branch operates on the second input (EEG data)
         if config.model is 'lstm':
-            cognitive_model_model = create_lstm_cognitive_model(param_dict, (X_train_eeg.shape[1], X_train_eeg.shape[2]), random_seed_value)
+            cognitive_model_model = create_lstm_cognitive_model(param_dict, (X_train_eeg.shape[1], X_train_eeg.shape[2]), 'random_eeg_input_tensor', random_seed_value)
         elif config.model is 'cnn':
-            cognitive_model_model = create_inception_cognitive_model(param_dict, (X_train_eeg.shape[1], X_train_eeg.shape[2]), random_seed_value)
+            cognitive_model_model = create_inception_cognitive_model(param_dict, (X_train_eeg.shape[1], X_train_eeg.shape[2]), 'random_eeg_input_tensor', random_seed_value)
             
         cognitive_model_model.summary()
 
@@ -227,11 +227,5 @@ def classifier(features, labels, eeg, embedding_type, param_dict, random_seed_va
     elapsed = (time.time() - start)
     print("Training time (all folds):", str(timedelta(seconds=elapsed)))
     fold_results['training_time'] = elapsed
-
-    #print(sklearn.metrics.classification_report(all_labels, all_predictions))
-    #conf_matrix = sklearn.metrics.confusion_matrix(all_labels, all_predictions)  # todo: add labels
-    #print(conf_matrix)
-    #ml_helpers.plot_confusion_matrix(conf_matrix)
-    #ml_helpers.plot_prediction_distribution(all_labels, all_predictions)
 
     return fold_results
