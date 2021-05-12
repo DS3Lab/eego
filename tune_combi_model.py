@@ -160,7 +160,8 @@ def main():
                                                                                                             config.embeddings,
                                                                                                             parameter_dict,
                                                                                                             rand)
-                                                        elif 'eeg_raw' in config.feature_set:
+
+                                                        if 'eeg_raw' in config.feature_set:
                                                             fold_results = sentiment_eeg_model.classifier(label_dict,
                                                                                                             eeg_dict,
                                                                                                             config.embeddings,
@@ -176,11 +177,26 @@ def main():
                                                                                                                         rand)
                                                         elif 'eeg_eye_tracking' in config.feature_set:
                                                             fold_results = sentiment_eeg_gaze_model.classifier(label_dict,
-                                                                                                                    eeg_dict,
-                                                                                                                    gaze_dict,
+                                                                                                                    eeg_dict, gaze_dict,
                                                                                                                     config.embeddings,
                                                                                                                     parameter_dict,
                                                                                                                     rand)
+
+                                                        elif 'random' in config.feature_set and 'eeg_theta' in config.feature_set:
+                                                            fold_results = sentiment_text_random_model.classifier(feature_dict, label_dict,
+                                                                                                            eeg_dict,
+                                                                                                            config.embeddings,
+                                                                                                            parameter_dict,
+                                                                                                            rand)
+
+                                                        elif 'combi_eeg_raw' in config.feature_set or 'eeg_theta' in config.feature_set or 'eeg_alpha' in config.feature_set or 'eeg_beta' in config.feature_set or 'eeg_gamma' in config.feature_set:
+                                                            fold_results = sentiment_text_eeg_model.classifier(feature_dict,
+                                                                                                                label_dict,
+                                                                                                                eeg_dict,
+                                                                                                                config.embeddings,
+                                                                                                                parameter_dict,
+                                                                                                                rand)
+
                                                         save_results(fold_results, config.class_task)
                                                     elif config.class_task == 'sentiment-bin':
                                                         print("dropping neutral sentences for binary sentiment classification")
