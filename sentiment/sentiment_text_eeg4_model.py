@@ -88,7 +88,7 @@ def classifier(features, labels, eeg_theta, eeg_alpha, eeg_beta, eeg_gamma, embe
         X_train_alpha, X_test_alpha = X_data_alpha[train_index], X_data_alpha[test_index]
         X_train_beta, X_test_beta = X_data_beta[train_index], X_data_beta[test_index]
         X_train_gamma, X_test_gamma = X_data_gamma[train_index], X_data_gamma[test_index]
-        X_train_theta, X_test_theta = X_data_gamma[train_index], X_data_gamma[test_index]
+        X_train_theta, X_test_theta = X_data_theta[train_index], X_data_theta[test_index]
 
         # reset model
         K.clear_session()
