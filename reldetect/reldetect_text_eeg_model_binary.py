@@ -137,7 +137,7 @@ def classifier(features, labels, eeg, embedding_type, param_dict, random_seed_va
         print("Preparing model...")
 
         # the first branch operates on the first input (word embeddings)
-        text_model_model = create_lstm_word_model_combi(param_dict, embedding_type, X_train_text.shape[1], num_words, text_feats,  y_train.shape[1], random_seed_value)
+        text_model_model = create_lstm_word_model_combi(param_dict, embedding_type, X_train_text.shape[1], num_words, text_feats, random_seed_value)
         text_model_model.summary()
 
         # the second branch operates on the second input (EEG data)
