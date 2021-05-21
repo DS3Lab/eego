@@ -345,7 +345,7 @@ def drop_samples(y, X, X_eeg=None):
     # tested with dropping the 4, 6 or 8 least frequent relations
     label_names = ["Visited", "Founder", "Nationality", "Wife", "Political Affiliation", "Job Title", "Education",
                    "Employer", "Awarded", "Birth Place", "Death Place"]
-    rel_index = 7
+    rel_index = 5
     print(label_names[rel_index], " vs. no relation - binary classification")
 
     # sample[5] = job_title

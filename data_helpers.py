@@ -97,13 +97,14 @@ def save_results(fold_results_dict, task):
     best_eps = ",".join(map(str, fold_results_dict['best-e']))
     folds = config.folds
     model_type = config.model
+    data_percentage = fold_results_dict['data_percentage']
 
     if config.model is 'cnn':
         inception_filters = fold_results_dict['inception_filters']
         inception_kernel_sizes = fold_results_dict['inception_kernel_sizes']
         inception_pool_size = fold_results_dict['inception_pool_size']
         inception_dense_dim = fold_results_dict['inception_dense_dim']
-        data_percentage = fold_results_dict['data_percentage']
+
 
         inception_kernel_sizes = str(inception_kernel_sizes).replace(' ', '')
         inception_dense_dim = str(inception_dense_dim).replace(' ', '')
