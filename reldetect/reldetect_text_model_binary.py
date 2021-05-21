@@ -185,6 +185,12 @@ def classifier(features, labels, embedding_type, param_dict, random_seed_value):
             fold_results['patience'] = config.patience
             fold_results['data_percentage'] = config.data_percentage
             fold_results['min_delta'] = config.min_delta
+
+            if config.model is 'cnn':
+                fold_results['inception_filters'] = param_dict['inception_filters']
+                fold_results['inception_kernel_sizes'] = param_dict['inception_kernel_sizes']
+                fold_results['inception_pool_size'] = param_dict['inception_pool_size']
+                fold_results['inception_dense_dim'] = param_dict['inception_dense_dim']
         else:
             fold_results['train-loss'].append(history.history['loss'])
             fold_results['train-accuracy'].append(history.history['accuracy'])
