@@ -100,7 +100,7 @@ def main():
                                                                                                                     parameter_dict,
                                                                                                                     rand)
                                                             
-                                                            if 'eeg_raw' in config.feature_set:
+                                                            elif 'eeg_raw' in config.feature_set:
                                                                 fold_results = reldetect_eeg_model.classifier(label_dict, eeg_dict,
                                                                                                                 config.embeddings,
                                                                                                                 parameter_dict,
