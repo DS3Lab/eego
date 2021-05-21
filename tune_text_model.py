@@ -75,7 +75,7 @@ def main():
                                                     if config.class_task == 'reldetect':
                                                         for threshold in config.rel_thresholds:
                                                             if 'binary' in config.feature_set:
-                                                                fold_results = reldetect_text_model_binary.lstm_classifier(feature_dict,
+                                                                fold_results = reldetect_text_model_binary.classifier(feature_dict,
                                                                                                                     label_dict,
                                                                                                                     config.embeddings,
                                                                                                                     parameter_dict,
